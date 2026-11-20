@@ -346,6 +346,8 @@ function terminar(resultado, semente) {
   const extras = [];
   if (subiuJogador) {
     extras.push(preencher(textos.jogadorSubiu, { nivel: jogo.estado.nivel, orvalho: dados.config.jogador.orvalhoPorNivel * subiuJogador }));
+    const vagas = jogo.vagasTime();
+    if (vagas > jogo.vagasTime(jogo.estado.nivel - subiuJogador)) extras.push(preencher(textos.vagaLiberada, { vagas }));
   }
   for (const { missao } of jogo.missoesAtivas().filter((x) => x.completa && !missoesAntes.has(x.missao.id))) {
     extras.push(`📜 ${preencher(textos.missaoCompleta, { titulo: missao.titulo })}`);

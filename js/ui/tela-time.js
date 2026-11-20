@@ -30,7 +30,9 @@ function desenhar() {
   desenharGrade();
   desenharPlantas();
   desenharBonus();
-  $('time-contagem').textContent = `${jogo.estado.time.length}/${dados.config.batalha.tamanhoTime}`;
+  const proxima = jogo.proximaVaga();
+  $('time-contagem').textContent = `${jogo.estado.time.length}/${jogo.vagasTime()}`
+    + (proxima ? ` ${preencher(dados.textos.proximaVaga, { nivel: proxima })}` : '');
   $('btn-lutar').textContent = `Lutar! ⚡${faseEscolhida.folego}`;
 }
 
@@ -94,7 +96,7 @@ function primeiroEspacoLivre() {
 function desenharPlantas() {
   const lista = $('lista-plantas');
   lista.innerHTML = '';
-  const max = dados.config.batalha.tamanhoTime;
+  const max = jogo.vagasTime();
   for (const p of dados.plantas.filter((x) => jogo.estado.colecao[x.id])) {
     const registro = jogo.estado.colecao[p.id];
     const s = atributos(p, registro, dados);
@@ -111,7 +113,8 @@ function desenharPlantas() {
       if (noTime) {
         jogo.definirTime(time.filter((m) => m !== noTime));
       } else if (time.length >= max) {
-        return avisar(preencher(dados.textos.timeCheio, { max }));
+        const nivel = jogo.proximaVaga();
+        return avisar(preencher(nivel ? dados.textos.timeCheioProxima : dados.textos.timeCheio, { max, nivel }));
       } else {
         const lugar = espacoEscolhido || primeiroEspacoLivre();
         jogo.definirTime([...time, { planta: p.id, ...lugar }]);
