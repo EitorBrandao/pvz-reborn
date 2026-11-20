@@ -60,7 +60,7 @@ function tamanhoMax() {
 function rotuloFase(f) {
   if (f.tipo) return dados.textos.rotuloAtividade[f.tipo] + (f.chefe ? ' · CHEFE' : '');
   const mapa = dados.campanha.mapas[f.mapaIndice];
-  return `${mapa.emoji} ${mapa.nome} · Fase ${f.indice + 1}${f.chefe ? ' · CHEFE' : ''}`;
+  return `${mapa.emoji} ${mapa.nome}${f.pesadelo ? ' 😈 Pesadelo' : ''} · Fase ${f.indice + 1}${f.chefe ? ' · CHEFE' : ''}`;
 }
 
 function desenharFase() {
