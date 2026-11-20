@@ -1,7 +1,7 @@
 // Guarda os arquivos do jogo no celular pra funcionar sem internet.
 // Com internet, SEMPRE busca a versão mais nova primeiro (sem usar cache velho do navegador).
 // Ao mudar a lista de arquivos, aumente o número da versão abaixo.
-const VERSAO = 'horta-v0.5.1';
+const VERSAO = 'horta-v0.5.2';
 const ESPERA_REDE_MS = 4000; // internet lenta: depois disso usa a cópia guardada
 
 const ARQUIVOS = [
@@ -16,6 +16,7 @@ const ARQUIVOS = [
   'js/evolucao.js',
   'js/campanha.js',
   'js/missoes.js',
+  'js/som.js',
   'js/ui/comum.js',
   'js/ui/tela-time.js',
   'js/ui/tela-batalha.js',

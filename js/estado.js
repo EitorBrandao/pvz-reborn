@@ -41,6 +41,7 @@ function novoEstado() {
     inventario: {},
     vencidas: [],
     velocidadeBatalha: 1,
+    somLigado: true,
     xpJogador: 0,
     folego: { valor: config.folego.max, desde: Date.now() },
     contadores: {},
@@ -216,6 +217,11 @@ export function estagioBroto() {
 
 export function definirTime(time) {
   estado.time = time;
+  salvarAgora();
+}
+
+export function definirSom(ligado) {
+  estado.somLigado = ligado;
   salvarAgora();
 }
 

@@ -4,6 +4,7 @@ import { $, mostrarTela, avisar, sortear, preencher } from './comum.js';
 import * as jogo from '../estado.js';
 import { prepararBatalha, simular, rolarCartas, criarRng } from '../batalha.js';
 import { calcularEstrelas } from '../campanha.js';
+import * as som from '../som.js';
 
 let dados, acoes;
 let missoesAntes = new Set();
@@ -33,6 +34,15 @@ export function iniciarTelaBatalha(d, a) {
   canvas = $('campo');
   ctx = canvas.getContext('2d');
   window.addEventListener('resize', medir);
+  som.configurarSom(dados.config.som);
+  som.ligarSom(jogo.estado.somLigado !== false);
+
+  $('btn-som').addEventListener('click', () => {
+    som.acordar();
+    jogo.definirSom(jogo.estado.somLigado === false);
+    som.ligarSom(jogo.estado.somLigado);
+    atualizarBotoes();
+  });
 
   $('btn-velocidade').addEventListener('click', () => {
     // passa pra próxima velocidade da lista (1x → 2x → 3x → 1x)
@@ -44,6 +54,7 @@ export function iniciarTelaBatalha(d, a) {
   $('btn-pular').addEventListener('click', () => {
     if (!podePular()) return avisar(dados.textos.pularBloqueado);
     pular = true;
+    som.pararMusica();
   });
   $('btn-de-novo').addEventListener('click', () => acoes.lutar(batalhaAtual));
   $('btn-proxima').addEventListener('click', () => {
@@ -64,6 +75,7 @@ function podePular() {
 function atualizarBotoes() {
   $('btn-velocidade').textContent = `${velEscolhida()}x`;
   $('btn-pular').classList.toggle('bloqueado', !podePular());
+  $('btn-som').textContent = jogo.estado.somLigado === false ? '🔇' : '🔊';
 }
 
 export function comecarBatalha(batalha) {
@@ -92,6 +104,9 @@ export function comecarBatalha(batalha) {
   mostrarTela('tela-batalha');
   medir();
   if (!loopId) loopId = requestAnimationFrame(desenhar);
+  som.acordar();
+  som.pararMusica();
+  som.comecarMusica();
 
   tocar(resultado.eventos, minhaPartida).then(() => {
     if (minhaPartida === partida) terminar(resultado, semente);
@@ -100,6 +115,7 @@ export function comecarBatalha(batalha) {
 
 function parar() {
   partida++;
+  som.pararMusica();
   if (loopId) cancelAnimationFrame(loopId);
   loopId = null;
 }
@@ -160,6 +176,7 @@ async function animarAcao(ev) {
     banner = { texto: ev.nomeHab, x: a.x, y: a.y - raio * 1.9, t0: agora(), dur: 1100 / vel() };
     a.brilho = 1;
     tremor += 3;
+    if (!pular) som.tocarSom('especial');
     await espera(450);
   }
 
@@ -167,6 +184,7 @@ async function animarAcao(ev) {
   if (golpes.length) {
     const alvo = vis[golpes[0].alvo];
     const ang = Math.atan2(alvo.y - a.y, alvo.x - a.x);
+    if (!pular) som.tocarSom('tiro');
     a.dx = Math.cos(ang) * raio * 0.7;
     a.dy = Math.sin(ang) * raio * 0.7;
     await espera(140);
@@ -204,6 +222,10 @@ function mostrarEfeito(ef) {
   const v = vis[ef.alvo];
   const t = dados.textos.efeitos;
   if (!v) return;
+  if (!pular) {
+    if (ef.tipo === 'dano') som.tocarSom(ef.morreu ? 'morte' : ef.reflexo ? 'reflexo' : ef.critico ? 'critico' : 'golpe');
+    else som.tocarSom(ef.tipo);
+  }
   switch (ef.tipo) {
     case 'dano': {
       v.vida = ef.vidaDepois;
@@ -273,6 +295,8 @@ function estourar(x, y, quantidade, cores) {
 
 function terminar(resultado, semente) {
   const { textos } = dados;
+  som.pararMusica();
+  som.tocarSom(resultado.vitoria ? 'vitoria' : 'derrota');
   const cartas = resultado.vitoria ? rolarCartas(batalhaAtual, criarRng(semente ^ 0x9e3779b9)) : [];
   const moedas = batalhaAtual.recompensa.moedas;
   const estrelas = resultado.vitoria
