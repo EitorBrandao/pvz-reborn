@@ -69,6 +69,7 @@ function completar(salvo) {
   // Cópias além do que a planta ainda vai usar viram Mudas Repetidas
   for (const r of Object.values(e.colecao)) {
     if (!r.ascensao) r.ascensao = 0;
+    if (!r.talentos) r.talentos = {};
     guardarSobras(r, e.inventario);
   }
   while (e.canteiro.length < dados.rotina.canteiro.vasos) e.canteiro.push(null);
@@ -641,6 +642,28 @@ export function ascender(idPlanta) {
   registro.nivel = 1;
   registro.xp = 0;
   contar('ascender');
+  salvarAgora();
+  return { ok: true };
+}
+
+export function gastarTalento(idPlanta, idNo) {
+  const registro = estado.colecao[idPlanta];
+  const no = evo.noTalento(dados, idNo);
+  if (!registro || !no) return { ok: false, erro: 'semMaterial' };
+  if ((registro.talentos[idNo] || 0) >= no.max) return { ok: false, erro: 'talentoMax' };
+  if (evo.pontosGastos(registro) >= evo.pontosTalento(registro, dados)) return { ok: false, erro: 'semPontos' };
+  registro.talentos[idNo] = (registro.talentos[idNo] || 0) + 1;
+  salvarAgora();
+  return { ok: true };
+}
+
+export function resetarTalentos(idPlanta) {
+  const registro = estado.colecao[idPlanta];
+  if (!registro || !evo.pontosGastos(registro)) return { ok: false, erro: 'semPontosGastos' };
+  const custo = dados.talentos.custoReset.orvalho;
+  if (estado.orvalho < custo) return { ok: false, erro: 'semOrvalho' };
+  estado.orvalho -= custo;
+  registro.talentos = {};
   salvarAgora();
   return { ok: true };
 }

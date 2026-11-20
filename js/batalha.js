@@ -1,7 +1,7 @@
 // Regras da batalha automática. Não desenha nada: só calcula o que acontece
 // e devolve uma lista de eventos pra tela animar.
 
-import { atributos, registroNovo, habilidadeComEstrelas, poder } from './evolucao.js';
+import { atributos, bonusTalentos, registroNovo, habilidadeComEstrelas, poder } from './evolucao.js';
 
 // Gerador de números aleatórios com semente (mesma semente = mesma batalha).
 export function criarRng(semente) {
@@ -72,6 +72,17 @@ export function prepararBatalha(batalha, time, dados, colecao = {}) {
       vidaMax: stats.vida, estrelas: registro.estrelas,
       habilidade: habilidadeComEstrelas(base.habilidade, registro.estrelas),
     });
+    // Talentos: crítico, força da habilidade e seiva
+    const tal = bonusTalentos(registro, dados);
+    u.bonusCritico = tal.critico;
+    u.bonusSeivaTurno = tal.seivaTurno;
+    u.seiva = Math.min(100, tal.seivaInicial);
+    if (tal.potencia > 0) {
+      const h = { ...u.habilidade };
+      if (h.mult) h.mult = Math.round(h.mult * (1 + tal.potencia) * 100) / 100;
+      if (h.pctVida) h.pctVida = Math.round(h.pctVida * (1 + tal.potencia) * 1000) / 1000;
+      u.habilidade = h;
+    }
     marcarVantagem(u, dados);
     unidades.push(u);
   }
@@ -175,7 +186,7 @@ export function simular(unidades, cfg, semente) {
     let bruto = atq * mult * cfg.multDano * (100 / (100 + def));
     if (eficaz) bruto *= 1 + atacante.vantagem;
     bruto *= 1 - cfg.variacao + rng() * 2 * cfg.variacao;
-    const critico = rng() < cfg.chanceCritico;
+    const critico = rng() < cfg.chanceCritico + (atacante.bonusCritico || 0);
     if (critico) bruto *= cfg.multCritico;
     const dano = Math.max(1, Math.round(bruto));
     const absorvido = Math.min(alvo.escudo, dano);
@@ -300,7 +311,7 @@ export function simular(unidades, cfg, semente) {
     } else {
       const alvo = alvoPadrao(u);
       if (alvo) bater(u, alvo, 1, efeitos);
-      u.seiva = Math.min(100, u.seiva + cfg.seivaPorTurno);
+      u.seiva = Math.min(100, u.seiva + cfg.seivaPorTurno + (u.bonusSeivaTurno || 0));
     }
     eventos.push({
       tipo: 'acao', de: u.uid, especial,
