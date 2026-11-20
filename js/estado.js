@@ -5,7 +5,7 @@ import * as evo from './evolucao.js';
 import { missaoCompleta } from './missoes.js';
 import { hoje } from './atividades.js';
 import {
-  cicloAtual, situacaoInvasao, premioDoRanking, novoCicloInvasao, ofertasDoDia, paginasHerbario,
+  cicloAtual, situacaoInvasao, premioDoRanking, novoCicloInvasao, ofertasDoDia, paginasHerbario, fusoesHerbario,
 } from './eventos.js';
 
 let dados = null;
@@ -67,7 +67,10 @@ function completar(salvo) {
   // Plantas que já estavam no time de saves antigos entram na coleção
   for (const m of e.time) if (!e.colecao[m.planta]) e.colecao[m.planta] = evo.registroNovo();
   // Cópias além do que a planta ainda vai usar viram Mudas Repetidas
-  for (const r of Object.values(e.colecao)) guardarSobras(r, e.inventario);
+  for (const r of Object.values(e.colecao)) {
+    if (!r.ascensao) r.ascensao = 0;
+    guardarSobras(r, e.inventario);
+  }
   while (e.canteiro.length < dados.rotina.canteiro.vasos) e.canteiro.push(null);
   return e;
 }
@@ -418,6 +421,10 @@ export function fazerTroca(id) {
 
 // ---------- Herbário ----------
 
+export function fusoes() {
+  return fusoesHerbario(dados, estado);
+}
+
 export function herbario() {
   return paginasHerbario(dados, estado);
 }
@@ -599,7 +606,7 @@ export function treinar(idPlanta, idCarta) {
   const carta = dados.cartas.find((c) => c.id === idCarta);
   if (!registro || !carta || !carta.xp) return { ok: false, erro: 'semMaterial' };
   if ((estado.inventario[idCarta] || 0) < 1) return { ok: false, erro: 'semMaterial' };
-  if (registro.nivel >= evo.nivelMaximo(registro.estrelas, config.evolucao)) return { ok: false, erro: 'nivelMaximo' };
+  if (registro.nivel >= evo.nivelMaximo(registro.estrelas, config.evolucao, registro.ascensao || 0)) return { ok: false, erro: 'nivelMaximo' };
   estado.inventario[idCarta] -= 1;
   const subiu = evo.darXp(registro, carta.xp, config.evolucao);
   contar('treinar');
@@ -617,6 +624,23 @@ export function evoluirEstrela(idPlanta) {
   estado.moedas -= custo.moedas;
   registro.estrelas += 1;
   contar('evoluirEstrela');
+  salvarAgora();
+  return { ok: true };
+}
+
+export function ascender(idPlanta) {
+  const registro = estado.colecao[idPlanta];
+  if (!registro || !evo.podeAscender(registro, config.evolucao)) return { ok: false, erro: 'ascensaoNaoPronta' };
+  const custo = evo.custoAscensao(registro, dados);
+  if (!custo) return { ok: false, erro: 'ascensaoNaoPronta' };
+  if (estado.moedas < custo.moedas) return { ok: false, erro: 'semMoedas' };
+  if (!evo.temCartas(estado.inventario, custo.cartas)) return { ok: false, erro: 'semMaterial' };
+  estado.moedas -= custo.moedas;
+  evo.gastarCartas(estado.inventario, custo.cartas);
+  registro.ascensao = (registro.ascensao || 0) + 1;
+  registro.nivel = 1;
+  registro.xp = 0;
+  contar('ascender');
   salvarAgora();
   return { ok: true };
 }

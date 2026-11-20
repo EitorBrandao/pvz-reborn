@@ -42,5 +42,13 @@
     "estufa": "Pragas da Estufa",
     "deserto": "Pragas do Deserto",
     "telhado": "Pragas do Telhado"
-  }
+  },
+  "fusoes": [
+    { "a": "pimentao", "b": "cacto", "emoji": "🌋", "nome": "Cacto Vulcão" },
+    { "a": "milho", "b": "bambu", "emoji": "🏹", "nome": "Bambu Pipoca" },
+    { "a": "babosa", "b": "vitoria", "emoji": "💧", "nome": "Lírio Curativo" },
+    { "a": "cogumelo", "b": "trepadeira", "emoji": "🕸️", "nome": "Teia Esporenta" },
+    { "a": "agave", "b": "jarro", "emoji": "☠️", "nome": "Jarro Peçonhento" },
+    { "a": "couve", "b": "bromelia", "emoji": "🛡️", "nome": "Couve Escudeira" }
+  ]
 }

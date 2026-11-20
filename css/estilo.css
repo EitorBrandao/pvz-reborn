@@ -381,6 +381,7 @@ body {
 .btn.pronto { outline: 3px solid var(--laranja); }
 @keyframes pisca-selo { 50% { transform: scale(1.12); } }
 .estrelas-peq { letter-spacing: -2px; }
+.selo-rank { color: #f0c040; letter-spacing: 0; font-size: 0.8em; font-weight: 700; }
 .barra-xp { display: block; width: 80%; height: 6px; background: rgba(0, 0, 0, .2); border-radius: 999px; overflow: hidden; }
 .barra-xp span { display: block; height: 100%; background: var(--azul); }
 .barra-xp.grande { width: 100%; height: 10px; }
@@ -813,6 +814,8 @@ body {
 .item-herbario span { font-size: 1.7rem; }
 .item-herbario small { font-size: .6rem; line-height: 1.1; overflow-wrap: anywhere; }
 .item-herbario.oculto span { filter: brightness(0); opacity: .35; }
+.fusao-receita { display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 6px; }
+.fusao-receita .item-herbario { width: 70px; }
 .item-herbario.chefe { box-shadow: inset 0 0 0 2px var(--vermelho); }
 .pagina-rodape { margin-top: 6px; text-align: right; font-size: .8rem; }
 .pagina-ok { color: #2f7d1f; font-weight: 800; }

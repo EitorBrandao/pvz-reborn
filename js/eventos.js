@@ -151,6 +151,17 @@ export function ofertasDoDia(dados, dia = hoje()) {
 
 // ---------- Herbário ----------
 
+// Receitas de fusão (informativas por enquanto): quais plantas o jogador já tem.
+export function fusoesHerbario(dados, estado) {
+  return (dados.herbario.fusoes || []).map((f) => {
+    const ing = [f.a, f.b].map((id) => {
+      const p = dados.plantas.find((x) => x.id === id);
+      return { emoji: p.emoji, nome: p.nome, tem: !!estado.colecao[id] };
+    });
+    return { ...f, ing };
+  });
+}
+
 // Páginas: uma por facção (plantas) e uma por mapa (pragas que aparecem nele).
 export function paginasHerbario(dados, estado) {
   const h = dados.herbario;

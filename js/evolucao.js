@@ -2,15 +2,25 @@
 // Só cálculos: quem salva é o estado.js.
 
 export function registroNovo() {
-  return { nivel: 1, xp: 0, estrelas: 1, copias: 0, equip: { vaso: 0, adubo: 0, regador: 0 } };
+  return { nivel: 1, xp: 0, estrelas: 1, ascensao: 0, copias: 0, equip: { vaso: 0, adubo: 0, regador: 0 } };
 }
 
 export function xpParaProximo(nivel, cfg) {
   return cfg.xpBase + (nivel - 1) * cfg.xpPorNivel;
 }
 
-export function nivelMaximo(estrelas, cfg) {
-  return estrelas * cfg.niveisPorEstrela;
+export function nivelMaximo(estrelas, cfg, ascensao = 0) {
+  return estrelas * cfg.niveisPorEstrela + ascensao * cfg.niveisPorRank;
+}
+
+// Ascensão: planta no nível máximo com todas as estrelas volta ao nível 1 e ganha um rank.
+export function custoAscensao(registro, dados) {
+  const rank = registro.ascensao || 0;
+  return rank >= dados.ascensao.rankMax ? null : dados.ascensao.custos[rank];
+}
+
+export function podeAscender(registro, cfg) {
+  return registro.estrelas >= cfg.estrelasMax && registro.nivel >= nivelMaximo(registro.estrelas, cfg, registro.ascensao || 0);
 }
 
 // Atributos finais de uma planta. "mudanca" permite prever como fica depois de evoluir.
@@ -18,12 +28,13 @@ export function atributos(base, registro, dados, mudanca = {}) {
   const r = { ...registro, ...mudanca, equip: { ...registro.equip, ...(mudanca.equip || {}) } };
   const fNivel = 1 + dados.config.batalha.crescimentoPorNivel * (r.nivel - 1);
   const fEstrela = 1 + dados.config.evolucao.bonusEstrela * (r.estrelas - 1);
+  const fRank = 1 + dados.config.evolucao.bonusRank * (r.ascensao || 0);
   const bonus = { vida: 0, atq: 0, def: 0, vel: 0 };
   for (const espaco of dados.equipamentos.espacos) {
     const n = r.equip[espaco.id] || 0;
     if (n > 0) bonus[espaco.atributo] += dados.equipamentos.niveis[n - 1].bonus;
   }
-  const calc = (attr) => Math.round(base[attr] * fNivel * fEstrela * (1 + bonus[attr]));
+  const calc = (attr) => Math.round(base[attr] * fNivel * fEstrela * fRank * (1 + bonus[attr]));
   return { vida: calc('vida'), atq: calc('atq'), def: calc('def'), vel: base.vel };
 }
 
@@ -50,7 +61,7 @@ export function habilidadeComEstrelas(hab, estrelas = 1) {
 
 // Dá XP e sobe de nível. Devolve quantos níveis subiu.
 export function darXp(registro, xp, cfg) {
-  const max = nivelMaximo(registro.estrelas, cfg);
+  const max = nivelMaximo(registro.estrelas, cfg, registro.ascensao || 0);
   if (registro.nivel >= max) { registro.xp = 0; return 0; }
   registro.xp += xp;
   let subiu = 0;
