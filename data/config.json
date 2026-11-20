@@ -1,5 +1,5 @@
 {
-  "versaoJogo": "0.4.1",
+  "versaoJogo": "0.4.2",
   "inicio": {
     "moedas": 500,
     "orvalho": 10,
@@ -56,7 +56,12 @@
     "chanceCritico": 0.15,
     "multCritico": 1.8,
     "variacao": 0.1,
-    "crescimentoPorNivel": 0.15
+    "crescimentoPorNivel": 0.15,
+    "velocidades": [
+      1,
+      2,
+      3
+    ]
   },
   "evolucao": {
     "xpBase": 40,

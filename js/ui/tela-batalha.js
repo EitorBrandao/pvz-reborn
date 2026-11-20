@@ -35,7 +35,10 @@ export function iniciarTelaBatalha(d, a) {
   window.addEventListener('resize', medir);
 
   $('btn-velocidade').addEventListener('click', () => {
-    jogo.definirVelocidade(velEscolhida() === 1 ? 2 : 1);
+    // passa pra próxima velocidade da lista (1x → 2x → 3x → 1x)
+    const lista = dados.config.batalha.velocidades;
+    const i = lista.indexOf(velEscolhida());
+    jogo.definirVelocidade(lista[(i + 1) % lista.length]);
     atualizarBotoes();
   });
   $('btn-pular').addEventListener('click', () => {
