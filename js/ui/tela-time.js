@@ -22,7 +22,10 @@ export function iniciarTelaTime(d, { lutar, voltar }) {
     if (!jogo.estado.time.length) return avisar(dados.textos.timeVazio);
     lutar(faseEscolhida);
   });
-  $('planta-info').addEventListener('click', () => $('planta-info').classList.add('escondido'));
+  $('planta-info').addEventListener('click', () => {
+    if (Date.now() < ignorarToqueAte) return; // o dedo ainda está soltando
+    $('planta-info').classList.add('escondido');
+  });
   $('btn-ordenar-time').addEventListener('click', () => {
     ordem = ORDENS[(ORDENS.indexOf(ordem) + 1) % ORDENS.length];
     try { localStorage.setItem('horta-ordem-time', ordem); } catch { /* sem storage */ }
@@ -227,7 +230,6 @@ function segurarParaVer(cartao, p, registro, stats) {
     cancelar();
     timer = setTimeout(() => {
       timer = null;
-      ignorarToqueAte = Date.now() + 600;
       mostrarInfo(p, registro, stats);
     }, TEMPO_SEGURAR);
   });
@@ -252,5 +254,6 @@ function mostrarInfo(p, registro, stats) {
     <div class="bloco"><span class="atributos">💪 ${stats.poder} · ❤️${stats.vida} ⚔️${stats.atq} 🛡️${stats.def} 💨${stats.vel}</span></div>
     <div class="bloco"><b>✨ ${h.nome}</b><p class="dica-pequena">${textoHabilidade(h, dados)}</p></div>
     <p class="dica-pequena">${t.infoPlantaFechar}</p>`;
+  ignorarToqueAte = Date.now() + 700;
   $('planta-info').classList.remove('escondido');
 }
