@@ -1,5 +1,7 @@
 [
   { "versao": "0.12.0", "itens": ["🌳 Labirinto das Raízes (em Desafios): corrida de 8 andares com portas, bênçãos, recrutas, elites e chefes. Qualquer planta serve: as pragas se ajustam ao poder do seu time", "Prêmio: Sementes do Labirinto (material de Fusão) e pontos de talento pra usar em qualquer planta", "Música própria do Labirinto"] },
+  { "versao": "0.11.5", "itens": ["Ordem Padrão da coleção agora mostra primeiro a última equipe usada, depois o resto por poder"] },
+  { "versao": "0.11.4", "itens": ["Botão de ordenar a coleção ganhou a opção ✦ Rank (maior rank primeiro, empate por nível)"] },
   { "versao": "0.11.3", "itens": ["✦ Selo de Rank também na batalha (ao lado do nível) e na tela da planta"] },
   { "versao": "0.11.2", "itens": ["🛡️ Barra de escudo azul em cima da vida na batalha", "⚔️ 4 plantas corpo a corpo novas (Mandioca, Melancia, Coco e Taboa): correm até a praga e batem mais forte, mas só alcançam a fileira da frente", "🎯 Padrões de ataque: planta pode mirar quem tem menos vida, mais vida ou as pragas de trás (aparece no detalhe da planta)", "🍯 Seiva Dourada brilha no inventário pra você guardar pro último nível"] },
   { "versao": "0.11.1", "itens": ["👆 Na tela de montar o time, segure o dedo numa planta pra ver as habilidades dela antes de escolher"] },

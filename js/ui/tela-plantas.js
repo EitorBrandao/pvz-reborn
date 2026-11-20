@@ -15,6 +15,7 @@ const ATRIBUTOS = ['vida', 'atq', 'def', 'vel'];
 const ORDENS = [
   { id: 'padrao', rotulo: '↕️ Padrão' },
   { id: 'poder', rotulo: '↕️ 💪 Poder' },
+  { id: 'rank', rotulo: '↕️ ✦ Rank' },
   { id: 'nivel', rotulo: '↕️ Nível' },
   { id: 'estrela', rotulo: '↕️ Estrela' },
 ];
@@ -154,16 +155,22 @@ function trocarOrdem() {
 }
 
 // Bloqueadas sempre por último; empate mantém a ordem original.
+// Padrão = time atual primeiro, depois por poder.
 function plantasOrdenadas() {
   const col = jogo.estado.colecao;
   const chave = (p) => {
     const r = col[p.id];
     if (!r) return [-1, -1];
     if (ordem === 'poder') return [poderDe(p, r), r.nivel];
+    if (ordem === 'rank') return [r.ascensao || 0, r.nivel];
     return ordem === 'estrela' ? [r.estrelas, r.nivel] : [r.nivel, r.estrelas];
   };
   if (ordem === 'padrao') {
-    return [...dados.plantas].sort((a, b) => Number(!col[a.id]) - Number(!col[b.id]));
+    // Time atual (última equipe usada) primeiro, depois o resto; sempre por poder. Bloqueadas por último.
+    const noTime = new Set(jogo.estado.time.map((m) => m.planta));
+    const pd = (p) => (col[p.id] ? poderDe(p, col[p.id]) : -1);
+    return [...dados.plantas].sort((a, b) =>
+      Number(!col[a.id]) - Number(!col[b.id]) || Number(noTime.has(b.id)) - Number(noTime.has(a.id)) || pd(b) - pd(a));
   }
   return [...dados.plantas].sort((a, b) => {
     const [a1, a2] = chave(a);
