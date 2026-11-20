@@ -1,4 +1,5 @@
 [
+  { "versao": "0.6.4", "itens": ["Em Preparar batalha, as plantas do time aparecem primeiro", "Botão pra ordenar a lista por nível, estrela, vida, ataque, defesa ou velocidade"] },
   { "versao": "0.6.3", "itens": ["Cópias de plantas com todas as estrelas viram 🧩 Muda Repetida", "Junte 3 Mudas Repetidas e toque nelas pra ganhar uma planta aleatória"] },
   { "versao": "0.6.2", "itens": ["O ✖ do detalhe da planta não cobre mais o texto", "Moedas e orvalho não saem da tela em celulares estreitos"] },
   { "versao": "0.6.1", "itens": ["Tela de detalhe da planta mais organizada: custos em pílulas, equipamentos sem quebrar linha"] },

@@ -96,6 +96,15 @@
     "devorar": "Morde a praga mais ferida ({forca}% do ataque). Se ela estiver com menos de {limite}% de vida, o dano sobe pra {bonus}%."
   },
   "habilidadeProxima": "Com {estrelas} ⭐: {texto}",
+  "ordensTime": {
+    "padrao": "↕️ Padrão",
+    "nivel": "↕️ Nível",
+    "estrela": "↕️ Estrela",
+    "vida": "↕️ ❤️ Vida",
+    "atq": "↕️ ⚔️ Ataque",
+    "def": "↕️ 🛡️ Defesa",
+    "vel": "↕️ 💨 Velocidade"
+  },
   "atributos": {
     "vida": "❤️ Vida",
     "atq": "⚔️ Ataque",

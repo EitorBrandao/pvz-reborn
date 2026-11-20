@@ -9,12 +9,23 @@ let dados;
 let faseEscolhida = null;
 let espacoEscolhido = null; // { col, linha } quando o jogador toca num espaço vazio
 
+// Ordem da lista de plantas (lembrada só neste aparelho). Plantas do time sempre em cima.
+const ORDENS = ['padrao', 'nivel', 'estrela', 'vida', 'atq', 'def', 'vel'];
+let ordem = 'padrao';
+try { ordem = localStorage.getItem('horta-ordem-time') || 'padrao'; } catch { /* sem storage */ }
+if (!ORDENS.includes(ordem)) ordem = 'padrao';
+
 export function iniciarTelaTime(d, { lutar, voltar }) {
   dados = d;
   $('time-voltar').addEventListener('click', () => voltar(faseEscolhida));
   $('btn-lutar').addEventListener('click', () => {
     if (!jogo.estado.time.length) return avisar(dados.textos.timeVazio);
     lutar(faseEscolhida);
+  });
+  $('btn-ordenar-time').addEventListener('click', () => {
+    ordem = ORDENS[(ORDENS.indexOf(ordem) + 1) % ORDENS.length];
+    try { localStorage.setItem('horta-ordem-time', ordem); } catch { /* sem storage */ }
+    desenharPlantas();
   });
 }
 
@@ -103,13 +114,35 @@ function primeiroEspacoLivre() {
   return null;
 }
 
+// Time primeiro (frente antes do fundo, de cima pra baixo); depois o resto na ordem escolhida.
+// Empate mantém a ordem original.
+function plantasOrdenadas() {
+  const col = jogo.estado.colecao;
+  const time = jogo.estado.time;
+  const itens = dados.plantas.filter((x) => col[x.id]).map((p, i) => ({
+    p, i, r: col[p.id], s: atributos(p, col[p.id], dados), m: time.find((t) => t.planta === p.id),
+  }));
+  const chave = ({ r, s }) => {
+    if (ordem === 'nivel') return [r.nivel, r.estrelas];
+    if (ordem === 'estrela') return [r.estrelas, r.nivel];
+    if (ordem === 'padrao') return [0, 0];
+    return [s[ordem], 0];
+  };
+  return itens.sort((a, b) => {
+    if (!!a.m !== !!b.m) return a.m ? -1 : 1;
+    if (a.m) return (a.m.col - b.m.col) || (a.m.linha - b.m.linha);
+    const [a1, a2] = chave(a);
+    const [b1, b2] = chave(b);
+    return (b1 - a1) || (b2 - a2) || (a.i - b.i);
+  });
+}
+
 function desenharPlantas() {
   const lista = $('lista-plantas');
   lista.innerHTML = '';
   const max = tamanhoMax();
-  for (const p of dados.plantas.filter((x) => jogo.estado.colecao[x.id])) {
-    const registro = jogo.estado.colecao[p.id];
-    const s = atributos(p, registro, dados);
+  $('btn-ordenar-time').textContent = dados.textos.ordensTime[ordem];
+  for (const { p, r: registro, s } of plantasOrdenadas()) {
     const noTime = jogo.estado.time.find((m) => m.planta === p.id);
     const cartao = document.createElement('button');
     const fora = faseEscolhida.faccao && p.faccao !== faseEscolhida.faccao;
