@@ -694,6 +694,7 @@ export function arte(u, classe = '') {
   const id = (u.id && (PLANTAS[u.id] || PRAGAS[u.id])) ? u.id : porEmoji.get(u.emoji);
   return (id && img('u', id, `arte${classe ? ` ${classe}` : ''}`)) || u.emoji || '';
 }
+export const urlUnidade = (id) => urlTela('u', id);
 export const iconeHabilidade = (tipo) => img('hab', tipo, 'icone-hab') || '✨';
 export const iconeStatus = (nome) => img('st', nome, 'icone-status');
 

@@ -1,4 +1,5 @@
 [
+  { "versao": "0.14.8", "itens": ["Samsung Internet: plantas e pragas da batalha também com cores vivas"] },
   { "versao": "0.14.7", "itens": ["Samsung Internet: plantas, pragas e a batalha voltam a ter cores vivas mesmo com o modo escuro do navegador"] },
   { "versao": "0.14.4", "itens": ["Cores do jogo não mudam mais com o modo escuro do celular (inclusive no Samsung Internet)"] },
   { "versao": "0.14.3", "itens": ["Desenhos das plantas e pragas mantêm as cores certas mesmo com o modo escuro do celular ligado"] },

@@ -5,11 +5,14 @@ import * as jogo from '../estado.js';
 import { prepararBatalha, simular, rolarCartas, criarRng } from '../batalha.js';
 import { calcularEstrelas } from '../campanha.js';
 import * as som from '../som.js';
-import { arte, imagemUnidade, imagemStatus, imagemHabilidade, infoTiro, corHabilidade, preCarregar } from '../arte.js';
+import { arte, urlUnidade, imagemStatus, imagemHabilidade, infoTiro, corHabilidade, preCarregar } from '../arte.js';
 
 let dados, acoes;
 let missoesAntes = new Set();
 let canvas, ctx, W = 0, H = 0, raio = 30;
+// Três camadas: grama e sombras (fundo), plantas e pragas como <img> (camada), e o resto por cima (ctx).
+// As unidades são <img> porque o modo escuro do Samsung Internet desbota desenhos feitos dentro do canvas.
+let canvasFundo, fundo, camada;
 let vis = {};            // aparência atual de cada unidade
 let projeteis = [];
 let flutuantes = [];
@@ -36,8 +39,11 @@ const vel = () => velEscolhida() * RITMO;
 export function iniciarTelaBatalha(d, a) {
   dados = d;
   acoes = a;
-  canvas = $('campo');
+  canvasFundo = $('campo');
+  fundo = canvasFundo.getContext('2d');
+  canvas = $('campo-topo');
   ctx = canvas.getContext('2d');
+  camada = $('campo-unidades');
   window.addEventListener('resize', medir);
 
   $('btn-velocidade').addEventListener('click', () => {
@@ -97,6 +103,7 @@ export function comecarBatalha(batalha) {
   vis = {};
   for (const u of unidades) vis[u.uid] = { ...u, ox: 0, oy: 0, dx: 0, dy: 0, kx: 0, alpha: 1, brilho: 0, flash: 0, estica: 0, fase: Math.random() * 6 };
   preCarregar(unidades.map((u) => u.id));
+  montarSprites();
 
   $('resultado').classList.add('escondido');
   $('batalha-nome').textContent = batalha.nome;
@@ -116,6 +123,23 @@ export function comecarBatalha(batalha) {
   });
 }
 
+// Uma <img> por unidade (mais uma branca por cima, pro piscar de dano).
+function montarSprites() {
+  camada.innerHTML = '';
+  for (const v of Object.values(vis)) {
+    const url = urlUnidade(v.id);
+    v.el = null;
+    if (!url) continue;
+    const el = document.createElement('div');
+    el.className = 'sprite-batalha';
+    el.innerHTML = `<img src="${url}" data-arte="u:${v.id}" alt="" draggable="false"><img class="branca" src="${url}" data-arte="u:${v.id}" alt="" draggable="false">`;
+    camada.append(el);
+    v.el = el;
+    v.elBranca = el.lastChild;
+    v.ladoEl = 0;
+  }
+}
+
 function parar() {
   partida++;
   som.pararMusica();
@@ -130,11 +154,13 @@ function medir() {
   const dpr = window.devicePixelRatio || 1;
   W = r.width;
   H = r.height;
-  canvas.width = Math.round(W * dpr);
-  canvas.height = Math.round(H * dpr);
-  canvas.style.width = `${W}px`;
-  canvas.style.height = `${H}px`;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  for (const c of [canvas, canvasFundo]) {
+    c.width = Math.round(W * dpr);
+    c.height = Math.round(H * dpr);
+    c.style.width = `${W}px`;
+    c.style.height = `${H}px`;
+    c.getContext('2d').setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
   raio = Math.min(W * 0.075, H * 0.085);
   for (const v of Object.values(vis)) {
     const xs = v.lado === 'planta' ? [0.34, 0.13] : [0.66, 0.87];
@@ -534,12 +560,18 @@ function desenhar() {
   loopId = requestAnimationFrame(desenhar);
   if (!W) { medir(); if (!W) return; }
   const t = agora();
-  ctx.save();
-  ctx.clearRect(0, 0, W, H);
+  let tx = 0, ty = 0;
   if (tremor > 0.2) {
-    ctx.translate((Math.random() - 0.5) * tremor, (Math.random() - 0.5) * tremor);
+    tx = (Math.random() - 0.5) * tremor;
+    ty = (Math.random() - 0.5) * tremor;
     tremor *= 0.86;
   } else tremor = 0;
+  for (const c of [ctx, fundo]) {
+    c.save();
+    c.clearRect(0, 0, W, H);
+    c.translate(tx, ty);
+  }
+  camada.style.transform = `translate(${tx}px, ${ty}px)`;
 
   desenharGrama();
   Object.values(vis).sort((a, b) => a.y - b.y).forEach(desenharUnidade);
@@ -550,6 +582,7 @@ function desenhar() {
   desenharFlutuantes(t);
   desenharBanner(t);
   ctx.restore();
+  fundo.restore();
   if (clarao > 0.01) {
     ctx.fillStyle = `rgba(255,255,255,${clarao})`;
     ctx.fillRect(0, 0, W, H);
@@ -565,18 +598,18 @@ function desenharGrama() {
   const topo = (H - linhas * lado) / 2;
   for (let i = 0; i < colunas; i++) {
     for (let j = 0; j < linhas; j++) {
-      ctx.fillStyle = (i + j) % 2 ? '#4caf2e' : '#43a326';
-      ctx.fillRect(i * lado, topo + j * lado, lado + 1, lado + 1);
+      fundo.fillStyle = (i + j) % 2 ? '#4caf2e' : '#43a326';
+      fundo.fillRect(i * lado, topo + j * lado, lado + 1, lado + 1);
     }
   }
-  ctx.strokeStyle = 'rgba(255,255,255,.25)';
-  ctx.setLineDash([8, 8]);
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(W / 2, 8);
-  ctx.lineTo(W / 2, H - 8);
-  ctx.stroke();
-  ctx.setLineDash([]);
+  fundo.strokeStyle = 'rgba(255,255,255,.25)';
+  fundo.setLineDash([8, 8]);
+  fundo.lineWidth = 2;
+  fundo.beginPath();
+  fundo.moveTo(W / 2, 8);
+  fundo.lineTo(W / 2, H - 8);
+  fundo.stroke();
+  fundo.setLineDash([]);
 }
 
 function desenharUnidade(v) {
@@ -592,26 +625,28 @@ function desenharUnidade(v) {
   const vivo = v.vida > 0;
   const t = agora() / 1000;
 
+  // sombra e brilho ficam no fundo, embaixo da planta
+  fundo.save();
+  fundo.globalAlpha = v.alpha;
+  fundo.fillStyle = 'rgba(0,0,0,.25)';
+  fundo.beginPath();
+  fundo.ellipse(x, y + r * 0.75, r * 0.9, r * 0.3, 0, 0, Math.PI * 2);
+  fundo.fill();
+  if (v.brilho > 0) {
+    const g = fundo.createRadialGradient(x, y, r * 0.2, x, y, r * 1.4);
+    g.addColorStop(0, 'rgba(255,240,140,.75)');
+    g.addColorStop(1, 'rgba(255,210,60,0)');
+    fundo.fillStyle = g;
+    fundo.beginPath();
+    fundo.arc(x, y, r * 1.4, 0, Math.PI * 2);
+    fundo.fill();
+  }
+  fundo.restore();
+
   ctx.save();
   ctx.globalAlpha = v.alpha;
 
-  ctx.fillStyle = 'rgba(0,0,0,.25)';
-  ctx.beginPath();
-  ctx.ellipse(x, y + r * 0.75, r * 0.9, r * 0.3, 0, 0, Math.PI * 2);
-  ctx.fill();
-
-  if (v.brilho > 0) {
-    const g = ctx.createRadialGradient(x, y, r * 0.2, x, y, r * 1.4);
-    g.addColorStop(0, 'rgba(255,240,140,.75)');
-    g.addColorStop(1, 'rgba(255,210,60,0)');
-    ctx.fillStyle = g;
-    ctx.beginPath();
-    ctx.arc(x, y, r * 1.4, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
   // Corpo: respira parado, estica ao atacar, amassa ao levar golpe, tomba ao cair.
-  const sprite = imagemUnidade(v.id);
   const lento = v.sono > 0 ? 0.45 : 1;
   const resp = vivo ? Math.sin(t * 3.2 * lento + v.fase) * 0.045 : 0;
   const amassa = Math.min(0.25, Math.abs(v.kx) / r * 0.35);
@@ -619,26 +654,23 @@ function desenharUnidade(v) {
   const sy = 1 + resp - v.estica * 0.12 - amassa;
   const lado = r * 2.15;
   const base = y + r * 0.82;
-  ctx.save();
-  ctx.translate(x, base);
-  if (!vivo) ctx.rotate((v.lado === 'planta' ? -1 : 1) * 0.5);
-  else if (v.sono > 0) ctx.rotate(Math.sin(t * 1.5 + v.fase) * 0.06);
-  ctx.scale(sx, sy);
-  if (sprite.pronta) {
-    ctx.drawImage(sprite.img, -lado / 2, -lado, lado, lado);
-    if (v.flash > 0.05 && sprite.branca) {
-      ctx.globalAlpha = v.alpha * Math.min(1, v.flash * 0.9);
-      ctx.drawImage(sprite.branca, -lado / 2, -lado, lado, lado);
-      ctx.globalAlpha = v.alpha;
-    }
+  let giro = 0;
+  if (!vivo) giro = (v.lado === 'planta' ? -1 : 1) * 0.5;
+  else if (v.sono > 0) giro = Math.sin(t * 1.5 + v.fase) * 0.06;
+  if (v.el) {
+    const st = v.el.style;
+    if (v.ladoEl !== lado) { st.width = `${lado}px`; st.height = `${lado}px`; v.ladoEl = lado; }
+    st.transform = `translate(${x - lado / 2}px, ${base - lado}px) rotate(${giro}rad) scale(${sx}, ${sy})`;
+    st.opacity = v.alpha;
+    st.zIndex = Math.round(y);
+    v.elBranca.style.opacity = v.flash > 0.05 ? Math.min(1, v.flash * 0.9) : 0;
   } else {
     ctx.font = `${r * 1.5}px serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillStyle = '#000'; // cor opaca, senão o emoji fica transparente no Chrome
-    ctx.fillText(v.emoji, 0, -r * 0.82);
+    ctx.fillText(v.emoji, x, base - r * 0.82);
   }
-  ctx.restore();
 
   if (v.escudo > 0 && vivo) {
     const g = ctx.createRadialGradient(x - r * 0.4, y - r * 0.5, r * 0.1, x, y, r * 1.15);

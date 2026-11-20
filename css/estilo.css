@@ -280,6 +280,7 @@ body {
 /* ---------- Batalha ---------- */
 .topo-batalha { justify-content: space-between; }
 .campo {
+  position: relative;
   flex: 1;
   min-height: 0;
   margin-top: 12px;
@@ -289,6 +290,12 @@ body {
   box-shadow: var(--sombra);
 }
 .campo canvas { display: block; }
+#campo-unidades, #campo-topo { position: absolute; left: 0; top: 0; pointer-events: none; }
+#campo-unidades { width: 100%; height: 100%; z-index: 1; }
+#campo-topo { z-index: 2; }
+.sprite-batalha { position: absolute; left: 0; top: 0; transform-origin: 50% 100%; will-change: transform; }
+.sprite-batalha img { display: block; width: 100%; height: 100%; -webkit-user-drag: none; }
+.sprite-batalha .branca { position: absolute; inset: 0; filter: brightness(0) invert(1); opacity: 0; }
 .controles { display: flex; gap: 12px; justify-content: center; padding: 12px 0; }
 .btn.bloqueado { filter: grayscale(.8); opacity: .7; }
 
@@ -916,4 +923,5 @@ body {
 .samsung .planta-emoji .arte, .samsung .detalhe-emoji .arte, .samsung .escolha-planta .arte {
   filter: contrast(1.8) saturate(1.65) brightness(.88) drop-shadow(0 2px 0 rgba(0, 0, 0, .22));
 }
-.samsung #campo { filter: brightness(.85) contrast(1.3) saturate(1.35); }
+.samsung #campo { filter: brightness(.92) contrast(1.15) saturate(1.2); }
+.samsung .sprite-batalha img:not(.branca) { filter: contrast(1.8) saturate(1.65) brightness(.88); }
