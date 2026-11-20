@@ -1,5 +1,7 @@
 [
-  { "versao": "0.6.2", "itens": ["Time começa com 3 vagas e ganha mais uma nos níveis 20, 30 e 40", "Toque no seu nível na tela inicial pra ver o XP e as vagas do time"] },
+  { "versao": "0.6.4", "itens": ["Time começa com 3 vagas e ganha mais uma nos níveis 20, 30 e 40", "Toque no seu nível na tela inicial pra ver o XP e as vagas do time"] },
+  { "versao": "0.6.3", "itens": ["Cópias de plantas com todas as estrelas viram 🧩 Muda Repetida", "Junte 3 Mudas Repetidas e toque nelas pra ganhar uma planta aleatória"] },
+  { "versao": "0.6.2", "itens": ["O ✖ do detalhe da planta não cobre mais o texto", "Moedas e orvalho não saem da tela em celulares estreitos"] },
   { "versao": "0.6.1", "itens": ["Tela de detalhe da planta mais organizada: custos em pílulas, equipamentos sem quebrar linha"] },
   { "versao": "0.6.0", "itens": ["Tela Desafios: Torre das Pragas, Desafio do Dia e Horta de Treino", "Nenhuma delas gasta fôlego"] },
   { "versao": "0.5.9", "itens": ["Novidades do jogo agora aparecem nas Opções"] },

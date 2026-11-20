@@ -637,6 +637,26 @@ body {
   justify-content: center;
 }
 .rodape-modal .btn { width: 100%; max-width: 240px; }
+/* Faixa fixa em cima do detalhe: o ✖ não cobre o texto ao rolar */
+.topo-modal {
+  position: sticky;
+  top: -16px;
+  z-index: 2;
+  margin: -16px -16px 0;
+  padding: 8px 10px 6px;
+  background: var(--bege);
+  display: flex;
+  justify-content: flex-end;
+}
+.topo-modal .fechar { position: static; float: none; }
+/* Topo das telas: o título encolhe antes das moedas/orvalho saírem da tela */
+.topo h2 { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.topo .pilula, .topo .btn-icone { flex-shrink: 0; }
+@media (max-width: 400px) {
+  .topo { gap: 8px; }
+  .topo h2 { font-size: 1.3rem; }
+  .topo .pilula { padding: 5px 9px; font-size: .9rem; }
+}
 .pacote-caixa { padding-bottom: 16px; }
 .pacote-caixa .dica-pequena { margin-bottom: 0; opacity: .7; }
 

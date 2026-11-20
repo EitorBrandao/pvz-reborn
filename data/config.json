@@ -1,5 +1,5 @@
 {
-  "versaoJogo": "0.6.2",
+  "versaoJogo": "0.6.4",
   "inicio": {
     "moedas": 500,
     "orvalho": 10,
@@ -100,6 +100,10 @@
       "vitoria": 8,
       "jarro": 8
     }
+  },
+  "troca": {
+    "carta": "muda_repetida",
+    "custo": 3
   },
   "folego": {
     "max": 30,
