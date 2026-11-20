@@ -27,6 +27,19 @@ export function atributos(base, registro, dados, mudanca = {}) {
   return { vida: calc('vida'), atq: calc('atq'), def: calc('def'), vel: base.vel };
 }
 
+// Habilidade com o bônus das estrelas. Cada estrela acima da 1ª soma "porEstrela".
+// Campos inteiros (golpes, alvos, turnos) são arredondados.
+const INTEIROS = ['golpes', 'alvos', 'turnos'];
+export function habilidadeComEstrelas(hab, estrelas = 1) {
+  const h = { ...hab };
+  const extra = Math.max(0, estrelas - 1);
+  for (const [campo, passo] of Object.entries(hab.porEstrela || {})) {
+    const v = (hab[campo] || 0) + passo * extra;
+    h[campo] = INTEIROS.includes(campo) ? Math.round(v) : Math.round(v * 100) / 100;
+  }
+  return h;
+}
+
 // Dá XP e sobe de nível. Devolve quantos níveis subiu.
 export function darXp(registro, xp, cfg) {
   const max = nivelMaximo(registro.estrelas, cfg);

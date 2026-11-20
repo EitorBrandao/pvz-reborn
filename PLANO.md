@@ -85,7 +85,7 @@ pvz-reborn/
 **Evolução das plantas:**
 
 - **Nível:** XP ganha em batalha. Atributos: VIDA, ATQ, DEF, VEL.
-- **Estrelas (1 a 5):** juntar cópias da mesma semente aumenta as estrelas e o nível máximo.
+- **Estrelas (1 a 5):** juntar cópias da mesma semente aumenta as estrelas e o nível máximo. Cada estrela também deixa a habilidade mais forte (ex.: Babosa cura mais plantas, Milho dispara mais vezes).
 - **Equipamentos:** 3 espaços (Vaso, Adubo, Regador), com raridade comum, rara, épica.
 - **Cartas de item:** materiais que caem nas batalhas e servem pra evoluir e fabricar equipamentos.
 - **Sementes novas:** Pacote de Sementes comprado com moedas do jogo ou ganho em missões.

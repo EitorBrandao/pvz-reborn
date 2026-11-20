@@ -2,7 +2,7 @@
 
 import { $, mostrarTela, avisar, preencher } from './comum.js';
 import * as jogo from '../estado.js';
-import { atributos, xpParaProximo, nivelMaximo, custoEstrela, custoEquip, temCartas } from '../evolucao.js';
+import { atributos, xpParaProximo, nivelMaximo, custoEstrela, custoEquip, temCartas, habilidadeComEstrelas } from '../evolucao.js';
 
 let dados;
 let aberta = null;      // id da planta aberta no detalhe
@@ -209,11 +209,16 @@ function desenharDetalhe() {
   }).join('');
 
   // Habilidade
-  const h = p.habilidade;
-  const descHab = preencher(t.habilidades[h.tipo] || '', {
-    reflete: Math.round((h.reflete || 0) * 100), turnos: h.turnos, golpes: h.golpes,
-    reducao: Math.round((h.reducao || 0) * 100),
+  const h = habilidadeComEstrelas(p.habilidade, r.estrelas);
+  const textoHab = (hab) => preencher(t.habilidades[hab.tipo] || '', {
+    reflete: Math.round((hab.reflete || 0) * 100), turnos: hab.turnos, golpes: hab.golpes,
+    reducao: Math.round((hab.reducao || 0) * 100), forca: Math.round((hab.mult || 0) * 100),
+    alvos: hab.alvos || 1,
   });
+  const descHab = textoHab(h);
+  const proxEstrela = r.estrelas < cfg.estrelasMax
+    ? preencher(t.habilidadeProxima, { estrelas: r.estrelas + 1, texto: textoHab(habilidadeComEstrelas(p.habilidade, r.estrelas + 1)) })
+    : '';
 
   // Treinar com cartas de XP
   const cartasXp = dados.cartas.filter((c) => c.uso === 'xp');
@@ -265,7 +270,7 @@ function desenharDetalhe() {
       <div class="barra-xp grande"><span style="width:${noMax ? 100 : (r.xp / precisa) * 100}%"></span></div>
     </div>
     <div class="bloco">${linhas}</div>
-    <div class="bloco"><b>✨ ${h.nome}</b><p class="dica-pequena">${descHab}</p></div>
+    <div class="bloco"><b>✨ ${h.nome}</b><p class="dica-pequena">${descHab}</p>${proxEstrela ? `<p class="previa">${proxEstrela}</p>` : ''}</div>
     <div class="bloco"><h4>Treinar${selo(m.treinar)}</h4><div class="botoes-linha">${treinos}</div></div>
     <div class="bloco"><h4>Estrela${selo(m.estrela)}</h4>${blocoEstrela}</div>
     <div class="bloco"><h4>Equipamentos${selo(m.algumEquip)}</h4>${equips}</div>`;

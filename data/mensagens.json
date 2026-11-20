@@ -46,15 +46,16 @@
   "equipSubiu": "{espaco} melhorou pra {nivel}!",
   "bloqueada": "Ache no Pacote de Sementes",
   "habilidades": {
-    "area_coluna": "Acerta toda uma coluna inimiga.",
+    "area_coluna": "Acerta toda uma coluna inimiga ({forca}% do ataque).",
     "espinhos": "Ataca e devolve {reflete}% do dano recebido por {turnos} rodadas.",
-    "rajada": "Dispara {golpes} golpes em alvos aleatórios.",
-    "cura": "Cura o aliado mais ferido.",
-    "escudo": "Dá um escudo pra todo o time por {turnos} rodadas.",
-    "perfurar": "Atravessa e acerta também quem está atrás.",
-    "sono": "Ataca e faz o alvo dormir {turnos} rodada.",
-    "lentidao": "Ataca e deixa o alvo {reducao}% mais lento."
+    "rajada": "Dispara {golpes} golpes em alvos aleatórios ({forca}% do ataque cada).",
+    "cura": "Cura {alvos} aliado(s) mais ferido(s) ({forca}% do ataque).",
+    "escudo": "Dá um escudo de {forca}% do ataque pra todo o time por {turnos} rodadas.",
+    "perfurar": "Atravessa e acerta também quem está atrás ({forca}% do ataque).",
+    "sono": "Ataca e faz o alvo dormir {turnos} rodada(s).",
+    "lentidao": "Ataca e deixa o alvo {reducao}% mais lento por {turnos} rodadas."
   },
+  "habilidadeProxima": "Com {estrelas} ⭐: {texto}",
   "atributos": {
     "vida": "❤️ Vida",
     "atq": "⚔️ Ataque",

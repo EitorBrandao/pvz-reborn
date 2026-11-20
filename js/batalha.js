@@ -1,7 +1,7 @@
 // Regras da batalha automática. Não desenha nada: só calcula o que acontece
 // e devolve uma lista de eventos pra tela animar.
 
-import { atributos, registroNovo } from './evolucao.js';
+import { atributos, registroNovo, habilidadeComEstrelas } from './evolucao.js';
 
 // Gerador de números aleatórios com semente (mesma semente = mesma batalha).
 export function criarRng(semente) {
@@ -40,7 +40,10 @@ export function prepararBatalha(batalha, time, dados, colecao = {}) {
     const registro = colecao[m.planta] || registroNovo();
     const u = montarUnidade(base, 'planta', m.col, m.linha, registro.nivel, `u${n++}`, cfg);
     const stats = atributos(base, registro, dados);
-    Object.assign(u, stats, { vidaMax: stats.vida, estrelas: registro.estrelas });
+    Object.assign(u, stats, {
+      vidaMax: stats.vida, estrelas: registro.estrelas,
+      habilidade: habilidadeComEstrelas(base.habilidade, registro.estrelas),
+    });
     unidades.push(u);
   }
   for (const i of batalha.inimigos) {
@@ -127,10 +130,12 @@ export function simular(unidades, cfg, semente) {
         }
         break;
       case 'cura': {
-        const ferido = aliados(u).sort((a, b) => a.vida / a.vidaMax - b.vida / b.vidaMax)[0];
+        const feridos = aliados(u).sort((a, b) => a.vida / a.vidaMax - b.vida / b.vidaMax).slice(0, h.alvos || 1);
         const valor = Math.round(u.atq * h.mult);
-        ferido.vida = Math.min(ferido.vidaMax, ferido.vida + valor);
-        efeitos.push({ alvo: ferido.uid, tipo: 'cura', valor, vidaDepois: ferido.vida });
+        for (const ferido of feridos) {
+          ferido.vida = Math.min(ferido.vidaMax, ferido.vida + valor);
+          efeitos.push({ alvo: ferido.uid, tipo: 'cura', valor, vidaDepois: ferido.vida });
+        }
         break;
       }
       case 'escudo': {
