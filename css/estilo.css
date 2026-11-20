@@ -310,7 +310,7 @@ body {
 /* ---------- Atualização ---------- */
 .aviso-atualizacao {
   position: fixed;
-  top: calc(env(safe-area-inset-top) + 10px);
+  top: calc(env(safe-area-inset-top) + 66px);
   left: 50%;
   transform: translateX(-50%);
   z-index: 20;

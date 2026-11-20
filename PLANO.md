@@ -28,6 +28,7 @@ O jogo original saiu do ar. Este projeto é um sucessor espiritual, não uma có
 | Backup | Exportar/Importar save como arquivo `.json` | Não perder o progresso ao trocar de celular |
 | PWA | `manifest.webmanifest` + `service-worker.js` | Instalar e jogar offline |
 | Hospedagem | GitHub Pages | Grátis, com HTTPS (obrigatório pra PWA) |
+| Atualização | Service worker busca a versão nova ao abrir | Igual app de loja: abriu, atualizou |
 | Arte provisória | Formas desenhadas no Canvas e emojis | Destrava o jogo antes da arte final |
 
 **Estrutura de pastas:**
@@ -58,6 +59,7 @@ pvz-reborn/
 **Batalha automática (o coração do jogo):**
 
 - Campo de grama. Seu time fica à esquerda, as pragas à direita, cada lado com até 5 unidades numa grade 2x3 (frente e fundo).
+- Limite de 15 rodadas: se ninguém vencer, conta como derrota.
 - Turnos por velocidade: quem tem mais VEL ataca primeiro. A frente apanha mais, o fundo fica mais protegido.
 - Cada planta tem um ataque normal e uma habilidade especial que dispara quando a barra de seiva enche.
 - Números de dano grandes saltando, críticos maiores, tremidinha de tela.
@@ -126,9 +128,9 @@ pvz-reborn/
 Cada fase termina com algo jogável no celular, testado antes de seguir.
 
 1. **Fundação:** projeto, tela inicial, PWA instalável, save com exportar/importar, publicado no GitHub Pages.
-   - [ ] Pronto quando: abre pelo link no celular, instala na tela inicial e o save sobrevive a fechar e abrir.
+   - [x] Pronto quando: abre pelo link no celular, instala na tela inicial e o save sobrevive a fechar e abrir.
 2. **Batalha:** campo, time contra pragas, turnos, habilidades, números de dano, vitória e derrota, queda de cartas.
-   - [ ] Pronto quando: dá pra montar um time e vencer ou perder uma batalha de teste.
+   - [x] Pronto quando: dá pra montar um time e vencer ou perder uma batalha de teste.
 3. **Evolução:** nível, estrelas, equipamentos, cartas de item, Pacote de Sementes, tela de plantas.
    - [ ] Pronto quando: uma planta fica visivelmente mais forte depois de evoluir.
 4. **Campanha:** mapas, fases, chefes, estrelas, fôlego, missões.
