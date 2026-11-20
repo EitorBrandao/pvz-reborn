@@ -3,6 +3,7 @@
 import { $, mostrarTela, avisar, preencher } from './comum.js';
 import * as jogo from '../estado.js';
 import { atributos, poder, xpParaProximo, nivelMaximo, custoEstrela, custoEquip, temCartas, habilidadeComEstrelas } from '../evolucao.js';
+import * as som from '../som.js';
 
 let dados;
 let aberta = null;      // id da planta aberta no detalhe
@@ -26,6 +27,12 @@ export function iniciarTelaPlantas(d, voltar) {
   $('plantas-voltar').addEventListener('click', voltar);
   $('btn-pacote-moedas').addEventListener('click', () => mostrarPacote(jogo.comprarPacote('moedas')));
   $('btn-pacote-orvalho').addEventListener('click', () => mostrarPacote(jogo.comprarPacote('orvalho')));
+  const lote = dados.config.pacote.lote;
+  $('btn-pacote-moedas-lote').addEventListener('click', () => mostrarPacote(jogo.comprarPacotes('moedas', lote)));
+  $('btn-pacote-orvalho-lote').addEventListener('click', () => mostrarPacote(jogo.comprarPacotes('orvalho', lote)));
+  $('usar-quantos').addEventListener('click', (e) => { if (e.target.id === 'usar-quantos') $('usar-quantos').classList.add('escondido'); });
+  $('usar-1').addEventListener('click', () => usarCarta(1));
+  $('usar-lote').addEventListener('click', () => usarCarta(usarLote));
   $('detalhe-fechar').addEventListener('click', fecharDetalhe);
   $('detalhe').addEventListener('click', (e) => { if (e.target.id === 'detalhe') fecharDetalhe(); });
   $('detalhe-fechar-baixo').addEventListener('click', fecharDetalhe);
@@ -35,12 +42,14 @@ export function iniciarTelaPlantas(d, voltar) {
   $('btn-ordenar').addEventListener('click', trocarOrdem);
   $('troca-fechar').addEventListener('click', fecharTroca);
   $('troca-mudas').addEventListener('click', (e) => { if (e.target.id === 'troca-mudas') fecharTroca(); });
-  $('troca-planta').addEventListener('click', () => { fecharTroca(); mostrarPacote(jogo.trocarMudas()); });
+  $('troca-planta').addEventListener('click', () => { fecharTroca(); usarComLote(carta(dados.config.troca.carta)); });
   $('troca-material').addEventListener('click', () => { fecharTroca(); mostrarMaterial(jogo.trocarMudasPorMaterial()); });
 
   const { pacote } = dados.config;
   $('btn-pacote-moedas').textContent = `🌱 Pacote 🪙${pacote.moedas}`;
   $('btn-pacote-orvalho').textContent = `🌱 Pacote 💧${pacote.orvalho}`;
+  $('btn-pacote-moedas-lote').textContent = `🌱×${lote} 🪙${pacote.moedas * lote}`;
+  $('btn-pacote-orvalho-lote').textContent = `🌱×${lote} 💧${pacote.orvalho * lote}`;
 }
 
 export function abrirTelaPlantas() {
@@ -125,9 +134,9 @@ function desenharInventario() {
     botao.className = `item-inventario ${c.raridade}`;
     botao.innerHTML = `<span>${c.emoji}</span><b>${qtd}</b>`;
     botao.addEventListener('click', () => {
-      if (c.uso === 'pacote') mostrarPacote(jogo.plantarSemente());
-      else if (c.uso === 'troca') abrirTroca();
-      else avisar(`${c.nome}: ${c.descricao}`);
+      if (c.uso === 'troca') return abrirTroca();
+      if (c.uso !== 'pacote') return avisar(`${c.nome}: ${c.descricao}`);
+      usarComLote(c);
     });
     area.appendChild(botao);
   }
@@ -338,15 +347,18 @@ function acaoDetalhe(evento) {
   switch (botao.dataset.acao) {
     case 'treinar':
       res = jogo.treinar(aberta, botao.dataset.carta);
+      if (res.ok) som.tocarSom(res.subiu ? 'nivel' : 'treino');
       if (res.ok && res.subiu) avisar(preencher(t.subiuNivel, { emoji: p.emoji, nome: p.nome, nivel: r.nivel }));
       break;
     case 'estrela':
       res = jogo.evoluirEstrela(aberta);
+      if (res.ok) som.tocarSom('estrela');
       if (res.ok) avisar(preencher(t.estrelaSubiu, { nome: p.nome, estrelas: r.estrelas }));
       break;
     case 'equip': {
       const esp = dados.equipamentos.espacos.find((x) => x.id === botao.dataset.espaco);
       res = jogo.melhorarEquip(aberta, esp.id);
+      if (res.ok) som.tocarSom('equip');
       if (res.ok) avisar(preencher(t.equipSubiu, { espaco: esp.nome, nivel: dados.equipamentos.niveis[r.equip[esp.id] - 1].nome }));
       break;
     }
@@ -379,13 +391,42 @@ function fecharTroca() {
 function mostrarMaterial(res) {
   if (!res.ok) return erro(res);
   const c = carta(res.carta);
+  som.tocarSom('pacote');
+  $('pacote-resumo').innerHTML = '';
   abrirResultado(c.emoji, preencher(dados.textos.materialGanho, { qtd: res.qtd, nome: c.nome }), c.raridade !== 'comum');
 }
 
 // ---------- Pacote de Sementes ----------
 
+// Com 10 itens ou mais, pergunta se usa 1 ou vários de uma vez
+function usarComLote(c) {
+  const qtd = jogo.estado.inventario[c.id] || 0;
+  const porUso = c.uso === 'troca' ? dados.config.troca.custo : 1;
+  const usos = Math.min(dados.config.pacote.lote, Math.floor(qtd / porUso));
+  usando = c;
+  if (qtd >= dados.config.pacote.lote && usos > 1) {
+    usarLote = usos;
+    $('usar-quantos-titulo').textContent = preencher(dados.textos.usarQuantos, { emoji: c.emoji, nome: c.nome });
+    $('usar-lote').textContent = `×${usos}`;
+    $('usar-quantos').classList.remove('escondido');
+  } else usarCarta(1);
+}
+
+let usando = null;   // carta do inventário sendo usada
+let usarLote = 1;
+
+function usarCarta(n) {
+  $('usar-quantos').classList.add('escondido');
+  if (usando.uso === 'pacote') mostrarPacote(n > 1 ? jogo.plantarSementes(n) : jogo.plantarSemente());
+  else mostrarPacote(n > 1 ? jogo.trocarMudasVarias(n) : jogo.trocarMudas());
+}
+
 function mostrarPacote(res) {
   if (!res.ok) return erro(res);
+  som.tocarSom('pacote');
+  if (res.nova || (res.resultados || []).some((r) => r.nova)) som.tocarSom('pacoteNovo');
+  if (res.resultados) return mostrarResumo(res.resultados);
+  $('pacote-resumo').innerHTML = '';
   const p = base(res.id);
   const t = dados.textos;
   const texto = res.nova ? t.plantaNova : (res.virouMuda ? t.copiaVirouMuda : t.copiaNova);
@@ -398,6 +439,33 @@ function abrirResultado(emoji, titulo, destaque) {
   $('pacote-resultado').classList.toggle('nova', destaque);
   $('pacote-resultado').classList.remove('escondido');
   // reinicia a animação
+  const caixa = $('pacote-resultado').firstElementChild;
+  caixa.style.animation = 'none';
+  void caixa.offsetWidth;
+  caixa.style.animation = '';
+  desenhar();
+}
+
+// Vários pacotes de uma vez: só os ícones e quantidades (plantas novas brilham)
+function mostrarResumo(resultados) {
+  const grupos = new Map();
+  let mudas = 0;
+  for (const r of resultados) {
+    if (r.virouMuda) { mudas++; continue; }
+    const g = grupos.get(r.id) || { qtd: 0, nova: false };
+    g.qtd++;
+    g.nova = g.nova || r.nova;
+    grupos.set(r.id, g);
+  }
+  const itens = [...grupos].map(([id, g]) =>
+    `<span class="resumo-item${g.nova ? ' nova' : ''}">${base(id).emoji}<b>×${g.qtd}</b></span>`);
+  if (mudas) itens.push(`<span class="resumo-item">${carta(dados.config.troca.carta).emoji}<b>×${mudas}</b></span>`);
+  const algumaNova = resultados.some((r) => r.nova);
+  $('pacote-emoji').textContent = '🌱';
+  $('pacote-titulo').textContent = preencher(dados.textos.resumoPacotes, { n: resultados.length });
+  $('pacote-resumo').innerHTML = itens.join('');
+  $('pacote-resultado').classList.toggle('nova', algumaNova);
+  $('pacote-resultado').classList.remove('escondido');
   const caixa = $('pacote-resultado').firstElementChild;
   caixa.style.animation = 'none';
   void caixa.offsetWidth;

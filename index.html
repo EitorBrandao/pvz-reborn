@@ -129,6 +129,7 @@
         <div class="grade-rotulos"><span>Fundo</span><span>Frente ➡️</span></div>
         <div id="grade-time" class="grade"></div>
         <div id="time-bonus" class="time-bonus"></div>
+        <div id="time-bonus-tabela" class="time-bonus-tabela"></div>
         <p class="dica-pequena">Toque numa planta pra colocar no time. Pra escolher o lugar, toque antes num espaço vazio. Toque numa planta do time pra tirar.</p>
         <div class="cabecalho-colecao">
           <h3 class="titulo-secao">Plantas</h3>
@@ -151,6 +152,8 @@
         <div class="pacotes">
           <button id="btn-pacote-moedas" class="btn btn-laranja"></button>
           <button id="btn-pacote-orvalho" class="btn btn-azul"></button>
+          <button id="btn-pacote-moedas-lote" class="btn btn-laranja"></button>
+          <button id="btn-pacote-orvalho-lote" class="btn btn-azul"></button>
         </div>
         <h3 class="titulo-secao">Cartas</h3>
         <div id="inventario" class="inventario"></div>
@@ -173,6 +176,7 @@
         <div class="modal-caixa pacote-caixa">
           <div id="pacote-emoji" class="pacote-emoji"></div>
           <h3 id="pacote-titulo"></h3>
+          <div id="pacote-resumo" class="pacote-resumo"></div>
           <button id="pacote-ok" class="btn btn-laranja">Oba!</button>
           <p class="dica-pequena">Toque em qualquer lugar pra fechar</p>
         </div>
@@ -187,6 +191,16 @@
           <button id="troca-material" class="btn btn-azul btn-largo"></button>
           <p id="troca-chances" class="dica-pequena"></p>
           <button id="troca-fechar" class="btn btn-azul btn-peq">Fechar</button>
+        </div>
+      </div>
+
+      <div id="usar-quantos" class="modal escondido">
+        <div class="modal-caixa pacote-caixa">
+          <h3 id="usar-quantos-titulo"></h3>
+          <div class="pacotes">
+            <button id="usar-1" class="btn btn-azul">×1</button>
+            <button id="usar-lote" class="btn btn-laranja"></button>
+          </div>
         </div>
       </div>
     </section>

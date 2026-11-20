@@ -91,6 +91,14 @@ function desenharBonus() {
       emoji: f.emoji, nome: f.nome, qtd, pct: Math.round(bonus * 100), atributo: t.atributos[f.atributo],
     })}</span>`).join('')
     : `<small>${t.bonusTimeVazio}</small>`;
+  // Tabela sempre visível, pra montar a estratégia antes de colocar as plantas
+  const bt = dados.faccoes.bonusTime;
+  $('time-bonus-tabela').innerHTML = `<small><b>${t.bonusTabelaTitulo}</b></small>` + dados.faccoes.faccoes.map((f) => {
+    const tem = jogo.estado.time.filter((m) => dados.plantas.find((p) => p.id === m.planta)?.faccao === f.id).length;
+    return `<small class="${bt[tem] ? 'ativa' : ''}">${preencher(t.bonusTabela, {
+      emoji: f.emoji, nome: f.nome, p2: Math.round(bt[2] * 100), p3: Math.round(bt[3] * 100), atributo: t.atributos[f.atributo],
+    })}</small>`;
+  }).join('');
 }
 
 function desenharGrade() {
@@ -130,8 +138,8 @@ function comPoder(s) {
   return { ...s, poder: poder(s, dados) };
 }
 
-// Time primeiro (frente antes do fundo, de cima pra baixo); depois o resto na ordem escolhida.
-// Empate mantém a ordem original.
+// Time primeiro, depois o resto; os dois grupos seguem a ordem escolhida.
+// Empate: time pelo lugar (frente antes do fundo, de cima pra baixo); resto pela ordem original.
 function plantasOrdenadas() {
   const col = jogo.estado.colecao;
   const time = jogo.estado.time;
@@ -147,10 +155,15 @@ function plantasOrdenadas() {
   };
   return itens.sort((a, b) => {
     if (!!a.m !== !!b.m) return a.m ? -1 : 1;
-    if (a.m) return (a.m.col - b.m.col) || (a.m.linha - b.m.linha);
     const [a1, a2] = chave(a);
     const [b1, b2] = chave(b);
-    return (b1 - a1) || (b2 - a2) || (a.i - b.i);
+    const porOrdem = (b1 - a1) || (b2 - a2);
+    if (a.m) {
+      // Selecionadas: grupo à parte, também ordenado pelo critério escolhido.
+      // Na ordem padrão (sem critério), segue o lugar no time.
+      return porOrdem || (a.m.col - b.m.col) || (a.m.linha - b.m.linha);
+    }
+    return porOrdem || (a.i - b.i);
   });
 }
 

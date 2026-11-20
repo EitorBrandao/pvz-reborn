@@ -101,6 +101,20 @@ const SONS = {
   tick_queimadura() { chiado(0.2, { vol: 0.22, corte: 3500 }); },
   tick_regeneracao() { nota(880, 0.2, { tipo: 'triangle', vol: 0.1 }); },
 
+  // Fora da batalha: pacotes e evolução
+  pacote() { chiado(0.25, { vol: 0.25, corte: 2500 }); [523, 659, 784].forEach((f, i) => nota(f, 0.15, { tipo: 'triangle', vol: 0.15, atraso: 0.2 + i * 0.07 })); },
+  pacoteNovo() { [784, 988, 1175, 1568].forEach((f, i) => nota(f, i === 3 ? 0.5 : 0.15, { tipo: 'triangle', vol: 0.18, atraso: 0.45 + i * 0.08 })); nota(2093, 0.4, { vol: 0.06, atraso: 0.75 }); },
+  treino() { nota(660, 0.1, { tipo: 'triangle', vol: 0.14, ate: 990 }); },
+  nivel() { [523, 659, 784, 1047].forEach((f, i) => nota(f, 0.14, { tipo: 'square', vol: 0.07, atraso: i * 0.07 })); },
+  estrela() {
+    [523, 659, 784, 1047, 1319].forEach((f, i) => nota(f, i === 4 ? 0.7 : 0.16, { tipo: 'triangle', vol: 0.2, atraso: i * 0.09 }));
+    [1568, 2093].forEach((f, i) => nota(f, 0.5, { vol: 0.06, atraso: 0.45 + i * 0.1 }));
+  },
+  equip() {
+    nota(1800, 0.15, { tipo: 'square', vol: 0.05 }); nota(2400, 0.2, { tipo: 'triangle', vol: 0.08, atraso: 0.05 });
+    nota(440, 0.3, { tipo: 'triangle', vol: 0.15, ate: 880, atraso: 0.12 });
+  },
+
   vitoria() { [523, 659, 784, 1047].forEach((f, i) => nota(f, i === 3 ? 0.6 : 0.18, { tipo: 'triangle', vol: 0.22, atraso: i * 0.13 })); },
   derrota() { [392, 330, 262, 196].forEach((f, i) => nota(f, i === 3 ? 0.7 : 0.25, { tipo: 'triangle', vol: 0.2, atraso: i * 0.2 })); },
 };

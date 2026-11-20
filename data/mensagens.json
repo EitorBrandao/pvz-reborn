@@ -70,6 +70,8 @@
   },
   "faccaoInfo": "{emoji} {nome}<br>forte contra {forteEmoji} {forteNome}<br>fraca contra {fracoEmoji} {fracoNome}",
   "bonusTime": "{emoji} {nome} ×{qtd}: +{pct}% {atributo}",
+  "bonusTabela": "{emoji} {nome}: 2 plantas +{p2}% · 3 plantas +{p3}% {atributo}",
+  "bonusTabelaTitulo": "Bônus por facção (ativo quando o time tem 2 ou 3 da mesma)",
   "bonusTimeVazio": "Junte 2 ou 3 plantas da mesma facção pra ganhar bônus.",
   "somLigado": "🔊 Som ligado",
   "somDesligado": "🔇 Som desligado",
@@ -81,6 +83,8 @@
   "nivelMaximo": "Nível máximo! Evolua a estrela pra continuar subindo.",
   "plantaNova": "Planta nova: {nome}!",
   "copiaNova": "+1 cópia de {nome}",
+  "resumoPacotes": "{n} pacotes abertos!",
+  "usarQuantos": "Quantas vezes usar {emoji} {nome}?",
   "copiaVirouMuda": "{nome} já tem cópias de sobra: virou 🧩 Muda Repetida",
   "semMudas": "Faltam 🧩 Mudas Repetidas pra essa troca.",
   "trocaTitulo": "Trocar 🧩 Mudas Repetidas",
@@ -208,6 +212,8 @@
     "presencaDica": "Um prêmio por dia que você entra. O 7º dia é o melhor!",
     "dia": "Dia {n}",
     "pegar": "Pegar prêmio",
-    "pegou": "Prêmio do dia: {premio}"
+    "pegou": "Prêmio do dia: {premio}",
+    "previa": "Total: 🪙 {moedas} · ✨ {xp} XP",
+    "forcaDica": "Nível maior: mais moedas e XP. Cada ⭐ além da 1ª: mais chance de cartas e viagem mais curta."
   }
 }

@@ -1,5 +1,8 @@
 [
-  { "versao": "0.7.1", "itens": ["Cópias que passam do necessário pra chegar a 5 ⭐ já viram 🧩 Muda Repetida", "🧩 também troca por material de equipamento sorteado (os raros saem menos)"] },
+  { "versao": "0.7.5", "itens": ["Cópias que passam do necessário pra chegar a 5 ⭐ já viram 🧩 Muda Repetida", "🧩 também troca por material de equipamento sorteado (os raros saem menos)"] },
+  { "versao": "0.7.4", "itens": ["Som ao abrir pacotes (e um brilho extra quando vem planta nova)", "Som ao treinar, subir de nível, ganhar estrela e melhorar equipamento"] },
+  { "versao": "0.7.2", "itens": ["Expedição: nível da planta aumenta moedas e XP", "Cada estrela aumenta a chance de cartas e encurta a viagem (até 30%)", "A janela mostra o prêmio e o tempo previstos para as plantas escolhidas"] },
+  { "versao": "0.7.1", "itens": ["Abrir 10 pacotes de uma vez e usar cartas em lote"] },
   { "versao": "0.7.0", "itens": ["Canteiro: 3 vasos com mudas que crescem mesmo com o jogo fechado", "Expedição: plantas fora do time exploram e voltam com prêmios", "Calendário da horta: um prêmio por dia"] },
   { "versao": "0.6.7", "itens": ["Novo 💪 Poder: um número que mostra rápido qual planta é mais forte (conta nível, estrelas e equipamentos)", "Em Preparar batalha, compare o Poder do seu time com o das pragas", "Ordenar por Poder na coleção e na montagem do time"] },
   { "versao": "0.6.6", "itens": ["Em Preparar batalha, as plantas do time aparecem primeiro", "Botão pra ordenar a lista por nível, estrela, vida, ataque, defesa ou velocidade"] },
