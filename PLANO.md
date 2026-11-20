@@ -40,7 +40,7 @@ pvz-reborn/
   service-worker.js
   css/         (estilo.css)
   js/          (main.js, estado.js, save.js, batalha.js, evolucao.js, campanha.js, arena.js, bots.js, ui/)
-  data/        (plantas.json, pragas.json, cartas.json, fases.json, bots.json, mensagens.json, missoes.json, atividades.json)
+  data/        (plantas.json, pragas.json, cartas.json, fases.json, bots.json, mensagens.json, missoes.json, atividades.json, rotina.json)
   art/         (plantas/, pragas/, ui/, icones/)
   audio/
 ```
@@ -116,6 +116,13 @@ pvz-reborn/
 - **Horta de Treino:** monte até 5 pragas que você já venceu, escolha o nível e teste o time. Não ganha nem perde nada.
 - Números e regras em `data/atividades.json`.
 
+**Rotina diária (na tela da horta, abaixo do broto):**
+
+- **Canteiro:** 3 vasos. Compra-se uma muda com moedas (Cenoura 5min, Tomate 30min, Morango 2h, Abóbora 8h; as maiores liberam por nível do jogador). Ela cresce com o jogo fechado; toque pra colher moedas e cartas.
+- **Expedição:** até 3 plantas fora do time vão pra um destino de 1h, 4h ou 8h e voltam com moedas, XP e cartas. Enquanto viajam, não podem entrar no time.
+- **Calendário da horta:** abre ao entrar no jogo, um prêmio por dia (não precisa ser seguido); o 7º dia é o maior e depois recomeça.
+- Números em `data/rotina.json`.
+
 **Missões:** guiam o jogador de nível em nível (vencer fase X, evoluir uma planta, chegar ao top 20 da arena). Ficam em `data/missoes.json`.
 
 **Para depois:** guilda com bots, eventos sazonais, fusão de plantas raras.
@@ -151,7 +158,7 @@ Cada fase termina com algo jogável no celular, testado antes de seguir.
 7. **Atividades rápidas:** Torre das Pragas, Desafio do Dia e Horta de Treino (tela "Desafios").
    - [x] Pronto quando: dá pra subir andares da torre, vencer o desafio do dia uma vez com prêmio e treinar contra pragas escolhidas.
 8. **Rotina diária:** Canteiro (plantas que crescem em tempo real e são colhidas), Expedição (plantas fora do time saem em missões de 1h/4h/8h e voltam com cartas) e Calendário de presença (prêmio por dia, 7º dia maior).
-   - [ ] Pronto quando: ao abrir depois de algumas horas, tem coisa pra colher, expedição pra receber e prêmio do dia.
+   - [x] Pronto quando: ao abrir depois de algumas horas, tem coisa pra colher, expedição pra receber e prêmio do dia.
 9. **Eventos e coleção:** Invasão de Chefe (chefe gigante de vários dias com ranking de dano junto com os bots), Feira (troca de materiais e loja que muda todo dia, só com moedas do jogo) e Herbário (álbum de plantas e pragas encontradas, com prêmio por página).
    - [ ] Pronto quando: tem um chefe de invasão rolando, a feira mudou de um dia pro outro e o herbário dá prêmio ao completar uma página.
 
