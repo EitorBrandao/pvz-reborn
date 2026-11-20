@@ -2,7 +2,7 @@
 
 import { $, mostrarTela, avisar, preencher } from './comum.js';
 import * as jogo from '../estado.js';
-import { atributos, xpParaProximo, nivelMaximo, custoEstrela, custoEquip } from '../evolucao.js';
+import { atributos, xpParaProximo, nivelMaximo, custoEstrela, custoEquip, temCartas } from '../evolucao.js';
 
 let dados;
 let aberta = null;      // id da planta aberta no detalhe
@@ -60,6 +60,27 @@ function erro(resultado) {
   avisar(dados.textos[resultado.erro] || dados.textos.semMaterial);
 }
 
+// O que dá pra melhorar agora nessa planta, com o que o jogador tem.
+function melhorias(r) {
+  const e = jogo.estado;
+  const cfg = dados.config.evolucao;
+  const treinar = r.nivel < nivelMaximo(r.estrelas, cfg)
+    && dados.cartas.some((c) => c.uso === 'xp' && (e.inventario[c.id] || 0) > 0);
+  const ce = custoEstrela(r, cfg);
+  const estrela = !!ce && r.copias >= ce.copias && e.moedas >= ce.moedas;
+  const equip = {};
+  for (const esp of dados.equipamentos.espacos) {
+    const c = custoEquip(r, esp.id, dados);
+    equip[esp.id] = !!c && e.moedas >= (c.moedas || 0) && temCartas(e.inventario, c.cartas || {});
+  }
+  const algumEquip = Object.values(equip).some(Boolean);
+  return { treinar, estrela, equip, algumEquip, alguma: treinar || estrela || algumEquip };
+}
+
+function selo(ok) {
+  return ok ? ' <span class="selo-melhorar">!</span>' : '';
+}
+
 // ---------- Lista ----------
 
 function desenhar() {
@@ -108,10 +129,11 @@ function desenharLista() {
       const cfg = dados.config.evolucao;
       const max = nivelMaximo(r.estrelas, cfg);
       const pxp = r.nivel >= max ? 1 : r.xp / xpParaProximo(r.nivel, cfg);
-      const custo = custoEstrela(r, cfg);
-      const podeEstrela = custo && r.copias >= custo.copias;
-      botao.className = 'cartao-planta' + (podeEstrela ? ' pode-evoluir' : '');
+      const m = melhorias(r);
+      const icones = [m.estrela && '⭐', m.algumEquip && '🛠️', m.treinar && '📈'].filter(Boolean).join('');
+      botao.className = 'cartao-planta' + (m.alguma ? ' pode-evoluir' : '');
       botao.innerHTML = `
+        ${m.alguma ? `<span class="aviso-melhorar" title="Dá pra melhorar">⬆️ ${icones}</span>` : ''}
         <span class="planta-emoji">${p.emoji}</span>
         <b>${p.nome}</b>
         <small class="estrelas-peq">${estrelasTexto(r.estrelas)}</small>
@@ -141,6 +163,7 @@ function desenharDetalhe() {
   const max = nivelMaximo(r.estrelas, cfg);
   const noMax = r.nivel >= max;
   const precisa = xpParaProximo(r.nivel, cfg);
+  const m = melhorias(r);
 
   // Atributos (com o ganho da última evolução, se teve)
   const linhas = ATRIBUTOS.map((a) => {
@@ -181,9 +204,10 @@ function desenharDetalhe() {
     const bonus = n ? `+${Math.round(dados.equipamentos.niveis[n - 1].bonus * 100)}%` : '';
     const c = custoEquip(r, esp.id, dados);
     let botao = '<small>Máximo!</small>';
+    const pronto = m.equip[esp.id] ? ' pronto' : '';
     if (c) {
       const prev = atributos(p, r, dados, { equip: { [esp.id]: n + 1 } });
-      botao = `<button class="btn btn-verde btn-peq" data-acao="equip" data-espaco="${esp.id}">
+      botao = `<button class="btn btn-verde btn-peq${pronto}" data-acao="equip" data-espaco="${esp.id}">
         Melhorar <small>${custoTexto(c)}</small><br><small>${t.atributos[esp.atributo].split(' ')[0]} ${stats[esp.atributo]} → ${prev[esp.atributo]}</small></button>`;
     }
     return `<div class="linha-equip nivel-${n}">
@@ -205,9 +229,9 @@ function desenharDetalhe() {
     </div>
     <div class="bloco">${linhas}</div>
     <div class="bloco"><b>✨ ${h.nome}</b><p class="dica-pequena">${descHab}</p></div>
-    <div class="bloco"><h4>Treinar</h4><div class="botoes-linha">${treinos}</div></div>
-    <div class="bloco"><h4>Estrela</h4>${blocoEstrela}</div>
-    <div class="bloco"><h4>Equipamentos</h4>${equips}</div>`;
+    <div class="bloco"><h4>Treinar${selo(m.treinar)}</h4><div class="botoes-linha">${treinos}</div></div>
+    <div class="bloco"><h4>Estrela${selo(m.estrela)}</h4>${blocoEstrela}</div>
+    <div class="bloco"><h4>Equipamentos${selo(m.algumEquip)}</h4>${equips}</div>`;
   $('detalhe').classList.remove('escondido');
 }
 

@@ -355,7 +355,20 @@ body {
 .item-inventario.epica { border-color: #a24be0; background: #f6ebff; }
 .cartao-planta.bloqueada .planta-emoji { filter: grayscale(1) brightness(.3); }
 .cartao-planta.bloqueada { opacity: .75; }
-.cartao-planta.pode-evoluir { border-color: var(--laranja); }
+.cartao-planta { position: relative; }
+.cartao-planta.pode-evoluir { border-color: var(--laranja); box-shadow: 0 0 0 2px var(--laranja), 0 3px 0 rgba(0, 0, 0, .3); }
+.aviso-melhorar {
+  position: absolute; top: 4px; right: 4px;
+  background: var(--vermelho); color: #fff; font-size: .75rem; font-weight: 700;
+  padding: 2px 6px; border-radius: 999px; border: 2px solid #fff;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, .3); animation: pisca-selo 1.2s ease-in-out infinite;
+}
+.selo-melhorar {
+  display: inline-block; width: 18px; height: 18px; line-height: 18px; text-align: center;
+  background: var(--vermelho); color: #fff; border-radius: 50%; font-size: .75rem; vertical-align: middle;
+}
+.btn.pronto { outline: 3px solid var(--laranja); }
+@keyframes pisca-selo { 50% { transform: scale(1.12); } }
 .estrelas-peq { letter-spacing: -2px; }
 .barra-xp { display: block; width: 80%; height: 6px; background: rgba(0, 0, 0, .2); border-radius: 999px; overflow: hidden; }
 .barra-xp span { display: block; height: 100%; background: var(--azul); }
