@@ -2,7 +2,7 @@
 
 import { $, mostrarTela, avisar, preencher } from './comum.js';
 import * as jogo from '../estado.js';
-import { atributos, poder, xpParaProximo, nivelMaximo, custoAscensao, podeAscender, custoEstrela, custoEquip, temCartas, habilidadeComEstrelas } from '../evolucao.js';
+import { atributos, poder, xpParaProximo, nivelMaximo, pontosTalento, pontosGastos, custoAscensao, podeAscender, custoEstrela, custoEquip, temCartas, habilidadeComEstrelas } from '../evolucao.js';
 import * as som from '../som.js';
 
 let dados;
@@ -102,7 +102,8 @@ function melhorias(r) {
   const algumEquip = Object.values(equip).some(Boolean);
   const ca = custoAscensao(r, dados);
   const ascender = !!ca && podeAscender(r, cfg) && e.moedas >= ca.moedas && temCartas(e.inventario, ca.cartas);
-  return { treinar, estrela, equip, algumEquip, ascender, alguma: treinar || estrela || algumEquip || ascender };
+  const talento = pontosTalento(r, dados) - pontosGastos(r) > 0;
+  return { treinar, estrela, equip, algumEquip, ascender, talento, alguma: treinar || estrela || algumEquip || ascender || talento };
 }
 
 function poderDe(p, r, mudancaReg) {
@@ -190,7 +191,7 @@ function desenharLista() {
       const max = nivelMaximo(r.estrelas, cfg, r.ascensao);
       const pxp = r.nivel >= max ? 1 : r.xp / xpParaProximo(r.nivel, cfg);
       const m = melhorias(r);
-      const icones = [m.ascender && '✦', m.estrela && '⭐', m.algumEquip && '🛠️', m.treinar && '📈'].filter(Boolean).join('');
+      const icones = [m.ascender && '✦', m.talento && '🌳', m.estrela && '⭐', m.algumEquip && '🛠️', m.treinar && '📈'].filter(Boolean).join('');
       botao.className = 'cartao-planta' + (m.alguma ? ' pode-evoluir' : '');
       botao.innerHTML = `
         ${m.alguma ? `<span class="aviso-melhorar" title="Dá pra melhorar">⬆️ ${icones}</span>` : ''}
@@ -312,6 +313,22 @@ function desenharDetalhe() {
     blocoAscensao = `<div class="bloco"><h4>Ascensão${selo(m.ascender)}</h4>${blocoAscensao}</div>`;
   }
 
+  // Talentos
+  const tl = dados.talentos;
+  const livres = pontosTalento(r, dados) - pontosGastos(r);
+  const ramosHtml = tl.ramos.map((ramo) => `
+    <div class="talento-ramo"><b>${ramo.emoji} ${ramo.nome}</b> <small>${ramo.desc}</small>
+    ${ramo.nos.map((no) => {
+      const n = (r.talentos || {})[no.id] || 0;
+      const fmt = (q) => no.absoluto ? q * no.porPonto : Math.round(q * no.porPonto * 100);
+      return `<div class="talento-no"><div><span>${no.nome} <b>${n}/${no.max}</b></span><small>${preencher(no.texto, { valor: fmt(n || 1) })}${n ? '' : ' (por ponto)'}</small></div>
+        <button class="btn btn-verde btn-peq" data-acao="talento" data-no="${no.id}" ${livres > 0 && n < no.max ? '' : 'disabled'}>+</button></div>`;
+    }).join('')}</div>`).join('');
+  const blocoTalentos = `<div class="bloco"><h4>Talentos${selo(livres > 0)}</h4>
+    <p class="dica-pequena">Pontos livres: <b>${livres}</b> (1 a cada ${tl.niveisPorPonto} níveis, +${tl.pontosPorRank} por rank de ascensão)</p>
+    ${ramosHtml}
+    <button class="btn btn-azul btn-peq" data-acao="resetar-talentos" ${pontosGastos(r) ? '' : 'disabled'}>Resetar 💧${tl.custoReset.orvalho}</button></div>`;
+
   // Equipamentos
   const equips = dados.equipamentos.espacos.map((esp) => {
     const n = r.equip[esp.id] || 0;
@@ -354,6 +371,7 @@ function desenharDetalhe() {
     <div class="bloco"><b>✨ ${h.nome}</b><p class="dica-pequena">${descHab}</p>${proxEstrela ? `<p class="previa">${proxEstrela}</p>` : ''}</div>
     <div class="bloco"><h4>Treinar${selo(m.treinar)}</h4><div class="botoes-grade">${treinos}</div></div>
     <div class="bloco"><h4>Estrela${selo(m.estrela)}</h4>${blocoEstrela}</div>
+    ${blocoTalentos}
     ${blocoAscensao}
     <div class="bloco"><h4>Equipamentos${selo(m.algumEquip)}</h4>${equips}</div>`;
   $('detalhe').classList.remove('escondido');
@@ -378,6 +396,15 @@ function acaoDetalhe(evento) {
       res = jogo.evoluirEstrela(aberta);
       if (res.ok) som.tocarSom('estrela');
       if (res.ok) avisar(preencher(t.estrelaSubiu, { nome: p.nome, estrelas: r.estrelas }));
+      break;
+    case 'talento':
+      res = jogo.gastarTalento(aberta, botao.dataset.no);
+      if (res.ok) som.tocarSom('treino');
+      break;
+    case 'resetar-talentos':
+      if (!confirm(preencher(t.talentosResetConfirma, { nome: p.nome, custo: dados.talentos.custoReset.orvalho }))) return;
+      res = jogo.resetarTalentos(aberta);
+      if (res.ok) avisar(preencher(t.talentosReset, { nome: p.nome }));
       break;
     case 'ascender':
       if (!confirm(preencher(t.ascensaoConfirma, { nome: p.nome, bonus: Math.round(dados.config.evolucao.bonusRank * 100) }))) return;

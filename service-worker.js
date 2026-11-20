@@ -1,7 +1,7 @@
 // Guarda os arquivos do jogo no celular pra funcionar sem internet.
 // Com internet, SEMPRE busca a versão mais nova primeiro (sem usar cache velho do navegador).
 // Ao mudar a lista de arquivos, aumente o número da versão abaixo.
-const VERSAO = 'horta-v0.9.2';
+const VERSAO = 'horta-v0.10.0';
 const ESPERA_REDE_MS = 4000; // internet lenta: depois disso usa a cópia guardada
 
 const ARQUIVOS = [
@@ -44,6 +44,7 @@ const ARQUIVOS = [
   'data/feira.json',
   'data/herbario.json',
   'data/ascensao.json',
+  'data/talentos.json',
   'art/icones/icone.svg',
   'art/icones/icone-192.png',
   'art/icones/icone-512.png',

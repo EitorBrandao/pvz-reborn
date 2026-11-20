@@ -1,0 +1,91 @@
+{
+  "niveisPorPonto": 5,
+  "pontosPorRank": 10,
+  "custoReset": {
+    "orvalho": 3
+  },
+  "ramos": [
+    {
+      "id": "raiz",
+      "emoji": "🌱",
+      "nome": "Raiz",
+      "desc": "Vida e defesa",
+      "nos": [
+        {
+          "id": "vida",
+          "nome": "Seiva Grossa",
+          "efeito": "vida",
+          "porPonto": 0.04,
+          "max": 5,
+          "texto": "+{valor}% de vida"
+        },
+        {
+          "id": "def",
+          "nome": "Casca Dura",
+          "efeito": "def",
+          "porPonto": 0.04,
+          "max": 5,
+          "texto": "+{valor}% de defesa"
+        }
+      ]
+    },
+    {
+      "id": "tronco",
+      "emoji": "🔥",
+      "nome": "Tronco",
+      "desc": "Ataque e crítico",
+      "nos": [
+        {
+          "id": "atq",
+          "nome": "Golpe Firme",
+          "efeito": "atq",
+          "porPonto": 0.04,
+          "max": 5,
+          "texto": "+{valor}% de ataque"
+        },
+        {
+          "id": "crit",
+          "nome": "Olho Afiado",
+          "efeito": "critico",
+          "porPonto": 0.02,
+          "max": 5,
+          "texto": "+{valor}% de chance de crítico"
+        }
+      ]
+    },
+    {
+      "id": "folha",
+      "emoji": "🌸",
+      "nome": "Folha",
+      "desc": "Habilidade e seiva",
+      "nos": [
+        {
+          "id": "potencia",
+          "nome": "Seiva Potente",
+          "efeito": "potencia",
+          "porPonto": 0.05,
+          "max": 5,
+          "texto": "+{valor}% de força da habilidade"
+        },
+        {
+          "id": "seivaIni",
+          "nome": "Broto Pronto",
+          "efeito": "seivaInicial",
+          "porPonto": 8,
+          "max": 5,
+          "texto": "+{valor} de seiva no começo da batalha",
+          "absoluto": true
+        },
+        {
+          "id": "seivaTurno",
+          "nome": "Raiz Veloz",
+          "efeito": "seivaTurno",
+          "porPonto": 1,
+          "max": 5,
+          "texto": "+{valor} de seiva por rodada",
+          "absoluto": true
+        }
+      ]
+    }
+  ]
+}
