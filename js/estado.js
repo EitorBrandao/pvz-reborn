@@ -2,6 +2,7 @@
 
 import * as save from './save.js';
 import * as evo from './evolucao.js';
+import { missaoCompleta } from './missoes.js';
 
 let dados = null;
 let config = null;
@@ -12,6 +13,7 @@ export function iniciar(d) {
   config = d.config;
   // Completa saves antigos com os campos novos (ex.: quem jogou a versão 0.1)
   estado = completar(save.carregar() || {});
+  preencherMissoes();
   salvarAgora();
   setInterval(salvarAgora, config.save.intervaloSegundos * 1000);
   // Salva também quando o jogador sai do app ou troca de aba
@@ -39,6 +41,11 @@ function novoEstado() {
     inventario: {},
     vencidas: [],
     velocidadeBatalha: 1,
+    xpJogador: 0,
+    folego: { valor: config.folego.max, desde: Date.now() },
+    contadores: {},
+    estrelasFases: {},
+    missoes: { ativas: [], proxima: 0 },
   };
 }
 
@@ -55,13 +62,134 @@ export function salvarAgora() {
 
 export function substituir(novo) {
   estado = completar(novo);
+  preencherMissoes();
   salvarAgora();
 }
 
 export function recomecar() {
   save.apagar();
   estado = novoEstado();
+  preencherMissoes();
   salvarAgora();
+}
+
+function contar(nome, n = 1) {
+  estado.contadores[nome] = (estado.contadores[nome] || 0) + n;
+}
+
+// ---------- Nível do jogador ----------
+
+export function xpJogadorInfo() {
+  const c = config.jogador;
+  return { nivel: estado.nivel, xp: estado.xpJogador, precisa: c.xpBase + estado.nivel * c.xpPorNivel };
+}
+
+// Devolve quantos níveis o jogador subiu. Subir enche o fôlego e dá orvalho.
+function darXpJogador(xp) {
+  estado.xpJogador += xp;
+  let subiu = 0;
+  let info = xpJogadorInfo();
+  while (info.xp >= info.precisa) {
+    estado.xpJogador -= info.precisa;
+    estado.nivel += 1;
+    estado.orvalho += config.jogador.orvalhoPorNivel;
+    subiu += 1;
+    info = xpJogadorInfo();
+  }
+  if (subiu) estado.folego = { valor: Math.max(estado.folego.valor, config.folego.max), desde: Date.now() };
+  return subiu;
+}
+
+// ---------- Fôlego ----------
+// Recupera 1 ponto a cada X minutos, inclusive com o jogo fechado (usa o relógio).
+
+export function folego() {
+  const c = config.folego;
+  const f = estado.folego;
+  const passo = c.minutosPorPonto * 60000;
+  const agora = Date.now();
+  if (f.valor >= c.max) {
+    f.desde = agora;
+  } else {
+    const pontos = Math.floor((agora - f.desde) / passo);
+    if (pontos > 0) {
+      f.valor = Math.min(c.max, f.valor + pontos);
+      f.desde = f.valor >= c.max ? agora : f.desde + pontos * passo;
+    }
+  }
+  const falta = f.valor >= c.max ? 0 : passo - (agora - f.desde);
+  return { valor: f.valor, max: c.max, falta };
+}
+
+export function gastarFolego(qtd) {
+  const atual = folego();
+  if (atual.valor < qtd) return false;
+  if (atual.valor >= atual.max) estado.folego.desde = Date.now();
+  estado.folego.valor -= qtd;
+  salvarAgora();
+  return true;
+}
+
+export function recarregarFolego() {
+  const custo = config.folego.recargaOrvalho;
+  if (folego().valor >= config.folego.max) return { ok: false, erro: 'folegoCheio' };
+  if (estado.orvalho < custo) return { ok: false, erro: 'semOrvalho' };
+  estado.orvalho -= custo;
+  estado.folego = { valor: config.folego.max, desde: Date.now() };
+  salvarAgora();
+  return { ok: true };
+}
+
+// ---------- Missões ----------
+
+function missaoPorId(id) {
+  return dados.missoes.missoes.find((m) => m.id === id);
+}
+
+// Ativa as próximas missões da fila até o limite. Devolve as que entraram.
+function preencherMissoes() {
+  const lista = dados.missoes.missoes;
+  const novas = [];
+  const m = estado.missoes;
+  while (m.ativas.length < dados.missoes.ativasMax && m.proxima < lista.length) {
+    const missao = lista[m.proxima++];
+    m.ativas.push({ id: missao.id, base: { ...estado.contadores }, nova: true });
+    novas.push(missao);
+  }
+  return novas;
+}
+
+// Lista das missões ativas com a definição e se estão completas
+export function missoesAtivas() {
+  return estado.missoes.ativas
+    .map((ativa) => ({ ativa, missao: missaoPorId(ativa.id) }))
+    .filter((x) => x.missao)
+    .map((x) => ({ ...x, completa: missaoCompleta(estado, x.ativa, x.missao) }));
+}
+
+export function idsMissoesCompletas() {
+  return missoesAtivas().filter((x) => x.completa).map((x) => x.missao.id);
+}
+
+export function marcarMissaoVista(id) {
+  const ativa = estado.missoes.ativas.find((a) => a.id === id);
+  if (ativa && ativa.nova) { ativa.nova = false; salvarAgora(); }
+}
+
+export function resgatarMissao(id) {
+  const item = missoesAtivas().find((x) => x.missao.id === id);
+  if (!item || !item.completa) return { ok: false, erro: 'semMaterial' };
+  const p = item.missao.premio;
+  estado.moedas += p.moedas || 0;
+  estado.orvalho += p.orvalho || 0;
+  for (const [carta, qtd] of Object.entries(p.cartas || {})) {
+    estado.inventario[carta] = (estado.inventario[carta] || 0) + qtd;
+  }
+  const subiuJogador = darXpJogador(p.xp || 0);
+  estado.missoes.ativas = estado.missoes.ativas.filter((a) => a.id !== id);
+  const novas = preencherMissoes();
+  salvarAgora();
+  return { ok: true, novas, subiuJogador };
 }
 
 // ---------- Broto ----------
@@ -69,6 +197,7 @@ export function recomecar() {
 // Rega o broto. Devolve as moedas ganhas se ele mudou de estágio.
 export function regarBroto() {
   estado.broto.regas += 1;
+  contar('regarBroto');
   const porEstagio = config.broto.regasPorEstagio;
   const ganhou = estado.broto.regas % porEstagio === 0 ? config.broto.moedasPorEstagio : 0;
   estado.moedas += ganhou;
@@ -95,8 +224,9 @@ export function definirVelocidade(v) {
   salvarAgora();
 }
 
-// Guarda o resultado da batalha. Devolve o XP dado e as plantas que subiram de nível.
-export function registrarBatalha(batalha, vitoria, cartas) {
+// Guarda o resultado da batalha. Devolve o XP dado, as plantas que subiram de nível
+// e quantos níveis o jogador subiu.
+export function registrarBatalha(batalha, vitoria, cartas, estrelas = 0) {
   const xpCheio = batalha.recompensa.xp || 0;
   const xp = vitoria ? xpCheio : Math.round(xpCheio * config.evolucao.xpDerrota);
   const subiram = [];
@@ -106,13 +236,20 @@ export function registrarBatalha(batalha, vitoria, cartas) {
       subiram.push({ id: m.planta, nivel: registro.nivel });
     }
   }
+  contar('batalhar');
   if (vitoria) {
     estado.moedas += batalha.recompensa.moedas;
+    estado.orvalho += batalha.recompensa.orvalho || 0;
     for (const c of cartas) estado.inventario[c] = (estado.inventario[c] || 0) + 1;
     if (!estado.vencidas.includes(batalha.id)) estado.vencidas.push(batalha.id);
+    estado.estrelasFases[batalha.id] = Math.max(estado.estrelasFases[batalha.id] || 0, estrelas);
+    contar('vencerFase');
+    contar('coletarCarta', cartas.length);
+    if (batalha.chefe) contar('vencerChefe');
   }
+  const subiuJogador = darXpJogador(xp);
   salvarAgora();
-  return { xp, subiram };
+  return { xp, subiram, subiuJogador };
 }
 
 // ---------- Evolução ----------
@@ -126,6 +263,7 @@ export function treinar(idPlanta, idCarta) {
   if (registro.nivel >= evo.nivelMaximo(registro.estrelas, config.evolucao)) return { ok: false, erro: 'nivelMaximo' };
   estado.inventario[idCarta] -= 1;
   const subiu = evo.darXp(registro, carta.xp, config.evolucao);
+  contar('treinar');
   salvarAgora();
   return { ok: true, subiu };
 }
@@ -139,6 +277,7 @@ export function evoluirEstrela(idPlanta) {
   registro.copias -= custo.copias;
   estado.moedas -= custo.moedas;
   registro.estrelas += 1;
+  contar('evoluirEstrela');
   salvarAgora();
   return { ok: true };
 }
@@ -152,6 +291,7 @@ export function melhorarEquip(idPlanta, idEspaco) {
   estado.moedas -= custo.moedas;
   evo.gastarCartas(estado.inventario, custo.cartas);
   registro.equip[idEspaco] = (registro.equip[idEspaco] || 0) + 1;
+  contar('melhorarEquip');
   salvarAgora();
   return { ok: true };
 }
@@ -161,6 +301,7 @@ function abrirPacote() {
   const nova = !estado.colecao[id];
   if (nova) estado.colecao[id] = evo.registroNovo();
   else estado.colecao[id].copias += 1;
+  contar('abrirPacote');
   salvarAgora();
   return { ok: true, id, nova };
 }

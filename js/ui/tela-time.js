@@ -1,51 +1,45 @@
-// Tela de preparar batalha: escolher a batalha e montar o time.
+// Tela de preparar batalha: ver a fase escolhida e montar o time.
 
 import { $, mostrarTela, avisar, preencher } from './comum.js';
 import * as jogo from '../estado.js';
 import { atributos } from '../evolucao.js';
 
 let dados;
-let batalhaEscolhida = null;
+let faseEscolhida = null;
 let espacoEscolhido = null; // { col, linha } quando o jogador toca num espaço vazio
 
 export function iniciarTelaTime(d, { lutar, voltar }) {
   dados = d;
-  $('time-voltar').addEventListener('click', voltar);
+  $('time-voltar').addEventListener('click', () => voltar(faseEscolhida));
   $('btn-lutar').addEventListener('click', () => {
     if (!jogo.estado.time.length) return avisar(dados.textos.timeVazio);
-    lutar(batalhaEscolhida);
+    lutar(faseEscolhida);
   });
 }
 
-export function abrirTelaTime() {
-  if (!batalhaEscolhida) batalhaEscolhida = dados.batalhas[0];
+export function abrirTelaTime(fase) {
+  if (fase) faseEscolhida = fase;
   espacoEscolhido = null;
   desenhar();
   mostrarTela('tela-time');
 }
 
 function desenhar() {
-  desenharBatalhas();
+  desenharFase();
   desenharGrade();
   desenharPlantas();
   $('time-contagem').textContent = `${jogo.estado.time.length}/${dados.config.batalha.tamanhoTime}`;
+  $('btn-lutar').textContent = `Lutar! ⚡${faseEscolhida.folego}`;
 }
 
-function desenharBatalhas() {
-  const lista = $('lista-batalhas');
-  lista.innerHTML = '';
-  for (const b of dados.batalhas) {
-    const botao = document.createElement('button');
-    botao.className = 'cartao-batalha' + (b === batalhaEscolhida ? ' escolhida' : '');
-    const inimigos = b.inimigos.map((i) => dados.pragas.find((p) => p.id === i.praga)?.emoji || '?').join('');
-    const vencida = jogo.estado.vencidas.includes(b.id) ? ' ✅' : '';
-    botao.innerHTML = `
-      <b>${b.nome}${vencida}</b>
-      <span class="estrelas">${'⭐'.repeat(b.dificuldade)}</span>
-      <span class="inimigos">${inimigos}</span>`;
-    botao.addEventListener('click', () => { batalhaEscolhida = b; desenhar(); });
-    lista.appendChild(botao);
-  }
+function desenharFase() {
+  const f = faseEscolhida;
+  const mapa = dados.campanha.mapas[f.mapaIndice];
+  const inimigos = f.inimigos.map((i) => dados.pragas.find((p) => p.id === i.praga)?.emoji || '?').join('');
+  $('time-fase').innerHTML = `
+    <small>${mapa.emoji} ${mapa.nome} · Fase ${f.indice + 1}${f.chefe ? ' · CHEFE' : ''}</small>
+    <b>${f.nome}</b>
+    <span class="inimigos">${inimigos} <small>Nv ${f.nivel}</small></span>`;
 }
 
 function desenharGrade() {

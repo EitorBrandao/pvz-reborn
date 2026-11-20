@@ -3,8 +3,10 @@
 import { $, mostrarTela, avisar, sortear, preencher } from './comum.js';
 import * as jogo from '../estado.js';
 import { prepararBatalha, simular, rolarCartas, criarRng } from '../batalha.js';
+import { calcularEstrelas } from '../campanha.js';
 
-let dados, aoSair;
+let dados, acoes;
+let missoesAntes = new Set();
 let canvas, ctx, W = 0, H = 0, raio = 30;
 let vis = {};            // aparência atual de cada unidade
 let projeteis = [];
@@ -21,9 +23,10 @@ let batalhaAtual = null;
 const agora = () => performance.now();
 const vel = () => jogo.estado.velocidadeBatalha || 1;
 
-export function iniciarTelaBatalha(d, sair) {
+// acoes: { sair(fase), lutar(fase), proxima(fase) -> fase seguinte liberada ou null, prepararProxima(fase) }
+export function iniciarTelaBatalha(d, a) {
   dados = d;
-  aoSair = sair;
+  acoes = a;
   canvas = $('campo');
   ctx = canvas.getContext('2d');
   window.addEventListener('resize', medir);
@@ -36,10 +39,15 @@ export function iniciarTelaBatalha(d, sair) {
     if (!podePular()) return avisar(dados.textos.pularBloqueado);
     pular = true;
   });
-  $('btn-de-novo').addEventListener('click', () => comecarBatalha(batalhaAtual));
+  $('btn-de-novo').addEventListener('click', () => acoes.lutar(batalhaAtual));
+  $('btn-proxima').addEventListener('click', () => {
+    const proxima = acoes.proxima(batalhaAtual);
+    parar();
+    if (proxima) acoes.prepararProxima(proxima);
+  });
   $('btn-sair-batalha').addEventListener('click', () => {
     parar();
-    aoSair();
+    acoes.sair(batalhaAtual);
   });
 }
 
@@ -55,6 +63,7 @@ function atualizarBotoes() {
 export function comecarBatalha(batalha) {
   batalhaAtual = batalha;
   const minhaPartida = ++partida;
+  missoesAntes = new Set(jogo.idsMissoesCompletas());
   pular = false;
   projeteis = [];
   flutuantes = [];
@@ -260,7 +269,10 @@ function terminar(resultado, semente) {
   const { textos } = dados;
   const cartas = resultado.vitoria ? rolarCartas(batalhaAtual, criarRng(semente ^ 0x9e3779b9)) : [];
   const moedas = batalhaAtual.recompensa.moedas;
-  const { xp, subiram } = jogo.registrarBatalha(batalhaAtual, resultado.vitoria, cartas);
+  const estrelas = resultado.vitoria
+    ? calcularEstrelas(resultado.plantasVivas, resultado.plantasTotal, dados.config.estrelasFase)
+    : 0;
+  const { xp, subiram, subiuJogador } = jogo.registrarBatalha(batalhaAtual, resultado.vitoria, cartas, estrelas);
   atualizarBotoes();
 
   const caixa = $('resultado');
@@ -278,6 +290,24 @@ function terminar(resultado, semente) {
     li.textContent = preencher(textos.subiuNivel, { emoji: p.emoji, nome: p.nome, nivel: s.nivel });
     niveis.appendChild(li);
   }
+  const extras = [];
+  if (subiuJogador) {
+    extras.push(preencher(textos.jogadorSubiu, { nivel: jogo.estado.nivel, orvalho: dados.config.jogador.orvalhoPorNivel * subiuJogador }));
+  }
+  for (const { missao } of jogo.missoesAtivas().filter((x) => x.completa && !missoesAntes.has(x.missao.id))) {
+    extras.push(`📜 ${preencher(textos.missaoCompleta, { titulo: missao.titulo })}`);
+  }
+  for (const texto of extras) {
+    const li = document.createElement('li');
+    li.className = 'destaque';
+    li.textContent = texto;
+    niveis.appendChild(li);
+  }
+
+  $('resultado-estrelas').innerHTML = resultado.vitoria
+    ? [1, 2, 3].map((n) => `<span class="${n <= estrelas ? 'ganha' : ''}" style="animation-delay:${0.2 + n * 0.25}s">⭐</span>`).join('')
+    : '';
+  $('btn-proxima').classList.toggle('escondido', !(resultado.vitoria && acoes.proxima(batalhaAtual)));
 
   const area = $('resultado-cartas');
   area.innerHTML = '';

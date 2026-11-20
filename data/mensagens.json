@@ -14,7 +14,6 @@
   "apagado": "Tudo apagado. Começando do zero!",
   "timeVazio": "Coloca pelo menos uma planta no time!",
   "timeCheio": "O time já tem {max} plantas. Tira uma pra trocar.",
-  "pularBloqueado": "Vença essa batalha uma vez pra liberar o Pular.",
   "vitoria": [
     "Vitória!",
     "Horta salva!",
@@ -61,5 +60,17 @@
     "atq": "⚔️ Ataque",
     "def": "🛡️ Defesa",
     "vel": "💨 Velocidade"
-  }
+  },
+  "semFolego": "Sem fôlego! Volta em {tempo} ou recarregue com 💧{custo}.",
+  "folegoRecarregado": "Fôlego cheio!",
+  "folegoCheio": "O fôlego já está cheio.",
+  "confirmarRecarga": "Recarregar o fôlego por 💧{custo} Gotas de Orvalho?",
+  "faseBloqueada": "Vença a fase anterior primeiro.",
+  "mapaBloqueado": "Derrote o chefe do {mapa} pra liberar.",
+  "jogadorSubiu": "Você subiu pro nível {nivel}! Fôlego cheio e +{orvalho} 💧",
+  "missaoNova": "Nova missão: {titulo}",
+  "missaoCompleta": "Missão completa: {titulo}!",
+  "missaoResgatada": "Prêmio resgatado!",
+  "semMissoes": "Você completou todas as missões. Por enquanto!",
+  "pularBloqueado": "Vença essa fase uma vez pra liberar o Pular."
 }

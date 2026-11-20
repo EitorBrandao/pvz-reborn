@@ -219,6 +219,8 @@ export function simular(unidades, cfg, semente) {
   }
 
   const vitoria = vivos('praga').length === 0 && vivos('planta').length > 0;
+  const plantasVivas = vivos('planta').length;
+  const plantasTotal = unidades.filter((u) => u.lado === 'planta').length;
   eventos.push({ tipo: 'fim', vitoria, rodadas: rodada, snap: foto() });
-  return { vitoria, rodadas: rodada, eventos };
+  return { vitoria, rodadas: rodada, eventos, plantasVivas, plantasTotal };
 }
