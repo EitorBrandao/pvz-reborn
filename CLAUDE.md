@@ -33,6 +33,7 @@ Arquivo novo (js, json, imagem) também precisa entrar na lista `ARQUIVOS` do `s
 
 ## Comunicação
 
+- **Sempre responda em português**, inclusive no resumo final e nas explicações.
 - O dono do jogo não é programador: explique em português simples, diga o que ele deve ver na tela e onde clicar.
 - Seja conciso e pergunte quando algo não estiver claro.
 - Ao terminar uma fase, marque o "Pronto quando" no `PLANO.md`.
