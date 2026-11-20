@@ -522,6 +522,17 @@ function abrirPacote(pesos = config.pacote.pesos) {
   return { ok: true, id, nova, virouMuda };
 }
 
+// Faz a mesma ação até n vezes (para quando acabar o recurso). Junta os resultados.
+function variasVezes(n, acao) {
+  const resultados = [];
+  for (let i = 0; i < n; i++) {
+    const r = acao();
+    if (!r.ok) { if (!resultados.length) return r; break; }
+    resultados.push(r);
+  }
+  return { ok: true, resultados };
+}
+
 // Troca Mudas Repetidas por uma planta aleatória (não sorteia as que já estão no máximo)
 export function trocarMudas() {
   const { carta, custo } = config.troca;
@@ -538,6 +549,15 @@ export function comprarPacote(moeda) {
   estado[moeda] -= preco;
   return abrirPacote();
 }
+
+export function comprarPacotes(moeda, n) {
+  const preco = config.pacote[moeda] * n;
+  if (estado[moeda] < preco) return { ok: false, erro: moeda === 'moedas' ? 'semMoedas' : 'semOrvalho' };
+  return variasVezes(n, () => comprarPacote(moeda));
+}
+
+export function plantarSementes(n) { return variasVezes(n, plantarSemente); }
+export function trocarMudasVarias(n) { return variasVezes(n, trocarMudas); }
 
 export function plantarSemente() {
   if ((estado.inventario.semente_misteriosa || 0) < 1) return { ok: false, erro: 'semMaterial' };
