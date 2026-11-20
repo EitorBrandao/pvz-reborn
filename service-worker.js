@@ -35,6 +35,7 @@ const ARQUIVOS = [
   'data/faccoes.json',
   'data/missoes.json',
   'data/atividades.json',
+  'data/changelog.json',
   'art/icones/icone.svg',
   'art/icones/icone-192.png',
   'art/icones/icone-512.png',

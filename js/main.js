@@ -190,8 +190,28 @@ function avisarVersaoNova(config) {
   }
 }
 
+// Lista de novidades na tela de Opções (mais nova primeiro, só a atual aberta)
+function desenharChangelog(lista) {
+  const caixa = $('changelog');
+  caixa.innerHTML = '';
+  lista.forEach((v, i) => {
+    const bloco = document.createElement('details');
+    bloco.open = i === 0;
+    const titulo = document.createElement('summary');
+    titulo.textContent = `Versão ${v.versao}`;
+    const itens = document.createElement('ul');
+    v.itens.forEach((t) => {
+      const li = document.createElement('li');
+      li.textContent = t;
+      itens.appendChild(li);
+    });
+    bloco.append(titulo, itens);
+    caixa.appendChild(bloco);
+  });
+}
+
 async function comecar() {
-  const [config, textos, plantas, pragas, cartas, campanha, equipamentos, missoes, faccoes, atividades] = await Promise.all([
+  const [config, textos, plantas, pragas, cartas, campanha, equipamentos, missoes, faccoes, atividades, changelog] = await Promise.all([
     lerJson('data/config.json'),
     lerJson('data/mensagens.json'),
     lerJson('data/plantas.json'),
@@ -202,12 +222,14 @@ async function comecar() {
     lerJson('data/missoes.json'),
     lerJson('data/faccoes.json'),
     lerJson('data/atividades.json'),
+    lerJson('data/changelog.json'),
   ]);
   dados = { config, textos, plantas, pragas, cartas, campanha: prepararCampanha(campanha), equipamentos, missoes, faccoes, atividades };
 
   jogo.iniciar(dados);
   save.pedirArmazenamentoPersistente();
   $('versao').textContent = `versão ${config.versaoJogo}`;
+  desenharChangelog(changelog);
 
   ligarBotoes();
   // Voltar de uma batalha: atividades voltam pra tela de Desafios, a campanha pro mapa

@@ -63,7 +63,7 @@
       "texto": "Racha a casca: o alvo perde {valor}% da defesa por {turnos} rodadas."
     }
   },
-  "faccaoInfo": "{emoji} {nome} · forte contra {forteEmoji} {forteNome}<br>fraca contra {fracoEmoji} {fracoNome}",
+  "faccaoInfo": "{emoji} {nome}<br>forte contra {forteEmoji} {forteNome}<br>fraca contra {fracoEmoji} {fracoNome}",
   "bonusTime": "{emoji} {nome} ×{qtd}: +{pct}% {atributo}",
   "bonusTimeVazio": "Junte 2 ou 3 plantas da mesma facção pra ganhar bônus.",
   "atualizado": "Jogo atualizado pra versão {versao}!",
