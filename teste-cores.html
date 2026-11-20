@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Teste de cores</title>
+<!-- Página temporária: descobre qual jeito de desenhar o modo escuro do Samsung Internet não estraga. -->
+<style>
+  body { margin: 0; padding: 12px; font: 14px "Trebuchet MS", sans-serif; color: #fff; background: #3d9a22; }
+  h1 { font-size: 1.1rem; margin: 0 0 6px; }
+  p { margin: 0 0 10px; font-size: .8rem; }
+  .g { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .c { background: #f6e7c1; color: #23301b; border: 3px solid #8a5a2b; border-radius: 12px; padding: 6px 2px; text-align: center; }
+  .c b { display: block; font-size: 1.4rem; }
+  .c small { display: block; font-size: .65rem; }
+  .s { width: 64px; height: 64px; margin: 0 auto; display: block; position: relative; }
+  .s img, .s canvas, .s svg { width: 64px; height: 64px; display: block; }
+  .pilha img { position: absolute; inset: 0; }
+  .filtro img { filter: contrast(1.6) saturate(1.5) brightness(.9); }
+  .bg { background-size: contain; background-repeat: no-repeat; background-position: center; }
+  .card-grad { background: linear-gradient(#f6e7c1, #f6e7c1); }
+  .card-img { background-color: transparent; background-repeat: repeat; }
+  #info { font-size: .7rem; opacity: .9; word-break: break-all; margin-top: 10px; }
+</style>
+</head>
+<body>
+<h1>Teste de cores (Samsung)</h1>
+<p>Tire um print desta tela no Samsung Internet com o modo escuro ligado e me mande. Quero saber quais letras ficaram com o desenho bem colorido e o cartão bege claro.</p>
+<div class="g" id="g"></div>
+<div id="info"></div>
+<script type="module">
+import { urlArte } from './js/arte.js';
+
+const svgUrl = urlArte('u', 'pimentao');
+const g = document.getElementById('g');
+const carregar = (src) => new Promise((ok) => { const i = new Image(); i.onload = () => ok(i); i.src = src; });
+const img = await carregar(svgUrl);
+const tela = document.createElement('canvas');
+tela.width = tela.height = 256;
+tela.getContext('2d').drawImage(img, 0, 0, 256, 256);
+const png = tela.toDataURL('image/png');
+const bege = (() => { const c = document.createElement('canvas'); c.width = c.height = 4; const x = c.getContext('2d'); x.fillStyle = '#f6e7c1'; x.fillRect(0, 0, 4, 4); return c.toDataURL('image/png'); })();
+const svgTexto = decodeURIComponent(svgUrl.split(',')[1]);
+
+const casos = [
+  ['A', 'img PNG (atual)', `<div class="s"><img src="${png}"></div>`],
+  ['B', 'img SVG', `<div class="s"><img src="${svgUrl}"></div>`],
+  ['C', '3 PNGs empilhados', `<div class="s pilha"><img src="${png}"><img src="${png}"><img src="${png}"></div>`],
+  ['D', 'fundo CSS PNG', `<div class="s bg" style="background-image:url('${png}')"></div>`],
+  ['E', 'SVG no HTML', `<div class="s">${svgTexto}</div>`],
+  ['F', 'canvas', `<div class="s" data-canvas></div>`],
+  ['G', 'img com filtro forte', `<div class="s filtro"><img src="${png}"></div>`],
+  ['H', 'cartão degradê', `<div class="s"><img src="${png}"></div>`, 'card-grad'],
+  ['I', 'cartão imagem', `<div class="s"><img src="${png}"></div>`, 'card-img'],
+];
+for (const [letra, nome, miolo, extra] of casos) {
+  const d = document.createElement('div');
+  d.className = `c ${extra || ''}`;
+  if (extra === 'card-img') d.style.backgroundImage = `url('${bege}')`;
+  d.innerHTML = `<b>${letra}</b>${miolo}<small>${nome}</small>`;
+  g.append(d);
+}
+const alvo = g.querySelector('[data-canvas]');
+const cv = document.createElement('canvas');
+cv.width = cv.height = 128;
+cv.getContext('2d').drawImage(tela, 0, 0, 128, 128);
+alvo.append(cv);
+
+document.getElementById('info').textContent =
+  `escuro=${matchMedia('(prefers-color-scheme: dark)').matches} · ${navigator.userAgent}`;
+</script>
+</body>
+</html>
