@@ -85,7 +85,7 @@ export function comecarBatalha(batalha) {
   const unidades = prepararBatalha(batalha, jogo.estado.time, dados, jogo.estado.colecao);
   unidadesAtuais = unidades;
   const semente = (Date.now() ^ Math.floor(Math.random() * 1e9)) >>> 0;
-  const resultado = simular(structuredClone(unidades), dados.config.batalha, semente);
+  const resultado = simular(structuredClone(unidades), batalha.maxRodadas ? { ...dados.config.batalha, maxRodadas: batalha.maxRodadas } : dados.config.batalha, semente);
   const chefe = batalha.tipo === 'invasao' && unidades.find((u) => u.lado === 'praga' && u.id === batalha.idChefe);
   chefeInvasao = chefe ? { uid: chefe.uid, vida: chefe.vida } : null;
 

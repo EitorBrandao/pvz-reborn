@@ -32,7 +32,7 @@ export function montarUnidade(base, lado, col, linha, nivel, uid, cfg) {
 }
 
 // Bônus de time: quantas plantas de cada facção e quanto cada uma ganha.
-export function bonusFaccoes(timeUsado, dados) {
+export function bonusFaccoes(time, dados) {
   const fx = dados.faccoes;
   const contagem = {};
   for (const m of time) {
@@ -107,7 +107,7 @@ export function prepararBatalha(batalha, time, dados, colecao = {}) {
     unidades.push(u);
   }
   if (dados.faccoes) {
-    for (const { faccao, bonus } of bonusFaccoes(time, dados)) {
+    for (const { faccao, bonus } of bonusFaccoes(timeUsado, dados)) {
       for (const u of unidades.filter((x) => x.faccao === faccao.id)) {
         u[faccao.atributo] = Math.round(u[faccao.atributo] * (1 + bonus));
         if (faccao.atributo === 'vida') u.vidaMax = u.vida;

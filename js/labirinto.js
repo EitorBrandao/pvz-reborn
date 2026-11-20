@@ -104,7 +104,10 @@ export function gerarBatalha(run, tipo, dados, colecao) {
     return s + poder({ vida: p.vida, atq: p.atq, def: p.def, vel: p.vel }, dados);
   }, 0);
   const cr = dados.config.batalha.crescimentoPorNivel;
-  const nivel = Math.max(1, Math.round(1 + (alvoBase / base1 - 1) / cr));
+  const nivelBruto = Math.round(1 + (alvoBase / base1 - 1) / cr);
+  const nivel = Math.max(1, nivelBruto);
+  // time muito fraco: as pragas já passam do alvo no nível 1, então ficam mais fracas em vez de mais baixas
+  const fraqueza = nivelBruto < 1 ? Math.max(c.fraquezaMin, alvoBase / base1) : 1;
 
   const inimigos = ids.map((praga, i) => ({ praga, col: ESPACOS[i][0], linha: ESPACOS[i][1], nivel }));
   const nomes = { batalha: 'Batalha', elite: '💀 Elite', chefe: '👑 Chefe' };
@@ -119,6 +122,8 @@ export function gerarBatalha(run, tipo, dados, colecao) {
     chefe: tipo === 'chefe',
     podePular: true,
     time: run.time,
+    maxRodadas: c.maxRodadas,
+    multPragas: fraqueza < 1 ? { vida: fraqueza, atq: fraqueza } : null,
     labirinto: { vidas: { ...run.vidas }, mods: bonusDoRun(run, dados) },
     inimigos,
     recompensa: { moedas: 0, xp: 0, orvalho: 0 },
