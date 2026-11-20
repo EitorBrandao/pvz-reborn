@@ -16,7 +16,7 @@ export function nivelMaximo(estrelas, cfg, ascensao = 0) {
 // ---------- Talentos ----------
 export function pontosTalento(registro, dados) {
   const t = dados.talentos;
-  return Math.floor(registro.nivel / t.niveisPorPonto) + (registro.ascensao || 0) * t.pontosPorRank;
+  return Math.floor(registro.nivel / t.niveisPorPonto) + (registro.ascensao || 0) * t.pontosPorRank + (registro.talentosExtra || 0);
 }
 
 export function pontosGastos(registro) {

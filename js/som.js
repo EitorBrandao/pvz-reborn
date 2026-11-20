@@ -186,6 +186,16 @@ const MUSICAS = {
         698, 0, 880, 0, 1047, 1175, 1047, 880, 784, 0, 659, 0, 698, 0, 0, 0],
     },
   },
+  // Labirinto das Raízes: misteriosa, de passos curiosos e notas que pingam.
+  labirinto: {
+    passo: 0.28,
+    baixo: { notas: [110, 131, 147, 131, 110, 123, 147, 165], cada: 4, timbre: 'triangle', vol: 0.22 },
+    melodia: {
+      timbre: 'sine', vol: 0.11,
+      notas: [0, 587, 0, 0, 523, 0, 659, 0, 0, 494, 0, 0, 440, 0, 0, 0,
+        0, 587, 0, 0, 659, 0, 784, 0, 0, 698, 0, 659, 587, 0, 0, 0],
+    },
+  },
   // Pesadelo: grave, lenta e sombria, em tom menor.
   pesadelo: {
     passo: 0.3,

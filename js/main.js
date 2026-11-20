@@ -11,6 +11,7 @@ import { iniciarMissoes, desenharMissoes } from './ui/painel-missoes.js';
 import { iniciarRotina, desenharRotina, mostrarPresenca } from './ui/painel-rotina.js';
 import { iniciarTelasEventos, abrirInvasao, montarBatalhaInvasao, desenharAtalhos } from './ui/tela-eventos.js';
 import { iniciarTelaAtividades, abrirTelaAtividades } from './ui/tela-atividades.js';
+import { iniciarTelaLabirinto, abrirLabirinto } from './ui/tela-labirinto.js';
 import { prepararCampanha, proximaFase, faseLiberada } from './campanha.js';
 import { gerarAndar, checarTime } from './atividades.js';
 import * as som from './som.js';
@@ -255,7 +256,7 @@ function ligarSom() {
 }
 
 async function comecar() {
-  const [config, textos, plantas, pragas, cartas, campanha, equipamentos, missoes, faccoes, atividades, changelog, rotina, invasao, feira, herbario, ascensao, talentos, pesadelo] = await Promise.all([
+  const [config, textos, plantas, pragas, cartas, campanha, equipamentos, missoes, faccoes, atividades, changelog, rotina, invasao, feira, herbario, ascensao, talentos, pesadelo, labirinto] = await Promise.all([
     lerJson('data/config.json'),
     lerJson('data/mensagens.json'),
     lerJson('data/plantas.json'),
@@ -274,8 +275,9 @@ async function comecar() {
     lerJson('data/ascensao.json'),
     lerJson('data/talentos.json'),
     lerJson('data/pesadelo.json'),
+    lerJson('data/labirinto.json'),
   ]);
-  dados = { config, textos, plantas, pragas, cartas, campanha: prepararCampanha(campanha, pesadelo), equipamentos, missoes, faccoes, atividades, rotina, invasao, feira, herbario, ascensao, talentos, pesadelo };
+  dados = { config, textos, plantas, pragas, cartas, campanha: prepararCampanha(campanha, pesadelo), equipamentos, missoes, faccoes, atividades, rotina, invasao, feira, herbario, ascensao, talentos, pesadelo, labirinto };
 
   jogo.iniciar(dados);
   save.pedirArmazenamentoPersistente();
@@ -287,12 +289,14 @@ async function comecar() {
   // Voltar de uma batalha: atividades voltam pra tela de Desafios, a campanha pro mapa
   const mapaDaFase = (fase) => {
     if (fase && fase.tipo === 'invasao') return abrirInvasao();
+    if (fase && fase.tipo === 'labirinto') return abrirLabirinto();
     if (fase && fase.tipo) return abrirTelaAtividades();
     return abrirTelaMapa(fase ? fase.mapaIndice : undefined, !!(fase && fase.pesadelo));
   };
   iniciarTelaMapa(dados, { voltar: irParaBase, preparar: abrirTelaTime });
   iniciarTelaAtividades(dados, { voltar: irParaBase, preparar: abrirTelaTime });
   iniciarTelaTime(dados, { lutar, voltar: mapaDaFase });
+  iniciarTelaLabirinto(dados, { lutar, voltar: abrirTelaAtividades });
   iniciarTelaBatalha(dados, {
     lutar,
     sair: mapaDaFase,

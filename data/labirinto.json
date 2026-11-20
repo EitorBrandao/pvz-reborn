@@ -1,0 +1,212 @@
+{
+ "andares": 8,
+ "chefes": [
+  4,
+  8
+ ],
+ "plantasInicio": 3,
+ "plantasMax": 5,
+ "fator": [
+  0.45,
+  0.55,
+  0.65,
+  0.85,
+  0.7,
+  0.8,
+  0.9,
+  1.1
+ ],
+ "fatorElite": 1.25,
+ "inimigosPorAndar": [
+  2,
+  2,
+  3,
+  3,
+  4,
+  4,
+  5,
+  5
+ ],
+ "chefeAjudantes": [
+  2,
+  3
+ ],
+ "poolInicial": 3,
+ "descansoCura": 0.35,
+ "chefeCura": 0.5,
+ "moedasPorAndar": 25,
+ "sementesPorAndar": [
+  2,
+  2,
+  3,
+  6,
+  3,
+  4,
+  5,
+  12
+ ],
+ "sementesVitoria": 10,
+ "andaresPorPonto": 2,
+ "pontosVitoria": 2,
+ "referenciaPoder": 6000,
+ "multPremio": {
+  "min": 0.3,
+  "max": 2
+ },
+ "portas": [
+  {
+   "t": "batalha",
+   "peso": 4
+  },
+  {
+   "t": "descanso",
+   "peso": 2
+  },
+  {
+   "t": "bencao",
+   "peso": 2
+  },
+  {
+   "t": "evento",
+   "peso": 2
+  },
+  {
+   "t": "elite",
+   "peso": 2,
+   "desdeAndar": 3
+  },
+  {
+   "t": "recruta",
+   "peso": 2
+  }
+ ],
+ "bencaos": [
+  {
+   "id": "orvalho",
+   "nome": "Orvalho Doce",
+   "emoji": "💧",
+   "texto": "+20% de vida",
+   "efeito": {
+    "vida": 0.2
+   }
+  },
+  {
+   "id": "espinho",
+   "nome": "Espinhos Afiados",
+   "emoji": "🗡️",
+   "texto": "+15% de ataque",
+   "efeito": {
+    "atq": 0.15
+   }
+  },
+  {
+   "id": "casca",
+   "nome": "Casca Grossa",
+   "emoji": "🛡️",
+   "texto": "+25% de defesa",
+   "efeito": {
+    "def": 0.25
+   }
+  },
+  {
+   "id": "polen",
+   "nome": "Pólen Veloz",
+   "emoji": "🌬️",
+   "texto": "+2 de velocidade",
+   "efeito": {
+    "vel": 2
+   }
+  },
+  {
+   "id": "seiva",
+   "nome": "Seiva Extra",
+   "emoji": "🍯",
+   "texto": "Começa a batalha com 50% da seiva",
+   "efeito": {
+    "seivaInicial": 50
+   }
+  },
+  {
+   "id": "sorte",
+   "nome": "Trevo da Sorte",
+   "emoji": "🍀",
+   "texto": "+15% de chance de crítico",
+   "efeito": {
+    "critico": 0.15
+   }
+  },
+  {
+   "id": "colheita",
+   "nome": "Colheita Farta",
+   "emoji": "🧺",
+   "texto": "+30% de Sementes do Labirinto no prêmio final",
+   "efeito": {
+    "sementes": 0.3
+   }
+  }
+ ],
+ "malditas": [
+  {
+   "id": "sede",
+   "nome": "Sede do Labirinto",
+   "emoji": "🔥",
+   "texto": "+35% de ataque, mas -25% de vida",
+   "efeito": {
+    "atq": 0.35,
+    "vida": -0.25
+   }
+  },
+  {
+   "id": "pacto",
+   "nome": "Pacto Aranha",
+   "emoji": "🕷️",
+   "texto": "+30% de defesa, mas -3 de velocidade",
+   "efeito": {
+    "def": 0.3,
+    "vel": -3
+   }
+  },
+  {
+   "id": "amarga",
+   "nome": "Seiva Amarga",
+   "emoji": "🩸",
+   "texto": "Seiva enche bem mais rápido, mas -15% de vida",
+   "efeito": {
+    "seivaTurno": 12,
+    "vida": -0.15
+   }
+  }
+ ],
+ "eventos": [
+  {
+   "id": "fonte",
+   "emoji": "⛲",
+   "titulo": "Uma fonte brilha entre as raízes",
+   "opcao": "Beber",
+   "chance": 0.5,
+   "ok": {
+    "cura": 0.5,
+    "texto": "A água era pura! Todos curaram 50%."
+   },
+   "falha": {
+    "dano": 0.2,
+    "texto": "Água amarga... todos perderam 20% da vida."
+   }
+  },
+  {
+   "id": "bau",
+   "emoji": "📦",
+   "titulo": "Um baú coberto de cipó",
+   "opcao": "Abrir",
+   "chance": 0.5,
+   "ok": {
+    "sementes": 2,
+    "texto": "Achou 2 Sementes do Labirinto!"
+   },
+   "falha": {
+    "dano": 0.15,
+    "texto": "Era uma armadilha! Todos perderam 15% da vida."
+   }
+  }
+ ]
+}

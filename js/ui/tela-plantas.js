@@ -315,6 +315,7 @@ function desenharDetalhe() {
     <p class="dica-pequena"><b>${classe.emoji} ${classe.nome}</b>: ${classe.desc}</p>
     <p class="dica-pequena">Pontos livres: <b>${livres}</b> (1 a cada ${tl.niveisPorPonto} níveis, +${tl.pontosPorRank} por rank de ascensão)</p>
     ${ramosHtml}
+    ${jogo.labirinto().coringa > 0 ? `<button class="btn btn-laranja btn-peq" data-acao="ponto-labirinto">🌳 ${dados.textos.labirinto.usarPonto} (${jogo.labirinto().coringa})</button>` : ''}
     <button class="btn btn-azul btn-peq" data-acao="resetar-talentos" ${pontosGastos(r) ? '' : 'disabled'}>Resetar 💧${tl.custoReset.orvalho}</button></div>`;
 
   // Equipamentos
@@ -387,6 +388,10 @@ function acaoDetalhe(evento) {
       break;
     case 'talento':
       res = jogo.gastarTalento(aberta, botao.dataset.no);
+      if (res.ok) som.tocarSom('treino');
+      break;
+    case 'ponto-labirinto':
+      res = jogo.usarPontoLabirinto(aberta);
       if (res.ok) som.tocarSom('treino');
       break;
     case 'resetar-talentos':

@@ -843,3 +843,17 @@ body {
 .mapa-modo { display: flex; gap: 8px; margin-top: 8px; }
 .mapa-modo .aba { flex: 1; }
 .modo-pesadelo .mapa-trilha { --cor-mapa: #8b1e2d; background-blend-mode: multiply; filter: saturate(.75) brightness(.85); }
+.lab-time { display: flex; gap: 6px; justify-content: center; margin: 8px 0; }
+.lab-planta { text-align: center; width: 18%; }
+.lab-planta.caida { opacity: .35; filter: grayscale(1); }
+.lab-trilha { display: flex; gap: 3px; margin: 6px 0; }
+.lab-trilha span { flex: 1; height: 8px; border-radius: 4px; background: rgba(0, 0, 0, .15); }
+.lab-trilha .feito { background: #6fd16f; }
+.lab-trilha .atual { background: #f0c040; }
+.lab-trilha .chefe { box-shadow: 0 0 0 2px #c0392b inset; }
+.lab-bencaos { text-align: center; font-size: 1.3rem; }
+.lab-portas { display: flex; flex-direction: column; gap: 8px; }
+.lab-porta { text-align: left; }
+.lab-porta small { display: block; font-weight: 400; opacity: .9; }
+.lab-premio { font-weight: 700; }
+.grade-plantas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }

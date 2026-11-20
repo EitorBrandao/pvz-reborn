@@ -4,6 +4,7 @@ import * as save from './save.js';
 import * as evo from './evolucao.js';
 import { missaoCompleta } from './missoes.js';
 import { hoje } from './atividades.js';
+import * as lab from './labirinto.js';
 import {
   cicloAtual, situacaoInvasao, premioDoRanking, novoCicloInvasao, ofertasDoDia, paginasHerbario, fusoesHerbario,
 } from './eventos.js';
@@ -59,6 +60,7 @@ function novoEstado() {
     invasao: null,
     feira: { dia: '', comprados: [] },
     herbario: { pegas: [] },
+    labirinto: { melhor: 0, coringa: 0, run: null },
   };
 }
 
@@ -273,6 +275,7 @@ export function definirVelocidade(v) {
 export function registrarBatalha(batalha, vitoria, cartas, estrelas = 0, extra = {}) {
   const tipo = batalha.tipo || 'campanha';
   if (tipo === 'invasao') return registrarInvasao(batalha, extra.dano || 0);
+  if (tipo === 'labirinto') return registrarLabirinto(batalha, vitoria, extra.vidas || {});
   const premio = vitoria && premioValido(batalha);
   const xpCheio = batalha.recompensa.xp || 0;
   const xp = vitoria ? (premio ? xpCheio : 0) : Math.round(xpCheio * config.evolucao.xpDerrota);
@@ -321,6 +324,179 @@ function darXpAoTime(xp) {
     if (registro && evo.darXp(registro, xp, config.evolucao) > 0) subiram.push({ id: m.planta, nivel: registro.nivel });
   }
   return subiram;
+}
+
+// ---------- Labirinto das Raízes ----------
+// A corrida fica salva em estado.labirinto.run (etapa: portas, bencao, recruta, evento ou fim).
+
+const cfgLab = () => dados.labirinto;
+
+export function labirinto() {
+  return estado.labirinto;
+}
+
+export function iniciarLabirinto(ids) {
+  const c = cfgLab();
+  if (estado.labirinto.run) return { ok: false, erro: 'labirintoEmAndamento' };
+  const validos = ids.filter((id) => estado.colecao[id] && !emExpedicao(id));
+  if (!validos.length || validos.length > c.plantasInicio) return { ok: false, erro: 'labirintoTime' };
+  const run = {
+    andar: 0, andaresVencidos: 0, time: lab.posicionarTime(validos, dados),
+    vidas: Object.fromEntries(validos.map((id) => [id, 1])),
+    bencaos: [], moedas: 0, sementesExtra: 0, etapa: 'portas', portas: [], venceu: false,
+  };
+  run.poderMedio = lab.poderDoTime(run, dados, estado.colecao);
+  run.portas = lab.gerarPortas(0, run, dados, estado.colecao, emExpedicao);
+  estado.labirinto.run = run;
+  salvarAgora();
+  return { ok: true };
+}
+
+// Abre uma porta. Salas de batalha devolvem { batalha }; as outras mudam a etapa.
+export function abrirPortaLabirinto(indice) {
+  const run = estado.labirinto.run;
+  const porta = run && run.etapa === 'portas' && run.portas[indice];
+  if (!porta) return { ok: false };
+  const c = cfgLab();
+  if (porta.t === 'batalha' || porta.t === 'elite' || porta.t === 'chefe') {
+    return { ok: true, batalha: lab.gerarBatalha(run, porta.t, dados, estado.colecao) };
+  }
+  if (porta.t === 'descanso') {
+    curarTime(run, c.descansoCura);
+    avancarLabirinto(run);
+  } else if (porta.t === 'bencao') {
+    run.etapa = 'bencao';
+    run.opcoes = lab.opcoesBencao(run, dados, false);
+  } else if (porta.t === 'recruta') {
+    run.etapa = 'recruta';
+    run.opcoes = lab.opcoesRecruta(run, dados, estado.colecao, emExpedicao);
+  } else if (porta.t === 'evento') {
+    run.etapa = 'evento';
+    run.evento = c.eventos[Math.floor(Math.random() * c.eventos.length)].id;
+  }
+  salvarAgora();
+  return { ok: true, tipo: porta.t };
+}
+
+function curarTime(run, fracao) {
+  for (const id of Object.keys(run.vidas)) if (run.vidas[id] > 0) run.vidas[id] = Math.min(1, run.vidas[id] + fracao);
+}
+
+function machucarTime(run, fracao) {
+  for (const id of Object.keys(run.vidas)) if (run.vidas[id] > 0) run.vidas[id] = Math.max(0.05, run.vidas[id] - fracao);
+}
+
+function avancarLabirinto(run) {
+  run.andar += 1;
+  run.andaresVencidos = Math.max(run.andaresVencidos, run.andar);
+  run.opcoes = null;
+  run.evento = null;
+  if (run.andar >= cfgLab().andares) {
+    run.venceu = true;
+    run.etapa = 'fim';
+    return;
+  }
+  run.etapa = 'portas';
+  run.portas = lab.gerarPortas(run.andar, run, dados, estado.colecao, emExpedicao);
+}
+
+export function escolherBencaoLabirinto(id) {
+  const run = estado.labirinto.run;
+  if (!run || run.etapa !== 'bencao' || !run.opcoes.includes(id)) return { ok: false };
+  run.bencaos.push(id);
+  avancarLabirinto(run);
+  salvarAgora();
+  return { ok: true };
+}
+
+export function recrutarLabirinto(id) {
+  const run = estado.labirinto.run;
+  if (!run || run.etapa !== 'recruta') return { ok: false };
+  if (id) {
+    if (!run.opcoes.includes(id) || run.time.length >= cfgLab().plantasMax) return { ok: false };
+    run.time = lab.posicionarTime([...run.time.map((m) => m.planta), id], dados);
+    run.vidas[id] = 1;
+  }
+  avancarLabirinto(run);
+  salvarAgora();
+  return { ok: true };
+}
+
+// arriscar = false: ignora o evento. Devolve o texto do resultado.
+export function eventoLabirinto(arriscar) {
+  const run = estado.labirinto.run;
+  if (!run || run.etapa !== 'evento') return { ok: false };
+  const ev = cfgLab().eventos.find((e) => e.id === run.evento);
+  let texto = '';
+  if (arriscar) {
+    const r = Math.random() < ev.chance ? ev.ok : ev.falha;
+    if (r.cura) curarTime(run, r.cura);
+    if (r.dano) machucarTime(run, r.dano);
+    if (r.sementes) run.sementesExtra += r.sementes;
+    texto = r.texto;
+  }
+  avancarLabirinto(run);
+  salvarAgora();
+  return { ok: true, texto };
+}
+
+// Resultado de uma batalha do labirinto. "vidas" = fração de vida final de cada planta.
+function registrarLabirinto(batalha, vitoria, vidas) {
+  const run = estado.labirinto.run;
+  const c = cfgLab();
+  const vazio = { xp: 0, moedas: 0, orvalho: 0, subiram: [], subiuJogador: 0, cartas: [] };
+  if (!run) return vazio;
+  contar('batalhar');
+  for (const id of Object.keys(run.vidas)) if (id in vidas) run.vidas[id] = Math.max(0, vidas[id]);
+  if (!vitoria) {
+    run.etapa = 'fim';
+    run.venceu = false;
+  } else {
+    run.moedas += c.moedasPorAndar * batalha.andar;
+    if (batalha.sala === 'elite') {
+      run.etapa = 'bencao';
+      run.opcoes = lab.opcoesBencao(run, dados, true);
+    } else {
+      if (batalha.sala === 'chefe') curarTime(run, c.chefeCura);
+      avancarLabirinto(run);
+    }
+  }
+  salvarAgora();
+  return vazio;
+}
+
+// Encerra a corrida: paga o prêmio e libera um novo labirinto.
+export function receberLabirinto() {
+  const run = estado.labirinto.run;
+  if (!run || run.etapa !== 'fim') return { ok: false };
+  const p = lab.premioFinal(run, dados, estado.colecao);
+  estado.moedas += p.moedas;
+  estado.inventario.semente_labirinto = (estado.inventario.semente_labirinto || 0) + p.sementes;
+  estado.labirinto.coringa += p.pontos;
+  estado.labirinto.melhor = Math.max(estado.labirinto.melhor, run.andaresVencidos);
+  estado.labirinto.run = null;
+  contar('labirinto');
+  salvarAgora();
+  return { ok: true, ...p, andares: run.andaresVencidos, venceu: run.venceu };
+}
+
+export function abandonarLabirinto() {
+  const run = estado.labirinto.run;
+  if (!run) return { ok: false };
+  run.etapa = 'fim';
+  run.venceu = false;
+  salvarAgora();
+  return { ok: true };
+}
+
+// Pontos de talento do Labirinto: o jogador escolhe em qual planta usar.
+export function usarPontoLabirinto(idPlanta) {
+  const r = estado.colecao[idPlanta];
+  if (!r || estado.labirinto.coringa < 1) return { ok: false, erro: 'semPontos' };
+  estado.labirinto.coringa -= 1;
+  r.talentosExtra = (r.talentosExtra || 0) + 1;
+  salvarAgora();
+  return { ok: true };
 }
 
 // ---------- Invasão de Chefe ----------

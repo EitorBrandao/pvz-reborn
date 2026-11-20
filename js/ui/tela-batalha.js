@@ -20,6 +20,7 @@ let pular = false;
 let loopId = null;
 let partida = 0;         // muda a cada batalha nova, pra cancelar animações antigas
 let batalhaAtual = null;
+let unidadesAtuais = []; // unidades da batalha (o Labirinto lê a vida que sobrou)
 let chefeInvasao = null; // { uid, vida } do chefe da Invasão, pra contar o dano
 
 const agora = () => performance.now();
@@ -82,6 +83,7 @@ export function comecarBatalha(batalha) {
   tremor = 0;
 
   const unidades = prepararBatalha(batalha, jogo.estado.time, dados, jogo.estado.colecao);
+  unidadesAtuais = unidades;
   const semente = (Date.now() ^ Math.floor(Math.random() * 1e9)) >>> 0;
   const resultado = simular(structuredClone(unidades), dados.config.batalha, semente);
   const chefe = batalha.tipo === 'invasao' && unidades.find((u) => u.lado === 'praga' && u.id === batalha.idChefe);
@@ -96,6 +98,7 @@ export function comecarBatalha(batalha) {
   atualizarBotoes();
   mostrarTela('tela-batalha');
   if (batalha.pesadelo) som.tocarMusica('pesadelo');
+  if (batalha.tipo === 'labirinto') som.tocarMusica('labirinto');
   medir();
   if (!loopId) loopId = requestAnimationFrame(desenhar);
   som.acordar();
@@ -379,7 +382,16 @@ function terminar(resultado, semente) {
   const estrelas = resultado.vitoria && campanha
     ? calcularEstrelas(resultado.plantasVivas, resultado.plantasTotal, dados.config.estrelasFase)
     : 0;
-  const { xp, moedas, orvalho, subiram, subiuJogador, cartas } = jogo.registrarBatalha(batalhaAtual, resultado.vitoria, sorteadas, estrelas, { dano });
+  let vidas = {};
+  if (batalhaAtual.tipo === 'labirinto') {
+    // fração de vida de cada planta no fim da batalha (quem não aparece no último quadro caiu)
+    const fim = resultado.eventos[resultado.eventos.length - 1]?.snap || {};
+    for (const u of unidadesAtuais.filter((x) => x.lado === 'planta')) {
+      const s = fim[u.uid];
+      vidas[u.id] = s ? Math.max(0, s.vida) / u.vidaMax : 0;
+    }
+  }
+  const { xp, moedas, orvalho, subiram, subiuJogador, cartas } = jogo.registrarBatalha(batalhaAtual, resultado.vitoria, sorteadas, estrelas, { dano, vidas });
   const invasao = batalhaAtual.tipo === 'invasao';
   atualizarBotoes();
 
@@ -391,6 +403,7 @@ function terminar(resultado, semente) {
   let texto;
   if (invasao) texto = preencher(textos.vitoriaTexto, { moedas, xp });
   else if (batalhaAtual.tipo === 'treino') texto = textos.treinoTexto;
+  else if (batalhaAtual.tipo === 'labirinto') texto = resultado.vitoria ? textos.labirinto.salaVencida : textos.labirinto.salaPerdida;
   else if (resultado.vitoria && !moedas && !xp) texto = textos.semPremioTexto;
   else if (resultado.vitoria) texto = preencher(textos.vitoriaTexto, { moedas, xp }) + (orvalho ? ` · +${orvalho} 💧` : '');
   else texto = preencher(textos.derrotaTexto, { xp });
@@ -432,11 +445,11 @@ function terminar(resultado, semente) {
   $('btn-proxima').textContent = textos.botaoProxima[batalhaAtual.tipo || 'campanha'];
   $('btn-sair-batalha').textContent = textos.botaoSair[batalhaAtual.tipo || 'campanha'];
   // na torre, depois de vencer, o caminho é subir (repetir o andar não dá nada)
-  $('btn-de-novo').classList.toggle('escondido', resultado.vitoria && batalhaAtual.tipo === 'torre');
+  $('btn-de-novo').classList.toggle('escondido', (resultado.vitoria && batalhaAtual.tipo === 'torre') || batalhaAtual.tipo === 'labirinto');
 
   const area = $('resultado-cartas');
   area.innerHTML = '';
-  if ((resultado.vitoria || invasao) && !cartas.length) area.innerHTML = `<p>${textos.semCartas}</p>`;
+  if ((resultado.vitoria || invasao) && !cartas.length && batalhaAtual.tipo !== 'labirinto') area.innerHTML = `<p>${textos.semCartas}</p>`;
   cartas.forEach((id, i) => {
     const c = dados.cartas.find((x) => x.id === id);
     if (!c) return;

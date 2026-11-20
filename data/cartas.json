@@ -4,5 +4,6 @@
   { "id": "seiva_dourada", "nome": "Seiva Dourada", "emoji": "🍯", "raridade": "rara", "uso": "xp", "xp": 150, "descricao": "Treina uma planta: +150 XP. Também serve em equipamento épico." },
   { "id": "petala_rara", "nome": "Pétala Rara", "emoji": "🌸", "raridade": "rara", "uso": "equip", "descricao": "Material pra equipamentos raros e épicos." },
   { "id": "semente_misteriosa", "nome": "Semente Misteriosa", "emoji": "🌰", "raridade": "epica", "uso": "pacote", "descricao": "Toque pra plantar: vira uma planta aleatória!" },
-  { "id": "muda_repetida", "nome": "Muda Repetida", "emoji": "🧩", "raridade": "rara", "uso": "troca", "descricao": "Vem das cópias que sobram depois de juntar tudo pra chegar ao máximo de estrelas. Toque pra trocar por planta ou material de equipamento." }
+  { "id": "muda_repetida", "nome": "Muda Repetida", "emoji": "🧩", "raridade": "rara", "uso": "troca", "descricao": "Vem das cópias que sobram depois de juntar tudo pra chegar ao máximo de estrelas. Toque pra trocar por planta ou material de equipamento." },
+  { "id": "semente_labirinto", "nome": "Semente do Labirinto", "emoji": "🌰", "raridade": "rara", "uso": "fusao", "descricao": "Vem do Labirinto das Raízes. Material pra Fusão de plantas (em breve)." }
 ]

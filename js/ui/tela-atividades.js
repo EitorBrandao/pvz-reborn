@@ -4,6 +4,7 @@ import { $, mostrarTela, avisar, preencher } from './comum.js';
 import * as jogo from '../estado.js';
 import { gerarAndar, desafioDoDia, batalhaTreino, pragasConhecidas } from '../atividades.js';
 import { resumoInvasao, abrirInvasao } from './tela-eventos.js';
+import { abrirLabirinto } from './tela-labirinto.js';
 
 let dados;
 let aoPreparar;
@@ -104,6 +105,17 @@ function desenhar() {
     botao: inv.pendente ? t.invasaoBotaoPremio : t.invasaoBotao,
     cor: 'btn-vermelho',
     acao: abrirInvasao,
+  }));
+
+  // Labirinto das Raízes
+  const lab = jogo.labirinto();
+  lista.appendChild(cartao({
+    emoji: '🌳',
+    titulo: t.labirintoTitulo,
+    linhas: [t.labirintoTexto, lab.run ? preencher(t.labirintoAndamento, { andar: Math.min(lab.run.andar + 1, dados.labirinto.andares) }) : preencher(t.labirintoRecorde, { n: lab.melhor })],
+    botao: lab.run ? t.labirintoContinuar : t.labirintoEntrar,
+    cor: 'btn-verde',
+    acao: abrirLabirinto,
   }));
 
   // Treino

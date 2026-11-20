@@ -169,20 +169,23 @@
     "torre": "Próximo andar ⬆️",
     "desafio": "Próxima ➡️",
     "treino": "Próxima ➡️",
-    "invasao": "Próxima ➡️"
+    "invasao": "Próxima ➡️",
+    "labirinto": "Continuar"
   },
   "botaoSair": {
     "campanha": "Mapa",
     "torre": "Sair",
     "desafio": "Sair",
     "treino": "Sair",
-    "invasao": "Voltar"
+    "invasao": "Voltar",
+    "labirinto": "Labirinto"
   },
   "rotuloAtividade": {
     "torre": "🗼 Torre das Pragas",
     "desafio": "📅 Desafio do Dia",
     "treino": "🎯 Horta de Treino",
-    "invasao": "👹 Invasão de Chefe"
+    "invasao": "👹 Invasão de Chefe",
+    "labirinto": "🌳 Labirinto das Raízes"
   },
   "regraTimeMax": "Regra do desafio: no máximo {max} plantas no time.",
   "regraFaccao": "Regra do desafio: só plantas {emoji} {faccao} no time.",
@@ -205,7 +208,13 @@
     "invasaoVida": "❤️ {pct}% · você é o {pos}º",
     "invasaoAtaques": "⚔️ {n}/{max} ataques grátis hoje",
     "invasaoDerrotado": "✅ Chefe derrotado! Novo chefe em breve.",
-    "invasaoPremio": "🎁 A invasão acabou: pegue seu prêmio!"
+    "invasaoPremio": "🎁 A invasão acabou: pegue seu prêmio!",
+    "labirintoTitulo": "Labirinto das Raízes",
+    "labirintoTexto": "Corrida de 8 andares com portas, bênçãos e chefes. Qualquer planta serve.",
+    "labirintoAndamento": "Corrida em andamento: andar {andar}",
+    "labirintoRecorde": "Melhor corrida: {n} andares",
+    "labirintoEntrar": "Entrar",
+    "labirintoContinuar": "Continuar"
   },
   "mudaBloqueada": "Isso só libera num nível maior.",
   "rotina": {
@@ -282,5 +291,78 @@
     "fusaoTexto": "Duas plantas raras se juntam e viram uma planta nova e mais forte. A fusão chega numa próxima fase. Já vá juntando as plantas das receitas!",
     "fusaoEmBreve": "Em breve",
     "fusaoTem": "Você tem"
+  },
+  "labirinto": {
+    "titulo": "Labirinto das Raízes",
+    "explicacao": "Uma corrida de {andares} andares sem salvar o time. Escolha até {plantas} plantas (qualquer uma da sua coleção), e a cada andar escolha uma porta. A vida só volta em clareiras. Perdeu, a corrida acaba. As pragas se ajustam à força do seu time, e o prêmio também.",
+    "recorde": "Melhor corrida: {n} andares.",
+    "escolhaTitulo": "Seu time ({n}/{max})",
+    "timeCheio": "O time inicial leva no máximo {max} plantas. Outras podem entrar pelas portas de recruta.",
+    "premioMult": "Prêmio estimado: x{mult} (time mais forte rende mais).",
+    "entrar": "Entrar no labirinto",
+    "erroTime": "Escolha de 1 a 3 plantas.",
+    "labirintoTime": "Escolha de 1 a 3 plantas.",
+    "labirintoEmAndamento": "Já tem uma corrida em andamento.",
+    "andar": "Andar {n} de {total}",
+    "escolhaPorta": "Escolha uma porta.",
+    "andarChefe": "Um chefe guarda a única porta deste andar!",
+    "descansou": "Todos descansaram e curaram 35%.",
+    "desistir": "Desistir da corrida",
+    "desistirConfirma": "Desistir? Você ainda recebe o prêmio do que já venceu.",
+    "salas": {
+      "batalha": {
+        "emoji": "⚔️",
+        "nome": "Batalha",
+        "texto": "Pragas no caminho."
+      },
+      "elite": {
+        "emoji": "💀",
+        "nome": "Elite",
+        "texto": "Mais forte. Dá um prêmio maldito: poderoso, mas com preço."
+      },
+      "chefe": {
+        "emoji": "👑",
+        "nome": "Chefe do andar",
+        "texto": "Ao vencer, todos curam 50%."
+      },
+      "descanso": {
+        "emoji": "🌿",
+        "nome": "Clareira",
+        "texto": "Todos curam 35%."
+      },
+      "bencao": {
+        "emoji": "🎁",
+        "nome": "Bênção",
+        "texto": "Escolha 1 de 3."
+      },
+      "recruta": {
+        "emoji": "🌱",
+        "nome": "Recruta",
+        "texto": "Uma planta se junta ao time."
+      },
+      "evento": {
+        "emoji": "❓",
+        "nome": "Evento",
+        "texto": "Arrisque a sorte."
+      }
+    },
+    "bencaoTitulo": "Escolha um prêmio",
+    "bencaoTexto": "Vale pra todas as plantas até o fim da corrida. 💀 = maldito, com preço.",
+    "recrutaTitulo": "Quem entra no time?",
+    "recrutaTexto": "A planta entra com a vida cheia e já com as bênçãos.",
+    "recrutou": "{nome} entrou no time!",
+    "seguirSemRecrutar": "Seguir sem recrutar",
+    "eventoTexto": "{chance}% de chance de dar certo.",
+    "ignorar": "Ignorar",
+    "salaVencida": "Sala vencida! A vida que sobrou segue com o time.",
+    "salaPerdida": "O time caiu. O labirinto venceu desta vez.",
+    "fimVitoria": "🏆 Você saiu do labirinto!",
+    "fimDerrota": "💀 A corrida terminou",
+    "fimAndares": "Andares vencidos: {n} de {total}.",
+    "fimPremio": "Prêmio: 🌰 {sementes} Sementes · 🌳 {pontos} pontos de talento · 🪙 {moedas} (x{mult})",
+    "receber": "Receber prêmio",
+    "recebeu": "Recebeu 🌰 {sementes} e 🌳 {pontos} pontos de talento!",
+    "pontosTalento": "Pontos do Labirinto: {n}",
+    "usarPonto": "Usar ponto do Labirinto"
   }
 }

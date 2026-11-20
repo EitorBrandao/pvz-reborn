@@ -31,7 +31,7 @@ export function montarUnidade(base, lado, col, linha, nivel, uid, cfg) {
 }
 
 // Bônus de time: quantas plantas de cada facção e quanto cada uma ganha.
-export function bonusFaccoes(time, dados) {
+export function bonusFaccoes(timeUsado, dados) {
   const fx = dados.faccoes;
   const contagem = {};
   for (const m of time) {
@@ -62,9 +62,12 @@ export function prepararBatalha(batalha, time, dados, colecao = {}) {
   const cfg = dados.config.batalha;
   const unidades = [];
   let n = 0;
-  for (const m of time) {
+  const lab = batalha.labirinto || null;
+  const timeUsado = batalha.time || time;
+  for (const m of timeUsado) {
     const base = dados.plantas.find((p) => p.id === m.planta);
     if (!base) continue;
+    if (lab && (lab.vidas[m.planta] ?? 1) <= 0) continue; // planta caída no labirinto
     const registro = colecao[m.planta] || registroNovo();
     const u = montarUnidade(base, 'planta', m.col, m.linha, registro.nivel, `u${n++}`, cfg);
     const stats = atributos(base, registro, dados);
@@ -86,6 +89,17 @@ export function prepararBatalha(batalha, time, dados, colecao = {}) {
       if (h.pctVida) h.pctVida = Math.round(h.pctVida * (1 + tal.potencia) * 1000) / 1000;
       u.habilidade = h;
     }
+    if (lab) {
+      // bênçãos do Labirinto
+      const b = lab.mods;
+      u.vida = u.vidaMax = Math.max(1, Math.round(u.vidaMax * (1 + b.vida)));
+      u.atq = Math.round(u.atq * (1 + b.atq));
+      u.def = Math.round(u.def * (1 + b.def));
+      u.vel = Math.max(1, u.vel + b.vel);
+      u.bonusCritico = (u.bonusCritico || 0) + b.critico;
+      u.bonusSeivaTurno = (u.bonusSeivaTurno || 0) + b.seivaTurno;
+      u.seiva = Math.max(u.seiva, b.seivaInicial);
+    }
     marcarVantagem(u, dados);
     unidades.push(u);
   }
@@ -96,6 +110,10 @@ export function prepararBatalha(batalha, time, dados, colecao = {}) {
         if (faccao.atributo === 'vida') u.vidaMax = u.vida;
       }
     }
+  }
+  if (lab) {
+    // a vida que sobrou de uma sala pra outra (depois do bônus de facção)
+    for (const u of unidades) u.vida = Math.max(1, Math.round(u.vidaMax * (lab.vidas[u.id] ?? 1)));
   }
   for (const i of batalha.inimigos) {
     const base = dados.pragas.find((p) => p.id === i.praga);
