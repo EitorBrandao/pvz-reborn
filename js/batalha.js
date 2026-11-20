@@ -220,7 +220,8 @@ export function simular(unidades, cfg, semente) {
         break;
       case 'rajada':
         for (let i = 0; i < h.golpes; i++) {
-          const lista = inimigos(u);
+          let lista = inimigos(u);
+          if (u.alcance === 'perto' && lista.some((i) => i.col === 0)) lista = lista.filter((i) => i.col === 0);
           if (!lista.length) break;
           bater(u, lista[Math.floor(rng() * lista.length)], h.mult, efeitos);
         }
