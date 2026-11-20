@@ -205,6 +205,7 @@ export function simular(unidades, cfg, semente) {
       opcoes = tras.length ? tras : todos;
     }
     if (tipo === 'fraco') return [...opcoes].sort((a, b) => a.vida / a.vidaMax - b.vida / b.vidaMax)[0];
+    if (tipo === 'rapido') return [...opcoes].sort((a, b) => velEfetiva(b) - velEfetiva(a))[0];
     if (tipo === 'forte') return [...opcoes].sort((a, b) => b.vida - a.vida)[0];
     if (tipo === 'aleatorio') return opcoes[Math.floor(rng() * opcoes.length)];
     let menor = Infinity;
@@ -250,7 +251,7 @@ export function simular(unidades, cfg, semente) {
         u.reflete = h.reflete;
         u.refleteTurnos = h.turnos;
         efeitos.push({ alvo: u.uid, tipo: 'espinhos' });
-        if (alvo) bater(u, alvo, h.mult, efeitos);
+        if (alvo) (h.coluna ? inimigos(u).filter((i) => i.col === alvo.col) : [alvo]).forEach((i) => bater(u, i, h.mult, efeitos));
         break;
       case 'rajada':
         for (let i = 0; i < h.golpes; i++) {

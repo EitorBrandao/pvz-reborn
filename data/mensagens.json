@@ -113,6 +113,7 @@
   "bloqueada": "Ache no Pacote de Sementes",
   "habilidades": {
     "area_coluna": "Acerta toda uma coluna inimiga ({forca}% do ataque).",
+    "espinhos_coluna": "Acerta toda uma coluna inimiga ({forca}% do ataque) e devolve {reflete}% do dano recebido por {turnos} rodadas.",
     "espinhos": "Ataca e devolve {reflete}% do dano recebido por {turnos} rodadas.",
     "rajada": "Dispara {golpes} golpes em alvos aleatórios ({forca}% do ataque cada).",
     "cura": "Cura o aliado mais ferido ({forca}% do ataque).",
@@ -135,6 +136,7 @@
     "frente": "🎯 Ataca a praga da frente, na mesma fileira.",
     "fraco": "🎯 Ataca a praga com menos vida.",
     "forte": "🎯 Ataca a praga com mais vida.",
+    "rapido": "🎯 Ataca a praga mais rápida.",
     "tras": "🎯 Prefere as pragas de trás.",
     "aleatorio": "🎯 Ataca pragas aleatórias."
   },

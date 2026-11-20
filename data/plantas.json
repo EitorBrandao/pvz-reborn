@@ -300,7 +300,8 @@
         "mult": 0.1,
         "bonus": 0.15
       }
-    }
+    },
+    "alvo": "fraco"
   },
   {
     "id": "mandioca",
@@ -409,13 +410,14 @@
     "projetil": "🔥",
     "funcao": "Tanque",
     "vida": 560,
-    "atq": 36,
+    "atq": 44,
     "def": 50,
     "vel": 9,
     "habilidade": {
       "tipo": "espinhos",
       "nome": "Pele de Lava",
-      "mult": 1.2,
+      "coluna": true,
+      "mult": 1.0,
       "reflete": 0.5,
       "turnos": 3,
       "aplica": {
@@ -440,26 +442,24 @@
     "emoji": "🕸️",
     "projetil": "💨",
     "funcao": "Controle",
-    "alvo": "tras",
+    "alvo": "rapido",
     "vida": 300,
     "atq": 36,
     "def": 24,
     "vel": 15,
     "habilidade": {
-      "tipo": "lentidao",
-      "nome": "Teia Entorpecente",
+      "tipo": "sono",
+      "nome": "Teia Adormecedora",
       "mult": 1.0,
-      "reducao": 0.5,
       "turnos": 2,
       "aplica": {
         "status": "fraqueza",
-        "valor": 0.25,
+        "valor": 0.3,
         "turnos": 2
       },
       "porEstrela": {
-        "reducao": 0.05,
-        "turnos": 0.25,
         "mult": 0.1,
+        "turnos": 0.25,
         "aplica": {
           "valor": 0.03
         }
@@ -497,7 +497,8 @@
           "turnos": 0.25
         }
       }
-    }
+    },
+    "alvo": "fraco"
   },
   {
     "id": "lirio_curativo",
