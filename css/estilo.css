@@ -434,14 +434,22 @@ body {
   cursor: pointer;
   z-index: 1;
 }
-.detalhe-topo { text-align: center; }
+.detalhe-topo { display: flex; align-items: center; gap: 10px; padding-right: 40px; text-align: left; }
+.detalhe-texto { min-width: 0; flex: 1; }
+.detalhe-texto small { display: block; }
+#detalhe .modal-caixa { max-height: 94%; }
+#detalhe .rodape-modal { display: none; } /* o ✖ e o toque fora já fecham: ganha espaço pras abas */
+#detalhe .topo-modal { height: 0; padding: 0; margin-bottom: 0; overflow: visible; }
+#detalhe .topo-modal .fechar { position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; font-size: 1rem; }
 .detalhe-topo h3 { margin: 4px 0 0; }
-.detalhe-topo .info-faccao { display: block; text-align: center; margin-top: 4px; font-size: .78rem; opacity: .85; }
-.detalhe-emoji { font-size: 3rem; display: inline-block; line-height: 1.1; }
+.detalhe-topo .info-faccao { margin-top: 2px; font-size: .72rem; opacity: .85; }
+.detalhe-emoji { font-size: 3.2rem; display: inline-block; line-height: 1.1; }
 .abas-detalhe { display: flex; gap: 4px; margin: 8px 0 4px; }
 .abas-detalhe .aba { flex: 1 1 0; min-width: 0; padding: 5px 2px; font-size: .74rem; white-space: normal; line-height: 1.2; }
 .abas-detalhe .selo-melhorar { width: 14px; height: 14px; line-height: 14px; font-size: .6rem; margin-left: 2px; }
 .conteudo-aba .bloco:first-child { border-top: 0; }
+.conteudo-aba .bloco { padding: 6px 0; }
+.conteudo-aba .dica-pequena { margin: 4px 0; }
 .detalhe-topo.evoluiu .detalhe-emoji { animation: pulo .5s ease-out; }
 .bloco { border-top: 2px dashed rgba(138, 90, 43, .4); padding: 10px 0; }
 .bloco h4 { margin: 0 0 8px; }
@@ -834,8 +842,8 @@ body {
 .item-herbario.chefe { box-shadow: inset 0 0 0 2px var(--vermelho); }
 .pagina-rodape { margin-top: 6px; text-align: right; font-size: .8rem; }
 .pagina-ok { color: #2f7d1f; font-weight: 800; }
-.talento-ramo { margin: 8px 0; }
-.talento-no { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 4px 0; font-size: 13px; }
+.talento-ramo { margin: 4px 0; }
+.talento-no { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 2px 0; font-size: 13px; }
 .talento-no small { display: block; opacity: .8; }
 
 /* ---------- Selos de Ascensão / Fusão ---------- */
@@ -871,7 +879,7 @@ body {
 .lab-porta small { display: block; font-weight: 400; opacity: .9; }
 .lab-premio { font-weight: 700; }
 .grade-plantas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-.selos-detalhe { position: static; transform: none; justify-content: center; margin-top: 4px; }
+.selos-detalhe { position: static; transform: none; justify-content: flex-start; margin-top: 2px; }
 .selos-detalhe .selo { font-size: .85rem; padding: 2px 10px; }
 .fusao-bloco { margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px dashed rgba(0, 0, 0, .15); text-align: center; }
 .fusao-bloco small { display: block; margin-top: 4px; }

@@ -320,7 +320,7 @@ function desenharDetalhe() {
       return `<div class="talento-no"><div><span>${no.nome} <b>${n}/${no.max}</b></span><small>${preencher(no.texto, { valor: fmt(n || 1) })}${n ? '' : ' (por ponto)'}</small></div>
         <button class="btn btn-verde btn-peq" data-acao="talento" data-no="${no.id}" ${livres > 0 && n < no.max ? '' : 'disabled'}>+</button></div>`;
     }).join('')}</div>`).join('');
-  const blocoTalentos = `<div class="bloco"><h4>Talentos${selo(livres > 0)}</h4>
+  const blocoTalentos = `<div class="bloco">
     <p class="dica-pequena"><b>${classe.emoji} ${classe.nome}</b>: ${classe.desc}</p>
     <p class="dica-pequena">Pontos livres: <b>${livres}</b> (1 a cada ${tl.niveisPorPonto} níveis, +${tl.pontosPorRank} por rank de ascensão)</p>
     ${ramosHtml}
@@ -372,17 +372,19 @@ function desenharDetalhe() {
       <div class="bloco"><h4>Estrela${selo(m.estrela)}</h4>${blocoEstrela}</div>
       ${blocoAscensao}`,
     talentos: blocoTalentos,
-    equip: `<div class="bloco"><h4>Equipamentos${selo(m.algumEquip)}</h4>${equips}</div>`,
+    equip: `<div class="bloco">${equips}</div>`,
   };
 
   $('detalhe-conteudo').innerHTML = `
     <div class="detalhe-topo ${mudanca ? 'evoluiu' : ''}">
       <span class="detalhe-emoji">${p.emoji}</span>
-      <h3>${p.nome}</h3>
-      <small>${p.funcao}</small>
-      ${infoFaccao ? `<small class="info-faccao">${infoFaccao}</small>` : ''}
-      <div class="estrelas">${estrelasTexto(r.estrelas)}</div>
-      ${selosPlanta(r, dados).html.replace('class="selos"', 'class="selos selos-detalhe"')}
+      <div class="detalhe-texto">
+        <h3>${p.nome}</h3>
+        <small>${p.funcao}</small>
+        ${infoFaccao ? `<small class="info-faccao">${infoFaccao}</small>` : ''}
+        <div class="estrelas">${estrelasTexto(r.estrelas)}</div>
+        ${selosPlanta(r, dados).html.replace('class="selos"', 'class="selos selos-detalhe"')}
+      </div>
     </div>
     <div class="abas-detalhe">${abas.map((a) => `<button class="aba${a.id === abaDetalhe ? ' ativa' : ''}" data-aba="${a.id}">${a.nome}${selo(a.selo)}</button>`).join('')}</div>
     <div class="conteudo-aba">${paineis[abaDetalhe]}</div>`;
