@@ -70,6 +70,8 @@
   },
   "faccaoInfo": "{emoji} {nome}<br>forte contra {forteEmoji} {forteNome}<br>fraca contra {fracoEmoji} {fracoNome}",
   "bonusTime": "{emoji} {nome} ×{qtd}: +{pct}% {atributo}",
+  "bonusTabela": "{emoji} {nome}: 2 plantas +{p2}% · 3 plantas +{p3}% {atributo}",
+  "bonusTabelaTitulo": "Bônus por facção (ativo quando o time tem 2 ou 3 da mesma)",
   "bonusTimeVazio": "Junte 2 ou 3 plantas da mesma facção pra ganhar bônus.",
   "somLigado": "🔊 Som ligado",
   "somDesligado": "🔇 Som desligado",

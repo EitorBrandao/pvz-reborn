@@ -91,6 +91,14 @@ function desenharBonus() {
       emoji: f.emoji, nome: f.nome, qtd, pct: Math.round(bonus * 100), atributo: t.atributos[f.atributo],
     })}</span>`).join('')
     : `<small>${t.bonusTimeVazio}</small>`;
+  // Tabela sempre visível, pra montar a estratégia antes de colocar as plantas
+  const bt = dados.faccoes.bonusTime;
+  $('time-bonus-tabela').innerHTML = `<small><b>${t.bonusTabelaTitulo}</b></small>` + dados.faccoes.faccoes.map((f) => {
+    const tem = jogo.estado.time.filter((m) => dados.plantas.find((p) => p.id === m.planta)?.faccao === f.id).length;
+    return `<small class="${bt[tem] ? 'ativa' : ''}">${preencher(t.bonusTabela, {
+      emoji: f.emoji, nome: f.nome, p2: Math.round(bt[2] * 100), p3: Math.round(bt[3] * 100), atributo: t.atributos[f.atributo],
+    })}</small>`;
+  }).join('');
 }
 
 function desenharGrade() {
