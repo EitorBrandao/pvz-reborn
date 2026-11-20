@@ -23,4 +23,6 @@ Abra o link no celular (Chrome no Android ou Safari no iPhone). Pra instalar com
 
 HTML, CSS e JavaScript puro, sem build. Números e textos ficam em `data/*.json`. Publicado pelo GitHub Pages a partir da branch `main`.
 
+**Wiki (como tudo funciona e se conecta):** [docs/](docs/README.md).
+
 Plano completo e andamento das fases em [PLANO.md](PLANO.md). Regras de trabalho em [CLAUDE.md](CLAUDE.md).

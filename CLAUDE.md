@@ -28,6 +28,10 @@ Arquivo novo (js, json, imagem) também precisa entrar na lista `ARQUIVOS` do `s
 - Música: cada modo novo do jogo precisa de música própria, diferente das outras. Crie em `MUSICAS` no `js/som.js` e ligue as telas do modo em `data/config.json` → `som.musicaPorTela` (tela sem entrada toca a música da horta).
 - Nomes, personagens e arte originais. Nada de Plants vs. Zombies, PopCap, EA ou Youkia.
 
+## Documentação
+
+- A wiki do projeto fica em `docs/` (índice em `docs/README.md`). Ao mudar uma regra, sistema, arquivo de dados ou tela, atualize a página correspondente no mesmo commit. Mudança só em `docs/` não precisa subir a versão do jogo.
+
 ## Testes
 
 - Não rode código nem testes com o modelo Opus: passe os testes pra um subagente com modelo menor (Sonnet ou Haiku, conforme a complexidade).
