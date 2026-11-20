@@ -1,4 +1,5 @@
 [
+  { "versao": "0.8.3", "itens": ["📖 Herbário: nova página de Fusão de plantas com as receitas (em breve)"] },
   { "versao": "0.8.2", "itens": ["Fim da batalha mostra o sumário de dano, com abas de dano causado e dano recebido por planta"] },
   { "versao": "0.8.1", "itens": ["Telhado mais difícil: fases 5 a 9 com 6 inimigos de tipos variados e nível maior", "Coruja Sombria agora dá pra vencer (antes não dava), mas pede um time bem montado"] },
   { "versao": "0.8.0", "itens": ["👹 Invasão de Chefe em Desafios: chefe gigante de 3 dias, todos os vizinhos batem nele, ranking de dano com prêmios", "🛒 Feira: ofertas que mudam todo dia e trocas de materiais", "📖 Herbário: álbum de plantas e pragas com prêmio por página completa", "Músicas próprias para Desafios, Invasão, Feira e Herbário"] },

@@ -266,6 +266,10 @@
     "pego": "✅ Prêmio pego",
     "pegar": "Pegar",
     "premio": "Prêmio:",
-    "pegou": "Página completa! {premio}"
+    "pegou": "Página completa! {premio}",
+    "fusaoTitulo": "🧬 Fusão de plantas",
+    "fusaoTexto": "Duas plantas raras se juntam e viram uma planta nova e mais forte. A fusão chega numa próxima fase. Já vá juntando as plantas das receitas!",
+    "fusaoEmBreve": "Em breve",
+    "fusaoTem": "Você tem"
   }
 }

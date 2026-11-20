@@ -5,7 +5,7 @@ import * as evo from './evolucao.js';
 import { missaoCompleta } from './missoes.js';
 import { hoje } from './atividades.js';
 import {
-  cicloAtual, situacaoInvasao, premioDoRanking, novoCicloInvasao, ofertasDoDia, paginasHerbario,
+  cicloAtual, situacaoInvasao, premioDoRanking, novoCicloInvasao, ofertasDoDia, paginasHerbario, fusoesHerbario,
 } from './eventos.js';
 
 let dados = null;
@@ -417,6 +417,10 @@ export function fazerTroca(id) {
 }
 
 // ---------- Herbário ----------
+
+export function fusoes() {
+  return fusoesHerbario(dados, estado);
+}
 
 export function herbario() {
   return paginasHerbario(dados, estado);

@@ -813,6 +813,8 @@ body {
 .item-herbario span { font-size: 1.7rem; }
 .item-herbario small { font-size: .6rem; line-height: 1.1; overflow-wrap: anywhere; }
 .item-herbario.oculto span { filter: brightness(0); opacity: .35; }
+.fusao-receita { display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 6px; }
+.fusao-receita .item-herbario { width: 70px; }
 .item-herbario.chefe { box-shadow: inset 0 0 0 2px var(--vermelho); }
 .pagina-rodape { margin-top: 6px; text-align: right; font-size: .8rem; }
 .pagina-ok { color: #2f7d1f; font-weight: 800; }
