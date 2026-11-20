@@ -8,6 +8,7 @@ import { iniciarTelaBatalha, comecarBatalha } from './ui/tela-batalha.js';
 import { iniciarTelaPlantas, abrirTelaPlantas } from './ui/tela-plantas.js';
 import { iniciarTelaMapa, abrirTelaMapa } from './ui/tela-mapa.js';
 import { iniciarMissoes, desenharMissoes } from './ui/painel-missoes.js';
+import { iniciarRotina, desenharRotina, mostrarPresenca } from './ui/painel-rotina.js';
 import { iniciarTelaAtividades, abrirTelaAtividades } from './ui/tela-atividades.js';
 import { prepararCampanha, proximaFase, faseLiberada } from './campanha.js';
 import { gerarAndar, checarTime } from './atividades.js';
@@ -28,6 +29,7 @@ function atualizarTela() {
   $('hud-xp').style.width = `${(xp.xp / xp.precisa) * 100}%`;
   atualizarFolego();
   desenharMissoes();
+  desenharRotina();
   const broto = jogo.estagioBroto();
   $('broto-emoji').textContent = broto.emoji;
   $('broto-barra').style.width = `${broto.progresso * 100}%`;
@@ -81,6 +83,7 @@ function ligarBotoes() {
   $('btn-jogar').addEventListener('click', () => {
     $('saudacao').textContent = sortear(textos.saudacoes);
     irParaBase();
+    mostrarPresenca();
   });
 
   $('broto').addEventListener('click', () => {
@@ -211,7 +214,7 @@ function desenharChangelog(lista) {
 }
 
 async function comecar() {
-  const [config, textos, plantas, pragas, cartas, campanha, equipamentos, missoes, faccoes, atividades, changelog] = await Promise.all([
+  const [config, textos, plantas, pragas, cartas, campanha, equipamentos, missoes, faccoes, atividades, changelog, rotina] = await Promise.all([
     lerJson('data/config.json'),
     lerJson('data/mensagens.json'),
     lerJson('data/plantas.json'),
@@ -223,8 +226,9 @@ async function comecar() {
     lerJson('data/faccoes.json'),
     lerJson('data/atividades.json'),
     lerJson('data/changelog.json'),
+    lerJson('data/rotina.json'),
   ]);
-  dados = { config, textos, plantas, pragas, cartas, campanha: prepararCampanha(campanha), equipamentos, missoes, faccoes, atividades };
+  dados = { config, textos, plantas, pragas, cartas, campanha: prepararCampanha(campanha), equipamentos, missoes, faccoes, atividades, rotina };
 
   jogo.iniciar(dados);
   save.pedirArmazenamentoPersistente();
@@ -250,6 +254,7 @@ async function comecar() {
   });
   iniciarTelaPlantas(dados, irParaBase);
   iniciarMissoes(dados, atualizarTela);
+  iniciarRotina(dados, atualizarTela);
   setInterval(atualizarFolego, 1000);
   prepararInstalacao();
   registrarServiceWorker();

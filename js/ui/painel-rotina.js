@@ -1,0 +1,235 @@
+// Rotina diária na tela da horta: Canteiro (3 vasos), Expedição e Calendário de presença.
+
+import { $, avisar, preencher } from './comum.js';
+import * as jogo from '../estado.js';
+
+let dados;
+let aoMudar;
+let aberto = null;         // o que está aberto na janela: 'vaso', 'expedicao' ou 'presenca'
+let vasoAberto = 0;
+let destinoEscolhido = null;
+let escolhidas = [];
+
+export function iniciarRotina(d, mudou) {
+  dados = d;
+  aoMudar = mudou;
+  $('rotina-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'rotina-modal' || e.target.closest('.rotina-fechar')) fechar();
+  });
+  setInterval(() => {
+    if ($('tela-base').classList.contains('ativa')) desenharRotina();
+  }, 1000);
+}
+
+const t = () => dados.textos.rotina;
+
+function formatar(ms) {
+  const s = Math.ceil(ms / 1000);
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const seg = String(s % 60).padStart(2, '0');
+  return h ? `${h}:${String(m).padStart(2, '0')}:${seg}` : `${m}:${seg}`;
+}
+
+function nomesCartas(cartas) {
+  return cartas.map((id) => dados.cartas.find((c) => c.id === id)?.emoji || '').join(' ');
+}
+
+function textoPremio(p) {
+  const partes = [];
+  if (p.moedas) partes.push(`🪙 ${p.moedas}`);
+  if (p.orvalho) partes.push(`💧 ${p.orvalho}`);
+  for (const [id, qtd] of Object.entries(p.cartas || {})) {
+    const c = dados.cartas.find((x) => x.id === id);
+    if (c) partes.push(`${c.emoji}${qtd > 1 ? `×${qtd}` : ''}`);
+  }
+  return partes.join(' ');
+}
+
+// ---------- Fileira da horta ----------
+
+export function desenharRotina() {
+  const area = $('rotina');
+  if (!area.childElementCount) {
+    for (let i = 0; i < dados.rotina.canteiro.vasos; i++) {
+      const b = document.createElement('button');
+      b.className = 'vaso';
+      b.addEventListener('click', () => tocarVaso(i));
+      area.appendChild(b);
+    }
+    const b = document.createElement('button');
+    b.className = 'vaso vaso-expedicao';
+    b.addEventListener('click', abrirExpedicao);
+    area.appendChild(b);
+  }
+  const botoes = area.children;
+  const estagios = dados.rotina.canteiro.estagios;
+  for (let i = 0; i < dados.rotina.canteiro.vasos; i++) {
+    const info = jogo.vasoInfo(i);
+    let emoji = '🟫';
+    let texto = t().plantar;
+    if (!info.vazio) {
+      emoji = info.pronto ? info.muda.emoji : estagios[Math.min(estagios.length - 1, Math.floor(info.progresso * estagios.length))];
+      texto = info.pronto ? t().colher : formatar(info.falta);
+    }
+    botoes[i].className = 'vaso' + (info.pronto ? ' pronto' : '') + (info.vazio ? ' vazio' : '');
+    botoes[i].innerHTML = `<span>${emoji}</span><small>${texto}</small>`;
+  }
+  const exp = jogo.expedicaoInfo();
+  const b = botoes[dados.rotina.canteiro.vasos];
+  b.className = 'vaso vaso-expedicao' + (exp && exp.pronta ? ' pronto' : '');
+  b.innerHTML = `<span>${exp ? exp.destino.emoji : '🧭'}</span><small>${
+    !exp ? t().expedicao : exp.pronta ? t().receber : formatar(exp.falta)}</small>`;
+  if (aberto === 'expedicao' && exp) desenharExpedicao();
+}
+
+// ---------- Janela ----------
+
+function abrirJanela(qual, html) {
+  aberto = qual;
+  $('rotina-conteudo').innerHTML = `<button class="fechar rotina-fechar" aria-label="Fechar">✖</button>${html}`;
+  $('rotina-modal').classList.remove('escondido');
+}
+
+function fechar() {
+  aberto = null;
+  $('rotina-modal').classList.add('escondido');
+}
+
+// ---------- Canteiro ----------
+
+function tocarVaso(i) {
+  const info = jogo.vasoInfo(i);
+  if (info.pronto) {
+    const r = jogo.colherVaso(i);
+    if (r.ok) avisar(preencher(t().colheu, { emoji: r.muda.emoji, moedas: r.moedas, cartas: nomesCartas(r.cartas) }).trim());
+    aoMudar();
+    return;
+  }
+  if (!info.vazio) return avisar(preencher(t().crescendo, { nome: info.muda.nome, tempo: formatar(info.falta) }));
+  vasoAberto = i;
+  const lista = dados.rotina.canteiro.mudas.map((m) => {
+    const bloqueada = jogo.estado.nivel < m.nivelMin;
+    const tempo = m.minutos >= 60 ? `${m.minutos / 60}h` : `${m.minutos}min`;
+    const cartas = m.cartas.map((c) => dados.cartas.find((x) => x.id === c.carta)?.emoji).join('');
+    return `<button class="linha-escolha${bloqueada ? ' bloqueada' : ''}" data-muda="${m.id}">
+      <span class="escolha-emoji">${bloqueada ? '🔒' : m.emoji}</span>
+      <span class="escolha-info"><b>${m.nome} · ⏱️ ${tempo}</b>
+        <small>${bloqueada ? preencher(t().nivelMin, { nivel: m.nivelMin }) : `${t().colhe} 🪙 ${m.moedas} ${cartas}`}</small></span>
+      <span class="escolha-preco">🪙 ${m.custo}</span>
+    </button>`;
+  }).join('');
+  abrirJanela('vaso', `<h3>${t().escolherMuda}</h3><p class="dica-pequena">${t().mudaDica}</p><div class="lista-escolha">${lista}</div>`);
+  $('rotina-conteudo').querySelectorAll('[data-muda]').forEach((b) => b.addEventListener('click', () => {
+    const r = jogo.plantarMuda(vasoAberto, b.dataset.muda);
+    if (!r.ok) return avisar(dados.textos[r.erro] || t()[r.erro]);
+    fechar();
+    aoMudar();
+  }));
+}
+
+// ---------- Expedição ----------
+
+function abrirExpedicao() {
+  const exp = jogo.expedicaoInfo();
+  if (exp && exp.pronta) {
+    const r = jogo.receberExpedicao();
+    if (r.ok) {
+      const subiram = r.subiram.map((s) => dados.plantas.find((p) => p.id === s.id)?.emoji).join('');
+      abrirJanela('resultado', `<h3>${t().voltaram}</h3>
+        <p class="rotina-premio">🪙 ${r.moedas} · ✨ ${r.xp} XP ${nomesCartas(r.cartas)}</p>
+        ${subiram ? `<p>${preencher(t().subiramNivel, { plantas: subiram })}</p>` : ''}
+        <button class="btn btn-laranja rotina-fechar">${t().oba}</button>`);
+    }
+    aoMudar();
+    return;
+  }
+  if (!exp) {
+    destinoEscolhido = destinoEscolhido || dados.rotina.expedicao.destinos[0].id;
+    escolhidas = escolhidas.filter((id) => podeIr(id));
+  }
+  aberto = 'expedicao';
+  desenharExpedicao();
+  $('rotina-modal').classList.remove('escondido');
+}
+
+function podeIr(id) {
+  return jogo.estado.colecao[id] && !jogo.estado.time.some((m) => m.planta === id);
+}
+
+function desenharExpedicao() {
+  const exp = jogo.expedicaoInfo();
+  const caixa = $('rotina-conteudo');
+  const fechar = '<button class="fechar rotina-fechar" aria-label="Fechar">✖</button>';
+  if (exp) {
+    const plantas = exp.plantas.map((id) => dados.plantas.find((p) => p.id === id)?.emoji).join(' ');
+    caixa.innerHTML = `${fechar}<h3>${exp.destino.emoji} ${exp.destino.nome}</h3>
+      <p class="rotina-plantas">${plantas}</p>
+      <div class="barra-xp grande"><span style="width:${exp.progresso * 100}%"></span></div>
+      <p>${preencher(t().voltaEm, { tempo: formatar(exp.falta) })}</p>
+      <p class="dica-pequena">${t().viajandoDica}</p>`;
+    return;
+  }
+  const max = dados.rotina.expedicao.maxPlantas;
+  const destinos = dados.rotina.expedicao.destinos.map((d) => {
+    const cartas = d.cartas.map((c) => dados.cartas.find((x) => x.id === c.carta)?.emoji).join('');
+    return `<button class="linha-escolha${d.id === destinoEscolhido ? ' marcada' : ''}" data-destino="${d.id}">
+      <span class="escolha-emoji">${d.emoji}</span>
+      <span class="escolha-info"><b>${d.nome} · ⏱️ ${d.horas}h</b>
+        <small>${preencher(t().porPlanta, { moedas: d.moedasPorPlanta, xp: d.xpPorPlanta })} ${cartas}</small></span>
+    </button>`;
+  }).join('');
+  const livres = dados.plantas.filter((p) => podeIr(p.id));
+  const plantas = livres.length
+    ? livres.map((p) => `<button class="escolha-planta${escolhidas.includes(p.id) ? ' marcada' : ''}" data-planta="${p.id}">
+        <span>${p.emoji}</span><small>Nv ${jogo.estado.colecao[p.id].nivel}</small></button>`).join('')
+    : `<p class="dica-pequena">${t().semPlantasLivres}</p>`;
+  caixa.innerHTML = `${fechar}<h3>🧭 ${t().expedicao}</h3>
+    <p class="dica-pequena">${t().expedicaoDica}</p>
+    <div class="lista-escolha">${destinos}</div>
+    <h4>${preencher(t().quemVai, { qtd: escolhidas.length, max })}</h4>
+    <div class="grade-escolha">${plantas}</div>
+    <button id="expedicao-enviar" class="btn btn-laranja btn-largo">${t().enviar}</button>`;
+  caixa.querySelectorAll('[data-destino]').forEach((b) => b.addEventListener('click', () => {
+    destinoEscolhido = b.dataset.destino;
+    desenharExpedicao();
+  }));
+  caixa.querySelectorAll('[data-planta]').forEach((b) => b.addEventListener('click', () => {
+    const id = b.dataset.planta;
+    if (escolhidas.includes(id)) escolhidas = escolhidas.filter((x) => x !== id);
+    else if (escolhidas.length >= max) return avisar(preencher(t().expedicaoCheia, { max }));
+    else escolhidas.push(id);
+    desenharExpedicao();
+  }));
+  $('expedicao-enviar').addEventListener('click', () => {
+    const r = jogo.enviarExpedicao(destinoEscolhido, escolhidas);
+    if (!r.ok) return avisar(t()[r.erro] || dados.textos[r.erro]);
+    escolhidas = [];
+    avisar(t().enviou);
+    fechar();
+    aoMudar();
+  });
+}
+
+// ---------- Calendário de presença ----------
+
+// Abre sozinho quando ainda não pegou o prêmio de hoje
+export function mostrarPresenca() {
+  const hojeIndice = jogo.presencaPendente();
+  if (hojeIndice < 0) return;
+  const dias = dados.rotina.presenca.premios.map((p, i) => `
+    <div class="dia-presenca${i < hojeIndice ? ' pego' : ''}${i === hojeIndice ? ' hoje' : ''}${i === 6 ? ' grande' : ''}">
+      <small>${preencher(t().dia, { n: i + 1 })}</small>
+      <span>${i < hojeIndice ? '✅' : textoPremio(p)}</span>
+    </div>`).join('');
+  abrirJanela('presenca', `<h3>📅 ${t().presencaTitulo}</h3>
+    <p class="dica-pequena">${t().presencaDica}</p>
+    <div class="grade-presenca">${dias}</div>
+    <button id="presenca-pegar" class="btn btn-laranja btn-largo">${t().pegar}</button>`);
+  $('presenca-pegar').addEventListener('click', () => {
+    const r = jogo.resgatarPresenca();
+    if (r.ok) avisar(preencher(t().pegou, { premio: textoPremio(r.premio) }));
+    fechar();
+    aoMudar();
+  });
+}

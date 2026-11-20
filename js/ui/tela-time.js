@@ -113,16 +113,20 @@ function desenharPlantas() {
     const noTime = jogo.estado.time.find((m) => m.planta === p.id);
     const cartao = document.createElement('button');
     const fora = faseEscolhida.faccao && p.faccao !== faseEscolhida.faccao;
-    cartao.className = 'cartao-planta' + (noTime ? ' no-time' : '') + (fora ? ' fora-regra' : '');
+    const viajando = jogo.emExpedicao(p.id);
+    cartao.className = 'cartao-planta' + (noTime ? ' no-time' : '') + (fora || viajando ? ' fora-regra' : '');
     cartao.innerHTML = `
       <span class="planta-emoji">${p.emoji}</span>
       <b>${p.nome}</b>
       <small>${dados.faccoes.faccoes.find((f) => f.id === p.faccao)?.emoji || ''} Nv ${registro.nivel} · ${'⭐'.repeat(registro.estrelas)}</small>
-      <span class="atributos">❤️${s.vida} ⚔️${s.atq} 🛡️${s.def} 💨${s.vel}</span>`;
+      <span class="atributos">❤️${s.vida} ⚔️${s.atq} 🛡️${s.def} 💨${s.vel}</span>
+      ${viajando ? `<small class="selo-viagem">${dados.textos.rotina.emViagem}</small>` : ''}`;
     cartao.addEventListener('click', () => {
       const time = jogo.estado.time;
       if (noTime) {
         jogo.definirTime(time.filter((m) => m !== noTime));
+      } else if (viajando) {
+        return avisar(dados.textos.rotina.plantaViajando);
       } else if (time.length >= max) {
         return avisar(preencher(dados.textos.timeCheio, { max }));
       } else {

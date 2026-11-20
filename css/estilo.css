@@ -648,3 +648,64 @@ body {
 .treino-escolhidos .espaco { height: 56px; font-size: 1.9rem; }
 .treino-nivel { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 10px 0 0; }
 .treino-nivel b { min-width: 64px; text-align: center; font-size: 1.1rem; text-shadow: 0 2px 0 rgba(0, 0, 0, .3); }
+
+/* ---------- Rotina: canteiro, expedição e calendário ---------- */
+.rotina { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: 100%; max-width: 340px; margin-top: 6px; }
+.vaso {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: 6px 2px; min-width: 0;
+  background: var(--bege); color: var(--escuro);
+  border: 3px solid var(--terra); border-radius: 14px;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, .3);
+  font-family: inherit; cursor: pointer;
+}
+.vaso span { font-size: 1.7rem; line-height: 1.1; }
+.vaso small { font-size: .7rem; font-weight: 700; white-space: nowrap; }
+.vaso.vazio span { opacity: .6; }
+.vaso.pronto { border-color: var(--laranja); background: #fff3d6; animation: pronto 1s ease-in-out infinite alternate; }
+.vaso-expedicao { background: #d8ecfa; border-color: #2a6fa3; }
+@keyframes pronto { to { transform: translateY(-3px); } }
+
+.lista-escolha { display: flex; flex-direction: column; gap: 6px; margin: 8px 0; }
+.linha-escolha {
+  display: flex; align-items: center; gap: 8px; text-align: left;
+  padding: 6px 8px; background: #fff8e6; color: var(--escuro);
+  border: 2px solid var(--terra); border-radius: 12px; font-family: inherit; cursor: pointer;
+}
+.linha-escolha.marcada { border-color: var(--laranja); background: #fff3d6; box-shadow: 0 0 0 2px var(--laranja); }
+.linha-escolha.bloqueada { opacity: .55; }
+.escolha-emoji { font-size: 1.8rem; flex-shrink: 0; }
+.escolha-info { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.escolha-info small { font-size: .75rem; }
+.escolha-preco { font-weight: 800; white-space: nowrap; }
+.grade-escolha { display: grid; grid-template-columns: repeat(auto-fill, minmax(56px, 1fr)); gap: 6px; margin: 6px 0 10px; }
+.escolha-planta {
+  display: flex; flex-direction: column; align-items: center; padding: 4px 0;
+  background: #fff8e6; color: var(--escuro); border: 2px solid var(--terra); border-radius: 12px;
+  font-family: inherit; cursor: pointer;
+}
+.escolha-planta span { font-size: 1.6rem; }
+.escolha-planta small { font-size: .65rem; }
+.escolha-planta.marcada { border-color: #3d9a22; background: #d9f5c8; box-shadow: 0 0 0 2px #3d9a22; }
+.btn-largo { width: 100%; }
+.rotina-premio { font-size: 1.2rem; font-weight: 800; }
+.rotina-plantas { font-size: 2rem; text-align: center; margin: 6px 0; }
+.selo-viagem { color: #2a6fa3; font-weight: 700; }
+
+.grade-presenca { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 8px 0 12px; }
+.dia-presenca {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  min-height: 62px; padding: 4px 2px; text-align: center;
+  background: #fff8e6; border: 2px solid var(--terra); border-radius: 12px;
+}
+.dia-presenca small { font-size: .7rem; opacity: .8; }
+.dia-presenca span { font-size: .85rem; font-weight: 700; overflow-wrap: anywhere; }
+.dia-presenca.pego { opacity: .55; }
+.dia-presenca.hoje { border-color: var(--laranja); background: #fff3d6; box-shadow: 0 0 0 2px var(--laranja); }
+.dia-presenca.grande { grid-column: span 2; background: #fde7b0; }
+
+/* celular baixinho: broto menor pra caber o canteiro */
+@media (max-height: 800px) {
+  .broto { width: 120px; height: 120px; font-size: 3.8rem; }
+  .base-centro { gap: 6px; }
+}

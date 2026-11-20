@@ -3,6 +3,7 @@
 import * as save from './save.js';
 import * as evo from './evolucao.js';
 import { missaoCompleta } from './missoes.js';
+import { hoje } from './atividades.js';
 
 let dados = null;
 let config = null;
@@ -49,6 +50,9 @@ function novoEstado() {
     missoes: { ativas: [], proxima: 0 },
     torre: { andar: 1, melhor: 0 },
     desafio: { dia: '', vencido: false, total: 0 },
+    canteiro: Array(dados.rotina.canteiro.vasos).fill(null),
+    expedicao: null,
+    presenca: { dia: '', dias: 0 },
   };
 }
 
@@ -56,6 +60,7 @@ function completar(salvo) {
   const e = Object.assign(novoEstado(), salvo);
   // Plantas que já estavam no time de saves antigos entram na coleção
   for (const m of e.time) if (!e.colecao[m.planta]) e.colecao[m.planta] = evo.registroNovo();
+  while (e.canteiro.length < dados.rotina.canteiro.vasos) e.canteiro.push(null);
   return e;
 }
 
@@ -284,6 +289,130 @@ function premioValido(batalha) {
   if (batalha.tipo === 'torre') return batalha.andar === estado.torre.andar;
   if (batalha.tipo === 'desafio') return !(estado.desafio.dia === batalha.dia && estado.desafio.vencido);
   return true;
+}
+
+// ---------- Rotina diária: Canteiro, Expedição e Calendário ----------
+// Tudo usa a hora do relógio, então continua andando com o jogo fechado.
+
+function sortearCartas(lista) {
+  return lista.filter((c) => Math.random() < c.chance).map((c) => c.carta);
+}
+
+function guardarCartas(cartas) {
+  for (const c of cartas) estado.inventario[c] = (estado.inventario[c] || 0) + 1;
+  contar('coletarCarta', cartas.length);
+}
+
+// Moedas, orvalho e cartas ({ id: qtd }) de um prêmio fixo
+function darPremio(p) {
+  estado.moedas += p.moedas || 0;
+  estado.orvalho += p.orvalho || 0;
+  for (const [carta, qtd] of Object.entries(p.cartas || {})) {
+    estado.inventario[carta] = (estado.inventario[carta] || 0) + qtd;
+  }
+}
+
+const mudaPorId = (id) => dados.rotina.canteiro.mudas.find((m) => m.id === id);
+
+// Situação de um vaso: vazio, crescendo (com tempo que falta) ou pronto
+export function vasoInfo(i) {
+  const v = estado.canteiro[i];
+  const muda = v && mudaPorId(v.muda);
+  if (!muda) return { vazio: true };
+  const total = muda.minutos * 60000;
+  const passou = Date.now() - v.desde;
+  return { muda, pronto: passou >= total, falta: Math.max(0, total - passou), progresso: Math.min(1, passou / total) };
+}
+
+export function plantarMuda(i, idMuda) {
+  const muda = mudaPorId(idMuda);
+  if (!muda || !vasoInfo(i).vazio) return { ok: false, erro: 'semMaterial' };
+  if (estado.nivel < muda.nivelMin) return { ok: false, erro: 'mudaBloqueada' };
+  if (estado.moedas < muda.custo) return { ok: false, erro: 'semMoedas' };
+  estado.moedas -= muda.custo;
+  estado.canteiro[i] = { muda: muda.id, desde: Date.now() };
+  contar('plantarMuda');
+  salvarAgora();
+  return { ok: true };
+}
+
+export function colherVaso(i) {
+  const info = vasoInfo(i);
+  if (!info.pronto) return { ok: false, erro: 'naoPronto' };
+  const cartas = sortearCartas(info.muda.cartas);
+  estado.moedas += info.muda.moedas;
+  guardarCartas(cartas);
+  estado.canteiro[i] = null;
+  contar('colherCanteiro');
+  salvarAgora();
+  return { ok: true, moedas: info.muda.moedas, cartas, muda: info.muda };
+}
+
+const destinoPorId = (id) => dados.rotina.expedicao.destinos.find((d) => d.id === id);
+
+export function emExpedicao(idPlanta) {
+  return !!estado.expedicao && estado.expedicao.plantas.includes(idPlanta);
+}
+
+export function expedicaoInfo() {
+  const e = estado.expedicao;
+  const destino = e && destinoPorId(e.destino);
+  if (!destino) return null;
+  const total = destino.horas * 3600000;
+  const passou = Date.now() - e.desde;
+  return { destino, plantas: e.plantas, pronta: passou >= total, falta: Math.max(0, total - passou), progresso: Math.min(1, passou / total) };
+}
+
+export function enviarExpedicao(idDestino, plantas) {
+  const destino = destinoPorId(idDestino);
+  if (!destino || estado.expedicao) return { ok: false, erro: 'semMaterial' };
+  if (!plantas.length) return { ok: false, erro: 'expedicaoVazia' };
+  if (plantas.length > dados.rotina.expedicao.maxPlantas) return { ok: false, erro: 'semMaterial' };
+  if (plantas.some((id) => !estado.colecao[id] || estado.time.some((m) => m.planta === id))) return { ok: false, erro: 'expedicaoNoTime' };
+  estado.expedicao = { destino: destino.id, plantas: [...plantas], desde: Date.now() };
+  contar('enviarExpedicao');
+  salvarAgora();
+  return { ok: true };
+}
+
+export function receberExpedicao() {
+  const info = expedicaoInfo();
+  if (!info || !info.pronta) return { ok: false, erro: 'naoPronto' };
+  const d = info.destino;
+  let moedas = 0;
+  let cartas = [];
+  const subiram = [];
+  for (const id of info.plantas) {
+    const registro = estado.colecao[id];
+    if (!registro) continue;
+    moedas += d.moedasPorPlanta + d.moedasPorNivel * registro.nivel;
+    cartas = cartas.concat(sortearCartas(d.cartas));
+    if (evo.darXp(registro, d.xpPorPlanta, config.evolucao) > 0) subiram.push({ id, nivel: registro.nivel });
+  }
+  estado.moedas += moedas;
+  guardarCartas(cartas);
+  estado.expedicao = null;
+  contar('voltarExpedicao');
+  salvarAgora();
+  return { ok: true, moedas, cartas, subiram, xp: d.xpPorPlanta };
+}
+
+// Calendário: um prêmio por dia em que o jogador entra (não precisa ser seguido).
+// Devolve o número do dia (0 a 6) se ainda não pegou o de hoje, senão -1.
+export function presencaPendente() {
+  if (estado.presenca.dia === hoje()) return -1;
+  return estado.presenca.dias % dados.rotina.presenca.premios.length;
+}
+
+export function resgatarPresenca() {
+  const indice = presencaPendente();
+  if (indice < 0) return { ok: false };
+  const premio = dados.rotina.presenca.premios[indice];
+  darPremio(premio);
+  estado.presenca = { dia: hoje(), dias: estado.presenca.dias + 1 };
+  contar('presenca');
+  salvarAgora();
+  return { ok: true, indice, premio };
 }
 
 // ---------- Evolução ----------
