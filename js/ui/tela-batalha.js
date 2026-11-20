@@ -513,7 +513,7 @@ function desenharUnidade(v) {
       ctx.fillStyle = 'rgba(0,0,0,.55)';
       ctx.fillRect(bx - 1, by - 7, larg + 2, 6);
       ctx.fillStyle = '#7fe3ff';
-      ctx.fillRect(bx, by - 6, larg * Math.min(1, v.escudo / v.vidaMax), 4);
+      ctx.fillRect(bx, by - 6, larg * Math.min(1, Math.max(0.12, v.escudo / v.vidaMax)), 4);
     }
     ctx.fillStyle = v.seiva >= 100 ? '#ffd23a' : '#3a9ee6';
     ctx.fillRect(bx, by + 7, larg * (v.seiva / 100), 3);
