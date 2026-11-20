@@ -255,7 +255,7 @@ function ligarSom() {
 }
 
 async function comecar() {
-  const [config, textos, plantas, pragas, cartas, campanha, equipamentos, missoes, faccoes, atividades, changelog, rotina, invasao, feira, herbario] = await Promise.all([
+  const [config, textos, plantas, pragas, cartas, campanha, equipamentos, missoes, faccoes, atividades, changelog, rotina, invasao, feira, herbario, ascensao] = await Promise.all([
     lerJson('data/config.json'),
     lerJson('data/mensagens.json'),
     lerJson('data/plantas.json'),
@@ -271,8 +271,9 @@ async function comecar() {
     lerJson('data/invasao.json'),
     lerJson('data/feira.json'),
     lerJson('data/herbario.json'),
+    lerJson('data/ascensao.json'),
   ]);
-  dados = { config, textos, plantas, pragas, cartas, campanha: prepararCampanha(campanha), equipamentos, missoes, faccoes, atividades, rotina, invasao, feira, herbario };
+  dados = { config, textos, plantas, pragas, cartas, campanha: prepararCampanha(campanha), equipamentos, missoes, faccoes, atividades, rotina, invasao, feira, herbario, ascensao };
 
   jogo.iniciar(dados);
   save.pedirArmazenamentoPersistente();
