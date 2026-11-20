@@ -94,6 +94,17 @@ export function xpJogadorInfo() {
   return { nivel: estado.nivel, xp: estado.xpJogador, precisa: c.xpBase + estado.nivel * c.xpPorNivel };
 }
 
+// Vagas no time: começa com algumas e libera mais ao subir de nível
+export function vagasTime(nivel = estado.nivel) {
+  const v = config.batalha.vagasTime;
+  return v.inicial + v.liberaNoNivel.filter((n) => nivel >= n).length;
+}
+
+// Próximo nível que libera vaga (ou null se já liberou todas)
+export function proximaVaga() {
+  return config.batalha.vagasTime.liberaNoNivel.find((n) => estado.nivel < n) ?? null;
+}
+
 // Devolve quantos níveis o jogador subiu. Subir enche o fôlego e dá orvalho.
 function darXpJogador(xp) {
   estado.xpJogador += xp;

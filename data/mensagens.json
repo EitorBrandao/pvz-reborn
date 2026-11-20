@@ -14,6 +14,11 @@
   "apagado": "Tudo apagado. Começando do zero!",
   "timeVazio": "Coloca pelo menos uma planta no time!",
   "timeCheio": "O time já tem {max} plantas. Tira uma pra trocar.",
+  "timeCheioProxima": "O time já tem {max} plantas. Nova vaga no nível {nivel}!",
+  "proximaVaga": "· nova vaga no Nv {nivel}",
+  "nivelInfo": "⭐ Nível {nivel} · XP {xp}/{precisa} · 🌿 Time: {vagas} vagas, próxima no nível {proxima}",
+  "nivelInfoMax": "⭐ Nível {nivel} · XP {xp}/{precisa} · 🌿 Time: {vagas} vagas (todas liberadas)",
+  "vagaLiberada": "🌱 Nova vaga no time liberada! Agora cabem {vagas} plantas.",
   "vitoria": [
     "Vitória!",
     "Horta salva!",

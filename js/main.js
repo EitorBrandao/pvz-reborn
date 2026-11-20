@@ -93,6 +93,12 @@ function ligarBotoes() {
     atualizarTela();
   });
 
+  $('btn-nivel').addEventListener('click', () => {
+    const xp = jogo.xpJogadorInfo();
+    const proxima = jogo.proximaVaga();
+    avisar(preencher(proxima ? dados.textos.nivelInfo : dados.textos.nivelInfoMax,
+      { nivel: xp.nivel, xp: xp.xp, precisa: xp.precisa, vagas: jogo.vagasTime(), proxima }));
+  });
   $('btn-campanha').addEventListener('click', () => abrirTelaMapa());
   document.querySelectorAll('.botao-folego').forEach((b) => b.addEventListener('click', pedirRecarga));
   $('btn-plantas').addEventListener('click', abrirTelaPlantas);
