@@ -15,6 +15,7 @@ const ATRIBUTOS = ['vida', 'atq', 'def', 'vel'];
 const ORDENS = [
   { id: 'padrao', rotulo: '↕️ Padrão' },
   { id: 'poder', rotulo: '↕️ 💪 Poder' },
+  { id: 'rank', rotulo: '↕️ ✦ Rank' },
   { id: 'nivel', rotulo: '↕️ Nível' },
   { id: 'estrela', rotulo: '↕️ Estrela' },
 ];
@@ -160,6 +161,7 @@ function plantasOrdenadas() {
     const r = col[p.id];
     if (!r) return [-1, -1];
     if (ordem === 'poder') return [poderDe(p, r), r.nivel];
+    if (ordem === 'rank') return [r.ascensao || 0, r.nivel];
     return ordem === 'estrela' ? [r.estrelas, r.nivel] : [r.nivel, r.estrelas];
   };
   if (ordem === 'padrao') {
