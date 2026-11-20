@@ -7,7 +7,8 @@ import * as som from '../som.js';
 
 let dados;
 let aberta = null;      // id da planta aberta no detalhe
-let mudanca = null;     // { antes, depois } pra mostrar o quanto ficou mais forte
+let abaDetalhe = 'status'; // aba aberta no detalhe: status, evoluir, talentos ou equip
+let mudanca = null;    // { antes, depois } pra mostrar o quanto ficou mais forte
 
 const ATRIBUTOS = ['vida', 'atq', 'def', 'vel'];
 
@@ -210,7 +211,7 @@ function desenharLista() {
         <small>Nv ${r.nivel}/${max}</small>
         <span class="poder">💪 ${poderDe(p, r)}</span>
         <span class="barra-xp"><span style="width:${pxp * 100}%"></span></span>`;
-      botao.addEventListener('click', () => { aberta = p.id; mudanca = null; desenharDetalhe(); });
+      botao.addEventListener('click', () => { aberta = p.id; mudanca = null; abaDetalhe = 'status'; desenharDetalhe(); });
     }
     lista.appendChild(botao);
   }
@@ -351,6 +352,29 @@ function desenharDetalhe() {
       ${botao}</div>`;
   }).join('');
 
+  const abas = [
+    { id: 'status', nome: '📊 Status', selo: false },
+    { id: 'evoluir', nome: '⬆️ Evoluir', selo: m.treinar || m.estrela || m.ascender },
+    { id: 'talentos', nome: '🌳 Talentos', selo: m.talento },
+    { id: 'equip', nome: '🛡️ Equip.', selo: m.algumEquip },
+  ];
+  const paineis = {
+    status: `
+      <div class="bloco">
+        <p><b>Nv ${r.nivel}</b> / ${max} ${noMax ? '' : `· XP ${r.xp}/${precisa}`}</p>
+        <div class="barra-xp grande"><span style="width:${noMax ? 100 : (r.xp / precisa) * 100}%"></span></div>
+      </div>
+      <div class="bloco">${linhas}</div>
+      <div class="bloco"><b>🗡️ Ataque</b><p class="dica-pequena">${infoAtaque}</p></div>
+      <div class="bloco"><b>✨ ${h.nome}</b><p class="dica-pequena">${descHab}</p>${proxEstrela ? `<p class="previa">${proxEstrela}</p>` : ''}</div>`,
+    evoluir: `
+      <div class="bloco"><h4>Treinar${selo(m.treinar)}</h4><div class="botoes-grade">${treinos}</div></div>
+      <div class="bloco"><h4>Estrela${selo(m.estrela)}</h4>${blocoEstrela}</div>
+      ${blocoAscensao}`,
+    talentos: blocoTalentos,
+    equip: `<div class="bloco"><h4>Equipamentos${selo(m.algumEquip)}</h4>${equips}</div>`,
+  };
+
   $('detalhe-conteudo').innerHTML = `
     <div class="detalhe-topo ${mudanca ? 'evoluiu' : ''}">
       <span class="detalhe-emoji">${p.emoji}</span>
@@ -360,22 +384,19 @@ function desenharDetalhe() {
       <div class="estrelas">${estrelasTexto(r.estrelas)}</div>
       ${selosPlanta(r, dados).html.replace('class="selos"', 'class="selos selos-detalhe"')}
     </div>
-    <div class="bloco">
-      <p><b>Nv ${r.nivel}</b> / ${max} ${noMax ? '' : `· XP ${r.xp}/${precisa}`}</p>
-      <div class="barra-xp grande"><span style="width:${noMax ? 100 : (r.xp / precisa) * 100}%"></span></div>
-    </div>
-    <div class="bloco">${linhas}</div>
-    <div class="bloco"><b>🗡️ Ataque</b><p class="dica-pequena">${infoAtaque}</p></div>
-    <div class="bloco"><b>✨ ${h.nome}</b><p class="dica-pequena">${descHab}</p>${proxEstrela ? `<p class="previa">${proxEstrela}</p>` : ''}</div>
-    <div class="bloco"><h4>Treinar${selo(m.treinar)}</h4><div class="botoes-grade">${treinos}</div></div>
-    <div class="bloco"><h4>Estrela${selo(m.estrela)}</h4>${blocoEstrela}</div>
-    ${blocoTalentos}
-    ${blocoAscensao}
-    <div class="bloco"><h4>Equipamentos${selo(m.algumEquip)}</h4>${equips}</div>`;
+    <div class="abas-detalhe">${abas.map((a) => `<button class="aba${a.id === abaDetalhe ? ' ativa' : ''}" data-aba="${a.id}">${a.nome}${selo(a.selo)}</button>`).join('')}</div>
+    <div class="conteudo-aba">${paineis[abaDetalhe]}</div>`;
   $('detalhe').classList.remove('escondido');
 }
 
 function acaoDetalhe(evento) {
+  const aba = evento.target.closest('[data-aba]');
+  if (aba) {
+    abaDetalhe = aba.dataset.aba;
+    mudanca = null;
+    desenharDetalhe();
+    return;
+  }
   const botao = evento.target.closest('[data-acao]');
   if (!botao || botao.disabled) return;
   const p = base(aberta);

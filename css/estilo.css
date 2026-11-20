@@ -437,7 +437,11 @@ body {
 .detalhe-topo { text-align: center; }
 .detalhe-topo h3 { margin: 4px 0 0; }
 .detalhe-topo .info-faccao { display: block; text-align: center; margin-top: 4px; font-size: .78rem; opacity: .85; }
-.detalhe-emoji { font-size: 4rem; display: inline-block; }
+.detalhe-emoji { font-size: 3rem; display: inline-block; line-height: 1.1; }
+.abas-detalhe { display: flex; gap: 4px; margin: 8px 0 4px; }
+.abas-detalhe .aba { flex: 1 1 0; min-width: 0; padding: 5px 2px; font-size: .74rem; white-space: normal; line-height: 1.2; }
+.abas-detalhe .selo-melhorar { width: 14px; height: 14px; line-height: 14px; font-size: .6rem; margin-left: 2px; }
+.conteudo-aba .bloco:first-child { border-top: 0; }
 .detalhe-topo.evoluiu .detalhe-emoji { animation: pulo .5s ease-out; }
 .bloco { border-top: 2px dashed rgba(138, 90, 43, .4); padding: 10px 0; }
 .bloco h4 { margin: 0 0 8px; }
