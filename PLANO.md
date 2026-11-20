@@ -40,7 +40,7 @@ pvz-reborn/
   service-worker.js
   css/         (estilo.css)
   js/          (main.js, estado.js, save.js, batalha.js, evolucao.js, campanha.js, arena.js, bots.js, ui/)
-  data/        (plantas.json, pragas.json, cartas.json, fases.json, bots.json, mensagens.json, missoes.json)
+  data/        (plantas.json, pragas.json, cartas.json, fases.json, bots.json, mensagens.json, missoes.json, atividades.json)
   art/         (plantas/, pragas/, ui/, icones/)
   audio/
 ```
@@ -109,9 +109,16 @@ pvz-reborn/
 - Cada bot tem time, nível e estilo próprios, que evoluem com o tempo (mesmo com o jogo fechado).
 - Os bots também desafiam você: ao abrir, aparece "Enquanto você estava fora" com as batalhas que você ganhou ou perdeu na defesa.
 
+**Atividades fora da campanha (tela "Desafios", sem gastar fôlego):**
+
+- **Torre das Pragas:** andares cada vez mais difíceis, com mais pragas e de nível maior. Chefe a cada 5 andares (dá orvalho e cartas raras). Cada andar só dá prêmio na primeira vitória. Guarda o recorde.
+- **Desafio do Dia:** uma batalha por dia com uma regra especial (só uma facção, time de três, pragas parrudas, furiosas ou ligeiras). O nível acompanha suas plantas. A primeira vitória do dia dá orvalho e cartas raras.
+- **Horta de Treino:** monte até 5 pragas que você já venceu, escolha o nível e teste o time. Não ganha nem perde nada.
+- Números e regras em `data/atividades.json`.
+
 **Missões:** guiam o jogador de nível em nível (vencer fase X, evoluir uma planta, chegar ao top 20 da arena). Ficam em `data/missoes.json`.
 
-**Para depois:** guilda com bots, eventos sazonais, sons e música, fusão de plantas raras.
+**Para depois:** guilda com bots, eventos sazonais, fusão de plantas raras.
 
 ## Rivais bots
 
@@ -141,6 +148,12 @@ Cada fase termina com algo jogável no celular, testado antes de seguir.
    - [ ] Pronto quando: ao abrir depois de um dia, o ranking mudou e o mural tem novidades críveis.
 6. **Capricho:** arte final, sons, animações, balanceamento.
    - [ ] Pronto quando: dá vontade de jogar todo dia.
+7. **Atividades rápidas:** Torre das Pragas, Desafio do Dia e Horta de Treino (tela "Desafios").
+   - [x] Pronto quando: dá pra subir andares da torre, vencer o desafio do dia uma vez com prêmio e treinar contra pragas escolhidas.
+8. **Rotina diária:** Canteiro (plantas que crescem em tempo real e são colhidas), Expedição (plantas fora do time saem em missões de 1h/4h/8h e voltam com cartas) e Calendário de presença (prêmio por dia, 7º dia maior).
+   - [ ] Pronto quando: ao abrir depois de algumas horas, tem coisa pra colher, expedição pra receber e prêmio do dia.
+9. **Eventos e coleção:** Invasão de Chefe (chefe gigante de vários dias com ranking de dano junto com os bots), Feira (troca de materiais e loja que muda todo dia, só com moedas do jogo) e Herbário (álbum de plantas e pragas encontradas, com prêmio por página).
+   - [ ] Pronto quando: tem um chefe de invasão rolando, a feira mudou de um dia pro outro e o herbário dá prêmio ao completar uma página.
 
 ## Regras de trabalho
 

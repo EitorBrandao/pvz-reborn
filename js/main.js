@@ -8,7 +8,9 @@ import { iniciarTelaBatalha, comecarBatalha } from './ui/tela-batalha.js';
 import { iniciarTelaPlantas, abrirTelaPlantas } from './ui/tela-plantas.js';
 import { iniciarTelaMapa, abrirTelaMapa } from './ui/tela-mapa.js';
 import { iniciarMissoes, desenharMissoes } from './ui/painel-missoes.js';
+import { iniciarTelaAtividades, abrirTelaAtividades } from './ui/tela-atividades.js';
 import { prepararCampanha, proximaFase, faseLiberada } from './campanha.js';
+import { gerarAndar, checarTime } from './atividades.js';
 
 let dados;
 
@@ -56,8 +58,10 @@ function pedirRecarga() {
   atualizarTela();
 }
 
-// Toda batalha da campanha passa por aqui: gasta o fôlego antes de lutar
+// Toda batalha passa por aqui: confere as regras do time e gasta o fôlego antes de lutar
 function lutar(fase) {
+  const problema = checarTime(fase, jogo.estado.time, dados);
+  if (problema) return avisar(preencher(dados.textos[problema.erro], problema));
   if (!jogo.gastarFolego(fase.folego)) {
     const { textos, config } = dados;
     return avisar(preencher(textos.semFolego, { tempo: formatarTempo(jogo.folego().falta), custo: config.folego.recargaOrvalho }));
@@ -92,6 +96,7 @@ function ligarBotoes() {
   $('btn-campanha').addEventListener('click', () => abrirTelaMapa());
   document.querySelectorAll('.botao-folego').forEach((b) => b.addEventListener('click', pedirRecarga));
   $('btn-plantas').addEventListener('click', abrirTelaPlantas);
+  $('btn-atividades').addEventListener('click', abrirTelaAtividades);
 
   document.querySelectorAll('[data-breve]').forEach((botao) => {
     botao.addEventListener('click', () => avisar(preencher(textos.emBreve, { nome: botao.dataset.breve })));
@@ -185,8 +190,28 @@ function avisarVersaoNova(config) {
   }
 }
 
+// Lista de novidades na tela de Opções (mais nova primeiro, só a atual aberta)
+function desenharChangelog(lista) {
+  const caixa = $('changelog');
+  caixa.innerHTML = '';
+  lista.forEach((v, i) => {
+    const bloco = document.createElement('details');
+    bloco.open = i === 0;
+    const titulo = document.createElement('summary');
+    titulo.textContent = `Versão ${v.versao}`;
+    const itens = document.createElement('ul');
+    v.itens.forEach((t) => {
+      const li = document.createElement('li');
+      li.textContent = t;
+      itens.appendChild(li);
+    });
+    bloco.append(titulo, itens);
+    caixa.appendChild(bloco);
+  });
+}
+
 async function comecar() {
-  const [config, textos, plantas, pragas, cartas, campanha, equipamentos, missoes, faccoes] = await Promise.all([
+  const [config, textos, plantas, pragas, cartas, campanha, equipamentos, missoes, faccoes, atividades, changelog] = await Promise.all([
     lerJson('data/config.json'),
     lerJson('data/mensagens.json'),
     lerJson('data/plantas.json'),
@@ -196,21 +221,28 @@ async function comecar() {
     lerJson('data/equipamentos.json'),
     lerJson('data/missoes.json'),
     lerJson('data/faccoes.json'),
+    lerJson('data/atividades.json'),
+    lerJson('data/changelog.json'),
   ]);
-  dados = { config, textos, plantas, pragas, cartas, campanha: prepararCampanha(campanha), equipamentos, missoes, faccoes };
+  dados = { config, textos, plantas, pragas, cartas, campanha: prepararCampanha(campanha), equipamentos, missoes, faccoes, atividades };
 
   jogo.iniciar(dados);
   save.pedirArmazenamentoPersistente();
   $('versao').textContent = `versão ${config.versaoJogo}`;
+  desenharChangelog(changelog);
 
   ligarBotoes();
-  const mapaDaFase = (fase) => abrirTelaMapa(fase ? fase.mapaIndice : undefined);
+  // Voltar de uma batalha: atividades voltam pra tela de Desafios, a campanha pro mapa
+  const mapaDaFase = (fase) => (fase && fase.tipo ? abrirTelaAtividades() : abrirTelaMapa(fase ? fase.mapaIndice : undefined));
   iniciarTelaMapa(dados, { voltar: irParaBase, preparar: abrirTelaTime });
+  iniciarTelaAtividades(dados, { voltar: irParaBase, preparar: abrirTelaTime });
   iniciarTelaTime(dados, { lutar, voltar: mapaDaFase });
   iniciarTelaBatalha(dados, {
     lutar,
     sair: mapaDaFase,
     proxima: (fase) => {
+      if (fase.tipo === 'torre') return fase.andar < jogo.estado.torre.andar ? gerarAndar(jogo.estado.torre.andar, dados) : null;
+      if (fase.tipo) return null;
       const p = proximaFase(dados.campanha, fase);
       return p && faseLiberada(dados.campanha, jogo.estado, p) ? p : null;
     },
