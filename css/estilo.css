@@ -618,6 +618,8 @@ body {
 .time-fase .inimigos small { font-size: .8rem; }
 .time-fase .categorias { font-size: .8rem; opacity: .8; }
 .time-bonus { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 4px; font-size: .85rem; }
+.time-bonus-tabela { display: flex; flex-direction: column; gap: 2px; margin: 4px 0 8px; opacity: .85; }
+.time-bonus-tabela .ativa { font-weight: 700; color: #2f7d1f; }
 .selo-bonus { background: #2f7d1f; color: #fff; border-radius: 999px; padding: 3px 10px; font-weight: 700; }
 
 /* ---------- Resultado: estrelas ---------- */
