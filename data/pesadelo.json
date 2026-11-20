@@ -1,9 +1,9 @@
 {
- "nivelBase": 45,
- "nivelPorMapa": 5,
+ "nivelBase": 55,
+ "nivelPorMapa": 6,
  "mult": {
-  "vida": 1.5,
-  "atq": 1.25
+  "vida": 3,
+  "atq": 2.5
  },
  "recompensa": {
   "moedas": 3,
@@ -13,5 +13,9 @@
  },
  "folegoMult": 2,
  "chanceCartaMult": 1.5,
- "estrelasParaAbrir": 3
+ "estrelasParaAbrir": 3,
+ "multChefe": {
+  "vida": 0.6,
+  "atq": 0.7
+ }
 }

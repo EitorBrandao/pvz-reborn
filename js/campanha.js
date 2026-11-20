@@ -22,14 +22,23 @@ function fasePesadelo(fase, mapaIndice, cfg) {
     xp: Math.round((r.xp || 0) * cfg.recompensa.xp),
   };
   premio.orvalho = Math.ceil((r.orvalho || 0) * cfg.recompensa.orvalhoMult) + cfg.recompensa.orvalhoExtra;
+  const nivel = cfg.nivelBase + cfg.nivelPorMapa * mapaIndice + fase.indice;
+  const soma = nivel - fase.nivel;
+  const mult = { ...cfg.mult };
+  if (fase.chefe || fase.inimigos.some((i) => i.nivel)) {
+    // fases de chefe: o mesmo aumento vale pro nível fixo do chefe, e os números ficam mais brandos
+    for (const k of Object.keys(mult)) mult[k] = Math.round(mult[k] * (cfg.multChefe[k] || 1) * 100) / 100;
+  }
+  const copia = structuredClone(fase);
+  copia.inimigos.forEach((i) => { if (i.nivel) i.nivel += soma; });
   return {
-    ...structuredClone(fase),
+    ...copia,
     id: `${fase.id}-p`,
     nome: `${fase.nome} (Pesadelo)`,
     pesadelo: true,
-    nivel: cfg.nivelBase + cfg.nivelPorMapa * mapaIndice + fase.indice,
+    nivel,
     folego: fase.folego * cfg.folegoMult,
-    multPragas: { ...cfg.mult },
+    multPragas: mult,
     recompensa: premio,
     cartas: fase.cartas.map((c) => ({ ...c, chance: Math.min(1, Math.round(c.chance * cfg.chanceCartaMult * 100) / 100) })),
   };
