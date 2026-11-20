@@ -438,7 +438,6 @@ body {
 .detalhe-texto { min-width: 0; flex: 1; }
 .detalhe-texto small { display: block; }
 #detalhe .modal-caixa { max-height: 94%; }
-#detalhe .rodape-modal { display: none; } /* o ✖ e o toque fora já fecham: ganha espaço pras abas */
 #detalhe .topo-modal { height: 0; padding: 0; margin-bottom: 0; overflow: visible; }
 #detalhe .topo-modal .fechar { position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; font-size: 1rem; }
 .detalhe-topo h3 { margin: 4px 0 0; }
@@ -664,18 +663,6 @@ body {
 /* espaço pros ícones de missão não encostarem na saudação */
 .saudacao { padding: 0 64px; }
 
-/* Botão Fechar fixo embaixo do detalhe, perto do polegar */
-.rodape-modal {
-  position: sticky;
-  bottom: 0;
-  margin: 0 -16px;
-  padding: 10px 16px 14px;
-  background: var(--bege);
-  border-top: 2px dashed rgba(138, 90, 43, .4);
-  display: flex;
-  justify-content: center;
-}
-.rodape-modal .btn { width: 100%; max-width: 240px; }
 /* Faixa fixa em cima do detalhe: o ✖ não cobre o texto ao rolar */
 .topo-modal {
   position: sticky;
