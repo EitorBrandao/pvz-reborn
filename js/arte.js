@@ -2,6 +2,8 @@
 // Tudo é gerado aqui mesmo (sem arquivos de imagem), então funciona offline.
 // Plantas olham pra direita; pragas olham pra esquerda (atacam vindo do outro lado).
 
+import { GLIFOS } from './arte-fonte.js';
+
 const K = '#2b1d14'; // contorno
 const n1 = (v) => +v.toFixed(1);
 const tr = (w = 3) => `stroke="${K}" stroke-width="${w}" stroke-linejoin="round" stroke-linecap="round"`;
@@ -626,7 +628,7 @@ const HABILIDADES = {
   cura: () => cruz(20, 20, 11, '#fff'),
   escudo: () => P('M20 6 L32 11 Q32 26 20 34 Q8 26 8 11 Z', '#e3f4ff', 2.2) + P('M20 10 L28 13.5 Q28 24 20 30 Z', '#9fd8ff', 0),
   perfurar: () => C(25, 20, 7, 'none', 2) + R(4, 18, 26, 4, 2, '#e8f5b0', 1.6) + P('M29 14 L38 20 L29 26 Z', '#fff', 1.8),
-  sono: () => P('M22 7 A12 12 0 1 0 33 23 A9 9 0 0 1 22 7 Z', '#fff59d', 2) + `<text x="27" y="15" font-size="10" font-weight="900" font-family="sans-serif" fill="#fff" stroke="${K}" stroke-width="1.2">z</text>`,
+  sono: () => P('M22 7 A12 12 0 1 0 33 23 A9 9 0 0 1 22 7 Z', '#fff59d', 2) + corda('M26 9 H32 L26 16 H32', '#fff', 1.8),
   lentidao: () => C(22, 20, 10, '#f5e1c0', 2) + L('M22 20 m0 -5 a5 5 0 1 1 -5 5 a3 3 0 1 1 3 -3', K, 1.8) + P('M6 32 Q10 26 14 30 L34 32 Z', '#c5e1a5', 1.8),
   golpe: () => `<g transform="rotate(-35 20 20)">${R(18, 14, 4.5, 22, 2, '#8a5a2b', 1.8)}${R(9, 7, 22, 11, 3, '#cfd8dc', 2)}</g>`,
   energia: () => P('M23 4 L10 22 L19 22 L15 36 L30 16 L21 16 Z', '#fff59d', 2),
@@ -642,8 +644,13 @@ const STATUS = {
   regeneracao: () => bola('#3fbf6b', cruz(20, 20, 9.5, '#fff')),
   fraqueza: () => bola('#d64545', P('M15 7 H25 V20 H31 L20 33 L9 20 H15 Z', '#fff', 2)),
   casca: () => bola('#8d6e63', P('M20 6 L31 10 Q31 25 20 33 Q9 25 9 10 Z', '#d7ccc8', 2) + L('M20 8 L17 16 L23 20 L18 30', K, 2)),
-  sono: () => bola('#7e57c2', `<text x="20" y="27" text-anchor="middle" font-size="20" font-weight="900" font-family="sans-serif" fill="#fff" stroke="${K}" stroke-width="1.5">Z</text>`),
+  sono: () => bola('#7e57c2', corda('M13 12 H27 L13 28 H27', '#fff', 3.5)),
   lento: () => bola('#4a90c2', C(22, 18, 8, '#f5e1c0', 2) + L('M22 18 m0 -4 a4 4 0 1 1 -4 4', K, 1.6) + P('M7 29 Q10 23 14 26 L33 28 Q33 31 30 31 L9 31 Z', '#c5e1a5', 1.8)),
+};
+
+// ---------- Chão da batalha (2x2 quadrados de grama) ----------
+const EXTRAS = {
+  chao: () => '<rect x="0" y="0" width="100" height="100" fill="#4caf2e"/><rect x="50" y="0" width="50" height="50" fill="#43a326"/><rect x="0" y="50" width="50" height="50" fill="#43a326"/>',
 };
 
 // ---------- Montagem ----------
@@ -655,6 +662,7 @@ function fonte(tipo, chave) {
   if (tipo === 'tiro') { const t = TIROS[chave]; return t && svg(t.s(), 40); }
   if (tipo === 'hab') { const f = HABILIDADES[chave]; return f && svg(selo(CORES_HAB[chave], f()), 40); }
   if (tipo === 'st') { const f = STATUS[chave]; return f && svg(f(), 40); }
+  if (tipo === 'extra') { const f = EXTRAS[chave]; return f && svg(f(), 100); }
   return null;
 }
 
@@ -669,93 +677,58 @@ function urlDe(tipo, chave) {
 const porEmoji = new Map();
 export function iniciarArte(dados) {
   for (const u of [...(dados.plantas || []), ...(dados.pragas || [])]) if (!porEmoji.has(u.emoji)) porEmoji.set(u.emoji, u.id);
-  // Já transforma os desenhos em imagem comum, antes das telas precisarem.
-  Object.keys(PLANTAS).forEach((id) => imagem('u', id));
-  Object.keys(PRAGAS).forEach((id) => imagem('u', id));
-  Object.keys(HABILIDADES).forEach((k) => imagem('hab', k));
-  Object.keys(STATUS).forEach((k) => imagem('st', k));
+  if (typeof document !== 'undefined' && document.fonts) {
+    document.fonts.load(`32px ${FONTE}`).then(() => { fontePronta = true; }).catch(() => {});
+  }
 }
 
-// ---------- Desenho → imagem PNG ----------
-// O "modo escuro forçado" de alguns navegadores de celular (ex.: Samsung Internet) recolore
-// desenhos SVG e deixa tudo desbotado, mas não mexe em imagens comuns. Por isso cada desenho
-// é pintado num canvas e vira PNG; o SVG só aparece nos primeiros instantes, até o PNG ficar pronto.
-const pngs = new Map();
-const urlTela = (tipo, chave) => pngs.get(`${tipo}:${chave}`) || urlDe(tipo, chave);
-const img = (tipo, chave, classe) => {
-  const url = urlTela(tipo, chave);
-  return url ? `<img class="${classe}" src="${url}" data-arte="${tipo}:${chave}" alt="" draggable="false">` : '';
+// ---------- Fonte colorida ----------
+// No jogo, cada desenho é uma "letra" da fonte art/arte.woff2 (gerada por tools/fonte-cor/gerar.sh).
+// Motivo: o modo escuro do Samsung Internet desbota imagens e canvas, mas não mexe em letras
+// coloridas (igual emoji). Os SVG acima continuam sendo a fonte da verdade dos desenhos.
+// Medidas da fonte: um desenho de S px usa font-size 0.8533·S; a letra começa S/32 à esquerda
+// do desenho, e a linha de base fica 0.7917·S abaixo do topo dele.
+export const FONTE = 'ArteHorta';
+let fontePronta = false;
+export function glifo(tipo, chave) {
+  const cp = GLIFOS[`${tipo}:${chave}`];
+  return cp ? String.fromCodePoint(cp) : null;
+}
+const span = (tipo, chave, classe) => {
+  const cp = GLIFOS[`${tipo}:${chave}`];
+  return cp ? `<span class="glifo ${classe}" aria-hidden="true">&#x${cp.toString(16)};</span>` : '';
 };
 
 // ---------- Para o HTML ----------
-// arte(planta ou praga): <img> do desenho, do tamanho da letra (substitui o emoji). Sem desenho, devolve o emoji.
+// arte(planta ou praga): o desenho do tamanho da letra (substitui o emoji). Sem desenho, devolve o emoji.
 export function arte(u, classe = '') {
   if (!u) return '';
   const id = (u.id && (PLANTAS[u.id] || PRAGAS[u.id])) ? u.id : porEmoji.get(u.emoji);
-  return (id && img('u', id, `arte${classe ? ` ${classe}` : ''}`)) || u.emoji || '';
+  return (id && span('u', id, `arte${classe ? ` ${classe}` : ''}`)) || u.emoji || '';
 }
-export const urlUnidade = (id) => urlTela('u', id);
-export const iconeHabilidade = (tipo) => img('hab', tipo, 'icone-hab') || '✨';
-export const iconeStatus = (nome) => img('st', nome, 'icone-status');
+export const iconeHabilidade = (tipo) => span('hab', tipo, 'icone-hab') || '✨';
+export const iconeStatus = (nome) => span('st', nome, 'icone-status');
 
 // ---------- Para o Canvas ----------
-// Imagens prontas pra desenhar (já em canvas, sem SVG); a "branca" é a silhueta do piscar de dano.
-const imagens = new Map();
-export function imagem(tipo, chave) {
-  const k = `${tipo}:${chave}`;
-  if (imagens.has(k)) return imagens.get(k);
-  const url = urlDe(tipo, chave);
-  const item = { img: null, branca: null, pronta: false };
-  imagens.set(k, item);
-  if (!url || typeof Image === 'undefined') return item;
-  const fonteImg = new Image();
-  fonteImg.onload = () => {
-    const lado = tipo === 'u' ? 256 : 128;
-    const c = document.createElement('canvas');
-    c.width = lado;
-    c.height = lado;
-    c.getContext('2d').drawImage(fonteImg, 0, 0, lado, lado);
-    item.img = c;
-    item.pronta = true;
-    try {
-      const png = c.toDataURL('image/png');
-      pngs.set(k, png);
-      document.querySelectorAll(`img[data-arte="${k}"]`).forEach((el) => { el.src = png; });
-    } catch { /* navegador não deixou exportar: fica o SVG */ }
-    if (tipo === 'u') {
-      const b = document.createElement('canvas');
-      b.width = lado;
-      b.height = lado;
-      const g = b.getContext('2d');
-      g.drawImage(c, 0, 0);
-      g.globalCompositeOperation = 'source-in';
-      g.fillStyle = '#fff';
-      g.fillRect(0, 0, lado, lado);
-      item.branca = b;
-    }
-  };
-  fonteImg.src = url;
-  return item;
+// Desenha o desenho ocupando o quadrado (x, y, lado). Devolve false se a fonte ainda não carregou.
+export function desenharGlifo(ctx, tipo, chave, x, y, lado) {
+  const g = fontePronta && glifo(tipo, chave);
+  if (!g) return false;
+  ctx.font = `${lado * 0.8533}px ${FONTE}`;
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+  ctx.fillStyle = '#000';
+  ctx.fillText(g, x - lado / 32, y + lado * 0.7917);
+  return true;
 }
-export const imagemUnidade = (id) => imagem('u', id);
-export const imagemStatus = (nome) => imagem('st', nome);
-export const imagemHabilidade = (tipo) => imagem('hab', tipo);
+export const artePronta = () => fontePronta;
 export function infoTiro(emoji) {
   const chave = TIRO_DO_EMOJI[emoji];
   if (!chave) return null;
-  const it = imagem('tiro', chave);
-  return { get pronta() { return it.pronta; }, get img() { return it.img; }, gira: !!TIROS[chave].gira, rastro: TIROS[chave].rastro };
+  return { chave, gira: !!TIROS[chave].gira, rastro: TIROS[chave].rastro };
 }
 export const corHabilidade = (tipo) => CORES_HAB[tipo] || '#ffd23a';
 
-// Carrega tudo de uma vez (chamado no começo da batalha) pra não piscar emoji.
-export function preCarregar(ids) {
-  ids.forEach(imagemUnidade);
-  Object.keys(STATUS).forEach(imagemStatus);
-  Object.keys(HABILIDADES).forEach(imagemHabilidade);
-  Object.keys(TIROS).forEach((k) => imagem('tiro', k));
-}
-
-// Galeria (usada só pra conferir a arte): todos os ids com desenho.
-export const idsComArte = () => ({ plantas: Object.keys(PLANTAS), pragas: Object.keys(PRAGAS), tiros: Object.keys(TIROS), habilidades: Object.keys(HABILIDADES), status: Object.keys(STATUS) });
+// Galeria e gerador da fonte: todos os ids com desenho.
+export const idsComArte = () => ({ plantas: Object.keys(PLANTAS), pragas: Object.keys(PRAGAS), tiros: Object.keys(TIROS), habilidades: Object.keys(HABILIDADES), status: Object.keys(STATUS), extras: Object.keys(EXTRAS) });
 export const urlArte = urlDe;

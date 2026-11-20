@@ -26,6 +26,7 @@ Arquivo novo (js, json, imagem) também precisa entrar na lista `ARQUIVOS` do `s
 - Nada de internet, login, anúncio ou compra com dinheiro real.
 - Som: todo efeito novo da batalha (status, habilidade, efeito) precisa de som próprio em `js/som.js` (`status_<nome>` quando pega e `tick_<nome>` se age a cada rodada).
 - Música: cada modo novo do jogo precisa de música própria, diferente das outras. Crie em `MUSICAS` no `js/som.js` e ligue as telas do modo em `data/config.json` → `som.musicaPorTela` (tela sem entrada toca a música da horta).
+- Arte: os desenhos ficam em `js/arte.js` (SVG), mas o jogo mostra eles pela fonte colorida `art/arte.woff2` (o modo escuro do Samsung desbota imagens, não letras). Mudou ou criou desenho? Rode `bash tools/fonte-cor/gerar.sh` pra refazer a fonte e `js/arte-fonte.js`.
 - Nomes, personagens e arte originais. Nada de Plants vs. Zombies, PopCap, EA ou Youkia.
 
 ## Testes

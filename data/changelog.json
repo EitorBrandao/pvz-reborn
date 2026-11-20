@@ -1,4 +1,5 @@
 [
+  { "versao": "0.14.12", "itens": ["🎨 Plantas, pragas, tiros, ícones e a grama da batalha agora mantêm as cores certas em qualquer navegador, inclusive no modo escuro do Samsung Internet"] },
   { "versao": "0.14.8", "itens": ["Samsung Internet: plantas e pragas da batalha também com cores vivas"] },
   { "versao": "0.14.7", "itens": ["Samsung Internet: plantas, pragas e a batalha voltam a ter cores vivas mesmo com o modo escuro do navegador"] },
   { "versao": "0.14.4", "itens": ["Cores do jogo não mudam mais com o modo escuro do celular (inclusive no Samsung Internet)"] },

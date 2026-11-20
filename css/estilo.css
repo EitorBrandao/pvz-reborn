@@ -1,5 +1,5 @@
 :root {
-  color-scheme: light;
+  color-scheme: only light;
   --grama-1: #4caf2e;
   --grama-2: #3d9a22;
   --grama-3: #2f7d1f;
@@ -14,22 +14,6 @@
   --fonte: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
 }
 
-/* Modo escuro do celular: o jogo avisa que tem tema escuro próprio (meta color-scheme + este bloco),
-   assim navegadores como o Samsung Internet não aplicam o filtro deles, que desbota cores e desenhos.
-   O "tema escuro" do jogo usa exatamente as mesmas cores do normal. */
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: light;
-    --grama-1: #4caf2e;
-    --grama-2: #3d9a22;
-    --grama-3: #2f7d1f;
-    --terra: #8a5a2b;
-    --bege: #f6e7c1;
-    --escuro: #23301b;
-  }
-  html, body { color: #fff; background-color: var(--grama-3); }
-  img, canvas { filter: none; }
-}
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
@@ -290,12 +274,7 @@ body {
   box-shadow: var(--sombra);
 }
 .campo canvas { display: block; }
-#campo-unidades, #campo-topo { position: absolute; left: 0; top: 0; pointer-events: none; }
-#campo-unidades { width: 100%; height: 100%; z-index: 1; }
-#campo-topo { z-index: 2; }
-.sprite-batalha { position: absolute; left: 0; top: 0; transform-origin: 50% 100%; will-change: transform; }
-.sprite-batalha img { display: block; width: 100%; height: 100%; -webkit-user-drag: none; }
-.sprite-batalha .branca { position: absolute; inset: 0; filter: brightness(0) invert(1); opacity: 0; }
+#campo-topo { position: absolute; left: 0; top: 0; pointer-events: none; }
 .controles { display: flex; gap: 12px; justify-content: center; padding: 12px 0; }
 .btn.bloqueado { filter: grayscale(.8); opacity: .7; }
 
@@ -908,20 +887,21 @@ body {
 .fusao-bloco small { display: block; margin-top: 4px; }
 
 /* ---------- Arte desenhada (js/arte.js) no lugar dos emojis ---------- */
-.arte { display: inline-block; width: 1.3em; height: 1.3em; vertical-align: middle; object-fit: contain; pointer-events: none; -webkit-user-drag: none; }
-.planta-emoji .arte, .detalhe-emoji .arte, .escolha-planta .arte { filter: drop-shadow(0 2px 0 rgba(0, 0, 0, .22)); }
-.detalhe-emoji .arte, .invasao-chefe .arte, .pacote-emoji .arte { width: 1.15em; height: 1.15em; }
-.espaco .arte { width: 1.2em; height: 1.2em; }
-.no-rosto .arte { width: 1.1em; height: 1.1em; }
-.icone-hab { display: inline-block; width: 1.7em; height: 1.7em; vertical-align: middle; flex-shrink: 0; }
-.nome-hab { display: inline-flex; align-items: center; gap: 6px; }
-.icone-status { display: inline-block; width: 1.2em; height: 1.2em; vertical-align: middle; }
-
-/* Samsung Internet: o modo escuro dele (que o site não consegue desligar) escurece e desbota
-   imagens e o canvas da batalha. Estes filtros devolvem a cor; doses medidas no celular (teste-cores). */
-.samsung .arte, .samsung .icone-hab, .samsung .icone-status { filter: contrast(1.8) saturate(1.65) brightness(.88); }
-.samsung .planta-emoji .arte, .samsung .detalhe-emoji .arte, .samsung .escolha-planta .arte {
-  filter: contrast(1.8) saturate(1.65) brightness(.88) drop-shadow(0 2px 0 rgba(0, 0, 0, .22));
+/* Cada desenho é uma letra da fonte colorida art/arte.woff2: o modo escuro do Samsung Internet
+   não mexe em letras coloridas (como emoji), só em imagens. O quadrado do desenho tem 1.172em
+   da própria fonte; os font-size abaixo dão o tamanho final em relação ao texto em volta. */
+@font-face { font-family: ArteHorta; src: url('../art/arte.woff2') format('woff2'); font-display: block; }
+.glifo {
+  display: inline-block; width: 1.172em; height: 1.172em; line-height: 1.172; text-indent: -0.0366em;
+  font-family: ArteHorta; font-style: normal; font-weight: normal; color: #000; white-space: nowrap;
+  overflow: visible; vertical-align: middle; pointer-events: none; user-select: none;
 }
-.samsung #campo { filter: brightness(.92) contrast(1.15) saturate(1.2); }
-.samsung .sprite-batalha img:not(.branca) { filter: contrast(1.8) saturate(1.65) brightness(.88); }
+.arte { font-size: 1.109em; }          /* desenho = 1.3em do texto em volta */
+.planta-emoji .arte, .detalhe-emoji .arte, .escolha-planta .arte { filter: drop-shadow(0 2px 0 rgba(0, 0, 0, .22)); }
+.detalhe-emoji .arte, .invasao-chefe .arte, .pacote-emoji .arte { font-size: .981em; }
+.espaco .arte { font-size: 1.024em; }
+.no-rosto .arte { font-size: .939em; }
+.icone-hab { font-size: 1.45em; flex-shrink: 0; }
+.icone-status { font-size: 1.024em; }
+.nome-hab { display: inline-flex; align-items: center; gap: 6px; }
+

@@ -5,14 +5,14 @@ import * as jogo from '../estado.js';
 import { prepararBatalha, simular, rolarCartas, criarRng } from '../batalha.js';
 import { calcularEstrelas } from '../campanha.js';
 import * as som from '../som.js';
-import { arte, urlUnidade, imagemStatus, imagemHabilidade, infoTiro, corHabilidade, preCarregar } from '../arte.js';
+import { arte, desenharGlifo, glifo, artePronta, infoTiro, corHabilidade } from '../arte.js';
 
 let dados, acoes;
 let missoesAntes = new Set();
 let canvas, ctx, W = 0, H = 0, raio = 30;
-// Três camadas: grama e sombras (fundo), plantas e pragas como <img> (camada), e o resto por cima (ctx).
-// As unidades são <img> porque o modo escuro do Samsung Internet desbota desenhos feitos dentro do canvas.
-let canvasFundo, fundo, camada;
+// Duas camadas: grama e sombras (fundo) e o resto por cima (ctx).
+// Plantas, pragas, tiros e ícones são letras da fonte colorida (ver js/arte.js).
+let canvasFundo, fundo;
 let vis = {};            // aparência atual de cada unidade
 let projeteis = [];
 let flutuantes = [];
@@ -43,7 +43,6 @@ export function iniciarTelaBatalha(d, a) {
   fundo = canvasFundo.getContext('2d');
   canvas = $('campo-topo');
   ctx = canvas.getContext('2d');
-  camada = $('campo-unidades');
   window.addEventListener('resize', medir);
 
   $('btn-velocidade').addEventListener('click', () => {
@@ -102,8 +101,6 @@ export function comecarBatalha(batalha) {
 
   vis = {};
   for (const u of unidades) vis[u.uid] = { ...u, ox: 0, oy: 0, dx: 0, dy: 0, kx: 0, alpha: 1, brilho: 0, flash: 0, estica: 0, fase: Math.random() * 6 };
-  preCarregar(unidades.map((u) => u.id));
-  montarSprites();
 
   $('resultado').classList.add('escondido');
   $('batalha-nome').textContent = batalha.nome;
@@ -121,23 +118,6 @@ export function comecarBatalha(batalha) {
   tocar(resultado.eventos, minhaPartida).then(() => {
     if (minhaPartida === partida) terminar(resultado, semente);
   });
-}
-
-// Uma <img> por unidade (mais uma branca por cima, pro piscar de dano).
-function montarSprites() {
-  camada.innerHTML = '';
-  for (const v of Object.values(vis)) {
-    const url = urlUnidade(v.id);
-    v.el = null;
-    if (!url) continue;
-    const el = document.createElement('div');
-    el.className = 'sprite-batalha';
-    el.innerHTML = `<img src="${url}" data-arte="u:${v.id}" alt="" draggable="false"><img class="branca" src="${url}" data-arte="u:${v.id}" alt="" draggable="false">`;
-    camada.append(el);
-    v.el = el;
-    v.elBranca = el.lastChild;
-    v.ladoEl = 0;
-  }
 }
 
 function parar() {
@@ -571,7 +551,6 @@ function desenhar() {
     c.clearRect(0, 0, W, H);
     c.translate(tx, ty);
   }
-  camada.style.transform = `translate(${tx}px, ${ty}px)`;
 
   desenharGrama();
   Object.values(vis).sort((a, b) => a.y - b.y).forEach(desenharUnidade);
@@ -596,10 +575,18 @@ function desenharGrama() {
   const lado = W / colunas;
   const linhas = Math.ceil(H / lado);
   const topo = (H - linhas * lado) / 2;
-  for (let i = 0; i < colunas; i++) {
-    for (let j = 0; j < linhas; j++) {
-      fundo.fillStyle = (i + j) % 2 ? '#4caf2e' : '#43a326';
-      fundo.fillRect(i * lado, topo + j * lado, lado + 1, lado + 1);
+  // A grama é uma letra da fonte colorida (2x2 quadrados), pra o modo escuro do celular não desbotar.
+  // Se a fonte ainda não carregou, pinta os quadrados direto.
+  if (artePronta()) {
+    for (let i = 0; i < colunas; i += 2) {
+      for (let j = 0; j < linhas; j += 2) desenharGlifo(fundo, 'extra', 'chao', i * lado, topo + j * lado, lado * 2 + 1);
+    }
+  } else {
+    for (let i = 0; i < colunas; i++) {
+      for (let j = 0; j < linhas; j++) {
+        fundo.fillStyle = (i + j) % 2 ? '#43a326' : '#4caf2e';
+        fundo.fillRect(i * lado, topo + j * lado, lado + 1, lado + 1);
+      }
     }
   }
   fundo.strokeStyle = 'rgba(255,255,255,.25)';
@@ -657,20 +644,27 @@ function desenharUnidade(v) {
   let giro = 0;
   if (!vivo) giro = (v.lado === 'planta' ? -1 : 1) * 0.5;
   else if (v.sono > 0) giro = Math.sin(t * 1.5 + v.fase) * 0.06;
-  if (v.el) {
-    const st = v.el.style;
-    if (v.ladoEl !== lado) { st.width = `${lado}px`; st.height = `${lado}px`; v.ladoEl = lado; }
-    st.transform = `translate(${x - lado / 2}px, ${base - lado}px) rotate(${giro}rad) scale(${sx}, ${sy})`;
-    st.opacity = v.alpha;
-    st.zIndex = Math.round(y);
-    v.elBranca.style.opacity = v.flash > 0.05 ? Math.min(1, v.flash * 0.9) : 0;
+  ctx.save();
+  ctx.translate(x, base);
+  ctx.rotate(giro);
+  ctx.scale(sx, sy);
+  if (desenharGlifo(ctx, 'u', v.id, -lado / 2, -lado, lado)) {
+    if (v.flash > 0.05) {
+      // piscar branco: a mesma letra pintada de branco por cima
+      ctx.globalAlpha = v.alpha * Math.min(1, v.flash * 0.9);
+      ctx.filter = 'brightness(0) invert(1)';
+      desenharGlifo(ctx, 'u', v.id, -lado / 2, -lado, lado);
+      ctx.filter = 'none';
+      ctx.globalAlpha = v.alpha;
+    }
   } else {
     ctx.font = `${r * 1.5}px serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillStyle = '#000'; // cor opaca, senão o emoji fica transparente no Chrome
-    ctx.fillText(v.emoji, x, base - r * 0.82);
+    ctx.fillText(v.emoji, 0, -r * 0.82);
   }
+  ctx.restore();
 
   if (v.escudo > 0 && vivo) {
     const g = ctx.createRadialGradient(x - r * 0.4, y - r * 0.5, r * 0.1, x, y, r * 1.15);
@@ -716,9 +710,9 @@ function desenharUnidade(v) {
       const tam = Math.max(14, r * 0.5);
       const x0 = x - ((sts.length - 1) * tam * 0.9) / 2;
       sts.forEach((n, i) => {
-        const ic = imagemStatus(n);
+
         const yy = y - r * 1.25 + Math.sin(t * 4 + i) * 1.5;
-        if (ic.pronta) ctx.drawImage(ic.img, x0 + i * tam * 0.9 - tam / 2, yy - tam / 2, tam, tam);
+        desenharGlifo(ctx, 'st', n, x0 + i * tam * 0.9 - tam / 2, yy - tam / 2, tam);
       });
     }
 
@@ -747,7 +741,14 @@ function desenharProjeteis(t) {
     const x = p.x0 + (p.x1 - p.x0) * k;
     const y = p.y0 + (p.y1 - p.y0) * k - Math.sin(Math.PI * k) * raio;
     const tiro = p.tiro;
-    if (!tiro || !tiro.pronta) { ctx.fillText(p.emoji, x, y); return true; }
+    if (!tiro || !artePronta()) {
+      ctx.font = `${raio * 0.8}px serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#000';
+      ctx.fillText(p.emoji, x, y);
+      return true;
+    }
     // rastro: faíscas que ficam pra trás
     if (Math.random() < 0.8) {
       particulas.push({ x, y, vx: (Math.random() - 0.5) * 0.6, vy: (Math.random() - 0.5) * 0.6, leve: true,
@@ -765,7 +766,7 @@ function desenharProjeteis(t) {
       ctx.shadowColor = tiro.rastro;
       ctx.shadowBlur = 12;
     }
-    ctx.drawImage(tiro.img, -tam / 2, -tam / 2, tam, tam);
+    desenharGlifo(ctx, 'tiro', tiro.chave, -tam / 2, -tam / 2, tam);
     ctx.restore();
     return true;
   });
@@ -838,11 +839,10 @@ function desenharSelos(t) {
   selos = selos.filter((s) => {
     const k = (t - s.t0) / s.dur;
     if (k >= 1) return false;
-    const ic = imagemStatus(s.nome);
-    if (!ic.pronta) return true;
+    if (!artePronta()) return true;
     const tam = raio * (0.6 + Math.sin(Math.min(1, k * 3) * Math.PI) * 0.5);
     ctx.globalAlpha = k < 0.7 ? 1 : 1 - (k - 0.7) / 0.3;
-    ctx.drawImage(ic.img, s.x - tam / 2, s.y - raio * 0.5 * k - tam / 2, tam, tam);
+    desenharGlifo(ctx, 'st', s.nome, s.x - tam / 2, s.y - raio * 0.5 * k - tam / 2, tam);
     ctx.globalAlpha = 1;
     return true;
   });
@@ -876,8 +876,7 @@ function desenharBanner(t) {
   if (k >= 1) { banner = null; return; }
   ctx.globalAlpha = k > 0.75 ? 1 - (k - 0.75) / 0.25 : 1;
   ctx.font = '900 16px "Trebuchet MS", sans-serif';
-  const ic = banner.hab ? imagemHabilidade(banner.hab) : null;
-  const comIcone = ic && ic.pronta;
+  const comIcone = !!(banner.hab && glifo('hab', banner.hab) && artePronta());
   const extra = comIcone ? 26 : 0;
   const larg = ctx.measureText(banner.texto).width + 20 + extra;
   const x = Math.min(Math.max(banner.x, larg / 2 + 4), W - larg / 2 - 4);
@@ -893,7 +892,8 @@ function desenharBanner(t) {
   ctx.roundRect(-larg / 2, -14, larg, 28, 14);
   ctx.fill();
   ctx.stroke();
-  if (comIcone) ctx.drawImage(ic.img, -larg / 2 + 1, -16, 32, 32);
+  if (comIcone) desenharGlifo(ctx, 'hab', banner.hab, -larg / 2 + 1, -16, 32);
+  ctx.font = '900 16px "Trebuchet MS", sans-serif';
   ctx.fillStyle = '#ffd23a';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
