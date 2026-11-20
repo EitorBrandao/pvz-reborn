@@ -24,6 +24,7 @@ Arquivo novo (js, json, imagem) também precisa entrar na lista `ARQUIVOS` do `s
 - Números e textos do jogo ficam em `data/*.json`, nunca espalhados pelo código.
 - `js/estado.js` é o único que mexe no save. Campos novos no save precisam funcionar com saves antigos (o `completar()` preenche o que faltar).
 - Nada de internet, login, anúncio ou compra com dinheiro real.
+- Som: todo efeito novo da batalha (status, habilidade, efeito) precisa de som próprio em `js/som.js` (`status_<nome>` quando pega e `tick_<nome>` se age a cada rodada).
 - Nomes, personagens e arte originais. Nada de Plants vs. Zombies, PopCap, EA ou Youkia.
 
 ## Testes
