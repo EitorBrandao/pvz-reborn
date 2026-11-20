@@ -2,7 +2,7 @@
 
 import { $, mostrarTela, avisar, preencher } from './comum.js';
 import * as jogo from '../estado.js';
-import { atributos, poder, xpParaProximo, nivelMaximo, pontosTalento, pontosGastos, custoAscensao, podeAscender, custoEstrela, custoEquip, temCartas, habilidadeComEstrelas } from '../evolucao.js';
+import { atributos, poder, xpParaProximo, nivelMaximo, classeTalento, pontosTalento, pontosGastos, custoAscensao, podeAscender, custoEstrela, custoEquip, temCartas, habilidadeComEstrelas } from '../evolucao.js';
 import * as som from '../som.js';
 
 let dados;
@@ -316,7 +316,8 @@ function desenharDetalhe() {
   // Talentos
   const tl = dados.talentos;
   const livres = pontosTalento(r, dados) - pontosGastos(r);
-  const ramosHtml = tl.ramos.map((ramo) => `
+  const classe = classeTalento(dados, p);
+  const ramosHtml = classe.ramos.map((ramo) => `
     <div class="talento-ramo"><b>${ramo.emoji} ${ramo.nome}</b> <small>${ramo.desc}</small>
     ${ramo.nos.map((no) => {
       const n = (r.talentos || {})[no.id] || 0;
@@ -325,6 +326,7 @@ function desenharDetalhe() {
         <button class="btn btn-verde btn-peq" data-acao="talento" data-no="${no.id}" ${livres > 0 && n < no.max ? '' : 'disabled'}>+</button></div>`;
     }).join('')}</div>`).join('');
   const blocoTalentos = `<div class="bloco"><h4>Talentos${selo(livres > 0)}</h4>
+    <p class="dica-pequena"><b>${classe.emoji} ${classe.nome}</b>: ${classe.desc}</p>
     <p class="dica-pequena">Pontos livres: <b>${livres}</b> (1 a cada ${tl.niveisPorPonto} níveis, +${tl.pontosPorRank} por rank de ascensão)</p>
     ${ramosHtml}
     <button class="btn btn-azul btn-peq" data-acao="resetar-talentos" ${pontosGastos(r) ? '' : 'disabled'}>Resetar 💧${tl.custoReset.orvalho}</button></div>`;
