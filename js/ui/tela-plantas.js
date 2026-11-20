@@ -3,6 +3,7 @@
 import { $, mostrarTela, avisar, preencher } from './comum.js';
 import * as jogo from '../estado.js';
 import { atributos, poder, xpParaProximo, nivelMaximo, custoEstrela, custoEquip, temCartas, habilidadeComEstrelas } from '../evolucao.js';
+import * as som from '../som.js';
 
 let dados;
 let aberta = null;      // id da planta aberta no detalhe
@@ -350,15 +351,18 @@ function acaoDetalhe(evento) {
   switch (botao.dataset.acao) {
     case 'treinar':
       res = jogo.treinar(aberta, botao.dataset.carta);
+      if (res.ok) som.tocarSom(res.subiu ? 'nivel' : 'treino');
       if (res.ok && res.subiu) avisar(preencher(t.subiuNivel, { emoji: p.emoji, nome: p.nome, nivel: r.nivel }));
       break;
     case 'estrela':
       res = jogo.evoluirEstrela(aberta);
+      if (res.ok) som.tocarSom('estrela');
       if (res.ok) avisar(preencher(t.estrelaSubiu, { nome: p.nome, estrelas: r.estrelas }));
       break;
     case 'equip': {
       const esp = dados.equipamentos.espacos.find((x) => x.id === botao.dataset.espaco);
       res = jogo.melhorarEquip(aberta, esp.id);
+      if (res.ok) som.tocarSom('equip');
       if (res.ok) avisar(preencher(t.equipSubiu, { espaco: esp.nome, nivel: dados.equipamentos.niveis[r.equip[esp.id] - 1].nome }));
       break;
     }
@@ -381,6 +385,8 @@ function usarCarta(n) {
 
 function mostrarPacote(res) {
   if (!res.ok) return erro(res);
+  som.tocarSom('pacote');
+  if (res.nova || (res.resultados || []).some((r) => r.nova)) som.tocarSom('pacoteNovo');
   if (res.resultados) return mostrarResumo(res.resultados);
   $('pacote-resumo').innerHTML = '';
   const p = base(res.id);
