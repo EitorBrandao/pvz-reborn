@@ -11,6 +11,13 @@ let aoLutar;
 let aoVoltar;
 let escolhidas = []; // plantas marcadas antes de entrar
 
+// Ordem da lista de plantas: a mesma (e lembrada junto) da tela de montar o time.
+const ORDENS = ['padrao', 'poder', 'nivel', 'estrela', 'vida', 'atq', 'def', 'vel'];
+const ICONE_ATRIBUTO = { vida: '❤️', atq: '⚔️', def: '🛡️', vel: '💨' };
+let ordem = 'padrao';
+try { ordem = localStorage.getItem('horta-ordem-time') || 'padrao'; } catch { /* sem storage */ }
+if (!ORDENS.includes(ordem)) ordem = 'padrao';
+
 export function iniciarTelaLabirinto(d, { lutar, voltar }) {
   dados = d;
   aoLutar = lutar;
@@ -96,6 +103,27 @@ function desenhar() {
 
 // ---------- Antes de entrar ----------
 
+// Plantas da coleção na ordem escolhida; empate mantém a ordem original.
+function plantasOrdenadas() {
+  const col = jogo.estado.colecao;
+  const itens = dados.plantas.filter((p) => col[p.id]).map((p, i) => {
+    const s = atributos(p, col[p.id], dados);
+    return { p, i, r: col[p.id], s, poder: poder(s, dados) };
+  });
+  const chave = ({ r, s, poder: pd }) => {
+    if (ordem === 'nivel') return [r.nivel, r.estrelas];
+    if (ordem === 'estrela') return [r.estrelas, r.nivel];
+    if (ordem === 'padrao') return [0, 0];
+    if (ordem === 'poder') return [pd, r.nivel];
+    return [s[ordem], 0];
+  };
+  return itens.sort((a, b) => {
+    const [a1, a2] = chave(a);
+    const [b1, b2] = chave(b);
+    return (b1 - a1) || (b2 - a2) || (a.i - b.i);
+  });
+}
+
 function desenharInicio(raiz) {
   const t = T();
   const c = dados.labirinto;
@@ -104,16 +132,14 @@ function desenharInicio(raiz) {
 
   const lista = document.createElement('div');
   lista.className = 'grade-plantas';
-  const donas = dados.plantas.filter((p) => jogo.estado.colecao[p.id]);
+  const donas = plantasOrdenadas();
   escolhidas = escolhidas.filter((id) => jogo.estado.colecao[id] && !jogo.emExpedicao(id));
-  for (const p of donas) {
-    const r = jogo.estado.colecao[p.id];
-    const s = atributos(p, r, dados);
+  for (const { p, r, s } of donas) {
     const viajando = jogo.emExpedicao(p.id);
     const marcada = escolhidas.includes(p.id);
     const cartao = document.createElement('button');
     cartao.className = 'cartao-planta' + (marcada ? ' no-time' : '') + (viajando ? ' fora-regra' : '');
-    cartao.innerHTML = `<span class="planta-emoji">${arte(p)}</span><b>${p.nome}</b><small>Nv ${r.nivel} · ${'⭐'.repeat(r.estrelas)}</small><span class="poder">💪 ${poder(s, dados)}</span>`;
+    cartao.innerHTML = `<span class="planta-emoji">${arte(p)}</span><b>${p.nome}</b><small>Nv ${r.nivel} · ${'⭐'.repeat(r.estrelas)}</small><span class="poder">${ICONE_ATRIBUTO[ordem] ? `${ICONE_ATRIBUTO[ordem]} ${s[ordem]}` : `💪 ${poder(s, dados)}`}</span>`;
     cartao.addEventListener('click', () => {
       if (viajando) return avisar(dados.textos.rotina.plantaViajando);
       if (marcada) escolhidas = escolhidas.filter((id) => id !== p.id);
@@ -125,7 +151,14 @@ function desenharInicio(raiz) {
   }
   const poderTime = escolhidas.reduce((soma, id) => soma + poder(atributos(planta(id), jogo.estado.colecao[id], dados), dados), 0);
   const mult = multPremio(poderTime, dados);
-  raiz.append(bloco(preencher(t.escolhaTitulo, { n: escolhidas.length, max: c.plantasInicio }), lista));
+  const ordenar = botao(dados.textos.ordensTime[ordem], 'btn-azul', () => {
+    ordem = ORDENS[(ORDENS.indexOf(ordem) + 1) % ORDENS.length];
+    try { localStorage.setItem('horta-ordem-time', ordem); } catch { /* sem storage */ }
+    desenhar();
+  });
+  ordenar.classList.remove('btn-largo');
+  ordenar.classList.add('btn-peq');
+  raiz.append(bloco(preencher(t.escolhaTitulo, { n: escolhidas.length, max: c.plantasInicio }), ordenar, lista));
   raiz.append(texto(preencher(t.premioMult, { mult: mult.toFixed(1) })));
   const entrar = botao(t.entrar, 'btn-laranja', () => {
     const r = jogo.iniciarLabirinto(escolhidas);
