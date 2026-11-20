@@ -1,6 +1,6 @@
 // Tela de plantas: coleção, cartas, pacote de sementes e evolução de cada planta.
 
-import { $, mostrarTela, avisar, preencher, selosPlanta } from './comum.js';
+import { $, mostrarTela, avisar, preencher, selosPlanta, textoHabilidade } from './comum.js';
 import * as jogo from '../estado.js';
 import { atributos, poder, xpParaProximo, nivelMaximo, classeTalento, pontosTalento, pontosGastos, custoAscensao, podeAscender, custoEstrela, custoEquip, temCartas, habilidadeComEstrelas } from '../evolucao.js';
 import * as som from '../som.js';
@@ -240,23 +240,7 @@ function desenharDetalhe() {
 
   // Habilidade
   const h = habilidadeComEstrelas(p.habilidade, r.estrelas);
-  const textoStatus = (hab) => {
-    const a = hab.aplica;
-    const st = a && t.status[a.status];
-    return st ? ' ' + preencher(st.texto, { valor: Math.round(a.valor * 100), turnos: a.turnos }) : '';
-  };
-  // Plural: usa o texto "_varios" quando o número passa de 1 (ex.: cura 2 aliados).
-  const chaveHab = (hab) => {
-    const n = hab.tipo === 'cura' ? hab.alvos : hab.tipo === 'sono' ? hab.turnos : 1;
-    return n > 1 && t.habilidades[`${hab.tipo}_varios`] ? `${hab.tipo}_varios` : hab.tipo;
-  };
-  const textoHab = (hab) => preencher(t.habilidades[chaveHab(hab)] || '', {
-    reflete: Math.round((hab.reflete || 0) * 100), turnos: hab.turnos, golpes: hab.golpes,
-    reducao: Math.round((hab.reducao || 0) * 100), forca: Math.round((hab.mult || 0) * 100),
-    alvos: hab.alvos || 1, seiva: hab.seiva,
-    pctVida: Math.round((hab.pctVida || 0) * 100), limite: Math.round((hab.limite || 0) * 100),
-    bonus: Math.round((hab.mult || 0) * (hab.bonus || 0) * 100),
-  }) + textoStatus(hab);
+  const textoHab = (hab) => textoHabilidade(hab, dados);
   const descHab = textoHab(h);
   const fx = dados.faccoes;
   const fac = fx.faccoes.find((f) => f.id === p.faccao);

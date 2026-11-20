@@ -12,6 +12,7 @@
   "saveInvalido": "Esse arquivo não parece um save da Horta Selvagem.",
   "confirmarApagar": "Apagar TODO o progresso? Não dá pra desfazer.",
   "apagado": "Tudo apagado. Começando do zero!",
+  "infoPlantaFechar": "Toque em qualquer lugar pra fechar.",
   "timeVazio": "Coloca pelo menos uma planta no time!",
   "timeCheio": "O time já tem {max} plantas. Tira uma pra trocar.",
   "timeCheioProxima": "O time já tem {max} plantas. Nova vaga no nível {nivel}!",

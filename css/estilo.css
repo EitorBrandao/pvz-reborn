@@ -232,6 +232,7 @@ body {
 .dica-pequena { font-size: .8rem; opacity: .9; text-align: center; margin: 8px 0; }
 
 .lista-plantas { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.cartao-planta { -webkit-touch-callout: none; }
 .cartao-planta {
   display: flex;
   flex-direction: column;
