@@ -92,6 +92,8 @@ export function prepararBatalha(batalha, time, dados, colecao = {}) {
       u[atributo] = Math.round(u[atributo] * mult);
       if (atributo === 'vida') u.vidaMax = u.vida;
     }
+    // ajuste só desse inimigo (ex.: chefe da Invasão bate mais fraco)
+    for (const [atributo, mult] of Object.entries(i.mult || {})) u[atributo] = Math.round(u[atributo] * mult);
     // vida fixa (ex.: chefe da Invasão, que guarda a vida entre uma batalha e outra)
     if (i.vida) {
       u.vida = i.vida;

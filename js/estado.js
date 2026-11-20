@@ -320,7 +320,7 @@ function registrarInvasao(batalha, dano) {
   const c = dados.invasao;
   const inv = estado.invasao;
   if (inv) inv.dano += dano;
-  const moedas = Math.round((dano / batalha.vidaUm) * c.moedasPorVidaChefe);
+  const moedas = c.moedasBase + Math.round((dano / batalha.vidaUm) * c.moedasPorVidaChefe);
   const xp = batalha.recompensa.xp;
   const cartas = sortearCartas(batalha.cartas);
   estado.moedas += moedas;

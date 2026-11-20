@@ -115,7 +115,7 @@ export function batalhaInvasao(sit, ciclo, dados) {
   const rng = criarRng(numeroDoTexto(`lacaios-${ciclo}`));
   const comuns = pragasConhecidas(dados, { vencidas: dados.campanha.mapas.flatMap((m) => m.fases.map((f) => f.id)) })
     .filter((p) => !p.chefe && p.categoria === sit.chefe.categoria);
-  const inimigos = [{ praga: sit.chefe.id, col: 0, linha: 1, nivel: sit.nivel, vida: sit.restante, vidaMax: sit.vidaTotal }];
+  const inimigos = [{ praga: sit.chefe.id, col: 0, linha: 1, nivel: sit.nivel, vida: sit.restante, vidaMax: sit.vidaTotal, mult: c.multChefe }];
   [[0, 0], [0, 2], [1, 1]].slice(0, c.lacaios).forEach(([col, linha]) => {
     const p = comuns[Math.floor(rng() * comuns.length)];
     if (p) inimigos.push({ praga: p.id, col, linha, nivel: sit.nivel });
