@@ -12,14 +12,21 @@
   "saveInvalido": "Esse arquivo não parece um save da Horta Selvagem.",
   "confirmarApagar": "Apagar TODO o progresso? Não dá pra desfazer.",
   "apagado": "Tudo apagado. Começando do zero!",
-
   "timeVazio": "Coloca pelo menos uma planta no time!",
   "timeCheio": "O time já tem {max} plantas. Tira uma pra trocar.",
   "pularBloqueado": "Vença essa batalha uma vez pra liberar o Pular.",
-  "vitoria": ["Vitória!", "Horta salva!", "Pragas no chão!"],
-  "derrota": ["Derrota...", "As pragas venceram", "Quase!"],
-  "vitoriaTexto": "+{moedas} moedas",
-  "derrotaTexto": "Tente outra formação ou outras plantas.",
+  "vitoria": [
+    "Vitória!",
+    "Horta salva!",
+    "Pragas no chão!"
+  ],
+  "derrota": [
+    "Derrota...",
+    "As pragas venceram",
+    "Quase!"
+  ],
+  "vitoriaTexto": "+{moedas} moedas · +{xp} XP",
+  "derrotaTexto": "+{xp} XP. Evolua suas plantas ou troque a formação.",
   "semCartas": "Nenhuma carta dessa vez.",
   "efeitos": {
     "dormindo": "💤 zzz",
@@ -27,5 +34,32 @@
     "sono": "💤 Dormiu!",
     "lento": "🐢 Lento!",
     "escudo": "🛡️ +{valor}"
+  },
+  "atualizado": "Jogo atualizado pra versão {versao}!",
+  "subiuNivel": "{emoji} {nome} subiu pro Nv {nivel}!",
+  "semMoedas": "Moedas insuficientes.",
+  "semOrvalho": "Gotas de Orvalho insuficientes.",
+  "semMaterial": "Faltam cartas pra isso.",
+  "nivelMaximo": "Nível máximo! Evolua a estrela pra continuar subindo.",
+  "plantaNova": "Planta nova: {nome}!",
+  "copiaNova": "+1 cópia de {nome}",
+  "estrelaSubiu": "{nome} agora tem {estrelas} ⭐!",
+  "equipSubiu": "{espaco} melhorou pra {nivel}!",
+  "bloqueada": "Ache no Pacote de Sementes",
+  "habilidades": {
+    "area_coluna": "Acerta toda uma coluna inimiga.",
+    "espinhos": "Ataca e devolve {reflete}% do dano recebido por {turnos} rodadas.",
+    "rajada": "Dispara {golpes} golpes em alvos aleatórios.",
+    "cura": "Cura o aliado mais ferido.",
+    "escudo": "Dá um escudo pra todo o time por {turnos} rodadas.",
+    "perfurar": "Atravessa e acerta também quem está atrás.",
+    "sono": "Ataca e faz o alvo dormir {turnos} rodada.",
+    "lentidao": "Ataca e deixa o alvo {reducao}% mais lento."
+  },
+  "atributos": {
+    "vida": "❤️ Vida",
+    "atq": "⚔️ Ataque",
+    "def": "🛡️ Defesa",
+    "vel": "💨 Velocidade"
   }
 }

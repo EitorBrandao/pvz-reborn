@@ -1,7 +1,7 @@
 [
-  { "id": "adubo", "nome": "Adubo Simples", "emoji": "🟫", "raridade": "comum" },
-  { "id": "fibra", "nome": "Fibra Verde", "emoji": "🧶", "raridade": "comum" },
-  { "id": "seiva_dourada", "nome": "Seiva Dourada", "emoji": "🍯", "raridade": "rara" },
-  { "id": "petala_rara", "nome": "Pétala Rara", "emoji": "🌸", "raridade": "rara" },
-  { "id": "semente_misteriosa", "nome": "Semente Misteriosa", "emoji": "🌰", "raridade": "epica" }
+  { "id": "adubo", "nome": "Terra Fértil", "emoji": "🟫", "raridade": "comum", "uso": "xp", "xp": 30, "descricao": "Treina uma planta: +30 XP." },
+  { "id": "fibra", "nome": "Fibra Verde", "emoji": "🧶", "raridade": "comum", "uso": "equip", "descricao": "Material pra melhorar equipamentos." },
+  { "id": "seiva_dourada", "nome": "Seiva Dourada", "emoji": "🍯", "raridade": "rara", "uso": "xp", "xp": 150, "descricao": "Treina uma planta: +150 XP. Também serve em equipamento épico." },
+  { "id": "petala_rara", "nome": "Pétala Rara", "emoji": "🌸", "raridade": "rara", "uso": "equip", "descricao": "Material pra equipamentos raros e épicos." },
+  { "id": "semente_misteriosa", "nome": "Semente Misteriosa", "emoji": "🌰", "raridade": "epica", "uso": "pacote", "descricao": "Toque pra plantar: vira uma planta aleatória!" }
 ]

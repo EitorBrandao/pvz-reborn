@@ -2,6 +2,7 @@
 
 import { $, mostrarTela, avisar, preencher } from './comum.js';
 import * as jogo from '../estado.js';
+import { atributos } from '../evolucao.js';
 
 let dados;
 let batalhaEscolhida = null;
@@ -84,15 +85,17 @@ function desenharPlantas() {
   const lista = $('lista-plantas');
   lista.innerHTML = '';
   const max = dados.config.batalha.tamanhoTime;
-  for (const p of dados.plantas) {
+  for (const p of dados.plantas.filter((x) => jogo.estado.colecao[x.id])) {
+    const registro = jogo.estado.colecao[p.id];
+    const s = atributos(p, registro, dados);
     const noTime = jogo.estado.time.find((m) => m.planta === p.id);
     const cartao = document.createElement('button');
     cartao.className = 'cartao-planta' + (noTime ? ' no-time' : '');
     cartao.innerHTML = `
       <span class="planta-emoji">${p.emoji}</span>
       <b>${p.nome}</b>
-      <small>${p.funcao}</small>
-      <span class="atributos">❤️${p.vida} ⚔️${p.atq} 🛡️${p.def} 💨${p.vel}</span>`;
+      <small>Nv ${registro.nivel} · ${'⭐'.repeat(registro.estrelas)}</small>
+      <span class="atributos">❤️${s.vida} ⚔️${s.atq} 🛡️${s.def} 💨${s.vel}</span>`;
     cartao.addEventListener('click', () => {
       const time = jogo.estado.time;
       if (noTime) {

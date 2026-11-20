@@ -1,6 +1,8 @@
 // Regras da batalha automática. Não desenha nada: só calcula o que acontece
 // e devolve uma lista de eventos pra tela animar.
 
+import { atributos, registroNovo } from './evolucao.js';
+
 // Gerador de números aleatórios com semente (mesma semente = mesma batalha).
 export function criarRng(semente) {
   let a = semente >>> 0;
@@ -27,13 +29,19 @@ export function montarUnidade(base, lado, col, linha, nivel, uid, cfg) {
 }
 
 // Monta as unidades dos dois lados a partir do time do jogador e da batalha escolhida.
-export function prepararBatalha(batalha, time, dados) {
+// "colecao" traz nível, estrelas e equipamentos de cada planta.
+export function prepararBatalha(batalha, time, dados, colecao = {}) {
   const cfg = dados.config.batalha;
   const unidades = [];
   let n = 0;
   for (const m of time) {
     const base = dados.plantas.find((p) => p.id === m.planta);
-    if (base) unidades.push(montarUnidade(base, 'planta', m.col, m.linha, m.nivel || 1, `u${n++}`, cfg));
+    if (!base) continue;
+    const registro = colecao[m.planta] || registroNovo();
+    const u = montarUnidade(base, 'planta', m.col, m.linha, registro.nivel, `u${n++}`, cfg);
+    const stats = atributos(base, registro, dados);
+    Object.assign(u, stats, { vidaMax: stats.vida, estrelas: registro.estrelas });
+    unidades.push(u);
   }
   for (const i of batalha.inimigos) {
     const base = dados.pragas.find((p) => p.id === i.praga);
@@ -79,7 +87,7 @@ export function simular(unidades, cfg, semente) {
 
   function bater(atacante, alvo, mult, efeitos) {
     if (atacante.vida <= 0) return; // morreu no meio do ataque (espinhos)
-    let bruto = atacante.atq * mult * (100 / (100 + alvo.def));
+    let bruto = atacante.atq * mult * cfg.multDano * (100 / (100 + alvo.def));
     bruto *= 1 - cfg.variacao + rng() * 2 * cfg.variacao;
     const critico = rng() < cfg.chanceCritico;
     if (critico) bruto *= cfg.multCritico;

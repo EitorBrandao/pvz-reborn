@@ -1,6 +1,8 @@
 // Guarda os arquivos do jogo no celular pra funcionar sem internet.
-// IMPORTANTE: ao mudar qualquer arquivo do jogo, aumente o número da versão abaixo.
-const VERSAO = 'horta-v0.2.0';
+// Com internet, SEMPRE busca a versão mais nova primeiro (sem usar cache velho do navegador).
+// Ao mudar a lista de arquivos, aumente o número da versão abaixo.
+const VERSAO = 'horta-v0.3.0';
+const ESPERA_REDE_MS = 4000; // internet lenta: depois disso usa a cópia guardada
 
 const ARQUIVOS = [
   './',
@@ -11,22 +13,29 @@ const ARQUIVOS = [
   'js/estado.js',
   'js/save.js',
   'js/batalha.js',
+  'js/evolucao.js',
   'js/ui/comum.js',
   'js/ui/tela-time.js',
   'js/ui/tela-batalha.js',
+  'js/ui/tela-plantas.js',
   'data/config.json',
   'data/mensagens.json',
   'data/plantas.json',
   'data/pragas.json',
   'data/cartas.json',
   'data/batalhas.json',
+  'data/equipamentos.json',
   'art/icones/icone.svg',
   'art/icones/icone-192.png',
   'art/icones/icone-512.png',
 ];
 
 self.addEventListener('install', (evento) => {
-  evento.waitUntil(caches.open(VERSAO).then((cache) => cache.addAll(ARQUIVOS)));
+  evento.waitUntil(
+    caches.open(VERSAO).then((cache) =>
+      cache.addAll(ARQUIVOS.map((a) => new Request(a, { cache: 'reload' })))
+    )
+  );
   self.skipWaiting();
 });
 
@@ -39,16 +48,25 @@ self.addEventListener('activate', (evento) => {
   self.clients.claim();
 });
 
-// Primeiro tenta a internet (pra pegar atualizações); sem internet, usa a cópia guardada.
 self.addEventListener('fetch', (evento) => {
-  if (evento.request.method !== 'GET') return;
-  evento.respondWith(
-    fetch(evento.request)
-      .then((resposta) => {
-        const copia = resposta.clone();
-        caches.open(VERSAO).then((cache) => cache.put(evento.request, copia));
-        return resposta;
-      })
-      .catch(() => caches.match(evento.request, { ignoreSearch: true }))
-  );
+  const pedido = evento.request;
+  if (pedido.method !== 'GET' || new URL(pedido.url).origin !== self.location.origin) return;
+  evento.respondWith(daRedeOuGuardado(pedido));
 });
+
+async function daRedeOuGuardado(pedido) {
+  const cache = await caches.open(VERSAO);
+  const daRede = fetch(new Request(pedido.url, { cache: 'no-cache' })).then((resposta) => {
+    if (resposta.ok) cache.put(pedido, resposta.clone());
+    return resposta;
+  });
+  try {
+    return await Promise.race([
+      daRede,
+      new Promise((_, falhar) => setTimeout(() => falhar(new Error('rede lenta')), ESPERA_REDE_MS)),
+    ]);
+  } catch {
+    const guardado = await caches.match(pedido, { ignoreSearch: true });
+    return guardado || daRede;
+  }
+}

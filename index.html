@@ -47,7 +47,7 @@
 
       <nav class="menu-base">
         <button id="btn-batalha" class="btn btn-menu btn-laranja">⚔️<span>Batalha</span></button>
-        <button class="btn btn-menu" data-breve="Plantas">🌿<span>Plantas</span></button>
+        <button id="btn-plantas" class="btn btn-menu">🌿<span>Plantas</span></button>
         <button class="btn btn-menu" data-breve="Campanha">🗺️<span>Campanha</span></button>
         <button class="btn btn-menu" data-breve="Arena">🏆<span>Arena</span></button>
       </nav>
@@ -71,6 +71,41 @@
       <button id="btn-lutar" class="btn btn-grande btn-laranja btn-fixo">Lutar!</button>
     </section>
 
+    <!-- Plantas -->
+    <section id="tela-plantas" class="tela">
+      <header class="topo">
+        <button id="plantas-voltar" class="btn-icone" aria-label="Voltar">⬅️</button>
+        <h2>Plantas</h2>
+        <span class="pilula topo-dir">🪙 <b id="plantas-moedas">0</b></span>
+        <span class="pilula">💧 <b id="plantas-orvalho">0</b></span>
+      </header>
+      <div class="rolagem">
+        <div class="pacotes">
+          <button id="btn-pacote-moedas" class="btn btn-laranja"></button>
+          <button id="btn-pacote-orvalho" class="btn btn-azul"></button>
+        </div>
+        <h3 class="titulo-secao">Cartas</h3>
+        <div id="inventario" class="inventario"></div>
+        <h3 class="titulo-secao">Coleção</h3>
+        <div id="colecao" class="lista-plantas"></div>
+      </div>
+
+      <div id="detalhe" class="modal escondido">
+        <div class="modal-caixa">
+          <button id="detalhe-fechar" class="fechar" aria-label="Fechar">✖</button>
+          <div id="detalhe-conteudo"></div>
+        </div>
+      </div>
+
+      <div id="pacote-resultado" class="modal escondido">
+        <div class="modal-caixa pacote-caixa">
+          <div id="pacote-emoji" class="pacote-emoji"></div>
+          <h3 id="pacote-titulo"></h3>
+          <button id="pacote-ok" class="btn btn-laranja">Oba!</button>
+        </div>
+      </div>
+    </section>
+
     <!-- Batalha -->
     <section id="tela-batalha" class="tela">
       <header class="topo topo-batalha">
@@ -86,6 +121,7 @@
         <div class="resultado-caixa">
           <h2 id="resultado-titulo"></h2>
           <p id="resultado-texto"></p>
+          <ul id="resultado-niveis" class="resultado-niveis"></ul>
           <div id="resultado-cartas" class="cartas"></div>
           <div class="resultado-botoes">
             <button id="btn-de-novo" class="btn btn-laranja">Lutar de novo</button>
@@ -117,6 +153,7 @@
   </div>
 
   <div id="aviso" class="aviso" role="status"></div>
+  <button id="aviso-atualizacao" class="aviso-atualizacao escondido">🌱 Nova versão! Toque pra atualizar</button>
 
   <script type="module" src="js/main.js"></script>
 </body>

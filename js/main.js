@@ -5,6 +5,7 @@ import * as save from './save.js';
 import { $, mostrarTela, avisar, sortear, preencher } from './ui/comum.js';
 import { iniciarTelaTime, abrirTelaTime } from './ui/tela-time.js';
 import { iniciarTelaBatalha, comecarBatalha } from './ui/tela-batalha.js';
+import { iniciarTelaPlantas, abrirTelaPlantas } from './ui/tela-plantas.js';
 
 let dados;
 
@@ -50,6 +51,7 @@ function ligarBotoes() {
   });
 
   $('btn-batalha').addEventListener('click', abrirTelaTime);
+  $('btn-plantas').addEventListener('click', abrirTelaPlantas);
 
   document.querySelectorAll('[data-breve]').forEach((botao) => {
     botao.addEventListener('click', () => avisar(preencher(textos.emBreve, { nome: botao.dataset.breve })));
@@ -102,34 +104,70 @@ function prepararInstalacao() {
   window.addEventListener('appinstalled', () => $('btn-instalar').classList.add('escondido'));
 }
 
-function registrarServiceWorker() {
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('service-worker.js').catch((erro) => {
-      console.warn('Service worker não registrou:', erro);
+// Procura atualização ao abrir o app e sempre que ele volta pra tela.
+// Se tiver versão nova: na tela inicial recarrega sozinho; no meio do jogo mostra um aviso.
+async function registrarServiceWorker() {
+  if (!('serviceWorker' in navigator)) return;
+  const jaTinhaVersao = !!navigator.serviceWorker.controller;
+  let recarregando = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!jaTinhaVersao || recarregando) return;
+    if ($('tela-inicio').classList.contains('ativa')) {
+      recarregando = true;
+      jogo.salvarAgora();
+      location.reload();
+    } else {
+      $('aviso-atualizacao').classList.remove('escondido');
+    }
+  });
+  $('aviso-atualizacao').addEventListener('click', () => {
+    jogo.salvarAgora();
+    location.reload();
+  });
+  try {
+    const registro = await navigator.serviceWorker.register('service-worker.js', { updateViaCache: 'none' });
+    registro.update();
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') registro.update();
     });
+  } catch (erro) {
+    console.warn('Service worker não registrou:', erro);
+  }
+}
+
+// Avisa quando o jogo foi atualizado desde a última vez
+function avisarVersaoNova(config) {
+  const anterior = jogo.estado.versaoVista;
+  jogo.estado.versaoVista = config.versaoJogo;
+  jogo.salvarAgora();
+  if (anterior && anterior !== config.versaoJogo) {
+    avisar(preencher(dados.textos.atualizado, { versao: config.versaoJogo }));
   }
 }
 
 async function comecar() {
-  const [config, textos, plantas, pragas, cartas, batalhas] = await Promise.all([
+  const [config, textos, plantas, pragas, cartas, batalhas, equipamentos] = await Promise.all([
     lerJson('data/config.json'),
     lerJson('data/mensagens.json'),
     lerJson('data/plantas.json'),
     lerJson('data/pragas.json'),
     lerJson('data/cartas.json'),
     lerJson('data/batalhas.json'),
+    lerJson('data/equipamentos.json'),
   ]);
-  dados = { config, textos, plantas, pragas, cartas, batalhas };
+  dados = { config, textos, plantas, pragas, cartas, batalhas, equipamentos };
 
-  jogo.iniciar(config);
+  jogo.iniciar(dados);
   save.pedirArmazenamentoPersistente();
   $('versao').textContent = `versão ${config.versaoJogo}`;
 
   ligarBotoes();
   iniciarTelaTime(dados, { lutar: comecarBatalha, voltar: irParaBase });
   iniciarTelaBatalha(dados, abrirTelaTime);
+  iniciarTelaPlantas(dados, irParaBase);
   prepararInstalacao();
   registrarServiceWorker();
+  avisarVersaoNova(config);
   atualizarTela();
 }
 

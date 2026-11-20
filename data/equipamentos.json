@@ -1,0 +1,12 @@
+{
+  "espacos": [
+    { "id": "vaso", "nome": "Vaso", "emoji": "🏺", "atributo": "vida" },
+    { "id": "adubo", "nome": "Adubo", "emoji": "🧪", "atributo": "atq" },
+    { "id": "regador", "nome": "Regador", "emoji": "🚿", "atributo": "def" }
+  ],
+  "niveis": [
+    { "nome": "Comum", "bonus": 0.10, "custo": { "moedas": 100, "cartas": { "fibra": 2 } } },
+    { "nome": "Raro", "bonus": 0.22, "custo": { "moedas": 400, "cartas": { "fibra": 4, "petala_rara": 1 } } },
+    { "nome": "Épico", "bonus": 0.40, "custo": { "moedas": 1200, "cartas": { "fibra": 6, "petala_rara": 3, "seiva_dourada": 1 } } }
+  ]
+}

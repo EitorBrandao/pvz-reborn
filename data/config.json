@@ -1,5 +1,5 @@
 {
-  "versaoJogo": "0.2.0",
+  "versaoJogo": "0.3.0",
   "inicio": {
     "moedas": 500,
     "orvalho": 10,
@@ -13,6 +13,7 @@
   "save": {
     "intervaloSegundos": 10
   },
+  "plantasIniciais": ["cacto", "milho", "bambu", "babosa", "pimentao"],
   "timeInicial": [
     { "planta": "cacto", "col": 0, "linha": 1 },
     { "planta": "milho", "col": 0, "linha": 0 },
@@ -21,12 +22,31 @@
   ],
   "batalha": {
     "tamanhoTime": 5,
-    "maxRodadas": 30,
+    "maxRodadas": 15,
+    "multDano": 1.7,
     "seivaPorTurno": 25,
     "seivaAoApanhar": 10,
-    "chanceCritico": 0.1,
-    "multCritico": 1.5,
+    "chanceCritico": 0.15,
+    "multCritico": 1.8,
     "variacao": 0.1,
     "crescimentoPorNivel": 0.15
+  },
+  "evolucao": {
+    "xpBase": 40,
+    "xpPorNivel": 25,
+    "xpDerrota": 0.3,
+    "niveisPorEstrela": 10,
+    "estrelasMax": 5,
+    "bonusEstrela": 0.2,
+    "copiasPorEstrela": [0, 2, 4, 8, 15],
+    "moedasPorEstrela": [0, 200, 500, 1200, 3000]
+  },
+  "pacote": {
+    "moedas": 300,
+    "orvalho": 5,
+    "pesos": {
+      "pimentao": 10, "cacto": 12, "milho": 12, "babosa": 10,
+      "couve": 10, "bambu": 10, "cogumelo": 6, "trepadeira": 6
+    }
   }
 }

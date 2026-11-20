@@ -9,6 +9,8 @@ let canvas, ctx, W = 0, H = 0, raio = 30;
 let vis = {};            // aparência atual de cada unidade
 let projeteis = [];
 let flutuantes = [];
+let particulas = [];
+let clarao = 0;         // tela pisca branco em golpe crítico
 let banner = null;
 let tremor = 0;
 let pular = false;
@@ -56,15 +58,17 @@ export function comecarBatalha(batalha) {
   pular = false;
   projeteis = [];
   flutuantes = [];
+  particulas = [];
+  clarao = 0;
   banner = null;
   tremor = 0;
 
-  const unidades = prepararBatalha(batalha, jogo.estado.time, dados);
+  const unidades = prepararBatalha(batalha, jogo.estado.time, dados, jogo.estado.colecao);
   const semente = (Date.now() ^ Math.floor(Math.random() * 1e9)) >>> 0;
   const resultado = simular(structuredClone(unidades), dados.config.batalha, semente);
 
   vis = {};
-  for (const u of unidades) vis[u.uid] = { ...u, ox: 0, oy: 0, dx: 0, dy: 0, alpha: 1, brilho: 0, flash: 0 };
+  for (const u of unidades) vis[u.uid] = { ...u, ox: 0, oy: 0, dx: 0, dy: 0, kx: 0, alpha: 1, brilho: 0, flash: 0 };
 
   $('resultado').classList.add('escondido');
   $('batalha-nome').textContent = batalha.nome;
@@ -186,13 +190,27 @@ function mostrarEfeito(ef) {
   const t = dados.textos.efeitos;
   if (!v) return;
   switch (ef.tipo) {
-    case 'dano':
+    case 'dano': {
       v.vida = ef.vidaDepois;
       v.flash = 1;
-      if (ef.reflexo) flutuar(v.x, v.y - raio, `-${ef.valor}`, '#d08cff', 22);
-      else if (ef.critico) { flutuar(v.x, v.y - raio, `${ef.valor}!`, '#ff3b2f', 36); tremor += 9; }
-      else { flutuar(v.x, v.y - raio, `${ef.valor}`, '#ffe14d', 26); tremor += 1.5; }
+      // empurrão pra trás: quanto maior o golpe (em relação à vida), mais forte
+      const peso = Math.min(1, ef.valor / v.vidaMax * 3);
+      v.kx = (v.lado === 'planta' ? -1 : 1) * raio * (0.35 + peso * 0.6) * (ef.critico ? 1.6 : 1);
+      const tam = 28 + peso * 22;
+      if (ef.reflexo) flutuar(v.x, v.y - raio, `-${ef.valor}`, '#d08cff', 24);
+      else if (ef.critico) {
+        flutuar(v.x, v.y - raio * 1.2, `${ef.valor}!`, '#ff3b2f', tam + 16, true);
+        tremor += 16;
+        clarao = 0.35;
+        estourar(v.x, v.y, 16, ['#fff', '#ffd23a', '#ff6a2f']);
+      } else {
+        flutuar(v.x, v.y - raio, `${ef.valor}`, '#ffe14d', tam);
+        tremor += 4 + peso * 6;
+        estourar(v.x, v.y, 7, ['#fff', '#ffe14d']);
+      }
+      if (ef.morreu) { estourar(v.x, v.y, 22, ['#8a5a2b', '#5cc23a', '#fff']); tremor += 8; }
       break;
+    }
     case 'cura':
       v.vida = ef.vidaDepois;
       flutuar(v.x, v.y - raio, `+${ef.valor}`, '#7dff6a', 26);
@@ -219,30 +237,47 @@ function aplicarFoto(snap) {
   for (const uid in snap) if (vis[uid]) Object.assign(vis[uid], snap[uid]);
 }
 
-function flutuar(x, y, texto, cor, tam) {
+function flutuar(x, y, texto, cor, tam, grande = false) {
   if (pular) return;
-  flutuantes.push({ x, y, texto, cor, tam, t0: agora(), dur: 900 / vel() });
+  flutuantes.push({ x, y, texto, cor, tam, grande, t0: agora(), dur: (grande ? 1200 : 900) / vel() });
+}
+
+function estourar(x, y, quantidade, cores) {
+  if (pular) return;
+  for (let i = 0; i < quantidade; i++) {
+    const ang = Math.random() * Math.PI * 2;
+    const forca = raio * (0.08 + Math.random() * 0.12);
+    particulas.push({
+      x, y, vx: Math.cos(ang) * forca, vy: Math.sin(ang) * forca - raio * 0.05,
+      cor: cores[i % cores.length], tam: 2 + Math.random() * 4, vida: 1,
+    });
+  }
 }
 
 // ---------- Resultado ----------
 
 function terminar(resultado, semente) {
   const { textos } = dados;
-  let cartas = [];
-  let moedas = 0;
-  if (resultado.vitoria) {
-    cartas = rolarCartas(batalhaAtual, criarRng(semente ^ 0x9e3779b9));
-    moedas = batalhaAtual.recompensa.moedas;
-    jogo.registrarVitoria(batalhaAtual.id, moedas, cartas);
-  }
+  const cartas = resultado.vitoria ? rolarCartas(batalhaAtual, criarRng(semente ^ 0x9e3779b9)) : [];
+  const moedas = batalhaAtual.recompensa.moedas;
+  const { xp, subiram } = jogo.registrarBatalha(batalhaAtual, resultado.vitoria, cartas);
   atualizarBotoes();
 
   const caixa = $('resultado');
   caixa.classList.toggle('vitoria', resultado.vitoria);
   $('resultado-titulo').textContent = sortear(resultado.vitoria ? textos.vitoria : textos.derrota);
   $('resultado-texto').textContent = resultado.vitoria
-    ? preencher(textos.vitoriaTexto, { moedas })
-    : textos.derrotaTexto;
+    ? preencher(textos.vitoriaTexto, { moedas, xp })
+    : preencher(textos.derrotaTexto, { xp });
+
+  const niveis = $('resultado-niveis');
+  niveis.innerHTML = '';
+  for (const s of subiram) {
+    const p = dados.plantas.find((x) => x.id === s.id);
+    const li = document.createElement('li');
+    li.textContent = preencher(textos.subiuNivel, { emoji: p.emoji, nome: p.nome, nivel: s.nivel });
+    niveis.appendChild(li);
+  }
 
   const area = $('resultado-cartas');
   area.innerHTML = '';
@@ -275,9 +310,15 @@ function desenhar() {
   desenharGrama();
   Object.values(vis).sort((a, b) => a.y - b.y).forEach(desenharUnidade);
   desenharProjeteis(t);
+  desenharParticulas();
   desenharFlutuantes(t);
   desenharBanner(t);
   ctx.restore();
+  if (clarao > 0.01) {
+    ctx.fillStyle = `rgba(255,255,255,${clarao})`;
+    ctx.fillRect(0, 0, W, H);
+    clarao *= 0.8;
+  }
 }
 
 function desenharGrama() {
@@ -307,7 +348,8 @@ function desenharUnidade(v) {
   v.oy += (v.dy - v.oy) * 0.35;
   v.alpha += ((v.vida > 0 ? 1 : 0.18) - v.alpha) * 0.12;
   v.flash *= 0.85;
-  const x = v.x + v.ox;
+  v.kx *= 0.82;
+  const x = v.x + v.ox + v.kx;
   const y = v.y + v.oy;
 
   ctx.save();
@@ -387,6 +429,23 @@ function desenharProjeteis(t) {
   });
 }
 
+function desenharParticulas() {
+  particulas = particulas.filter((p) => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += raio * 0.012;
+    p.vida -= 0.035;
+    if (p.vida <= 0) return false;
+    ctx.globalAlpha = p.vida;
+    ctx.fillStyle = p.cor;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.tam, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    return true;
+  });
+}
+
 function desenharFlutuantes(t) {
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
@@ -394,12 +453,13 @@ function desenharFlutuantes(t) {
   flutuantes = flutuantes.filter((f) => {
     const k = (t - f.t0) / f.dur;
     if (k >= 1) return false;
-    const escala = k < 0.15 ? 0.5 + (k / 0.15) * 0.7 : 1.2 - Math.min(0.2, k - 0.15);
+    const pico = f.grande ? 1.5 : 1.25;
+    const escala = k < 0.12 ? 0.4 + (k / 0.12) * (pico - 0.4) : pico - Math.min(pico - 1, (k - 0.12) * 2);
     ctx.globalAlpha = k < 0.6 ? 1 : 1 - (k - 0.6) / 0.4;
     ctx.font = `900 ${f.tam * escala}px "Trebuchet MS", sans-serif`;
     const y = f.y - 45 * k;
     ctx.strokeStyle = '#2a1600';
-    ctx.lineWidth = 5;
+    ctx.lineWidth = f.grande ? 7 : 5;
     ctx.strokeText(f.texto, f.x, y);
     ctx.fillStyle = f.cor;
     ctx.fillText(f.texto, f.x, y);
