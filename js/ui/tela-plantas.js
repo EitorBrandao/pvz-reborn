@@ -43,7 +43,7 @@ export function iniciarTelaPlantas(d, voltar) {
   $('troca-fechar').addEventListener('click', fecharTroca);
   $('troca-mudas').addEventListener('click', (e) => { if (e.target.id === 'troca-mudas') fecharTroca(); });
   $('troca-planta').addEventListener('click', () => { fecharTroca(); usarComLote(carta(dados.config.troca.carta)); });
-  $('troca-material').addEventListener('click', () => { fecharTroca(); mostrarMaterial(jogo.trocarMudasPorMaterial()); });
+  $('troca-material').addEventListener('click', () => { fecharTroca(); usarComLote(carta(dados.config.troca.carta), true); });
 
   const { pacote } = dados.config;
   $('btn-pacote-moedas').textContent = `🌱 Pacote 🪙${pacote.moedas}`;
@@ -396,15 +396,28 @@ function mostrarMaterial(res) {
   abrirResultado(c.emoji, preencher(dados.textos.materialGanho, { qtd: res.qtd, nome: c.nome }), c.raridade !== 'comum');
 }
 
+function mostrarMateriais(res) {
+  if (!res.ok) return erro(res);
+  som.tocarSom('pacote');
+  $('pacote-emoji').textContent = '🎲';
+  $('pacote-titulo').textContent = '';
+  $('pacote-resumo').innerHTML = res.premios
+    .map((x) => `<span class="resumo-item">${carta(x.carta).emoji}<b>×${x.qtd}</b></span>`).join('');
+  $('pacote-resultado').classList.remove('nova');
+  $('pacote-resultado').classList.remove('escondido');
+  desenhar();
+}
+
 // ---------- Pacote de Sementes ----------
 
 // Com 10 itens ou mais, pergunta se usa 1 ou vários de uma vez
-function usarComLote(c) {
+function usarComLote(c, material = false) {
   const qtd = jogo.estado.inventario[c.id] || 0;
-  const porUso = c.uso === 'troca' ? dados.config.troca.custo : 1;
+  const porUso = material ? dados.config.troca.custoMaterial : (c.uso === 'troca' ? dados.config.troca.custo : 1);
+  usandoMaterial = material;
   const usos = Math.min(dados.config.pacote.lote, Math.floor(qtd / porUso));
   usando = c;
-  if (qtd >= dados.config.pacote.lote && usos > 1) {
+  if (usos > 1 && (material || qtd >= dados.config.pacote.lote)) {
     usarLote = usos;
     $('usar-quantos-titulo').textContent = preencher(dados.textos.usarQuantos, { emoji: c.emoji, nome: c.nome });
     $('usar-lote').textContent = `×${usos}`;
@@ -414,9 +427,11 @@ function usarComLote(c) {
 
 let usando = null;   // carta do inventário sendo usada
 let usarLote = 1;
+let usandoMaterial = false;
 
 function usarCarta(n) {
   $('usar-quantos').classList.add('escondido');
+  if (usandoMaterial) return n > 1 ? mostrarMateriais(jogo.trocarMudasPorMaterialVarias(n)) : mostrarMaterial(jogo.trocarMudasPorMaterial());
   if (usando.uso === 'pacote') mostrarPacote(n > 1 ? jogo.plantarSementes(n) : jogo.plantarSemente());
   else mostrarPacote(n > 1 ? jogo.trocarMudasVarias(n) : jogo.trocarMudas());
 }

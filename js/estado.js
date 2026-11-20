@@ -697,6 +697,15 @@ export function trocarMudasPorMaterial() {
   return { ok: true, carta: premio.carta, qtd: premio.qtd };
 }
 
+// Troca vários de uma vez e junta os prêmios iguais
+export function trocarMudasPorMaterialVarias(n) {
+  const r = variasVezes(n, trocarMudasPorMaterial);
+  if (!r.ok) return r;
+  const total = {};
+  for (const x of r.resultados) total[x.carta] = (total[x.carta] || 0) + x.qtd;
+  return { ok: true, premios: Object.entries(total).map(([carta, qtd]) => ({ carta, qtd })) };
+}
+
 // moeda: 'moedas' ou 'orvalho'
 export function comprarPacote(moeda) {
   const preco = config.pacote[moeda];
