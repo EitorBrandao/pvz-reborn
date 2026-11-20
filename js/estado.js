@@ -56,6 +56,13 @@ function completar(salvo) {
   const e = Object.assign(novoEstado(), salvo);
   // Plantas que já estavam no time de saves antigos entram na coleção
   for (const m of e.time) if (!e.colecao[m.planta]) e.colecao[m.planta] = evo.registroNovo();
+  // Cópias guardadas em plantas que já têm todas as estrelas viram Mudas Repetidas
+  for (const r of Object.values(e.colecao)) {
+    if (r.estrelas >= config.evolucao.estrelasMax && r.copias > 0) {
+      e.inventario[config.troca.carta] = (e.inventario[config.troca.carta] || 0) + r.copias;
+      r.copias = 0;
+    }
+  }
   return e;
 }
 
@@ -85,6 +92,17 @@ function contar(nome, n = 1) {
 export function xpJogadorInfo() {
   const c = config.jogador;
   return { nivel: estado.nivel, xp: estado.xpJogador, precisa: c.xpBase + estado.nivel * c.xpPorNivel };
+}
+
+// Vagas no time: começa com algumas e libera mais ao subir de nível
+export function vagasTime(nivel = estado.nivel) {
+  const v = config.batalha.vagasTime;
+  return v.inicial + v.liberaNoNivel.filter((n) => nivel >= n).length;
+}
+
+// Próximo nível que libera vaga (ou null se já liberou todas)
+export function proximaVaga() {
+  return config.batalha.vagasTime.liberaNoNivel.find((n) => estado.nivel < n) ?? null;
 }
 
 // Devolve quantos níveis o jogador subiu. Subir enche o fôlego e dá orvalho.
@@ -330,14 +348,31 @@ export function melhorarEquip(idPlanta, idEspaco) {
   return { ok: true };
 }
 
-function abrirPacote() {
-  const id = evo.sortearPlanta(config.pacote.pesos);
+function estaNoMaximo(id) {
+  const r = estado.colecao[id];
+  return !!r && r.estrelas >= config.evolucao.estrelasMax;
+}
+
+function abrirPacote(pesos = config.pacote.pesos) {
+  const id = evo.sortearPlanta(pesos);
   const nova = !estado.colecao[id];
+  // Cópia de planta que já tem todas as estrelas vira Muda Repetida
+  const virouMuda = !nova && estaNoMaximo(id);
   if (nova) estado.colecao[id] = evo.registroNovo();
+  else if (virouMuda) estado.inventario[config.troca.carta] = (estado.inventario[config.troca.carta] || 0) + 1;
   else estado.colecao[id].copias += 1;
   contar('abrirPacote');
   salvarAgora();
-  return { ok: true, id, nova };
+  return { ok: true, id, nova, virouMuda };
+}
+
+// Troca Mudas Repetidas por uma planta aleatória (não sorteia as que já estão no máximo)
+export function trocarMudas() {
+  const { carta, custo } = config.troca;
+  if ((estado.inventario[carta] || 0) < custo) return { ok: false, erro: 'semMudas' };
+  const pesos = Object.fromEntries(Object.entries(config.pacote.pesos).filter(([id]) => !estaNoMaximo(id)));
+  estado.inventario[carta] -= custo;
+  return abrirPacote(Object.keys(pesos).length ? pesos : config.pacote.pesos);
 }
 
 // moeda: 'moedas' ou 'orvalho'

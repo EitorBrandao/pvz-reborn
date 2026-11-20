@@ -69,7 +69,7 @@ function custoTexto(custo) {
 }
 
 function erro(resultado) {
-  avisar(dados.textos[resultado.erro] || dados.textos.semMaterial);
+  avisar(preencher(dados.textos[resultado.erro] || dados.textos.semMaterial, { n: dados.config.troca.custo }));
 }
 
 // O que dá pra melhorar agora nessa planta, com o que o jogador tem.
@@ -117,6 +117,7 @@ function desenharInventario() {
     botao.innerHTML = `<span>${c.emoji}</span><b>${qtd}</b>`;
     botao.addEventListener('click', () => {
       if (c.uso === 'pacote') mostrarPacote(jogo.plantarSemente());
+      else if (c.uso === 'troca') mostrarPacote(jogo.trocarMudas());
       else avisar(`${c.nome}: ${c.descricao}`);
     });
     area.appendChild(botao);
@@ -347,7 +348,8 @@ function mostrarPacote(res) {
   const p = base(res.id);
   const t = dados.textos;
   $('pacote-emoji').textContent = p.emoji;
-  $('pacote-titulo').textContent = res.nova ? preencher(t.plantaNova, { nome: p.nome }) : preencher(t.copiaNova, { nome: p.nome });
+  const texto = res.nova ? t.plantaNova : (res.virouMuda ? t.copiaVirouMuda : t.copiaNova);
+  $('pacote-titulo').textContent = preencher(texto, { nome: p.nome });
   $('pacote-resultado').classList.toggle('nova', res.nova);
   $('pacote-resultado').classList.remove('escondido');
   // reinicia a animação

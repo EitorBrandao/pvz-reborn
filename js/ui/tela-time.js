@@ -30,13 +30,15 @@ function desenhar() {
   desenharGrade();
   desenharPlantas();
   desenharBonus();
-  $('time-contagem').textContent = `${jogo.estado.time.length}/${tamanhoMax()}`;
+  const proxima = faseEscolhida.timeMax ? null : jogo.proximaVaga();
+  $('time-contagem').textContent = `${jogo.estado.time.length}/${tamanhoMax()}`
+    + (proxima ? ` ${preencher(dados.textos.proximaVaga, { nivel: proxima })}` : '');
   $('btn-lutar').textContent = faseEscolhida.folego ? `Lutar! ⚡${faseEscolhida.folego}` : 'Lutar!';
 }
 
-// Limite de plantas: regra da batalha (ex.: Desafio "Time de três") ou o normal
+// Limite de plantas: vagas liberadas pelo nível, ou menos se a batalha tiver regra própria (ex.: Desafio "Time de três")
 function tamanhoMax() {
-  return faseEscolhida.timeMax || dados.config.batalha.tamanhoTime;
+  return Math.min(faseEscolhida.timeMax || Infinity, jogo.vagasTime());
 }
 
 // Linha de cima do resumo: mapa e fase na campanha, nome da atividade fora dela
@@ -124,7 +126,8 @@ function desenharPlantas() {
       if (noTime) {
         jogo.definirTime(time.filter((m) => m !== noTime));
       } else if (time.length >= max) {
-        return avisar(preencher(dados.textos.timeCheio, { max }));
+        const nivel = faseEscolhida.timeMax ? null : jogo.proximaVaga();
+        return avisar(preencher(nivel ? dados.textos.timeCheioProxima : dados.textos.timeCheio, { max, nivel }));
       } else {
         const lugar = espacoEscolhido || primeiroEspacoLivre();
         jogo.definirTime([...time, { planta: p.id, ...lugar }]);
