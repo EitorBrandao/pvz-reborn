@@ -34,7 +34,7 @@ export function poderDoTime(run, dados, colecao) {
 // Multiplicador do prêmio: time mais forte rende mais (e time fraquinho rende menos)
 export function multPremio(poderTime, dados) {
   const c = dados.labirinto;
-  const m = poderTime / c.referenciaPoder;
+  const m = poderTime / c.referenciaPremio;
   return Math.max(c.multPremio.min, Math.min(c.multPremio.max, m));
 }
 

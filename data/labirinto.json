@@ -211,5 +211,6 @@
  ],
  "maxRodadas": 40,
  "fraquezaMin": 0.25,
- "expoentePoder": 1.15
+ "expoentePoder": 1.15,
+ "referenciaPremio": 6000
 }
