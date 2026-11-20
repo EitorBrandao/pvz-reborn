@@ -160,10 +160,10 @@ function podeIr(id) {
 function desenharExpedicao() {
   const exp = jogo.expedicaoInfo();
   const caixa = $('rotina-conteudo');
-  const fechar = '<button class="fechar rotina-fechar" aria-label="Fechar">✖</button>';
+  const botaoFechar = '<button class="fechar rotina-fechar" aria-label="Fechar">✖</button>';
   if (exp) {
     const plantas = exp.plantas.map((id) => dados.plantas.find((p) => p.id === id)?.emoji).join(' ');
-    caixa.innerHTML = `${fechar}<h3>${exp.destino.emoji} ${exp.destino.nome}</h3>
+    caixa.innerHTML = `${botaoFechar}<h3>${exp.destino.emoji} ${exp.destino.nome}</h3>
       <p class="rotina-plantas">${plantas}</p>
       <div class="barra-xp grande"><span style="width:${exp.progresso * 100}%"></span></div>
       <p>${preencher(t().voltaEm, { tempo: formatar(exp.falta) })}</p>
@@ -184,7 +184,7 @@ function desenharExpedicao() {
     ? livres.map((p) => `<button class="escolha-planta${escolhidas.includes(p.id) ? ' marcada' : ''}" data-planta="${p.id}">
         <span>${p.emoji}</span><small>Nv ${jogo.estado.colecao[p.id].nivel}</small></button>`).join('')
     : `<p class="dica-pequena">${t().semPlantasLivres}</p>`;
-  caixa.innerHTML = `${fechar}<h3>🧭 ${t().expedicao}</h3>
+  caixa.innerHTML = `${botaoFechar}<h3>🧭 ${t().expedicao}</h3>
     <p class="dica-pequena">${t().expedicaoDica}</p>
     <div class="lista-escolha">${destinos}</div>
     <h4>${preencher(t().quemVai, { qtd: escolhidas.length, max })}</h4>
