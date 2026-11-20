@@ -40,7 +40,7 @@ body {
   padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom);
 }
 
-.tela { display: none; height: 100%; flex-direction: column; }
+.tela { display: none; height: 100%; flex-direction: column; position: relative; }
 .tela.ativa { display: flex; }
 .escondido { display: none !important; }
 
@@ -138,7 +138,7 @@ body {
 
 .menu-base {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 8px;
   padding: 12px;
   margin-bottom: 12px;
@@ -434,6 +434,167 @@ body {
 #pacote-resultado.nova .pacote-caixa { border-color: var(--laranja); box-shadow: 0 0 30px #ffd23a; }
 @keyframes pacote { from { transform: scale(.3) rotate(-20deg); opacity: 0; } to { transform: none; opacity: 1; } }
 
+/* ---------- HUD compacto (fase 4) ---------- */
+.hud { gap: 6px; flex-wrap: nowrap; }
+.hud .pilula { padding: 5px 9px; font-size: .9rem; }
+.pilula-btn { font-family: inherit; color: #fff; border: 0; cursor: pointer; display: inline-flex; align-items: baseline; gap: 3px; }
+.folego-tempo { font-size: .65rem; opacity: .85; }
+.folego-tempo:empty { display: none; }
+.pilula-nivel { position: relative; padding-bottom: 8px !important; }
+.mini-xp { position: absolute; left: 8px; right: 8px; bottom: 3px; height: 3px; background: rgba(255, 255, 255, .25); border-radius: 2px; overflow: hidden; }
+.mini-xp span { display: block; height: 100%; width: 0; background: #ffd23a; }
+
+/* ---------- Missões ---------- */
+.missoes-lado {
+  position: absolute;
+  left: 0;
+  top: 70px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 2;
+}
+.missao-icone {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 3px solid var(--terra);
+  background: var(--bege);
+  box-shadow: 0 3px 0 rgba(0, 0, 0, .3);
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+.missao-icone span { font-size: 1.5rem; }
+.missao-icone small { font-size: .65rem; font-weight: 800; color: var(--escuro); }
+.missao-icone.nova::after {
+  content: '!';
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--vermelho);
+  color: #fff;
+  font-weight: 900;
+  font-size: .8rem;
+  display: grid;
+  place-items: center;
+  border: 2px solid #fff;
+}
+.missao-icone.completa { border-color: var(--laranja); background: #fff3d6; animation: pulsa-missao 1s ease-in-out infinite; }
+@keyframes pulsa-missao { 50% { transform: scale(1.12); box-shadow: 0 0 16px #ffd23a; } }
+.fala { display: flex; gap: 10px; align-items: flex-start; margin: 8px 0 12px; }
+.fala-rosto { font-size: 3rem; line-height: 1; }
+.fala-balao { background: #fff; border: 3px solid var(--terra); border-radius: 14px; padding: 8px 10px; flex: 1; }
+.fala-balao p { margin: 4px 0 0; }
+.tarefa { display: grid; grid-template-columns: 1fr auto; gap: 4px 8px; align-items: center; margin-bottom: 8px; }
+.tarefa .barra-xp { grid-column: 1; }
+.premios { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.premio { background: #fff; border: 2px solid #d8c08a; border-radius: 999px; padding: 3px 10px; font-weight: 700; }
+#missao-resgatar { width: 100%; margin-top: 8px; }
+
+/* ---------- Mapa ---------- */
+.mapa-abas { display: flex; gap: 8px; margin-top: 12px; overflow-x: auto; }
+.aba {
+  font-family: inherit;
+  font-weight: 800;
+  border: 3px solid var(--terra);
+  background: rgba(246, 231, 193, .6);
+  color: var(--escuro);
+  border-radius: 999px;
+  padding: 6px 14px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.aba.ativa { background: var(--bege); border-color: var(--laranja); }
+.aba.bloqueada { opacity: .6; }
+.mapa-caminho {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  margin: 12px 0;
+  border: 4px solid var(--terra);
+  border-radius: 18px;
+  box-shadow: var(--sombra);
+}
+.mapa-trilha {
+  position: relative;
+  min-height: 100%;
+  padding: 24px 0 40px;
+  background:
+    radial-gradient(circle at 20% 15%, rgba(255, 255, 255, .12) 0 40px, transparent 41px),
+    radial-gradient(circle at 80% 55%, rgba(255, 255, 255, .1) 0 50px, transparent 51px),
+    var(--cor-mapa, #4caf2e);
+}
+.mapa-svg { position: absolute; left: 0; top: 0; pointer-events: none; z-index: 0; }
+.mapa-svg polyline { fill: none; stroke: #f6e7c1; stroke-width: 8; stroke-dasharray: 2 14; stroke-linecap: round; opacity: .9; }
+.no-linha { position: relative; height: 92px; }
+.no-fase {
+  position: absolute;
+  left: var(--x);
+  top: 0;
+  transform: translateX(-50%);
+  width: 66px;
+  height: 66px;
+  border-radius: 50%;
+  border: 4px solid var(--terra);
+  background: var(--bege);
+  box-shadow: 0 4px 0 rgba(0, 0, 0, .35);
+  font-family: inherit;
+  cursor: pointer;
+  z-index: 1;
+}
+.no-rosto { font-size: 1.6rem; font-weight: 900; color: var(--escuro); }
+.no-estrelas { position: absolute; left: 50%; bottom: -16px; transform: translateX(-50%); font-size: .7rem; white-space: nowrap; letter-spacing: -2px; }
+.no-fase.feita { background: #d9f5c8; border-color: #2f7d1f; }
+.no-fase.bloqueada { filter: grayscale(.8) brightness(.85); }
+.no-fase.atual { border-color: var(--laranja); animation: pulsa-no 1.1s ease-in-out infinite; }
+.no-fase.chefe { width: 84px; height: 84px; background: #ffe0d6; border-color: var(--vermelho); }
+.no-fase.chefe .no-rosto { font-size: 2.4rem; }
+@keyframes pulsa-no { 50% { transform: translateX(-50%) scale(1.12); box-shadow: 0 0 18px #ffd23a; } }
+
+.fase-numero { margin: 0; font-size: .8rem; font-weight: 700; opacity: .75; }
+#fase-conteudo h3 { margin: 2px 0; }
+.fase-estrelas { font-size: 1.4rem; }
+.fase-inimigos { font-size: 2rem; margin-top: 4px; }
+.fase-cartas { display: flex; gap: 6px; }
+.mini-carta { font-size: 1.3rem; background: #fff; border: 2px solid #bbb; border-radius: 8px; padding: 2px 6px; }
+.mini-carta.rara { border-color: var(--azul); }
+.mini-carta.epica { border-color: #a24be0; }
+#fase-preparar { width: 100%; margin-top: 8px; font-size: 1.2rem; }
+
+/* ---------- Time: resumo da fase ---------- */
+.time-fase {
+  margin-top: 12px;
+  background: var(--bege);
+  color: var(--escuro);
+  border: 3px solid var(--terra);
+  border-radius: 14px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.time-fase .inimigos { font-size: 1.5rem; }
+.time-fase .inimigos small { font-size: .8rem; }
+
+/* ---------- Resultado: estrelas ---------- */
+.resultado-estrelas { font-size: 2.6rem; letter-spacing: 4px; min-height: 0; }
+.resultado-estrelas span { display: inline-block; filter: grayscale(1) brightness(.6); opacity: .5; }
+.resultado-estrelas span.ganha { filter: none; opacity: 1; animation: estrela .5s cubic-bezier(.2, 1.6, .4, 1) both; }
+@keyframes estrela { from { transform: scale(0) rotate(-90deg); } to { transform: none; } }
+.resultado-niveis li.destaque { color: #c06a00; }
+
+/* espaço pros ícones de missão não encostarem na saudação */
+.saudacao { padding: 0 64px; }
+
 /* Botão Fechar fixo embaixo do detalhe, perto do polegar */
 .rodape-modal {
   position: sticky;
@@ -448,3 +609,6 @@ body {
 .rodape-modal .btn { width: 100%; max-width: 240px; }
 .pacote-caixa { padding-bottom: 16px; }
 .pacote-caixa .dica-pequena { margin-bottom: 0; opacity: .7; }
+
+.cabecalho-colecao { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.cabecalho-colecao .titulo-secao { margin-bottom: 8px; }

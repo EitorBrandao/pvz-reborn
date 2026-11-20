@@ -1,5 +1,5 @@
 {
-  "versaoJogo": "0.3.2",
+  "versaoJogo": "0.4.3",
   "inicio": {
     "moedas": 500,
     "orvalho": 10,
@@ -7,18 +7,45 @@
   },
   "broto": {
     "regasPorEstagio": 5,
-    "estagios": ["🌱", "🌿", "🪴", "🌻"],
+    "estagios": [
+      "🌱",
+      "🌿",
+      "🪴",
+      "🌻"
+    ],
     "moedasPorEstagio": 25
   },
   "save": {
     "intervaloSegundos": 10
   },
-  "plantasIniciais": ["cacto", "milho", "bambu", "babosa", "pimentao"],
+  "plantasIniciais": [
+    "cacto",
+    "milho",
+    "bambu",
+    "babosa",
+    "pimentao"
+  ],
   "timeInicial": [
-    { "planta": "cacto", "col": 0, "linha": 1 },
-    { "planta": "milho", "col": 0, "linha": 0 },
-    { "planta": "bambu", "col": 0, "linha": 2 },
-    { "planta": "babosa", "col": 1, "linha": 1 }
+    {
+      "planta": "cacto",
+      "col": 0,
+      "linha": 1
+    },
+    {
+      "planta": "milho",
+      "col": 0,
+      "linha": 0
+    },
+    {
+      "planta": "bambu",
+      "col": 0,
+      "linha": 2
+    },
+    {
+      "planta": "babosa",
+      "col": 1,
+      "linha": 1
+    }
   ],
   "batalha": {
     "tamanhoTime": 5,
@@ -29,7 +56,12 @@
     "chanceCritico": 0.15,
     "multCritico": 1.8,
     "variacao": 0.1,
-    "crescimentoPorNivel": 0.15
+    "crescimentoPorNivel": 0.15,
+    "velocidades": [
+      1,
+      2,
+      3
+    ]
   },
   "evolucao": {
     "xpBase": 40,
@@ -38,15 +70,47 @@
     "niveisPorEstrela": 10,
     "estrelasMax": 5,
     "bonusEstrela": 0.2,
-    "copiasPorEstrela": [0, 2, 4, 8, 15],
-    "moedasPorEstrela": [0, 200, 500, 1200, 3000]
+    "copiasPorEstrela": [
+      0,
+      2,
+      4,
+      8,
+      15
+    ],
+    "moedasPorEstrela": [
+      0,
+      200,
+      500,
+      1200,
+      3000
+    ]
   },
   "pacote": {
     "moedas": 300,
     "orvalho": 5,
     "pesos": {
-      "pimentao": 10, "cacto": 12, "milho": 12, "babosa": 10,
-      "couve": 10, "bambu": 10, "cogumelo": 6, "trepadeira": 6
+      "pimentao": 10,
+      "cacto": 12,
+      "milho": 12,
+      "babosa": 10,
+      "couve": 10,
+      "bambu": 10,
+      "cogumelo": 6,
+      "trepadeira": 6
     }
+  },
+  "folego": {
+    "max": 30,
+    "minutosPorPonto": 4,
+    "recargaOrvalho": 3
+  },
+  "jogador": {
+    "xpBase": 50,
+    "xpPorNivel": 30,
+    "orvalhoPorNivel": 1
+  },
+  "estrelasFase": {
+    "tres": 1.0,
+    "duas": 0.5
   }
 }

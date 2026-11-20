@@ -1,0 +1,299 @@
+{
+ "personagem": {
+  "nome": "Dona Flora",
+  "emoji": "👩‍🌾",
+  "cargo": "jardineira-chefe"
+ },
+ "ativasMax": 3,
+ "missoes": [
+  {
+   "id": "m1",
+   "icone": "⚔️",
+   "titulo": "Primeira colheita",
+   "fala": "Ô, jardineiro! As pragas invadiram o quintal. Bora mostrar quem manda nessa horta?",
+   "tarefas": [
+    {
+     "tipo": "contador",
+     "contador": "vencerFase",
+     "meta": 1,
+     "texto": "Vencer 1 fase da campanha"
+    }
+   ],
+   "premio": {
+    "moedas": 50,
+    "xp": 20
+   }
+  },
+  {
+   "id": "m2",
+   "icone": "🌿",
+   "titulo": "Time completo",
+   "fala": "Planta sozinha não segura praga. Junta a turma toda!",
+   "tarefas": [
+    {
+     "tipo": "estado",
+     "chave": "tamanhoTime",
+     "meta": 5,
+     "texto": "Ter 5 plantas no time"
+    }
+   ],
+   "premio": {
+    "cartas": {
+     "adubo": 2
+    },
+    "xp": 20
+   }
+  },
+  {
+   "id": "m3",
+   "icone": "💧",
+   "titulo": "Regando com carinho",
+   "fala": "Aquele broto da entrada tá com sede. Dá uma regadinha, vai.",
+   "tarefas": [
+    {
+     "tipo": "contador",
+     "contador": "regarBroto",
+     "meta": 10,
+     "texto": "Regar o broto 10 vezes"
+    }
+   ],
+   "premio": {
+    "moedas": 40,
+    "xp": 15
+   }
+  },
+  {
+   "id": "m4",
+   "icone": "🟫",
+   "titulo": "Treino puxado",
+   "fala": "Terra boa faz planta forte. Usa essas cartas de treino!",
+   "tarefas": [
+    {
+     "tipo": "contador",
+     "contador": "treinar",
+     "meta": 2,
+     "texto": "Treinar plantas 2 vezes"
+    }
+   ],
+   "premio": {
+    "moedas": 60,
+    "xp": 25
+   }
+  },
+  {
+   "id": "m5",
+   "icone": "🏡",
+   "titulo": "Avançando no quintal",
+   "fala": "Cada canteiro limpo é uma vitória. Continua assim!",
+   "tarefas": [
+    {
+     "tipo": "contador",
+     "contador": "vencerFase",
+     "meta": 3,
+     "texto": "Vencer 3 batalhas da campanha"
+    }
+   ],
+   "premio": {
+    "cartas": {
+     "seiva_dourada": 1
+    },
+    "xp": 30
+   }
+  },
+  {
+   "id": "m6",
+   "icone": "🌱",
+   "titulo": "Sementes da sorte",
+   "fala": "Dizem que nos pacotes tem planta que eu nunca vi. Tô curiosa!",
+   "tarefas": [
+    {
+     "tipo": "contador",
+     "contador": "abrirPacote",
+     "meta": 1,
+     "texto": "Abrir 1 Pacote de Sementes"
+    }
+   ],
+   "premio": {
+    "moedas": 120,
+    "xp": 25
+   }
+  },
+  {
+   "id": "m7",
+   "icone": "💪",
+   "titulo": "Planta parruda",
+   "fala": "Quero ver uma planta sua bem crescida, daquelas de dar orgulho.",
+   "tarefas": [
+    {
+     "tipo": "estado",
+     "chave": "nivelMaxPlanta",
+     "meta": 5,
+     "texto": "Ter uma planta no Nv 5"
+    }
+   ],
+   "premio": {
+    "cartas": {
+     "fibra": 3
+    },
+    "moedas": 80,
+    "xp": 30
+   }
+  },
+  {
+   "id": "m8",
+   "icone": "🏺",
+   "titulo": "Bem equipada",
+   "fala": "Um vasinho novo muda tudo. Vai por mim!",
+   "tarefas": [
+    {
+     "tipo": "contador",
+     "contador": "melhorarEquip",
+     "meta": 1,
+     "texto": "Melhorar 1 equipamento"
+    }
+   ],
+   "premio": {
+    "cartas": {
+     "petala_rara": 1
+    },
+    "xp": 30
+   }
+  },
+  {
+   "id": "m9",
+   "icone": "⭐",
+   "titulo": "Capricho",
+   "fala": "Vencer é bom. Vencer sem perder ninguém é melhor ainda.",
+   "tarefas": [
+    {
+     "tipo": "estado",
+     "chave": "fasesTresEstrelas",
+     "meta": 3,
+     "texto": "Ganhar 3 estrelas em 3 fases"
+    }
+   ],
+   "premio": {
+    "orvalho": 2,
+    "xp": 35
+   }
+  },
+  {
+   "id": "m10",
+   "icone": "🚩",
+   "titulo": "Metade do caminho",
+   "fala": "Já tô vendo o formigueiro lá no fundo do quintal...",
+   "tarefas": [
+    {
+     "tipo": "fase",
+     "fase": "quintal-5",
+     "texto": "Concluir a fase 5 do Quintal"
+    }
+   ],
+   "premio": {
+    "moedas": 150,
+    "xp": 40
+   }
+  },
+  {
+   "id": "m11",
+   "icone": "📚",
+   "titulo": "Colecionador",
+   "fala": "Quanto mais variedade, mais estratégia. Bora aumentar a coleção.",
+   "tarefas": [
+    {
+     "tipo": "estado",
+     "chave": "plantasNaColecao",
+     "meta": 6,
+     "texto": "Ter 6 plantas na coleção"
+    }
+   ],
+   "premio": {
+    "cartas": {
+     "semente_misteriosa": 1
+    },
+    "xp": 40
+   }
+  },
+  {
+   "id": "m12",
+   "icone": "🌟",
+   "titulo": "Estrela nova",
+   "fala": "Junta as cópias e faz uma planta brilhar!",
+   "tarefas": [
+    {
+     "tipo": "contador",
+     "contador": "evoluirEstrela",
+     "meta": 1,
+     "texto": "Evoluir 1 estrela de planta"
+    }
+   ],
+   "premio": {
+    "orvalho": 3,
+    "xp": 40
+   }
+  },
+  {
+   "id": "m13",
+   "icone": "🐜",
+   "titulo": "Abaixo a Rainha!",
+   "fala": "É agora. A Rainha Formiga tá te esperando. Coragem!",
+   "tarefas": [
+    {
+     "tipo": "fase",
+     "fase": "quintal-10",
+     "texto": "Derrotar a Rainha Formiga"
+    }
+   ],
+   "premio": {
+    "cartas": {
+     "semente_misteriosa": 1
+    },
+    "orvalho": 5,
+    "xp": 80
+   }
+  },
+  {
+   "id": "m14",
+   "icone": "🍎",
+   "titulo": "Rumo ao pomar",
+   "fala": "Ouvi zumbido lá no pomar... coisa boa não é.",
+   "tarefas": [
+    {
+     "tipo": "fase",
+     "fase": "pomar-3",
+     "texto": "Concluir a fase 3 do Pomar"
+    },
+    {
+     "tipo": "contador",
+     "contador": "coletarCarta",
+     "meta": 10,
+     "texto": "Ganhar 10 cartas em batalhas"
+    }
+   ],
+   "premio": {
+    "moedas": 300,
+    "xp": 60
+   }
+  },
+  {
+   "id": "m15",
+   "icone": "🦅",
+   "titulo": "Céu limpo",
+   "fala": "Aquele gavião vive roubando minhas frutas. Dá um jeito nele!",
+   "tarefas": [
+    {
+     "tipo": "fase",
+     "fase": "pomar-10",
+     "texto": "Derrotar o Gavião Guloso"
+    }
+   ],
+   "premio": {
+    "orvalho": 8,
+    "cartas": {
+     "semente_misteriosa": 2
+    },
+    "xp": 120
+   }
+  }
+ ]
+}

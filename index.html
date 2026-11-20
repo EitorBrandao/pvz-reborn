@@ -31,10 +31,12 @@
       <header class="hud">
         <div class="pilula">🪙 <b id="hud-moedas">0</b></div>
         <div class="pilula">💧 <b id="hud-orvalho">0</b></div>
-        <div class="pilula">⭐ Nv <b id="hud-nivel">1</b></div>
+        <button id="hud-folego" class="pilula pilula-btn botao-folego">⚡<b class="folego-valor">30</b><small class="folego-tempo"></small></button>
+        <div class="pilula pilula-nivel">⭐<b id="hud-nivel">1</b><span class="mini-xp"><span id="hud-xp"></span></span></div>
         <button id="btn-opcoes" class="btn-icone" aria-label="Opções">⚙️</button>
       </header>
 
+      <aside id="missoes-lado" class="missoes-lado"></aside>
       <main class="base-centro">
         <p class="saudacao" id="saudacao"></p>
         <button id="broto" class="broto" aria-label="Regar o broto">
@@ -46,11 +48,32 @@
       </main>
 
       <nav class="menu-base">
-        <button id="btn-batalha" class="btn btn-menu btn-laranja">⚔️<span>Batalha</span></button>
+        <button id="btn-campanha" class="btn btn-menu btn-laranja">⚔️<span>Campanha</span></button>
         <button id="btn-plantas" class="btn btn-menu">🌿<span>Plantas</span></button>
-        <button class="btn btn-menu" data-breve="Campanha">🗺️<span>Campanha</span></button>
         <button class="btn btn-menu" data-breve="Arena">🏆<span>Arena</span></button>
       </nav>
+
+      <div id="missao-ficha" class="modal escondido">
+        <div id="missao-conteudo" class="modal-caixa"></div>
+      </div>
+    </section>
+
+    <!-- Mapa da campanha -->
+    <section id="tela-mapa" class="tela">
+      <header class="topo">
+        <button id="mapa-voltar" class="btn-icone" aria-label="Voltar">⬅️</button>
+        <h2 id="mapa-titulo">Campanha</h2>
+        <button class="pilula pilula-btn topo-dir botao-folego">⚡<b class="folego-valor">30</b><small class="folego-tempo"></small></button>
+      </header>
+      <div id="mapa-abas" class="mapa-abas"></div>
+      <div class="mapa-caminho">
+        <div id="mapa-trilha" class="mapa-trilha">
+          <svg id="mapa-svg" class="mapa-svg"></svg>
+        </div>
+      </div>
+      <div id="fase-painel" class="modal escondido">
+        <div id="fase-conteudo" class="modal-caixa"></div>
+      </div>
     </section>
 
     <!-- Preparar batalha -->
@@ -60,8 +83,7 @@
         <h2>Preparar batalha</h2>
       </header>
       <div class="rolagem">
-        <h3 class="titulo-secao">Escolha a batalha</h3>
-        <div id="lista-batalhas" class="lista-batalhas"></div>
+        <div id="time-fase" class="time-fase"></div>
         <h3 class="titulo-secao">Seu time <small id="time-contagem"></small></h3>
         <div class="grade-rotulos"><span>Fundo</span><span>Frente ➡️</span></div>
         <div id="grade-time" class="grade"></div>
@@ -86,7 +108,10 @@
         </div>
         <h3 class="titulo-secao">Cartas</h3>
         <div id="inventario" class="inventario"></div>
-        <h3 class="titulo-secao">Coleção</h3>
+        <div class="cabecalho-colecao">
+          <h3 class="titulo-secao">Coleção</h3>
+          <button id="btn-ordenar" class="btn btn-azul btn-peq"></button>
+        </div>
         <div id="colecao" class="lista-plantas"></div>
       </div>
 
@@ -121,13 +146,15 @@
       </div>
       <div id="resultado" class="resultado escondido">
         <div class="resultado-caixa">
+          <div id="resultado-estrelas" class="resultado-estrelas"></div>
           <h2 id="resultado-titulo"></h2>
           <p id="resultado-texto"></p>
           <ul id="resultado-niveis" class="resultado-niveis"></ul>
           <div id="resultado-cartas" class="cartas"></div>
           <div class="resultado-botoes">
-            <button id="btn-de-novo" class="btn btn-laranja">Lutar de novo</button>
-            <button id="btn-sair-batalha" class="btn btn-azul">Voltar</button>
+            <button id="btn-proxima" class="btn btn-laranja escondido">Próxima fase ➡️</button>
+            <button id="btn-de-novo" class="btn btn-verde">De novo</button>
+            <button id="btn-sair-batalha" class="btn btn-azul">Mapa</button>
           </div>
         </div>
       </div>

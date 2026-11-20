@@ -6,6 +6,9 @@ import { $, mostrarTela, avisar, sortear, preencher } from './ui/comum.js';
 import { iniciarTelaTime, abrirTelaTime } from './ui/tela-time.js';
 import { iniciarTelaBatalha, comecarBatalha } from './ui/tela-batalha.js';
 import { iniciarTelaPlantas, abrirTelaPlantas } from './ui/tela-plantas.js';
+import { iniciarTelaMapa, abrirTelaMapa } from './ui/tela-mapa.js';
+import { iniciarMissoes, desenharMissoes } from './ui/painel-missoes.js';
+import { prepararCampanha, proximaFase, faseLiberada } from './campanha.js';
 
 let dados;
 
@@ -19,12 +22,48 @@ function atualizarTela() {
   $('hud-moedas').textContent = e.moedas;
   $('hud-orvalho').textContent = e.orvalho;
   $('hud-nivel').textContent = e.nivel;
+  const xp = jogo.xpJogadorInfo();
+  $('hud-xp').style.width = `${(xp.xp / xp.precisa) * 100}%`;
+  atualizarFolego();
+  desenharMissoes();
   const broto = jogo.estagioBroto();
   $('broto-emoji').textContent = broto.emoji;
   $('broto-barra').style.width = `${broto.progresso * 100}%`;
   $('broto-regas').textContent = e.broto.regas;
   const data = new Date(e.ultimaSessao).toLocaleString('pt-BR');
   $('info-save').textContent = `Último save: ${data}`;
+}
+
+// Fôlego em todas as telas que mostram (atualiza a cada segundo)
+function atualizarFolego() {
+  const f = jogo.folego();
+  const tempo = f.falta ? formatarTempo(f.falta) : '';
+  document.querySelectorAll('.folego-valor').forEach((el) => { el.textContent = `${f.valor}/${f.max}`; });
+  document.querySelectorAll('.folego-tempo').forEach((el) => { el.textContent = tempo; });
+}
+
+function formatarTempo(ms) {
+  const s = Math.ceil(ms / 1000);
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+}
+
+function pedirRecarga() {
+  const { textos, config } = dados;
+  if (jogo.folego().valor >= config.folego.max) return avisar(textos.folegoCheio);
+  if (!confirm(preencher(textos.confirmarRecarga, { custo: config.folego.recargaOrvalho }))) return;
+  const res = jogo.recarregarFolego();
+  avisar(res.ok ? textos.folegoRecarregado : textos[res.erro]);
+  atualizarTela();
+}
+
+// Toda batalha da campanha passa por aqui: gasta o fôlego antes de lutar
+function lutar(fase) {
+  if (!jogo.gastarFolego(fase.folego)) {
+    const { textos, config } = dados;
+    return avisar(preencher(textos.semFolego, { tempo: formatarTempo(jogo.folego().falta), custo: config.folego.recargaOrvalho }));
+  }
+  atualizarFolego();
+  comecarBatalha(fase);
 }
 
 function irParaBase() {
@@ -50,7 +89,8 @@ function ligarBotoes() {
     atualizarTela();
   });
 
-  $('btn-batalha').addEventListener('click', abrirTelaTime);
+  $('btn-campanha').addEventListener('click', () => abrirTelaMapa());
+  document.querySelectorAll('.botao-folego').forEach((b) => b.addEventListener('click', pedirRecarga));
   $('btn-plantas').addEventListener('click', abrirTelaPlantas);
 
   document.querySelectorAll('[data-breve]').forEach((botao) => {
@@ -146,25 +186,38 @@ function avisarVersaoNova(config) {
 }
 
 async function comecar() {
-  const [config, textos, plantas, pragas, cartas, batalhas, equipamentos] = await Promise.all([
+  const [config, textos, plantas, pragas, cartas, campanha, equipamentos, missoes] = await Promise.all([
     lerJson('data/config.json'),
     lerJson('data/mensagens.json'),
     lerJson('data/plantas.json'),
     lerJson('data/pragas.json'),
     lerJson('data/cartas.json'),
-    lerJson('data/batalhas.json'),
+    lerJson('data/campanha.json'),
     lerJson('data/equipamentos.json'),
+    lerJson('data/missoes.json'),
   ]);
-  dados = { config, textos, plantas, pragas, cartas, batalhas, equipamentos };
+  dados = { config, textos, plantas, pragas, cartas, campanha: prepararCampanha(campanha), equipamentos, missoes };
 
   jogo.iniciar(dados);
   save.pedirArmazenamentoPersistente();
   $('versao').textContent = `versão ${config.versaoJogo}`;
 
   ligarBotoes();
-  iniciarTelaTime(dados, { lutar: comecarBatalha, voltar: irParaBase });
-  iniciarTelaBatalha(dados, abrirTelaTime);
+  const mapaDaFase = (fase) => abrirTelaMapa(fase ? fase.mapaIndice : undefined);
+  iniciarTelaMapa(dados, { voltar: irParaBase, preparar: abrirTelaTime });
+  iniciarTelaTime(dados, { lutar, voltar: mapaDaFase });
+  iniciarTelaBatalha(dados, {
+    lutar,
+    sair: mapaDaFase,
+    proxima: (fase) => {
+      const p = proximaFase(dados.campanha, fase);
+      return p && faseLiberada(dados.campanha, jogo.estado, p) ? p : null;
+    },
+    prepararProxima: abrirTelaTime,
+  });
   iniciarTelaPlantas(dados, irParaBase);
+  iniciarMissoes(dados, atualizarTela);
+  setInterval(atualizarFolego, 1000);
   prepararInstalacao();
   registrarServiceWorker();
   avisarVersaoNova(config);
