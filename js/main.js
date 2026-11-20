@@ -186,7 +186,7 @@ function avisarVersaoNova(config) {
 }
 
 async function comecar() {
-  const [config, textos, plantas, pragas, cartas, campanha, equipamentos, missoes] = await Promise.all([
+  const [config, textos, plantas, pragas, cartas, campanha, equipamentos, missoes, faccoes] = await Promise.all([
     lerJson('data/config.json'),
     lerJson('data/mensagens.json'),
     lerJson('data/plantas.json'),
@@ -195,8 +195,9 @@ async function comecar() {
     lerJson('data/campanha.json'),
     lerJson('data/equipamentos.json'),
     lerJson('data/missoes.json'),
+    lerJson('data/faccoes.json'),
   ]);
-  dados = { config, textos, plantas, pragas, cartas, campanha: prepararCampanha(campanha), equipamentos, missoes };
+  dados = { config, textos, plantas, pragas, cartas, campanha: prepararCampanha(campanha), equipamentos, missoes, faccoes };
 
   jogo.iniciar(dados);
   save.pedirArmazenamentoPersistente();

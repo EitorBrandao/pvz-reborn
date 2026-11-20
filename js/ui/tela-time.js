@@ -3,6 +3,7 @@
 import { $, mostrarTela, avisar, preencher } from './comum.js';
 import * as jogo from '../estado.js';
 import { atributos } from '../evolucao.js';
+import { bonusFaccoes } from '../batalha.js';
 
 let dados;
 let faseEscolhida = null;
@@ -28,6 +29,7 @@ function desenhar() {
   desenharFase();
   desenharGrade();
   desenharPlantas();
+  desenharBonus();
   $('time-contagem').textContent = `${jogo.estado.time.length}/${dados.config.batalha.tamanhoTime}`;
   $('btn-lutar').textContent = `Lutar! ⚡${faseEscolhida.folego}`;
 }
@@ -36,10 +38,24 @@ function desenharFase() {
   const f = faseEscolhida;
   const mapa = dados.campanha.mapas[f.mapaIndice];
   const inimigos = f.inimigos.map((i) => dados.pragas.find((p) => p.id === i.praga)?.emoji || '?').join('');
+  const cats = [...new Set(f.inimigos.map((i) => dados.pragas.find((p) => p.id === i.praga)?.categoria))]
+    .map((id) => dados.faccoes.categorias.find((c) => c.id === id)).filter(Boolean)
+    .map((c) => `${c.emoji} ${c.nome}`).join(' · ');
   $('time-fase').innerHTML = `
     <small>${mapa.emoji} ${mapa.nome} · Fase ${f.indice + 1}${f.chefe ? ' · CHEFE' : ''}</small>
     <b>${f.nome}</b>
-    <span class="inimigos">${inimigos} <small>Nv ${f.nivel}</small></span>`;
+    <span class="inimigos">${inimigos} <small>Nv ${f.nivel}</small></span>
+    <small class="categorias">${cats}</small>`;
+}
+
+function desenharBonus() {
+  const t = dados.textos;
+  const lista = bonusFaccoes(jogo.estado.time, dados);
+  $('time-bonus').innerHTML = lista.length
+    ? lista.map(({ faccao: f, qtd, bonus }) => `<span class="selo-bonus">${preencher(t.bonusTime, {
+      emoji: f.emoji, nome: f.nome, qtd, pct: Math.round(bonus * 100), atributo: t.atributos[f.atributo],
+    })}</span>`).join('')
+    : `<small>${t.bonusTimeVazio}</small>`;
 }
 
 function desenharGrade() {
@@ -88,7 +104,7 @@ function desenharPlantas() {
     cartao.innerHTML = `
       <span class="planta-emoji">${p.emoji}</span>
       <b>${p.nome}</b>
-      <small>Nv ${registro.nivel} · ${'⭐'.repeat(registro.estrelas)}</small>
+      <small>${dados.faccoes.faccoes.find((f) => f.id === p.faccao)?.emoji || ''} Nv ${registro.nivel} · ${'⭐'.repeat(registro.estrelas)}</small>
       <span class="atributos">❤️${s.vida} ⚔️${s.atq} 🛡️${s.def} 💨${s.vel}</span>`;
     cartao.addEventListener('click', () => {
       const time = jogo.estado.time;

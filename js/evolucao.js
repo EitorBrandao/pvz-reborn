@@ -29,7 +29,7 @@ export function atributos(base, registro, dados, mudanca = {}) {
 
 // Habilidade com o bônus das estrelas. Cada estrela acima da 1ª soma "porEstrela".
 // Campos inteiros (golpes, alvos, turnos) são arredondados.
-const INTEIROS = ['golpes', 'alvos', 'turnos'];
+const INTEIROS = ['golpes', 'alvos', 'turnos', 'seiva'];
 export function habilidadeComEstrelas(hab, estrelas = 1) {
   const h = { ...hab };
   const extra = Math.max(0, estrelas - 1);

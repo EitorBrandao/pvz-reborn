@@ -213,9 +213,18 @@ function desenharDetalhe() {
   const textoHab = (hab) => preencher(t.habilidades[hab.tipo] || '', {
     reflete: Math.round((hab.reflete || 0) * 100), turnos: hab.turnos, golpes: hab.golpes,
     reducao: Math.round((hab.reducao || 0) * 100), forca: Math.round((hab.mult || 0) * 100),
-    alvos: hab.alvos || 1,
+    alvos: hab.alvos || 1, veneno: Math.round((hab.dano || 0) * 100), seiva: hab.seiva,
+    pctVida: Math.round((hab.pctVida || 0) * 100), limite: Math.round((hab.limite || 0) * 100),
+    bonus: Math.round((hab.mult || 0) * (hab.bonus || 0) * 100),
   });
   const descHab = textoHab(h);
+  const fx = dados.faccoes;
+  const fac = fx.faccoes.find((f) => f.id === p.faccao);
+  const forte = fac && fx.categorias.find((c) => c.id === fac.forteContra);
+  const fraco = fac && fx.categorias.find((c) => c.forteContra === fac.id);
+  const infoFaccao = fac && forte && fraco ? preencher(t.faccaoInfo, {
+    emoji: fac.emoji, nome: fac.nome, forteEmoji: forte.emoji, forteNome: forte.nome, fracoEmoji: fraco.emoji, fracoNome: fraco.nome,
+  }) : '';
   const proxEstrela = r.estrelas < cfg.estrelasMax
     ? preencher(t.habilidadeProxima, { estrelas: r.estrelas + 1, texto: textoHab(habilidadeComEstrelas(p.habilidade, r.estrelas + 1)) })
     : '';
@@ -263,6 +272,7 @@ function desenharDetalhe() {
       <span class="detalhe-emoji">${p.emoji}</span>
       <h3>${p.nome}</h3>
       <small>${p.funcao}</small>
+      ${infoFaccao ? `<small class="info-faccao">${infoFaccao}</small>` : ''}
       <div class="estrelas">${estrelasTexto(r.estrelas)}</div>
     </div>
     <div class="bloco">

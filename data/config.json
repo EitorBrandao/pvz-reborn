@@ -1,5 +1,5 @@
 {
-  "versaoJogo": "0.5.4",
+  "versaoJogo": "0.5.5",
   "inicio": {
     "moedas": 500,
     "orvalho": 10,
@@ -96,7 +96,11 @@
       "couve": 10,
       "bambu": 10,
       "cogumelo": 6,
-      "trepadeira": 6
+      "trepadeira": 6,
+      "agave": 8,
+      "bromelia": 8,
+      "vitoria": 8,
+      "jarro": 8
     }
   },
   "folego": {

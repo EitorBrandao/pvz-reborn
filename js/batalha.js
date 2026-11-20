@@ -20,12 +20,39 @@ export function montarUnidade(base, lado, col, linha, nivel, uid, cfg) {
   return {
     uid, id: base.id, nome: base.nome, emoji: base.emoji, projetil: base.projetil,
     habilidade: base.habilidade, chefe: !!base.chefe,
+    faccao: base.faccao || null, categoria: base.categoria || null, forteContra: null, vantagem: 0,
     lado, col, linha, nivel,
     vidaMax: vida, vida,
     atq: Math.round(base.atq * f), def: Math.round(base.def * f), vel: base.vel,
     seiva: 0, escudo: 0, escudoTurnos: 0, reflete: 0, refleteTurnos: 0,
-    sono: 0, lento: 0, lentoTurnos: 0,
+    sono: 0, lento: 0, lentoTurnos: 0, veneno: 0, venenoTurnos: 0,
   };
+}
+
+// Bônus de time: quantas plantas de cada facção e quanto cada uma ganha.
+export function bonusFaccoes(time, dados) {
+  const fx = dados.faccoes;
+  const contagem = {};
+  for (const m of time) {
+    const p = dados.plantas.find((x) => x.id === m.planta);
+    if (p && p.faccao) contagem[p.faccao] = (contagem[p.faccao] || 0) + 1;
+  }
+  return fx.faccoes
+    .filter((f) => fx.bonusTime[contagem[f.id]])
+    .map((f) => ({ faccao: f, qtd: contagem[f.id], bonus: fx.bonusTime[contagem[f.id]] }));
+}
+
+// Quem cada unidade vence: plantas batem forte numa categoria de praga, pragas numa facção.
+function marcarVantagem(u, dados) {
+  const fx = dados.faccoes;
+  if (!fx) return;
+  if (u.faccao) {
+    u.forteContra = fx.faccoes.find((f) => f.id === u.faccao)?.forteContra || null;
+    u.vantagem = fx.vantagemPlanta;
+  } else if (u.categoria) {
+    u.forteContra = fx.categorias.find((c) => c.id === u.categoria)?.forteContra || null;
+    u.vantagem = fx.vantagemPraga;
+  }
 }
 
 // Monta as unidades dos dois lados a partir do time do jogador e da batalha escolhida.
@@ -44,11 +71,23 @@ export function prepararBatalha(batalha, time, dados, colecao = {}) {
       vidaMax: stats.vida, estrelas: registro.estrelas,
       habilidade: habilidadeComEstrelas(base.habilidade, registro.estrelas),
     });
+    marcarVantagem(u, dados);
     unidades.push(u);
+  }
+  if (dados.faccoes) {
+    for (const { faccao, bonus } of bonusFaccoes(time, dados)) {
+      for (const u of unidades.filter((x) => x.faccao === faccao.id)) {
+        u[faccao.atributo] = Math.round(u[faccao.atributo] * (1 + bonus));
+        if (faccao.atributo === 'vida') u.vidaMax = u.vida;
+      }
+    }
   }
   for (const i of batalha.inimigos) {
     const base = dados.pragas.find((p) => p.id === i.praga);
-    if (base) unidades.push(montarUnidade(base, 'praga', i.col, i.linha, i.nivel || batalha.nivel, `u${n++}`, cfg));
+    if (!base) continue;
+    const u = montarUnidade(base, 'praga', i.col, i.linha, i.nivel || batalha.nivel, `u${n++}`, cfg);
+    marcarVantagem(u, dados);
+    unidades.push(u);
   }
   return unidades;
 }
@@ -71,7 +110,7 @@ export function simular(unidades, cfg, semente) {
   function foto() {
     const snap = {};
     for (const u of unidades) {
-      snap[u.uid] = { vida: u.vida, seiva: u.seiva, escudo: u.escudo, sono: u.sono, lento: u.lento };
+      snap[u.uid] = { vida: u.vida, seiva: u.seiva, escudo: u.escudo, sono: u.sono, lento: u.lento, veneno: u.venenoTurnos };
     }
     return snap;
   }
@@ -90,7 +129,9 @@ export function simular(unidades, cfg, semente) {
 
   function bater(atacante, alvo, mult, efeitos) {
     if (atacante.vida <= 0) return; // morreu no meio do ataque (espinhos)
+    const eficaz = !!atacante.forteContra && atacante.forteContra === (alvo.faccao || alvo.categoria);
     let bruto = atacante.atq * mult * cfg.multDano * (100 / (100 + alvo.def));
+    if (eficaz) bruto *= 1 + atacante.vantagem;
     bruto *= 1 - cfg.variacao + rng() * 2 * cfg.variacao;
     const critico = rng() < cfg.chanceCritico;
     if (critico) bruto *= cfg.multCritico;
@@ -100,7 +141,7 @@ export function simular(unidades, cfg, semente) {
     const resto = dano - absorvido;
     alvo.vida = Math.max(0, alvo.vida - resto);
     alvo.seiva = Math.min(100, alvo.seiva + cfg.seivaAoApanhar);
-    efeitos.push({ alvo: alvo.uid, tipo: 'dano', valor: dano, critico, absorvido, vidaDepois: alvo.vida, morreu: alvo.vida === 0 });
+    efeitos.push({ alvo: alvo.uid, tipo: 'dano', valor: dano, critico, eficaz, absorvido, vidaDepois: alvo.vida, morreu: alvo.vida === 0 });
 
     if (alvo.reflete > 0 && resto > 0 && atacante.vida > 0) {
       const volta = Math.max(1, Math.round(resto * alvo.reflete));
@@ -170,6 +211,40 @@ export function simular(unidades, cfg, semente) {
           }
         }
         break;
+      case 'veneno':
+        if (alvo) {
+          bater(u, alvo, h.mult, efeitos);
+          if (alvo.vida > 0) {
+            alvo.veneno = Math.max(1, Math.round(u.atq * h.dano));
+            alvo.venenoTurnos = h.turnos;
+            efeitos.push({ alvo: alvo.uid, tipo: 'envenenou' });
+          }
+        }
+        break;
+      case 'energia':
+        if (alvo) bater(u, alvo, h.mult, efeitos);
+        for (const a of aliados(u)) {
+          if (a === u) continue;
+          a.seiva = Math.min(100, a.seiva + h.seiva);
+          efeitos.push({ alvo: a.uid, tipo: 'seiva', valor: h.seiva });
+        }
+        break;
+      case 'protecao': {
+        if (alvo) bater(u, alvo, h.mult, efeitos);
+        const valor = Math.round(u.vidaMax * h.pctVida);
+        const frente = aliados(u).filter((a) => a.col === 0 || a === u);
+        for (const a of frente) {
+          a.escudo = Math.max(a.escudo, valor);
+          a.escudoTurnos = Math.max(a.escudoTurnos, h.turnos);
+          efeitos.push({ alvo: a.uid, tipo: 'escudo', valor: a.escudo });
+        }
+        break;
+      }
+      case 'devorar': {
+        const presa = inimigos(u).sort((a, b) => a.vida / a.vidaMax - b.vida / b.vidaMax)[0];
+        if (presa) bater(u, presa, h.mult * (presa.vida / presa.vidaMax < h.limite ? h.bonus : 1), efeitos);
+        break;
+      }
       default:
         if (alvo) bater(u, alvo, 1, efeitos);
     }
@@ -199,7 +274,22 @@ export function simular(unidades, cfg, semente) {
     });
   }
 
+  // Veneno: no fim da rodada, quem está envenenado perde vida.
+  function tickVeneno() {
+    if (acabou()) return;
+    const efeitos = [];
+    for (const u of unidades) {
+      if (u.vida <= 0 || u.venenoTurnos <= 0) continue;
+      const dano = Math.min(u.vida, u.veneno);
+      u.vida -= dano;
+      efeitos.push({ alvo: u.uid, tipo: 'dano', valor: dano, critico: false, absorvido: 0, veneno: true, vidaDepois: u.vida, morreu: u.vida === 0 });
+      if (--u.venenoTurnos === 0) u.veneno = 0;
+    }
+    if (efeitos.length) eventos.push({ tipo: 'veneno', efeitos, snap: foto() });
+  }
+
   function passarTurno() {
+    tickVeneno();
     for (const u of unidades) {
       if (u.escudoTurnos > 0 && --u.escudoTurnos === 0) u.escudo = 0;
       if (u.refleteTurnos > 0 && --u.refleteTurnos === 0) u.reflete = 0;

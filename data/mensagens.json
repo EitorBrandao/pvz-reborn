@@ -32,8 +32,14 @@
     "espinhos": "🌵 Espinhos!",
     "sono": "💤 Dormiu!",
     "lento": "🐢 Lento!",
-    "escudo": "🛡️ +{valor}"
+    "escudo": "🛡️ +{valor}",
+    "eficaz": "Eficaz!",
+    "envenenou": "🧪 Envenenado!",
+    "seiva": "⚡+{valor}"
   },
+  "faccaoInfo": "{emoji} {nome} · forte contra {forteEmoji} {forteNome} · fraca contra {fracoEmoji} {fracoNome}",
+  "bonusTime": "{emoji} {nome} ×{qtd}: +{pct}% {atributo}",
+  "bonusTimeVazio": "Junte 2 ou 3 plantas da mesma facção pra ganhar bônus.",
   "atualizado": "Jogo atualizado pra versão {versao}!",
   "subiuNivel": "{emoji} {nome} subiu pro Nv {nivel}!",
   "semMoedas": "Moedas insuficientes.",
@@ -53,7 +59,11 @@
     "escudo": "Dá um escudo de {forca}% do ataque pra todo o time por {turnos} rodadas.",
     "perfurar": "Atravessa e acerta também quem está atrás ({forca}% do ataque).",
     "sono": "Ataca e faz o alvo dormir {turnos} rodada(s).",
-    "lentidao": "Ataca e deixa o alvo {reducao}% mais lento por {turnos} rodadas."
+    "lentidao": "Ataca e deixa o alvo {reducao}% mais lento por {turnos} rodadas.",
+    "veneno": "Ataca e envenena o alvo: perde {veneno}% do ataque por rodada, durante {turnos} rodadas.",
+    "energia": "Ataca e enche {seiva} de energia do especial de todos os aliados.",
+    "protecao": "Ataca e dá um escudo de {pctVida}% da própria vida pras plantas da frente por {turnos} rodadas.",
+    "devorar": "Morde a praga mais ferida ({forca}% do ataque). Se ela estiver com menos de {limite}% de vida, o dano sobe pra {bonus}%."
   },
   "habilidadeProxima": "Com {estrelas} ⭐: {texto}",
   "atributos": {

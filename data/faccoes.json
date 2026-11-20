@@ -1,0 +1,17 @@
+{
+  "vantagemPlanta": 0.3,
+  "vantagemPraga": 0.25,
+  "bonusTime": { "2": 0.1, "3": 0.2 },
+  "faccoes": [
+    { "id": "sertao", "nome": "Sertão", "emoji": "🏜️", "atributo": "def", "forteContra": "rastejante" },
+    { "id": "mata", "nome": "Mata", "emoji": "🌴", "atributo": "vel", "forteContra": "voador" },
+    { "id": "brejo", "nome": "Brejo", "emoji": "🐸", "atributo": "vida", "forteContra": "blindado" },
+    { "id": "roca", "nome": "Roça", "emoji": "🌽", "atributo": "atq", "forteContra": "saltador" }
+  ],
+  "categorias": [
+    { "id": "rastejante", "nome": "Rastejantes", "emoji": "🐛", "forteContra": "roca" },
+    { "id": "voador", "nome": "Voadores", "emoji": "🦅", "forteContra": "sertao" },
+    { "id": "blindado", "nome": "Blindados", "emoji": "🪲", "forteContra": "mata" },
+    { "id": "saltador", "nome": "Saltadores", "emoji": "🦗", "forteContra": "brejo" }
+  ]
+}

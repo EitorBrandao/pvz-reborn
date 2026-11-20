@@ -413,6 +413,7 @@ body {
 }
 .detalhe-topo { text-align: center; }
 .detalhe-topo h3 { margin: 4px 0 0; }
+.detalhe-topo .info-faccao { display: block; margin-top: 4px; font-size: .78rem; opacity: .85; }
 .detalhe-emoji { font-size: 4rem; display: inline-block; }
 .detalhe-topo.evoluiu .detalhe-emoji { animation: pulo .5s ease-out; }
 .bloco { border-top: 2px dashed rgba(138, 90, 43, .4); padding: 10px 0; }
@@ -584,6 +585,9 @@ body {
 }
 .time-fase .inimigos { font-size: 1.5rem; }
 .time-fase .inimigos small { font-size: .8rem; }
+.time-fase .categorias { font-size: .8rem; opacity: .8; }
+.time-bonus { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 4px; font-size: .85rem; }
+.selo-bonus { background: #2f7d1f; color: #fff; border-radius: 999px; padding: 3px 10px; font-weight: 700; }
 
 /* ---------- Resultado: estrelas ---------- */
 .resultado-estrelas { font-size: 2.6rem; letter-spacing: 4px; min-height: 0; }

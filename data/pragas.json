@@ -1,6 +1,6 @@
 [
   {
-    "id": "lagarta",
+    "id": "lagarta", "categoria": "rastejante",
     "nome": "Lagarta Gulosa",
     "emoji": "🐛",
     "projetil": "🟢",
@@ -15,7 +15,7 @@
     }
   },
   {
-    "id": "gafanhoto",
+    "id": "gafanhoto", "categoria": "saltador",
     "nome": "Gafanhoto Saqueador",
     "emoji": "🦗",
     "projetil": "💢",
@@ -31,7 +31,7 @@
     }
   },
   {
-    "id": "besouro",
+    "id": "besouro", "categoria": "blindado",
     "nome": "Besouro Blindado",
     "emoji": "🪲",
     "projetil": "🪨",
@@ -47,7 +47,7 @@
     }
   },
   {
-    "id": "lesma",
+    "id": "lesma", "categoria": "rastejante",
     "nome": "Lesma Ácida",
     "emoji": "🐌",
     "projetil": "💚",
@@ -64,7 +64,7 @@
     }
   },
   {
-    "id": "toupeira",
+    "id": "toupeira", "categoria": "rastejante",
     "nome": "Toupeira Escavadora",
     "emoji": "🦫",
     "projetil": "🪨",
@@ -79,7 +79,7 @@
     }
   },
   {
-    "id": "rainha",
+    "id": "rainha", "categoria": "blindado",
     "nome": "Rainha Formiga",
     "emoji": "🐜",
     "projetil": "🐜",
@@ -95,7 +95,7 @@
     }
   },
   {
-    "id": "vespa",
+    "id": "vespa", "categoria": "voador",
     "nome": "Vespa Ferroada",
     "emoji": "🐝",
     "projetil": "📌",
@@ -111,7 +111,7 @@
     }
   },
   {
-    "id": "aranha",
+    "id": "aranha", "categoria": "blindado",
     "nome": "Aranha Tecelã",
     "emoji": "🕷️",
     "projetil": "🕸️",
@@ -128,7 +128,7 @@
     }
   },
   {
-    "id": "gaviao",
+    "id": "gaviao", "categoria": "voador",
     "nome": "Gavião Guloso",
     "emoji": "🦅",
     "projetil": "🪶",
@@ -144,7 +144,7 @@
     }
   },
   {
-    "id": "sapo",
+    "id": "sapo", "categoria": "saltador",
     "nome": "Sapo Linguarudo",
     "emoji": "🐸",
     "projetil": "👅",
@@ -161,7 +161,7 @@
     }
   },
   {
-    "id": "mosquito",
+    "id": "mosquito", "categoria": "voador",
     "nome": "Mosquito Zumbidor",
     "emoji": "🦟",
     "projetil": "📍",
@@ -177,7 +177,7 @@
     }
   },
   {
-    "id": "jacare",
+    "id": "jacare", "categoria": "blindado",
     "nome": "Jacaré Rabugento",
     "emoji": "🐊",
     "projetil": "🫧",
@@ -193,7 +193,7 @@
     }
   },
   {
-    "id": "barata",
+    "id": "barata", "categoria": "rastejante",
     "nome": "Barata Sorrateira",
     "emoji": "🪳",
     "projetil": "🟤",
@@ -208,7 +208,7 @@
     }
   },
   {
-    "id": "mariposa",
+    "id": "mariposa", "categoria": "voador",
     "nome": "Mariposa Noturna",
     "emoji": "🦋",
     "projetil": "✨",
@@ -224,7 +224,7 @@
     }
   },
   {
-    "id": "camaleao",
+    "id": "camaleao", "categoria": "saltador",
     "nome": "Camaleão Sombrio",
     "emoji": "🦎",
     "projetil": "👅",
@@ -241,7 +241,7 @@
     }
   },
   {
-    "id": "escorpiao",
+    "id": "escorpiao", "categoria": "rastejante",
     "nome": "Escorpião Ferrão",
     "emoji": "🦂",
     "projetil": "💥",
@@ -256,7 +256,7 @@
     }
   },
   {
-    "id": "ourico",
+    "id": "ourico", "categoria": "blindado",
     "nome": "Ouriço Espinhento",
     "emoji": "🦔",
     "projetil": "🔸",
@@ -273,7 +273,7 @@
     }
   },
   {
-    "id": "serpente",
+    "id": "serpente", "categoria": "rastejante",
     "nome": "Serpente das Dunas",
     "emoji": "🐍",
     "projetil": "🟣",
@@ -289,7 +289,7 @@
     }
   },
   {
-    "id": "pombo",
+    "id": "pombo", "categoria": "voador",
     "nome": "Pombo Bagunceiro",
     "emoji": "🕊️",
     "projetil": "🪶",
@@ -305,7 +305,7 @@
     }
   },
   {
-    "id": "morcego",
+    "id": "morcego", "categoria": "voador",
     "nome": "Morcego Notívago",
     "emoji": "🦇",
     "projetil": "🌑",
@@ -320,7 +320,7 @@
     }
   },
   {
-    "id": "coruja",
+    "id": "coruja", "categoria": "voador",
     "nome": "Coruja Sombria",
     "emoji": "🦉",
     "projetil": "🌙",
