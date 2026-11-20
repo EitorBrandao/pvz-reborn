@@ -186,6 +186,16 @@ const MUSICAS = {
         698, 0, 880, 0, 1047, 1175, 1047, 880, 784, 0, 659, 0, 698, 0, 0, 0],
     },
   },
+  // Pesadelo: grave, lenta e sombria, em tom menor.
+  pesadelo: {
+    passo: 0.3,
+    baixo: { notas: [98, 98, 104, 93, 98, 98, 87, 93], cada: 4, timbre: 'sawtooth', vol: 0.15 },
+    melodia: {
+      timbre: 'square', vol: 0.04,
+      notas: [392, 0, 0, 370, 392, 0, 311, 0, 330, 0, 0, 0, 294, 0, 0, 0,
+        392, 0, 466, 0, 440, 0, 392, 370, 349, 0, 311, 0, 294, 0, 0, 0],
+    },
+  },
   // Herbário: lenta e delicada, de folhear um álbum.
   herbario: {
     passo: 0.42,

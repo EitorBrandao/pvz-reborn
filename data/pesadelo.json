@@ -1,0 +1,21 @@
+{
+ "nivelBase": 55,
+ "nivelPorMapa": 6,
+ "mult": {
+  "vida": 3,
+  "atq": 2.5
+ },
+ "recompensa": {
+  "moedas": 3,
+  "xp": 2.5,
+  "orvalhoMult": 2,
+  "orvalhoExtra": 1
+ },
+ "folegoMult": 2,
+ "chanceCartaMult": 1.5,
+ "estrelasParaAbrir": 3,
+ "multChefe": {
+  "vida": 0.6,
+  "atq": 0.7
+ }
+}

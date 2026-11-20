@@ -1,91 +1,378 @@
 {
-  "niveisPorPonto": 5,
-  "pontosPorRank": 10,
-  "custoReset": {
-    "orvalho": 3
-  },
-  "ramos": [
+ "niveisPorPonto": 5,
+ "pontosPorRank": 10,
+ "custoReset": {
+  "orvalho": 3
+ },
+ "funcoes": {
+  "Tanque": "tanque",
+  "Dano em área": "dano",
+  "Dano rápido": "dano",
+  "Dano perfurante": "dano",
+  "Veneno": "dano",
+  "Finalizador": "dano",
+  "Cura": "apoio",
+  "Suporte": "apoio",
+  "Controle": "controle"
+ },
+ "classes": {
+  "tanque": {
+   "nome": "Tanque",
+   "emoji": "🛡️",
+   "desc": "Aguenta o tranco: muita vida e defesa, habilidade protetora mais forte.",
+   "ramos": [
     {
-      "id": "raiz",
-      "emoji": "🌱",
-      "nome": "Raiz",
-      "desc": "Vida e defesa",
-      "nos": [
-        {
-          "id": "vida",
-          "nome": "Seiva Grossa",
-          "efeito": "vida",
-          "porPonto": 0.04,
-          "max": 5,
-          "texto": "+{valor}% de vida"
-        },
-        {
-          "id": "def",
-          "nome": "Casca Dura",
-          "efeito": "def",
-          "porPonto": 0.04,
-          "max": 5,
-          "texto": "+{valor}% de defesa"
-        }
-      ]
+     "id": "raiz",
+     "emoji": "🌱",
+     "nome": "Raiz",
+     "desc": "Vida e defesa",
+     "nos": [
+      {
+       "id": "vida",
+       "nome": "Casca Reforçada",
+       "efeito": "vida",
+       "porPonto": 0.06,
+       "max": 5,
+       "texto": "+{valor}% de vida"
+      },
+      {
+       "id": "def",
+       "nome": "Armadura Viva",
+       "efeito": "def",
+       "porPonto": 0.08,
+       "max": 5,
+       "texto": "+{valor}% de defesa"
+      }
+     ]
     },
     {
-      "id": "tronco",
-      "emoji": "🔥",
-      "nome": "Tronco",
-      "desc": "Ataque e crítico",
-      "nos": [
-        {
-          "id": "atq",
-          "nome": "Golpe Firme",
-          "efeito": "atq",
-          "porPonto": 0.04,
-          "max": 5,
-          "texto": "+{valor}% de ataque"
-        },
-        {
-          "id": "crit",
-          "nome": "Olho Afiado",
-          "efeito": "critico",
-          "porPonto": 0.02,
-          "max": 5,
-          "texto": "+{valor}% de chance de crítico"
-        }
-      ]
+     "id": "tronco",
+     "emoji": "🔥",
+     "nome": "Tronco",
+     "desc": "Ataque e passo",
+     "nos": [
+      {
+       "id": "atq",
+       "nome": "Golpe Firme",
+       "efeito": "atq",
+       "porPonto": 0.03,
+       "max": 5,
+       "texto": "+{valor}% de ataque"
+      },
+      {
+       "id": "vel",
+       "nome": "Passo Ligeiro",
+       "efeito": "vel",
+       "porPonto": 1,
+       "max": 3,
+       "texto": "+{valor} de velocidade",
+       "absoluto": true
+      }
+     ]
     },
     {
-      "id": "folha",
-      "emoji": "🌸",
-      "nome": "Folha",
-      "desc": "Habilidade e seiva",
-      "nos": [
-        {
-          "id": "potencia",
-          "nome": "Seiva Potente",
-          "efeito": "potencia",
-          "porPonto": 0.05,
-          "max": 5,
-          "texto": "+{valor}% de força da habilidade"
-        },
-        {
-          "id": "seivaIni",
-          "nome": "Broto Pronto",
-          "efeito": "seivaInicial",
-          "porPonto": 8,
-          "max": 5,
-          "texto": "+{valor} de seiva no começo da batalha",
-          "absoluto": true
-        },
-        {
-          "id": "seivaTurno",
-          "nome": "Raiz Veloz",
-          "efeito": "seivaTurno",
-          "porPonto": 1,
-          "max": 5,
-          "texto": "+{valor} de seiva por rodada",
-          "absoluto": true
-        }
-      ]
+     "id": "folha",
+     "emoji": "🌸",
+     "nome": "Folha",
+     "desc": "Proteção e seiva",
+     "nos": [
+      {
+       "id": "potencia",
+       "nome": "Seiva Protetora",
+       "efeito": "potencia",
+       "porPonto": 0.08,
+       "max": 5,
+       "texto": "+{valor}% de força da habilidade"
+      },
+      {
+       "id": "seivaIni",
+       "nome": "Broto Pronto",
+       "efeito": "seivaInicial",
+       "porPonto": 8,
+       "max": 5,
+       "texto": "+{valor} de seiva no começo da batalha",
+       "absoluto": true
+      },
+      {
+       "id": "seivaTurno",
+       "nome": "Raiz Veloz",
+       "efeito": "seivaTurno",
+       "porPonto": 1,
+       "max": 5,
+       "texto": "+{valor} de seiva por rodada",
+       "absoluto": true
+      }
+     ]
     }
-  ]
+   ]
+  },
+  "dano": {
+   "nome": "Dano",
+   "emoji": "⚔️",
+   "desc": "Bate forte: ataque, crítico e dano crítico.",
+   "ramos": [
+    {
+     "id": "raiz",
+     "emoji": "🌱",
+     "nome": "Raiz",
+     "desc": "Resistência",
+     "nos": [
+      {
+       "id": "vida",
+       "nome": "Seiva Grossa",
+       "efeito": "vida",
+       "porPonto": 0.03,
+       "max": 5,
+       "texto": "+{valor}% de vida"
+      },
+      {
+       "id": "def",
+       "nome": "Casca Dura",
+       "efeito": "def",
+       "porPonto": 0.03,
+       "max": 5,
+       "texto": "+{valor}% de defesa"
+      }
+     ]
+    },
+    {
+     "id": "tronco",
+     "emoji": "🔥",
+     "nome": "Tronco",
+     "desc": "Ataque e crítico",
+     "nos": [
+      {
+       "id": "atq",
+       "nome": "Golpe Brutal",
+       "efeito": "atq",
+       "porPonto": 0.06,
+       "max": 5,
+       "texto": "+{valor}% de ataque"
+      },
+      {
+       "id": "crit",
+       "nome": "Olho Afiado",
+       "efeito": "critico",
+       "porPonto": 0.03,
+       "max": 5,
+       "texto": "+{valor}% de chance de crítico"
+      },
+      {
+       "id": "critDano",
+       "nome": "Golpe Certeiro",
+       "efeito": "critDano",
+       "porPonto": 0.1,
+       "max": 5,
+       "texto": "+{valor}% de dano crítico"
+      }
+     ]
+    },
+    {
+     "id": "folha",
+     "emoji": "🌸",
+     "nome": "Folha",
+     "desc": "Habilidade e seiva",
+     "nos": [
+      {
+       "id": "potencia",
+       "nome": "Seiva Potente",
+       "efeito": "potencia",
+       "porPonto": 0.06,
+       "max": 5,
+       "texto": "+{valor}% de força da habilidade"
+      },
+      {
+       "id": "seivaTurno",
+       "nome": "Raiz Veloz",
+       "efeito": "seivaTurno",
+       "porPonto": 1,
+       "max": 5,
+       "texto": "+{valor} de seiva por rodada",
+       "absoluto": true
+      }
+     ]
+    }
+   ]
+  },
+  "apoio": {
+   "nome": "Apoio",
+   "emoji": "💚",
+   "desc": "Cura e suporte: habilidade forte e seiva rápida.",
+   "ramos": [
+    {
+     "id": "raiz",
+     "emoji": "🌱",
+     "nome": "Raiz",
+     "desc": "Vida e defesa",
+     "nos": [
+      {
+       "id": "vida",
+       "nome": "Seiva Grossa",
+       "efeito": "vida",
+       "porPonto": 0.05,
+       "max": 5,
+       "texto": "+{valor}% de vida"
+      },
+      {
+       "id": "def",
+       "nome": "Casca Dura",
+       "efeito": "def",
+       "porPonto": 0.04,
+       "max": 5,
+       "texto": "+{valor}% de defesa"
+      }
+     ]
+    },
+    {
+     "id": "tronco",
+     "emoji": "🔥",
+     "nome": "Tronco",
+     "desc": "Ataque e passo",
+     "nos": [
+      {
+       "id": "atq",
+       "nome": "Golpe Firme",
+       "efeito": "atq",
+       "porPonto": 0.03,
+       "max": 5,
+       "texto": "+{valor}% de ataque"
+      },
+      {
+       "id": "vel",
+       "nome": "Passo Ligeiro",
+       "efeito": "vel",
+       "porPonto": 1,
+       "max": 3,
+       "texto": "+{valor} de velocidade",
+       "absoluto": true
+      }
+     ]
+    },
+    {
+     "id": "folha",
+     "emoji": "🌸",
+     "nome": "Folha",
+     "desc": "Cura e seiva",
+     "nos": [
+      {
+       "id": "potencia",
+       "nome": "Seiva Curativa",
+       "efeito": "potencia",
+       "porPonto": 0.08,
+       "max": 5,
+       "texto": "+{valor}% de força da habilidade"
+      },
+      {
+       "id": "seivaIni",
+       "nome": "Broto Pronto",
+       "efeito": "seivaInicial",
+       "porPonto": 10,
+       "max": 5,
+       "texto": "+{valor} de seiva no começo da batalha",
+       "absoluto": true
+      },
+      {
+       "id": "seivaTurno",
+       "nome": "Raiz Generosa",
+       "efeito": "seivaTurno",
+       "porPonto": 2,
+       "max": 5,
+       "texto": "+{valor} de seiva por rodada",
+       "absoluto": true
+      }
+     ]
+    }
+   ]
+  },
+  "controle": {
+   "nome": "Controle",
+   "emoji": "🌀",
+   "desc": "Domina o ritmo: velocidade e seiva pra soltar a habilidade cedo.",
+   "ramos": [
+    {
+     "id": "raiz",
+     "emoji": "🌱",
+     "nome": "Raiz",
+     "desc": "Vida e defesa",
+     "nos": [
+      {
+       "id": "vida",
+       "nome": "Seiva Grossa",
+       "efeito": "vida",
+       "porPonto": 0.04,
+       "max": 5,
+       "texto": "+{valor}% de vida"
+      },
+      {
+       "id": "def",
+       "nome": "Casca Dura",
+       "efeito": "def",
+       "porPonto": 0.04,
+       "max": 5,
+       "texto": "+{valor}% de defesa"
+      }
+     ]
+    },
+    {
+     "id": "tronco",
+     "emoji": "🔥",
+     "nome": "Tronco",
+     "desc": "Ataque e velocidade",
+     "nos": [
+      {
+       "id": "atq",
+       "nome": "Golpe Firme",
+       "efeito": "atq",
+       "porPonto": 0.03,
+       "max": 5,
+       "texto": "+{valor}% de ataque"
+      },
+      {
+       "id": "vel",
+       "nome": "Pé de Vento",
+       "efeito": "vel",
+       "porPonto": 1,
+       "max": 5,
+       "texto": "+{valor} de velocidade",
+       "absoluto": true
+      }
+     ]
+    },
+    {
+     "id": "folha",
+     "emoji": "🌸",
+     "nome": "Folha",
+     "desc": "Habilidade e seiva",
+     "nos": [
+      {
+       "id": "potencia",
+       "nome": "Seiva Potente",
+       "efeito": "potencia",
+       "porPonto": 0.05,
+       "max": 5,
+       "texto": "+{valor}% de força da habilidade"
+      },
+      {
+       "id": "seivaIni",
+       "nome": "Broto Pronto",
+       "efeito": "seivaInicial",
+       "porPonto": 10,
+       "max": 5,
+       "texto": "+{valor} de seiva no começo da batalha",
+       "absoluto": true
+      },
+      {
+       "id": "seivaTurno",
+       "nome": "Raiz Veloz",
+       "efeito": "seivaTurno",
+       "porPonto": 2,
+       "max": 5,
+       "texto": "+{valor} de seiva por rodada",
+       "absoluto": true
+      }
+     ]
+    }
+   ]
+  }
+ }
 }

@@ -72,6 +72,12 @@ function completar(salvo) {
     if (!r.talentos) r.talentos = {};
     guardarSobras(r, e.inventario);
   }
+  // Talentos que não existem na classe da planta são devolvidos (viram pontos livres)
+  for (const [id, r] of Object.entries(e.colecao)) {
+    const base = dados.plantas.find((x) => x.id === id);
+    if (!base) continue;
+    for (const no of Object.keys(r.talentos)) if (!evo.noTalento(dados, base, no)) delete r.talentos[no];
+  }
   while (e.canteiro.length < dados.rotina.canteiro.vasos) e.canteiro.push(null);
   return e;
 }
@@ -648,7 +654,8 @@ export function ascender(idPlanta) {
 
 export function gastarTalento(idPlanta, idNo) {
   const registro = estado.colecao[idPlanta];
-  const no = evo.noTalento(dados, idNo);
+  const base = dados.plantas.find((x) => x.id === idPlanta);
+  const no = base && evo.noTalento(dados, base, idNo);
   if (!registro || !no) return { ok: false, erro: 'semMaterial' };
   if ((registro.talentos[idNo] || 0) >= no.max) return { ok: false, erro: 'talentoMax' };
   if (evo.pontosGastos(registro) >= evo.pontosTalento(registro, dados)) return { ok: false, erro: 'semPontos' };

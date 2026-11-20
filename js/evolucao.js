@@ -23,20 +23,26 @@ export function pontosGastos(registro) {
   return Object.values(registro.talentos || {}).reduce((a, b) => a + b, 0);
 }
 
-export function noTalento(dados, idNo) {
-  for (const ramo of dados.talentos.ramos) {
+// Classe de talentos da planta (pela função dela: Tanque, Dano, Apoio, Controle)
+export function classeTalento(dados, base) {
+  const t = dados.talentos;
+  return t.classes[t.funcoes[base.funcao]] || t.classes.dano;
+}
+
+export function noTalento(dados, base, idNo) {
+  for (const ramo of classeTalento(dados, base).ramos) {
     const no = ramo.nos.find((n) => n.id === idNo);
     if (no) return no;
   }
   return null;
 }
 
-// Soma os bônus dos talentos: { vida, atq, def, critico, potencia, seivaInicial, seivaTurno }
-export function bonusTalentos(registro, dados) {
-  const b = { vida: 0, atq: 0, def: 0, critico: 0, potencia: 0, seivaInicial: 0, seivaTurno: 0 };
+// Soma os bônus dos talentos: { vida, atq, def, vel, critico, critDano, potencia, seivaInicial, seivaTurno }
+export function bonusTalentos(registro, dados, base) {
+  const b = { vida: 0, atq: 0, def: 0, vel: 0, critico: 0, critDano: 0, potencia: 0, seivaInicial: 0, seivaTurno: 0 };
   if (!dados.talentos) return b;
   for (const [id, n] of Object.entries(registro.talentos || {})) {
-    const no = noTalento(dados, id);
+    const no = noTalento(dados, base, id);
     if (no) b[no.efeito] += no.porPonto * n;
   }
   return b;
@@ -59,14 +65,14 @@ export function atributos(base, registro, dados, mudanca = {}) {
   const fEstrela = 1 + dados.config.evolucao.bonusEstrela * (r.estrelas - 1);
   const fRank = 1 + dados.config.evolucao.bonusRank * (r.ascensao || 0);
   const bonus = { vida: 0, atq: 0, def: 0, vel: 0 };
-  const tal = bonusTalentos(r, dados);
+  const tal = bonusTalentos(r, dados, base);
   bonus.vida += tal.vida; bonus.atq += tal.atq; bonus.def += tal.def;
   for (const espaco of dados.equipamentos.espacos) {
     const n = r.equip[espaco.id] || 0;
     if (n > 0) bonus[espaco.atributo] += dados.equipamentos.niveis[n - 1].bonus;
   }
   const calc = (attr) => Math.round(base[attr] * fNivel * fEstrela * fRank * (1 + bonus[attr]));
-  return { vida: calc('vida'), atq: calc('atq'), def: calc('def'), vel: base.vel };
+  return { vida: calc('vida'), atq: calc('atq'), def: calc('def'), vel: base.vel + tal.vel };
 }
 
 // Poder: um número só pra comparar plantas (e pragas). Soma os atributos finais

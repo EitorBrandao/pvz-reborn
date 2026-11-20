@@ -2,11 +2,13 @@
 
 import { $, mostrarTela, avisar, preencher } from './comum.js';
 import * as jogo from '../estado.js';
-import { mapaLiberado, faseLiberada, concluida, faseAtual } from '../campanha.js';
+import * as som from '../som.js';
+import { mapaLiberado, faseLiberada, concluida, faseAtual, pesadeloLiberado } from '../campanha.js';
 
 let dados;
 let aoPreparar;
 let mapaAberto = 0;
+let modoPesadelo = false;
 
 export function iniciarTelaMapa(d, { voltar, preparar }) {
   dados = d;
@@ -18,7 +20,8 @@ export function iniciarTelaMapa(d, { voltar, preparar }) {
   window.addEventListener('resize', () => { if ($('tela-mapa').classList.contains('ativa')) desenharTrilha(); });
 }
 
-export function abrirTelaMapa(indiceMapa) {
+export function abrirTelaMapa(indiceMapa, pesadelo = false) {
+  modoPesadelo = pesadelo;
   if (indiceMapa !== undefined) mapaAberto = indiceMapa;
   else {
     // abre no último mapa liberado
@@ -29,6 +32,10 @@ export function abrirTelaMapa(indiceMapa) {
   $('fase-painel').classList.add('escondido');
   mostrarTela('tela-mapa');
   desenhar();
+}
+
+function musicaDoModo() {
+  som.tocarMusica(modoPesadelo ? 'pesadelo' : 'horta');
 }
 
 function estrelas(n) {
@@ -42,7 +49,23 @@ function emojiPraga(id) {
 function desenhar() {
   const c = dados.campanha;
   const mapa = c.mapas[mapaAberto];
-  $('mapa-titulo').textContent = `${mapa.emoji} ${mapa.nome}`;
+  const cfgP = dados.pesadelo;
+  const abertoP = pesadeloLiberado(c, jogo.estado, mapaAberto, cfgP);
+  if (modoPesadelo && !abertoP) modoPesadelo = false;
+  const fases = modoPesadelo ? mapa.pesadelo.fases : mapa.fases;
+  $('tela-mapa').classList.toggle('modo-pesadelo', modoPesadelo);
+  $('mapa-titulo').textContent = `${mapa.emoji} ${mapa.nome}${modoPesadelo ? ' 😈' : ''}`;
+  musicaDoModo();
+
+  // Normal / Pesadelo
+  const modo = $('mapa-modo');
+  modo.innerHTML = `<button class="aba${modoPesadelo ? '' : ' ativa'}" data-p="0">Normal</button>
+    <button class="aba${modoPesadelo ? ' ativa' : ''}${abertoP ? '' : ' bloqueada'}" data-p="1">${abertoP ? '😈' : '🔒'} Pesadelo</button>`;
+  modo.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => {
+    if (b.dataset.p === '1' && !abertoP) return avisar(dados.textos.pesadeloBloqueado);
+    modoPesadelo = b.dataset.p === '1';
+    desenhar();
+  }));
 
   // Abas
   const abas = $('mapa-abas');
@@ -55,6 +78,7 @@ function desenhar() {
     aba.addEventListener('click', () => {
       if (!liberado) return avisar(preencher(dados.textos.mapaBloqueado, { mapa: c.mapas[i - 1].nome }));
       mapaAberto = i;
+      modoPesadelo = false;
       desenhar();
     });
     abas.appendChild(aba);
@@ -64,9 +88,9 @@ function desenhar() {
   const trilha = $('mapa-trilha');
   trilha.style.setProperty('--cor-mapa', mapa.cor);
   trilha.querySelectorAll('.no-linha').forEach((n) => n.remove());
-  const atual = faseAtual(c, jogo.estado, mapaAberto);
+  const atual = faseAtual(c, jogo.estado, mapaAberto, modoPesadelo);
   const deslocamentos = [50, 25, 50, 75];
-  mapa.fases.forEach((fase, i) => {
+  fases.forEach((fase, i) => {
     const liberada = faseLiberada(c, jogo.estado, fase);
     const feita = concluida(jogo.estado, fase.id);
     const linha = document.createElement('div');
@@ -120,8 +144,9 @@ function abrirPainel(fase) {
 
   $('fase-conteudo').innerHTML = `
     <button id="fase-fechar" class="fechar" aria-label="Fechar">✖</button>
-    <p class="fase-numero">${mapa.nome} · Fase ${fase.indice + 1}${fase.chefe ? ' · CHEFE' : ''}</p>
+    <p class="fase-numero">${mapa.nome}${fase.pesadelo ? ' 😈 Pesadelo' : ''} · Fase ${fase.indice + 1}${fase.chefe ? ' · CHEFE' : ''}</p>
     <h3>${fase.nome}</h3>
+    ${fase.pesadelo ? `<p class="dica-pequena">${dados.textos.pesadeloAviso}</p>` : ''}
     <div class="fase-estrelas">${estrelas(melhor)}</div>
     <div class="bloco"><b>Inimigos</b> <small>(Nv ${fase.nivel})</small><div class="fase-inimigos">${inimigos}</div></div>
     <div class="bloco"><b>Prêmios</b>

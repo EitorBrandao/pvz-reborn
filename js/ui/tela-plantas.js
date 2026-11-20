@@ -1,8 +1,8 @@
 // Tela de plantas: coleção, cartas, pacote de sementes e evolução de cada planta.
 
-import { $, mostrarTela, avisar, preencher, selosPlanta } from './comum.js';
+import { $, mostrarTela, avisar, preencher, selosPlanta, textoHabilidade } from './comum.js';
 import * as jogo from '../estado.js';
-import { atributos, poder, xpParaProximo, nivelMaximo, pontosTalento, pontosGastos, custoAscensao, podeAscender, custoEstrela, custoEquip, temCartas, habilidadeComEstrelas } from '../evolucao.js';
+import { atributos, poder, xpParaProximo, nivelMaximo, classeTalento, pontosTalento, pontosGastos, custoAscensao, podeAscender, custoEstrela, custoEquip, temCartas, habilidadeComEstrelas } from '../evolucao.js';
 import * as som from '../som.js';
 
 let dados;
@@ -240,23 +240,7 @@ function desenharDetalhe() {
 
   // Habilidade
   const h = habilidadeComEstrelas(p.habilidade, r.estrelas);
-  const textoStatus = (hab) => {
-    const a = hab.aplica;
-    const st = a && t.status[a.status];
-    return st ? ' ' + preencher(st.texto, { valor: Math.round(a.valor * 100), turnos: a.turnos }) : '';
-  };
-  // Plural: usa o texto "_varios" quando o número passa de 1 (ex.: cura 2 aliados).
-  const chaveHab = (hab) => {
-    const n = hab.tipo === 'cura' ? hab.alvos : hab.tipo === 'sono' ? hab.turnos : 1;
-    return n > 1 && t.habilidades[`${hab.tipo}_varios`] ? `${hab.tipo}_varios` : hab.tipo;
-  };
-  const textoHab = (hab) => preencher(t.habilidades[chaveHab(hab)] || '', {
-    reflete: Math.round((hab.reflete || 0) * 100), turnos: hab.turnos, golpes: hab.golpes,
-    reducao: Math.round((hab.reducao || 0) * 100), forca: Math.round((hab.mult || 0) * 100),
-    alvos: hab.alvos || 1, seiva: hab.seiva,
-    pctVida: Math.round((hab.pctVida || 0) * 100), limite: Math.round((hab.limite || 0) * 100),
-    bonus: Math.round((hab.mult || 0) * (hab.bonus || 0) * 100),
-  }) + textoStatus(hab);
+  const textoHab = (hab) => textoHabilidade(hab, dados);
   const descHab = textoHab(h);
   const infoAtaque = `${preencher(t.alcance[p.alcance || 'longe'], { bonus: Math.round((dados.config.batalha.multPerto - 1) * 100) })}<br>${t.padraoAtaque[p.alvo || 'frente']}`;
   const fx = dados.faccoes;
@@ -319,7 +303,8 @@ function desenharDetalhe() {
   // Talentos
   const tl = dados.talentos;
   const livres = pontosTalento(r, dados) - pontosGastos(r);
-  const ramosHtml = tl.ramos.map((ramo) => `
+  const classe = classeTalento(dados, p);
+  const ramosHtml = classe.ramos.map((ramo) => `
     <div class="talento-ramo"><b>${ramo.emoji} ${ramo.nome}</b> <small>${ramo.desc}</small>
     ${ramo.nos.map((no) => {
       const n = (r.talentos || {})[no.id] || 0;
@@ -328,6 +313,7 @@ function desenharDetalhe() {
         <button class="btn btn-verde btn-peq" data-acao="talento" data-no="${no.id}" ${livres > 0 && n < no.max ? '' : 'disabled'}>+</button></div>`;
     }).join('')}</div>`).join('');
   const blocoTalentos = `<div class="bloco"><h4>Talentos${selo(livres > 0)}</h4>
+    <p class="dica-pequena"><b>${classe.emoji} ${classe.nome}</b>: ${classe.desc}</p>
     <p class="dica-pequena">Pontos livres: <b>${livres}</b> (1 a cada ${tl.niveisPorPonto} níveis, +${tl.pontosPorRank} por rank de ascensão)</p>
     ${ramosHtml}
     <button class="btn btn-azul btn-peq" data-acao="resetar-talentos" ${pontosGastos(r) ? '' : 'disabled'}>Resetar 💧${tl.custoReset.orvalho}</button></div>`;

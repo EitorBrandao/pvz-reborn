@@ -74,13 +74,16 @@ export function prepararBatalha(batalha, time, dados, colecao = {}) {
       habilidade: habilidadeComEstrelas(base.habilidade, registro.estrelas),
     });
     // Talentos: crítico, força da habilidade e seiva
-    const tal = bonusTalentos(registro, dados);
+    const tal = bonusTalentos(registro, dados, base);
     u.bonusCritico = tal.critico;
+    u.bonusCritDano = tal.critDano;
     u.bonusSeivaTurno = tal.seivaTurno;
     u.seiva = Math.min(100, tal.seivaInicial);
     if (tal.potencia > 0) {
       const h = { ...u.habilidade };
       if (h.mult) h.mult = Math.round(h.mult * (1 + tal.potencia) * 100) / 100;
+      if (h.seiva) h.seiva = Math.round(h.seiva * (1 + tal.potencia));
+      if (h.reflete) h.reflete = Math.round(h.reflete * (1 + tal.potencia) * 100) / 100;
       if (h.pctVida) h.pctVida = Math.round(h.pctVida * (1 + tal.potencia) * 1000) / 1000;
       u.habilidade = h;
     }
@@ -200,7 +203,7 @@ export function simular(unidades, cfg, semente) {
     if (atacante.alcance === 'perto') bruto *= cfg.multPerto || 1;
     bruto *= 1 - cfg.variacao + rng() * 2 * cfg.variacao;
     const critico = rng() < cfg.chanceCritico + (atacante.bonusCritico || 0);
-    if (critico) bruto *= cfg.multCritico;
+    if (critico) bruto *= cfg.multCritico + (atacante.bonusCritDano || 0);
     const dano = Math.max(1, Math.round(bruto));
     const absorvido = Math.min(alvo.escudo, dano);
     alvo.escudo -= absorvido;

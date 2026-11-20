@@ -232,6 +232,7 @@ body {
 .dica-pequena { font-size: .8rem; opacity: .9; text-align: center; margin: 8px 0; }
 
 .lista-plantas { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.cartao-planta { -webkit-touch-callout: none; }
 .cartao-planta {
   display: flex;
   flex-direction: column;
@@ -848,3 +849,6 @@ body {
 .espaco .marca-fusao { left: 4px; right: auto; }
 .espaco.ascendida { border-color: #e0a800; background: #fff4c4; }
 .espaco.fundida { border-color: #7b3fe4; }
+.mapa-modo { display: flex; gap: 8px; margin-top: 8px; }
+.mapa-modo .aba { flex: 1; }
+.modo-pesadelo .mapa-trilha { --cor-mapa: #8b1e2d; background-blend-mode: multiply; filter: saturate(.75) brightness(.85); }
