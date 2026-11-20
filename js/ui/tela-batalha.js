@@ -182,21 +182,39 @@ async function animarAcao(ev) {
   if (golpes.length) {
     const alvo = vis[golpes[0].alvo];
     const ang = Math.atan2(alvo.y - a.y, alvo.x - a.x);
-    if (!pular) som.tocarSom('tiro');
-    a.dx = Math.cos(ang) * raio * 0.7;
-    a.dy = Math.sin(ang) * raio * 0.7;
-    await espera(140);
-    a.dx = 0;
-    a.dy = 0;
+    if (!ev.perto) {
+      if (!pular) som.tocarSom('tiro');
+      a.dx = Math.cos(ang) * raio * 0.7;
+      a.dy = Math.sin(ang) * raio * 0.7;
+      await espera(140);
+      a.dx = 0;
+      a.dy = 0;
+    }
   }
 
-  let atraso = 0;
-  const chegadas = golpes.map((ef) => {
-    const voo = lancar(a, vis[ef.alvo], a.projetil, atraso).then(() => mostrarEfeito(ef));
-    atraso += ev.habTipo === 'rajada' ? 130 : 50;
-    return voo;
-  });
-  await Promise.all(chegadas);
+  if (ev.perto) {
+    // corpo a corpo: a planta corre até o alvo, bate e volta (sem projétil)
+    for (const ef of golpes) {
+      const alvo = vis[ef.alvo];
+      const ang = Math.atan2(alvo.y - a.y, alvo.x - a.x);
+      const dist = Math.max(0, Math.hypot(alvo.x - a.x, alvo.y - a.y) - raio * 1.6);
+      a.dx = Math.cos(ang) * dist;
+      a.dy = Math.sin(ang) * dist;
+      await espera(200);
+      mostrarEfeito(ef);
+      await espera(120);
+    }
+    a.dx = 0;
+    a.dy = 0;
+  } else {
+    let atraso = 0;
+    const chegadas = golpes.map((ef) => {
+      const voo = lancar(a, vis[ef.alvo], a.projetil, atraso).then(() => mostrarEfeito(ef));
+      atraso += ev.habTipo === 'rajada' ? 130 : 50;
+      return voo;
+    });
+    await Promise.all(chegadas);
+  }
 
   for (const ef of ev.efeitos) {
     if (!(ef.tipo === 'dano' && !ef.reflexo)) mostrarEfeito(ef);
@@ -565,6 +583,12 @@ function desenharUnidade(v) {
     ctx.fillRect(bx - 1, by - 1, larg + 2, 12);
     ctx.fillStyle = pv > 0.5 ? '#5cc23a' : pv > 0.25 ? '#ffb020' : '#e5483a';
     ctx.fillRect(bx, by, larg * pv, 6);
+    if (v.escudo > 0) {
+      ctx.fillStyle = 'rgba(0,0,0,.55)';
+      ctx.fillRect(bx - 1, by - 7, larg + 2, 6);
+      ctx.fillStyle = '#7fe3ff';
+      ctx.fillRect(bx, by - 6, larg * Math.min(1, Math.max(0.12, v.escudo / v.vidaMax)), 4);
+    }
     ctx.fillStyle = v.seiva >= 100 ? '#ffd23a' : '#3a9ee6';
     ctx.fillRect(bx, by + 7, larg * (v.seiva / 100), 3);
 
@@ -579,11 +603,12 @@ function desenharUnidade(v) {
     }
 
     ctx.font = `bold ${Math.max(10, r * 0.32)}px "Trebuchet MS", sans-serif`;
-    ctx.fillStyle = '#fff';
+    const rotulo = `Nv${v.nivel}${v.rank ? ` ✦${v.rank}` : ''}${v.fusao ? ' 🧬' : ''}`;
+    ctx.fillStyle = v.rank ? '#ffd23a' : '#fff';
     ctx.strokeStyle = 'rgba(0,0,0,.6)';
     ctx.lineWidth = 3;
-    ctx.strokeText(`Nv${v.nivel}`, x, by + 20);
-    ctx.fillText(`Nv${v.nivel}`, x, by + 20);
+    ctx.strokeText(rotulo, x, by + 20);
+    ctx.fillText(rotulo, x, by + 20);
   }
   ctx.restore();
 }

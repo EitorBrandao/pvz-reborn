@@ -134,7 +134,7 @@ function desenharInventario() {
     if (!qtd) continue;
     vazio = false;
     const botao = document.createElement('button');
-    botao.className = `item-inventario ${c.raridade}`;
+    botao.className = `item-inventario ${c.raridade}${c.destaque ? ' destaque' : ''}`;
     botao.innerHTML = `<span>${c.emoji}</span><b>${qtd}</b>`;
     botao.addEventListener('click', () => {
       if (c.uso === 'troca') return abrirTroca();
@@ -242,6 +242,7 @@ function desenharDetalhe() {
   const h = habilidadeComEstrelas(p.habilidade, r.estrelas);
   const textoHab = (hab) => textoHabilidade(hab, dados);
   const descHab = textoHab(h);
+  const infoAtaque = `${preencher(t.alcance[p.alcance || 'longe'], { bonus: Math.round((dados.config.batalha.multPerto - 1) * 100) })}<br>${t.padraoAtaque[p.alvo || 'frente']}`;
   const fx = dados.faccoes;
   const fac = fx.faccoes.find((f) => f.id === p.faccao);
   const forte = fac && fx.categorias.find((c) => c.id === fac.forteContra);
@@ -350,13 +351,14 @@ function desenharDetalhe() {
       <small>${p.funcao}</small>
       ${infoFaccao ? `<small class="info-faccao">${infoFaccao}</small>` : ''}
       <div class="estrelas">${estrelasTexto(r.estrelas)}</div>
-      ${r.ascensao ? `<div class="selo-rank">${dados.ascensao.selos[r.ascensao]} Rank ${r.ascensao}</div>` : ''}
+      ${selosPlanta(r, dados).html.replace('class="selos"', 'class="selos selos-detalhe"')}
     </div>
     <div class="bloco">
       <p><b>Nv ${r.nivel}</b> / ${max} ${noMax ? '' : `· XP ${r.xp}/${precisa}`}</p>
       <div class="barra-xp grande"><span style="width:${noMax ? 100 : (r.xp / precisa) * 100}%"></span></div>
     </div>
     <div class="bloco">${linhas}</div>
+    <div class="bloco"><b>🗡️ Ataque</b><p class="dica-pequena">${infoAtaque}</p></div>
     <div class="bloco"><b>✨ ${h.nome}</b><p class="dica-pequena">${descHab}</p>${proxEstrela ? `<p class="previa">${proxEstrela}</p>` : ''}</div>
     <div class="bloco"><h4>Treinar${selo(m.treinar)}</h4><div class="botoes-grade">${treinos}</div></div>
     <div class="bloco"><h4>Estrela${selo(m.estrela)}</h4>${blocoEstrela}</div>

@@ -127,6 +127,17 @@
     "protecao": "Ataca e dá um escudo de {pctVida}% da própria vida pras plantas da frente por {turnos} rodadas.",
     "devorar": "Morde a praga mais ferida ({forca}% do ataque). Se ela estiver com menos de {limite}% de vida, o dano sobe pra {bonus}%."
   },
+  "alcance": {
+    "perto": "⚔️ Corpo a corpo: só alcança a fileira da frente, mas bate {bonus}% mais forte.",
+    "longe": "🏹 À distância: alcança qualquer fileira."
+  },
+  "padraoAtaque": {
+    "frente": "🎯 Ataca a praga da frente, na mesma fileira.",
+    "fraco": "🎯 Ataca a praga com menos vida.",
+    "forte": "🎯 Ataca a praga com mais vida.",
+    "tras": "🎯 Prefere as pragas de trás.",
+    "aleatorio": "🎯 Ataca pragas aleatórias."
+  },
   "habilidadeProxima": "Com {estrelas} ⭐: {texto}",
   "ordensTime": {
     "padrao": "↕️ Padrão",

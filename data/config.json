@@ -1,5 +1,5 @@
 {
-  "versaoJogo": "0.11.1",
+  "versaoJogo": "0.12.0",
   "inicio": {
     "moedas": 500,
     "orvalho": 10,
@@ -49,6 +49,7 @@
     },
     "maxRodadas": 15,
     "multDano": 1.7,
+    "multPerto": 1.25,
     "seivaPorTurno": 25,
     "seivaAoApanhar": 10,
     "chanceCritico": 0.15,
@@ -101,7 +102,11 @@
       "agave": 8,
       "bromelia": 8,
       "vitoria": 8,
-      "jarro": 8
+      "jarro": 8,
+      "mandioca": 8,
+      "melancia": 8,
+      "coco": 8,
+      "taboa": 8
     }
   },
   "troca": {
