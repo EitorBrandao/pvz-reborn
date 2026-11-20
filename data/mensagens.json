@@ -74,6 +74,8 @@
   "nivelMaximo": "Nível máximo! Evolua a estrela pra continuar subindo.",
   "plantaNova": "Planta nova: {nome}!",
   "copiaNova": "+1 cópia de {nome}",
+  "copiaVirouMuda": "{nome} já tem todas as estrelas: virou 🧩 Muda Repetida",
+  "semMudas": "Junte {n} 🧩 Mudas Repetidas pra trocar por uma planta.",
   "estrelaSubiu": "{nome} agora tem {estrelas} ⭐!",
   "equipSubiu": "{espaco} melhorou pra {nivel}!",
   "bloqueada": "Ache no Pacote de Sementes",
@@ -148,7 +150,7 @@
     "treinoTexto": "Escolha pragas que você já venceu e teste seu time à vontade.",
     "treinoBotao": "Treinar"
   },
-  "mudaBloqueada": "Essa muda libera num nível maior.",
+  "mudaBloqueada": "Isso só libera num nível maior.",
   "rotina": {
     "plantar": "Plantar",
     "colher": "Colher!",
@@ -156,8 +158,8 @@
     "receber": "Receber!",
     "colheu": "{emoji} Colheita! +{moedas} 🪙 {cartas}",
     "crescendo": "{nome} ainda está crescendo: falta {tempo}.",
-    "escolherMuda": "Escolha uma muda",
-    "mudaDica": "Ela cresce mesmo com o jogo fechado. Volte pra colher!",
+    "escolherMuda": "Escolha o que plantar",
+    "mudaDica": "Cresce mesmo com o jogo fechado. Volte pra colher!",
     "colhe": "Colhe",
     "nivelMin": "Libera no nível {nivel}",
     "naoPronto": "Ainda não está pronto.",

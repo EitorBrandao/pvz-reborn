@@ -103,6 +103,10 @@
       "jarro": 8
     }
   },
+  "troca": {
+    "carta": "muda_repetida",
+    "custo": 3
+  },
   "folego": {
     "max": 30,
     "minutosPorPonto": 4,
