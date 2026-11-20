@@ -435,3 +435,6 @@ body {
 .rodape-modal .btn { width: 100%; max-width: 240px; }
 .pacote-caixa { padding-bottom: 16px; }
 .pacote-caixa .dica-pequena { margin-bottom: 0; opacity: .7; }
+
+.cabecalho-colecao { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.cabecalho-colecao .titulo-secao { margin-bottom: 8px; }

@@ -10,6 +10,16 @@ let mudanca = null;     // { antes, depois } pra mostrar o quanto ficou mais for
 
 const ATRIBUTOS = ['vida', 'atq', 'def', 'vel'];
 
+// Ordenação da coleção (lembrada só neste aparelho)
+const ORDENS = [
+  { id: 'padrao', rotulo: '↕️ Padrão' },
+  { id: 'nivel', rotulo: '↕️ Nível' },
+  { id: 'estrela', rotulo: '↕️ Estrela' },
+];
+let ordem = 'padrao';
+try { ordem = localStorage.getItem('horta-ordem-colecao') || 'padrao'; } catch { /* sem storage */ }
+if (!ORDENS.some((o) => o.id === ordem)) ordem = 'padrao';
+
 export function iniciarTelaPlantas(d, voltar) {
   dados = d;
   $('plantas-voltar').addEventListener('click', voltar);
@@ -21,6 +31,7 @@ export function iniciarTelaPlantas(d, voltar) {
   // Fecha o resultado do pacote tocando em qualquer lugar
   $('pacote-resultado').addEventListener('click', () => { $('pacote-resultado').classList.add('escondido'); desenhar(); });
   $('detalhe-conteudo').addEventListener('click', acaoDetalhe);
+  $('btn-ordenar').addEventListener('click', trocarOrdem);
 
   const { pacote } = dados.config;
   $('btn-pacote-moedas').textContent = `🌱 Pacote 🪙${pacote.moedas}`;
@@ -91,10 +102,36 @@ function desenharInventario() {
   if (vazio) area.innerHTML = '<p class="dica-pequena">Vença batalhas pra ganhar cartas.</p>';
 }
 
+function trocarOrdem() {
+  const i = ORDENS.findIndex((o) => o.id === ordem);
+  ordem = ORDENS[(i + 1) % ORDENS.length].id;
+  try { localStorage.setItem('horta-ordem-colecao', ordem); } catch { /* sem storage */ }
+  desenharLista();
+}
+
+// Bloqueadas sempre por último; empate mantém a ordem original.
+function plantasOrdenadas() {
+  const col = jogo.estado.colecao;
+  const chave = (p) => {
+    const r = col[p.id];
+    if (!r) return [-1, -1];
+    return ordem === 'estrela' ? [r.estrelas, r.nivel] : [r.nivel, r.estrelas];
+  };
+  if (ordem === 'padrao') {
+    return [...dados.plantas].sort((a, b) => Number(!col[a.id]) - Number(!col[b.id]));
+  }
+  return [...dados.plantas].sort((a, b) => {
+    const [a1, a2] = chave(a);
+    const [b1, b2] = chave(b);
+    return b1 - a1 || b2 - a2;
+  });
+}
+
 function desenharLista() {
   const lista = $('colecao');
   lista.innerHTML = '';
-  for (const p of dados.plantas) {
+  $('btn-ordenar').textContent = ORDENS.find((o) => o.id === ordem).rotulo;
+  for (const p of plantasOrdenadas()) {
     const r = jogo.estado.colecao[p.id];
     const botao = document.createElement('button');
     if (!r) {
