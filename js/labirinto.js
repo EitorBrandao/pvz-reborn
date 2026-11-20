@@ -85,7 +85,9 @@ export function opcoesRecruta(run, dados, colecao, emViagem = () => false) {
 export function gerarBatalha(run, tipo, dados, colecao) {
   const c = dados.labirinto;
   const andar = run.andar;
-  const alvoBase = poderDoTime(run, dados, colecao) * c.fator[Math.min(andar, c.fator.length - 1)] * (tipo === 'elite' ? c.fatorElite : 1);
+  // expoente > 1: time forte enfrenta pragas proporcionalmente mais fortes (o poder cresce menos que a força real)
+  const poderBase = Math.pow(poderDoTime(run, dados, colecao) / c.referenciaPoder, c.expoentePoder || 1) * c.referenciaPoder;
+  const alvoBase = poderBase * c.fator[Math.min(andar, c.fator.length - 1)] * (tipo === 'elite' ? c.fatorElite : 1);
   const comuns = dados.pragas.filter((p) => !p.chefe);
   const pool = comuns.slice(0, Math.min(comuns.length, c.poolInicial + andar));
   const chefes = dados.pragas.filter((p) => p.chefe);
