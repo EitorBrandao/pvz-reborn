@@ -86,5 +86,11 @@ export const GLIFOS = {
  "tiro:lua": 57426,
  "tiro:formiga": 57427,
  "tiro:estouro": 57428,
- "extra:chao": 57429
+ "extra:chao": 57429,
+ "extra:tinta_azul": 57430,
+ "extra:tinta_verde": 57431,
+ "extra:tinta_amarelo": 57432,
+ "extra:tinta_laranja": 57433,
+ "extra:tinta_vermelho": 57434,
+ "extra:tinta_ciano": 57435
 };

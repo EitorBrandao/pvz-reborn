@@ -875,7 +875,7 @@ body {
 .lab-trilha .feito { background: #6fd16f; }
 .lab-trilha .atual { background: #f0c040; }
 .lab-trilha span { position: relative; overflow: hidden; }
-.lab-trilha .chefe { outline: 2px solid #c0392b; outline-offset: -2px; }
+.lab-trilha .chefe::after { content: ""; position: absolute; inset: 0; border: 2px solid #c0392b; border-radius: 4px; pointer-events: none; } /* por cima da tinta, que cobriria o outline */
 .lab-bencaos { text-align: center; font-size: 1.3rem; }
 .lab-portas { display: flex; flex-direction: column; gap: 8px; }
 .lab-porta { text-align: left; }
