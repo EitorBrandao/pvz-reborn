@@ -327,6 +327,61 @@ function estourar(x, y, quantidade, cores) {
 
 // ---------- Resultado ----------
 
+// Soma o dano de cada planta (causado e recebido) a partir dos eventos da batalha.
+function somarDano(eventos) {
+  const causado = {}, recebido = {};
+  let status = 0;
+  const soma = (m, k, v) => { m[k] = (m[k] || 0) + v; };
+  for (const ev of eventos) {
+    if (!ev.efeitos) continue;
+    let anterior = null;
+    for (const e of ev.efeitos) {
+      if (e.tipo === 'dano') {
+        const alvo = vis[e.alvo];
+        if (alvo && alvo.lado === 'planta') soma(recebido, e.alvo, e.valor);
+        if (e.porStatus) { if (alvo && alvo.lado === 'praga') status += e.valor; }
+        else if (e.reflexo) { if (anterior) soma(causado, anterior.alvo, e.valor); }
+        else if (ev.de && vis[ev.de] && vis[ev.de].lado === 'planta') soma(causado, ev.de, e.valor);
+        if (!e.reflexo) anterior = e;
+      }
+    }
+  }
+  return { causado, recebido, status };
+}
+
+function mostrarDano(soma, aba) {
+  const t = dados.textos.sumarioDano;
+  $('aba-dano-causado').textContent = t.causado;
+  $('aba-dano-recebido').textContent = t.recebido;
+  $('aba-dano-causado').classList.toggle('ativa', aba === 'causado');
+  $('aba-dano-recebido').classList.toggle('ativa', aba === 'recebido');
+  const lista = $('resultado-dano');
+  lista.innerHTML = '';
+  const linhas = Object.entries(soma[aba]).map(([uid, v]) => ({ nome: `${vis[uid].emoji} ${vis[uid].nome}`, v }));
+  if (aba === 'causado' && soma.status > 0) linhas.push({ nome: t.status, v: soma.status });
+  linhas.sort((a, b) => b.v - a.v);
+  const max = linhas.length ? linhas[0].v : 1;
+  const total = linhas.reduce((s, l) => s + l.v, 0);
+  if (!linhas.length) lista.innerHTML = `<li>${t.nada}</li>`;
+  for (const l of linhas) {
+    const li = document.createElement('li');
+    const barra = document.createElement('i');
+    barra.style.width = `${Math.round((l.v / max) * 100)}%`;
+    const nome = document.createElement('span');
+    nome.textContent = l.nome;
+    const num = document.createElement('span');
+    num.textContent = l.v.toLocaleString('pt-BR');
+    li.append(barra, nome, num);
+    lista.appendChild(li);
+  }
+  if (linhas.length > 1) {
+    const li = document.createElement('li');
+    li.className = 'total';
+    li.innerHTML = `<span>${t.total}: ${total.toLocaleString('pt-BR')}</span>`;
+    lista.appendChild(li);
+  }
+}
+
 function terminar(resultado, semente) {
   const { textos } = dados;
   som.pararMusica();
@@ -357,6 +412,11 @@ function terminar(resultado, semente) {
   else if (resultado.vitoria) texto = preencher(textos.vitoriaTexto, { moedas, xp }) + (orvalho ? ` · +${orvalho} 💧` : '');
   else texto = preencher(textos.derrotaTexto, { xp });
   $('resultado-texto').textContent = texto;
+
+  const somaDano = somarDano(resultado.eventos);
+  mostrarDano(somaDano, 'causado');
+  $('aba-dano-causado').onclick = () => mostrarDano(somaDano, 'causado');
+  $('aba-dano-recebido').onclick = () => mostrarDano(somaDano, 'recebido');
 
   const niveis = $('resultado-niveis');
   niveis.innerHTML = '';

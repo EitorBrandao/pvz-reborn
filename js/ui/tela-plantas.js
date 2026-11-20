@@ -1,8 +1,8 @@
 // Tela de plantas: coleção, cartas, pacote de sementes e evolução de cada planta.
 
-import { $, mostrarTela, avisar, preencher } from './comum.js';
+import { $, mostrarTela, avisar, preencher, selosPlanta } from './comum.js';
 import * as jogo from '../estado.js';
-import { atributos, poder, xpParaProximo, nivelMaximo, custoEstrela, custoEquip, temCartas, habilidadeComEstrelas } from '../evolucao.js';
+import { atributos, poder, xpParaProximo, nivelMaximo, pontosTalento, pontosGastos, custoAscensao, podeAscender, custoEstrela, custoEquip, temCartas, habilidadeComEstrelas } from '../evolucao.js';
 import * as som from '../som.js';
 
 let dados;
@@ -43,7 +43,7 @@ export function iniciarTelaPlantas(d, voltar) {
   $('troca-fechar').addEventListener('click', fecharTroca);
   $('troca-mudas').addEventListener('click', (e) => { if (e.target.id === 'troca-mudas') fecharTroca(); });
   $('troca-planta').addEventListener('click', () => { fecharTroca(); usarComLote(carta(dados.config.troca.carta)); });
-  $('troca-material').addEventListener('click', () => { fecharTroca(); mostrarMaterial(jogo.trocarMudasPorMaterial()); });
+  $('troca-material').addEventListener('click', () => { fecharTroca(); usarComLote(carta(dados.config.troca.carta), true); });
 
   const { pacote } = dados.config;
   $('btn-pacote-moedas').textContent = `🌱 Pacote 🪙${pacote.moedas}`;
@@ -90,7 +90,7 @@ function erro(resultado) {
 function melhorias(r) {
   const e = jogo.estado;
   const cfg = dados.config.evolucao;
-  const treinar = r.nivel < nivelMaximo(r.estrelas, cfg)
+  const treinar = r.nivel < nivelMaximo(r.estrelas, cfg, r.ascensao)
     && dados.cartas.some((c) => c.uso === 'xp' && (e.inventario[c.id] || 0) > 0);
   const ce = custoEstrela(r, cfg);
   const estrela = !!ce && r.copias >= ce.copias && e.moedas >= ce.moedas;
@@ -100,7 +100,10 @@ function melhorias(r) {
     equip[esp.id] = !!c && e.moedas >= (c.moedas || 0) && temCartas(e.inventario, c.cartas || {});
   }
   const algumEquip = Object.values(equip).some(Boolean);
-  return { treinar, estrela, equip, algumEquip, alguma: treinar || estrela || algumEquip };
+  const ca = custoAscensao(r, dados);
+  const ascender = !!ca && podeAscender(r, cfg) && e.moedas >= ca.moedas && temCartas(e.inventario, ca.cartas);
+  const talento = pontosTalento(r, dados) - pontosGastos(r) > 0;
+  return { treinar, estrela, equip, algumEquip, ascender, talento, alguma: treinar || estrela || algumEquip || ascender || talento };
 }
 
 function poderDe(p, r, mudancaReg) {
@@ -185,12 +188,14 @@ function desenharLista() {
       botao.addEventListener('click', () => avisar(dados.textos.bloqueada));
     } else {
       const cfg = dados.config.evolucao;
-      const max = nivelMaximo(r.estrelas, cfg);
+      const max = nivelMaximo(r.estrelas, cfg, r.ascensao);
       const pxp = r.nivel >= max ? 1 : r.xp / xpParaProximo(r.nivel, cfg);
       const m = melhorias(r);
-      const icones = [m.estrela && '⭐', m.algumEquip && '🛠️', m.treinar && '📈'].filter(Boolean).join('');
-      botao.className = 'cartao-planta' + (m.alguma ? ' pode-evoluir' : '');
+      const icones = [m.ascender && '✦', m.talento && '🌳', m.estrela && '⭐', m.algumEquip && '🛠️', m.treinar && '📈'].filter(Boolean).join('');
+      const selos = selosPlanta(r, dados);
+      botao.className = 'cartao-planta' + (m.alguma ? ' pode-evoluir' : '') + selos.classe;
       botao.innerHTML = `
+        ${selos.html}
         ${m.alguma ? `<span class="aviso-melhorar" title="Dá pra melhorar">⬆️ ${icones}</span>` : ''}
         <span class="planta-emoji">${p.emoji}</span>
         <b>${p.nome}</b>
@@ -219,7 +224,7 @@ function desenharDetalhe() {
   const cfg = dados.config.evolucao;
   const t = dados.textos;
   const stats = atributos(p, r, dados);
-  const max = nivelMaximo(r.estrelas, cfg);
+  const max = nivelMaximo(r.estrelas, cfg, r.ascensao);
   const noMax = r.nivel >= max;
   const precisa = xpParaProximo(r.nivel, cfg);
   const m = melhorias(r);
@@ -291,6 +296,42 @@ function desenharDetalhe() {
       <button class="btn btn-laranja btn-largo" data-acao="estrela" ${r.copias >= custo.copias ? '' : 'disabled'}>Evoluir pra ${r.estrelas + 1} ⭐</button>`;
   }
 
+  // Ascensão
+  const ca = custoAscensao(r, dados);
+  let blocoAscensao = '';
+  if (r.estrelas >= cfg.estrelasMax) {
+    if (!ca) blocoAscensao = `<p class="dica-pequena">Rank máximo!</p>`;
+    else {
+      const prev = atributos(p, r, dados, { ascensao: (r.ascensao || 0) + 1, nivel: 1 });
+      const pronto = podeAscender(r, cfg);
+      const bonusRank = Math.round(cfg.bonusRank * 100);
+      blocoAscensao = `
+        <p class="dica-pequena">${pronto ? 'Volta pro nível 1, mas ' : 'No nível máximo, '}ganha +${bonusRank}% de atributos pra sempre e +${cfg.niveisPorRank} de nível máximo.</p>
+        <div class="estrela-info">
+          ${custoTexto(ca)}
+          <div class="previa-grade"><span>Nv máx</span><b>${max} → ${max + cfg.niveisPorRank}</b></div>
+        </div>
+        <button class="btn btn-laranja btn-largo" data-acao="ascender" ${pronto ? '' : 'disabled'}>✦ Ascender (rank ${(r.ascensao || 0) + 1})</button>`;
+    }
+    blocoAscensao = `<div class="bloco"><h4>Ascensão${selo(m.ascender)}</h4>${blocoAscensao}</div>`;
+  }
+
+  // Talentos
+  const tl = dados.talentos;
+  const livres = pontosTalento(r, dados) - pontosGastos(r);
+  const ramosHtml = tl.ramos.map((ramo) => `
+    <div class="talento-ramo"><b>${ramo.emoji} ${ramo.nome}</b> <small>${ramo.desc}</small>
+    ${ramo.nos.map((no) => {
+      const n = (r.talentos || {})[no.id] || 0;
+      const fmt = (q) => no.absoluto ? q * no.porPonto : Math.round(q * no.porPonto * 100);
+      return `<div class="talento-no"><div><span>${no.nome} <b>${n}/${no.max}</b></span><small>${preencher(no.texto, { valor: fmt(n || 1) })}${n ? '' : ' (por ponto)'}</small></div>
+        <button class="btn btn-verde btn-peq" data-acao="talento" data-no="${no.id}" ${livres > 0 && n < no.max ? '' : 'disabled'}>+</button></div>`;
+    }).join('')}</div>`).join('');
+  const blocoTalentos = `<div class="bloco"><h4>Talentos${selo(livres > 0)}</h4>
+    <p class="dica-pequena">Pontos livres: <b>${livres}</b> (1 a cada ${tl.niveisPorPonto} níveis, +${tl.pontosPorRank} por rank de ascensão)</p>
+    ${ramosHtml}
+    <button class="btn btn-azul btn-peq" data-acao="resetar-talentos" ${pontosGastos(r) ? '' : 'disabled'}>Resetar 💧${tl.custoReset.orvalho}</button></div>`;
+
   // Equipamentos
   const equips = dados.equipamentos.espacos.map((esp) => {
     const n = r.equip[esp.id] || 0;
@@ -323,6 +364,7 @@ function desenharDetalhe() {
       <small>${p.funcao}</small>
       ${infoFaccao ? `<small class="info-faccao">${infoFaccao}</small>` : ''}
       <div class="estrelas">${estrelasTexto(r.estrelas)}</div>
+      ${r.ascensao ? `<div class="selo-rank">${dados.ascensao.selos[r.ascensao]} Rank ${r.ascensao}</div>` : ''}
     </div>
     <div class="bloco">
       <p><b>Nv ${r.nivel}</b> / ${max} ${noMax ? '' : `· XP ${r.xp}/${precisa}`}</p>
@@ -333,6 +375,8 @@ function desenharDetalhe() {
     <div class="bloco"><b>✨ ${h.nome}</b><p class="dica-pequena">${descHab}</p>${proxEstrela ? `<p class="previa">${proxEstrela}</p>` : ''}</div>
     <div class="bloco"><h4>Treinar${selo(m.treinar)}</h4><div class="botoes-grade">${treinos}</div></div>
     <div class="bloco"><h4>Estrela${selo(m.estrela)}</h4>${blocoEstrela}</div>
+    ${blocoTalentos}
+    ${blocoAscensao}
     <div class="bloco"><h4>Equipamentos${selo(m.algumEquip)}</h4>${equips}</div>`;
   $('detalhe').classList.remove('escondido');
 }
@@ -356,6 +400,21 @@ function acaoDetalhe(evento) {
       res = jogo.evoluirEstrela(aberta);
       if (res.ok) som.tocarSom('estrela');
       if (res.ok) avisar(preencher(t.estrelaSubiu, { nome: p.nome, estrelas: r.estrelas }));
+      break;
+    case 'talento':
+      res = jogo.gastarTalento(aberta, botao.dataset.no);
+      if (res.ok) som.tocarSom('treino');
+      break;
+    case 'resetar-talentos':
+      if (!confirm(preencher(t.talentosResetConfirma, { nome: p.nome, custo: dados.talentos.custoReset.orvalho }))) return;
+      res = jogo.resetarTalentos(aberta);
+      if (res.ok) avisar(preencher(t.talentosReset, { nome: p.nome }));
+      break;
+    case 'ascender':
+      if (!confirm(preencher(t.ascensaoConfirma, { nome: p.nome, bonus: Math.round(dados.config.evolucao.bonusRank * 100) }))) return;
+      res = jogo.ascender(aberta);
+      if (res.ok) som.tocarSom('estrela');
+      if (res.ok) avisar(preencher(t.ascensaoFeita, { nome: p.nome, rank: r.ascensao }));
       break;
     case 'equip': {
       const esp = dados.equipamentos.espacos.find((x) => x.id === botao.dataset.espaco);
@@ -398,15 +457,28 @@ function mostrarMaterial(res) {
   abrirResultado(c.emoji, preencher(dados.textos.materialGanho, { qtd: res.qtd, nome: c.nome }), c.raridade !== 'comum');
 }
 
+function mostrarMateriais(res) {
+  if (!res.ok) return erro(res);
+  som.tocarSom('pacote');
+  $('pacote-emoji').textContent = '🎲';
+  $('pacote-titulo').textContent = '';
+  $('pacote-resumo').innerHTML = res.premios
+    .map((x) => `<span class="resumo-item">${carta(x.carta).emoji}<b>×${x.qtd}</b></span>`).join('');
+  $('pacote-resultado').classList.remove('nova');
+  $('pacote-resultado').classList.remove('escondido');
+  desenhar();
+}
+
 // ---------- Pacote de Sementes ----------
 
 // Com 10 itens ou mais, pergunta se usa 1 ou vários de uma vez
-function usarComLote(c) {
+function usarComLote(c, material = false) {
   const qtd = jogo.estado.inventario[c.id] || 0;
-  const porUso = c.uso === 'troca' ? dados.config.troca.custo : 1;
+  const porUso = material ? dados.config.troca.custoMaterial : (c.uso === 'troca' ? dados.config.troca.custo : 1);
+  usandoMaterial = material;
   const usos = Math.min(dados.config.pacote.lote, Math.floor(qtd / porUso));
   usando = c;
-  if (qtd >= dados.config.pacote.lote && usos > 1) {
+  if (usos > 1 && (material || qtd >= dados.config.pacote.lote)) {
     usarLote = usos;
     $('usar-quantos-titulo').textContent = preencher(dados.textos.usarQuantos, { emoji: c.emoji, nome: c.nome });
     $('usar-lote').textContent = `×${usos}`;
@@ -416,9 +488,11 @@ function usarComLote(c) {
 
 let usando = null;   // carta do inventário sendo usada
 let usarLote = 1;
+let usandoMaterial = false;
 
 function usarCarta(n) {
   $('usar-quantos').classList.add('escondido');
+  if (usandoMaterial) return n > 1 ? mostrarMateriais(jogo.trocarMudasPorMaterialVarias(n)) : mostrarMaterial(jogo.trocarMudasPorMaterial());
   if (usando.uso === 'pacote') mostrarPacote(n > 1 ? jogo.plantarSementes(n) : jogo.plantarSemente());
   else mostrarPacote(n > 1 ? jogo.trocarMudasVarias(n) : jogo.trocarMudas());
 }

@@ -3,9 +3,9 @@
   "ataquesGratis": 3,
   "custoAtaqueExtra": 2,
   "nivelExtra": 0,
-  "multVida": 12,
+  "multVida": 30,
   "lacaios": 2,
-  "danoBotsPorHora": 0.17,
+  "danoBotsPorHora": 0.425,
   "madrugada": [
     1,
     7
