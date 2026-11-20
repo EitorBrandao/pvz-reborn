@@ -358,14 +358,15 @@ function desenhar() {
 }
 
 function desenharGrama() {
+  // Quadrados de verdade: o lado vem da largura; as linhas preenchem a altura, centralizadas.
   const colunas = 8;
-  const linhas = 6;
-  const lw = W / colunas;
-  const lh = H / linhas;
+  const lado = W / colunas;
+  const linhas = Math.ceil(H / lado);
+  const topo = (H - linhas * lado) / 2;
   for (let i = 0; i < colunas; i++) {
     for (let j = 0; j < linhas; j++) {
       ctx.fillStyle = (i + j) % 2 ? '#4caf2e' : '#43a326';
-      ctx.fillRect(i * lw, j * lh, lw + 1, lh + 1);
+      ctx.fillRect(i * lado, topo + j * lado, lado + 1, lado + 1);
     }
   }
   ctx.strokeStyle = 'rgba(255,255,255,.25)';
