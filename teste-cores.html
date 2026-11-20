@@ -3,68 +3,92 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Teste de cores</title>
-<!-- Página temporária: descobre qual jeito de desenhar o modo escuro do Samsung Internet não estraga. -->
+<title>Teste de cores 2</title>
+<!-- Página temporária: descobre como contornar o modo escuro forçado do Samsung Internet. -->
 <style>
   body { margin: 0; padding: 12px; font: 14px "Trebuchet MS", sans-serif; color: #fff; background: #3d9a22; }
   h1 { font-size: 1.1rem; margin: 0 0 6px; }
-  p { margin: 0 0 10px; font-size: .8rem; }
+  h2 { font-size: .95rem; margin: 14px 0 6px; }
+  p { margin: 0 0 8px; font-size: .8rem; }
   .g { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
   .c { background: #f6e7c1; color: #23301b; border: 3px solid #8a5a2b; border-radius: 12px; padding: 6px 2px; text-align: center; }
-  .c b { display: block; font-size: 1.4rem; }
-  .c small { display: block; font-size: .65rem; }
-  .s { width: 64px; height: 64px; margin: 0 auto; display: block; position: relative; }
-  .s img, .s canvas, .s svg { width: 64px; height: 64px; display: block; }
-  .pilha img { position: absolute; inset: 0; }
-  .filtro img { filter: contrast(1.6) saturate(1.5) brightness(.9); }
-  .bg { background-size: contain; background-repeat: no-repeat; background-position: center; }
-  .card-grad { background: linear-gradient(#f6e7c1, #f6e7c1); }
-  .card-img { background-color: transparent; background-repeat: repeat; }
+  .c b { display: block; font-size: 1.3rem; }
+  .c small { display: block; font-size: .62rem; }
+  .s { width: 64px; height: 64px; margin: 0 auto; display: block; }
+  .s img, .s canvas { width: 64px; height: 64px; display: block; }
+  iframe { width: 100%; height: 130px; border: 0; border-radius: 12px; display: block; }
   #info { font-size: .7rem; opacity: .9; word-break: break-all; margin-top: 10px; }
 </style>
 </head>
 <body>
-<h1>Teste de cores (Samsung)</h1>
-<p>Tire um print desta tela no Samsung Internet com o modo escuro ligado e me mande. Quero saber quais letras ficaram com o desenho bem colorido e o cartão bege claro.</p>
-<div class="g" id="g"></div>
+<h1>Teste de cores 2 (Samsung)</h1>
+<p>Mande um print desta tela inteira (pode precisar de 2 prints). Se puder, mande também um com o modo escuro do Samsung <b>desligado</b>, só pra comparar.</p>
+<h2>Imagem com filtro de compensação</h2>
+<div class="g" id="g1"></div>
+<h2>Batalha (canvas) com compensação</h2>
+<div class="g" id="g2"></div>
+<h2>Página com fundo escuro</h2>
+<div class="g" id="g3"></div>
 <div id="info"></div>
 <script type="module">
 import { urlArte } from './js/arte.js';
 
-const svgUrl = urlArte('u', 'pimentao');
-const g = document.getElementById('g');
 const carregar = (src) => new Promise((ok) => { const i = new Image(); i.onload = () => ok(i); i.src = src; });
-const img = await carregar(svgUrl);
+const img = await carregar(urlArte('u', 'pimentao'));
 const tela = document.createElement('canvas');
 tela.width = tela.height = 256;
 tela.getContext('2d').drawImage(img, 0, 0, 256, 256);
 const png = tela.toDataURL('image/png');
-const bege = (() => { const c = document.createElement('canvas'); c.width = c.height = 4; const x = c.getContext('2d'); x.fillStyle = '#f6e7c1'; x.fillRect(0, 0, 4, 4); return c.toDataURL('image/png'); })();
-const svgTexto = decodeURIComponent(svgUrl.split(',')[1]);
 
-const casos = [
-  ['A', 'img PNG (atual)', `<div class="s"><img src="${png}"></div>`],
-  ['B', 'img SVG', `<div class="s"><img src="${svgUrl}"></div>`],
-  ['C', '3 PNGs empilhados', `<div class="s pilha"><img src="${png}"><img src="${png}"><img src="${png}"></div>`],
-  ['D', 'fundo CSS PNG', `<div class="s bg" style="background-image:url('${png}')"></div>`],
-  ['E', 'SVG no HTML', `<div class="s">${svgTexto}</div>`],
-  ['F', 'canvas', `<div class="s" data-canvas></div>`],
-  ['G', 'img com filtro forte', `<div class="s filtro"><img src="${png}"></div>`],
-  ['H', 'cartão degradê', `<div class="s"><img src="${png}"></div>`, 'card-grad'],
-  ['I', 'cartão imagem', `<div class="s"><img src="${png}"></div>`, 'card-img'],
+const cartao = (letra, miolo, nome) => `<div class="c"><b>${letra}</b><div class="s">${miolo}</div><small>${nome}</small></div>`;
+
+// 1) <img> com filtros de força diferente
+const filtros = [
+  ['A', 'nenhum', 'none'],
+  ['B', 'fraco', 'contrast(1.3) saturate(1.3)'],
+  ['C', 'médio (G antigo)', 'contrast(1.6) saturate(1.5) brightness(.9)'],
+  ['D', 'forte', 'contrast(2) saturate(1.8) brightness(.85)'],
+  ['E', 'claro+forte', 'brightness(1.35) contrast(1.6) saturate(1.6)'],
+  ['F', 'muito forte', 'contrast(2.6) saturate(2.2) brightness(.8)'],
 ];
-for (const [letra, nome, miolo, extra] of casos) {
+document.getElementById('g1').innerHTML = filtros.map(([l, n, f]) => cartao(l, `<img src="${png}" style="filter:${f}">`, n)).join('');
+
+// 2) canvas (como a batalha) com filtros
+const filtrosCanvas = [
+  ['G', 'nenhum', 'none'],
+  ['H', 'escurece', 'brightness(.75) contrast(1.4) saturate(1.4)'],
+  ['I', 'inverte cores', 'invert(1) hue-rotate(180deg)'],
+];
+document.getElementById('g2').innerHTML = filtrosCanvas.map(([l, n, f]) => cartao(l, `<canvas width="128" height="128" style="filter:${f}"></canvas>`, n)).join('');
+document.querySelectorAll('#g2 canvas').forEach((c) => {
+  const x = c.getContext('2d');
+  x.fillStyle = '#4caf2e';
+  x.fillRect(0, 0, 128, 128);
+  x.drawImage(tela, 0, 0, 128, 128);
+});
+
+// 3) página inteira com fundo escuro (iframe = outra página)
+const pagina = (fundo, meta) => `<!doctype html><html><head><meta charset="utf-8">${meta}
+<style>html,body{margin:0;background:${fundo};font:12px sans-serif;color:#fff;text-align:center}
+.c{background:#f6e7c1;color:#23301b;border:3px solid #8a5a2b;border-radius:10px;margin:6px;padding:4px}
+img,canvas{width:56px;height:56px;vertical-align:middle}</style></head>
+<body><div class="c"><img src="${png}"><canvas width="112" height="112"></canvas><br>cartão</div>
+<script>const c=document.querySelector('canvas').getContext('2d');c.fillStyle='#4caf2e';c.fillRect(0,0,112,112);
+const i=new Image();i.onload=()=>c.drawImage(i,0,0,112,112);i.src=document.querySelector('img').src;<\/script></body></html>`;
+const frames = [
+  ['J', 'fundo preto', pagina('#000', '')],
+  ['K', 'fundo verde-escuro', pagina('#10240a', '')],
+  ['L', 'preto + tema escuro', pagina('#000', '<meta name="color-scheme" content="dark"><style>:root{color-scheme:dark}</style>')],
+];
+const g3 = document.getElementById('g3');
+for (const [l, n, html] of frames) {
   const d = document.createElement('div');
-  d.className = `c ${extra || ''}`;
-  if (extra === 'card-img') d.style.backgroundImage = `url('${bege}')`;
-  d.innerHTML = `<b>${letra}</b>${miolo}<small>${nome}</small>`;
-  g.append(d);
+  d.innerHTML = `<b style="font-size:1.2rem">${l}</b> <small>${n}</small>`;
+  const f = document.createElement('iframe');
+  f.srcdoc = html;
+  d.append(f);
+  g3.append(d);
 }
-const alvo = g.querySelector('[data-canvas]');
-const cv = document.createElement('canvas');
-cv.width = cv.height = 128;
-cv.getContext('2d').drawImage(tela, 0, 0, 128, 128);
-alvo.append(cv);
 
 document.getElementById('info').textContent =
   `escuro=${matchMedia('(prefers-color-scheme: dark)').matches} · ${navigator.userAgent}`;
