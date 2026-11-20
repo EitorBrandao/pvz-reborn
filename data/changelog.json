@@ -1,4 +1,5 @@
 [
+  { "versao": "0.14.1", "itens": ["Corrige os desenhos desbotados em celulares com modo escuro forçado: o jogo agora fica sempre com as cores certas"] },
   { "versao": "0.14.0", "itens": ["🎨 Arte nova: todas as plantas e pragas ganharam desenho próprio, no lugar dos emojis", "As plantas respiram paradas, esticam quando atacam e piscam quando levam golpe", "Tiros desenhados com rastro, e cada habilidade especial ganhou ícone, cor e efeito próprios", "Ícones novos de status (veneno, queimadura, sono, lentidão...) em cima das unidades na batalha"] },
   { "versao": "0.13.4", "itens": ["Preparar batalha mais clara: as plantas do time ficam no grupo \"✅ No time\", com borda verde e um ✓ no canto; as outras ficam em \"Fora do time\"", "Cartões mais limpos: só nível, estrelas e Poder (ou o atributo que você escolheu pra ordenar). Segure a planta pra ver tudo"] },
   { "versao": "0.13.1", "itens": ["✦ Plantas normais agora ascendem até o Rank 3. Só as plantas híbridas (da Fusão) chegam ao Rank 5"] },

@@ -1,4 +1,5 @@
 :root {
+  color-scheme: only light; /* não deixa o modo escuro forçado do celular desbotar cores e desenhos */
   --grama-1: #4caf2e;
   --grama-2: #3d9a22;
   --grama-3: #2f7d1f;
