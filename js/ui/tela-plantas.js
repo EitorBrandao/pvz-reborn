@@ -17,7 +17,9 @@ export function iniciarTelaPlantas(d, voltar) {
   $('btn-pacote-orvalho').addEventListener('click', () => mostrarPacote(jogo.comprarPacote('orvalho')));
   $('detalhe-fechar').addEventListener('click', fecharDetalhe);
   $('detalhe').addEventListener('click', (e) => { if (e.target.id === 'detalhe') fecharDetalhe(); });
-  $('pacote-ok').addEventListener('click', () => { $('pacote-resultado').classList.add('escondido'); desenhar(); });
+  $('detalhe-fechar-baixo').addEventListener('click', fecharDetalhe);
+  // Fecha o resultado do pacote tocando em qualquer lugar
+  $('pacote-resultado').addEventListener('click', () => { $('pacote-resultado').classList.add('escondido'); desenhar(); });
   $('detalhe-conteudo').addEventListener('click', acaoDetalhe);
 
   const { pacote } = dados.config;
