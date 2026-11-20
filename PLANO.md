@@ -125,7 +125,7 @@ pvz-reborn/
 
 **Eventos e coleção:**
 
-- **Invasão de Chefe** (4º cartão em Desafios): um chefe gigante (12× a vida de um chefe normal, mas batendo mais fraco) fica 3 dias na horta. Você e 10 vizinhos bots batem no mesmo chefe; os bots batem sozinhos com o tempo (menos de madrugada), mesmo com o jogo fechado. 3 ataques grátis por dia, extra custa 💧2. Cada ataque dá moedas pelo dano, XP e cartas; no fim, prêmio pela posição no ranking (+💧3 se o chefe caiu). Quando a Arena chegar, os bots daqui viram os bots completos. Números em `data/invasao.json`.
+- **Invasão de Chefe** (4º cartão em Desafios): um chefe gigante (30× a vida de um chefe normal, mas batendo mais fraco) fica 3 dias na horta. Você e 10 vizinhos bots batem no mesmo chefe; os bots batem sozinhos com o tempo (menos de madrugada), mesmo com o jogo fechado. 3 ataques grátis por dia, extra custa 💧2. Cada ataque dá moedas pelo dano, XP e cartas; no fim, prêmio pela posição no ranking (+💧3 se o chefe caiu). Quando a Arena chegar, os bots daqui viram os bots completos. Números em `data/invasao.json`.
 - **Feira** (botão 🛒 à direita da horta): 4 ofertas por dia, cada uma comprável uma vez, só com moedas do jogo; e trocas de materiais (ex.: 6 Fibras → 1 Pétala). Números em `data/feira.json`.
 - **Herbário** (botão 📖 à direita da horta): uma página por facção (plantas) e uma por mapa (pragas). Página completa dá prêmio uma vez. Números em `data/herbario.json`.
 - Cada um tem música própria (`desafios`, `invasao`, `feira`, `herbario` no `js/som.js`).

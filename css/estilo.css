@@ -822,3 +822,20 @@ body {
 .talento-ramo { margin: 8px 0; }
 .talento-no { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 4px 0; font-size: 13px; }
 .talento-no small { display: block; opacity: .8; }
+
+/* ---------- Selos de Ascensão / Fusão ---------- */
+.cartao-planta, .espaco { position: relative; }
+.cartao-planta.ascendida { background: linear-gradient(180deg, #fff4c4, var(--bege) 60%); border-color: #e0a800; box-shadow: 0 0 0 2px #f0c040, 0 3px 0 rgba(0, 0, 0, .3); }
+.cartao-planta.ascendida.rank-3, .cartao-planta.ascendida.rank-4 { border-color: #e07a00; box-shadow: 0 0 0 2px #ff9d1c, 0 0 10px #ffc04a, 0 3px 0 rgba(0, 0, 0, .3); }
+.cartao-planta.ascendida.rank-5 { border-color: #c2185b; background: linear-gradient(180deg, #ffe0f0, #fff4c4 60%); box-shadow: 0 0 0 2px #ff4fa3, 0 0 14px #ffb347, 0 3px 0 rgba(0, 0, 0, .3); }
+.cartao-planta.fundida { border-color: #7b3fe4; box-shadow: 0 0 0 2px #a678ff, 0 3px 0 rgba(0, 0, 0, .3); }
+.cartao-planta.no-time.ascendida { background: linear-gradient(180deg, #fff4c4, #d9f5c8 60%); }
+.selos { position: absolute; top: -9px; left: 50%; transform: translateX(-50%); display: flex; gap: 3px; white-space: nowrap; z-index: 1; }
+.selo { font-size: .68rem; font-weight: 800; padding: 1px 7px; border-radius: 10px; color: #4a2e00; background: #f0c040; border: 2px solid #b8860b; }
+.selo-asc.rank-3, .selo-asc.rank-4 { background: #ff9d1c; border-color: #b85c00; }
+.selo-asc.rank-5 { background: #ff4fa3; border-color: #a0004e; color: #fff; }
+.selo-fusao { background: #a678ff; border-color: #5b21b6; color: #fff; }
+.espaco .marca-rank, .espaco .marca-fusao { position: absolute; bottom: 1px; right: 4px; font-size: .7rem; font-weight: 800; font-style: normal; color: #8a5a00; text-shadow: 0 0 3px #fff; }
+.espaco .marca-fusao { left: 4px; right: auto; }
+.espaco.ascendida { border-color: #e0a800; background: #fff4c4; }
+.espaco.fundida { border-color: #7b3fe4; }

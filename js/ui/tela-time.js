@@ -1,6 +1,6 @@
 // Tela de preparar batalha: ver a fase escolhida e montar o time.
 
-import { $, mostrarTela, avisar, preencher } from './comum.js';
+import { $, mostrarTela, avisar, preencher, selosPlanta } from './comum.js';
 import * as jogo from '../estado.js';
 import { atributos, poder } from '../evolucao.js';
 import { bonusFaccoes, poderLados } from '../batalha.js';
@@ -111,7 +111,9 @@ function desenharGrade() {
       const espaco = document.createElement('button');
       const marcado = espacoEscolhido && espacoEscolhido.col === col && espacoEscolhido.linha === linha;
       espaco.className = 'espaco' + (planta ? ' cheio' : '') + (marcado ? ' marcado' : '');
-      espaco.textContent = planta ? planta.emoji : (marcado ? '➕' : '');
+      const reg = planta && jogo.estado.colecao[planta.id];
+      espaco.className += reg ? selosPlanta(reg, dados).classe : '';
+      espaco.innerHTML = planta ? `${planta.emoji}${selosPlanta(reg, dados).marca}` : (marcado ? '➕' : '');
       espaco.addEventListener('click', () => {
         if (planta) {
           jogo.definirTime(jogo.estado.time.filter((m) => m !== membro));
@@ -177,8 +179,10 @@ function desenharPlantas() {
     const cartao = document.createElement('button');
     const fora = faseEscolhida.faccao && p.faccao !== faseEscolhida.faccao;
     const viajando = jogo.emExpedicao(p.id);
-    cartao.className = 'cartao-planta' + (noTime ? ' no-time' : '') + (fora || viajando ? ' fora-regra' : '');
+    const selos = selosPlanta(registro, dados);
+    cartao.className = 'cartao-planta' + (noTime ? ' no-time' : '') + (fora || viajando ? ' fora-regra' : '') + selos.classe;
     cartao.innerHTML = `
+      ${selos.html}
       <span class="planta-emoji">${p.emoji}</span>
       <b>${p.nome}</b>
       <small>${dados.faccoes.faccoes.find((f) => f.id === p.faccao)?.emoji || ''} Nv ${registro.nivel} · ${'⭐'.repeat(registro.estrelas)}</small>

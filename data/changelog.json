@@ -1,5 +1,7 @@
 [
-  { "versao": "0.10.1", "itens": ["🌳 Talentos agora são diferentes por classe: Tanque (vida e defesa), Dano (ataque e crítico), Apoio (cura e seiva) e Controle (velocidade e seiva)", "Novos nós: velocidade e dano crítico. Talentos que não existem na classe da planta são devolvidos como pontos livres"] },
+  { "versao": "0.10.3", "itens": ["🌳 Talentos agora são diferentes por classe: Tanque (vida e defesa), Dano (ataque e crítico), Apoio (cura e seiva) e Controle (velocidade e seiva)", "Novos nós: velocidade e dano crítico. Talentos que não existem na classe da planta são devolvidos como pontos livres"] },
+  { "versao": "0.10.2", "itens": ["Torre mais difícil: pragas sobem 2 níveis por andar, prêmio maior", "Desafio do Dia com 5 pragas, 3 níveis acima das suas plantas", "Invasão mais longa: chefe com mais vida e vizinhos batendo mais"] },
+  { "versao": "0.10.1", "itens": ["✦ Plantas com Ascensão ganham selo de Rank, moldura dourada e marca no espaço do time", "Pronto pra mostrar também o selo de Fusão"] },
   { "versao": "0.10.0", "itens": ["🌳 Árvore de talentos: cada planta ganha 1 ponto a cada 5 níveis (+10 por rank de ascensão) pra gastar em Raiz (vida, defesa), Tronco (ataque, crítico) e Folha (habilidade, seiva)", "Resetar os talentos custa 💧3"] },
   { "versao": "0.9.2", "itens": ["Troca de 🧩 por material de equipamento agora permite trocar vários de uma vez (×10)"] },
   { "versao": "0.9.1", "itens": ["📖 Herbário: nova página de Fusão de plantas com as receitas (em breve)"] },

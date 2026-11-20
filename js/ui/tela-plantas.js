@@ -1,6 +1,6 @@
 // Tela de plantas: coleção, cartas, pacote de sementes e evolução de cada planta.
 
-import { $, mostrarTela, avisar, preencher } from './comum.js';
+import { $, mostrarTela, avisar, preencher, selosPlanta } from './comum.js';
 import * as jogo from '../estado.js';
 import { atributos, poder, xpParaProximo, nivelMaximo, classeTalento, pontosTalento, pontosGastos, custoAscensao, podeAscender, custoEstrela, custoEquip, temCartas, habilidadeComEstrelas } from '../evolucao.js';
 import * as som from '../som.js';
@@ -192,12 +192,14 @@ function desenharLista() {
       const pxp = r.nivel >= max ? 1 : r.xp / xpParaProximo(r.nivel, cfg);
       const m = melhorias(r);
       const icones = [m.ascender && '✦', m.talento && '🌳', m.estrela && '⭐', m.algumEquip && '🛠️', m.treinar && '📈'].filter(Boolean).join('');
-      botao.className = 'cartao-planta' + (m.alguma ? ' pode-evoluir' : '');
+      const selos = selosPlanta(r, dados);
+      botao.className = 'cartao-planta' + (m.alguma ? ' pode-evoluir' : '') + selos.classe;
       botao.innerHTML = `
+        ${selos.html}
         ${m.alguma ? `<span class="aviso-melhorar" title="Dá pra melhorar">⬆️ ${icones}</span>` : ''}
         <span class="planta-emoji">${p.emoji}</span>
         <b>${p.nome}</b>
-        <small class="estrelas-peq">${estrelasTexto(r.estrelas)}${r.ascensao ? ` <span class="selo-rank">${dados.ascensao.selos[r.ascensao]}</span>` : ''}</small>
+        <small class="estrelas-peq">${estrelasTexto(r.estrelas)}</small>
         <small>Nv ${r.nivel}/${max}</small>
         <span class="poder">💪 ${poderDe(p, r)}</span>
         <span class="barra-xp"><span style="width:${pxp * 100}%"></span></span>`;
