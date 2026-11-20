@@ -1011,6 +1011,2170 @@
      ]
     }
    ]
+  },
+  {
+   "id": "pantano",
+   "nome": "Pântano",
+   "emoji": "🐸",
+   "cor": "#3f7d5c",
+   "fases": [
+    {
+     "id": "pantano-1",
+     "nome": "Brejo traiçoeiro",
+     "nivel": 9,
+     "folego": 3,
+     "inimigos": [
+      {
+       "praga": "sapo",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "mosquito",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "lesma",
+       "col": 0,
+       "linha": 2
+      }
+     ],
+     "recompensa": {
+      "moedas": 290,
+      "xp": 130
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 0.85
+      },
+      {
+       "carta": "fibra",
+       "chance": 0.5
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.25
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.23
+      }
+     ]
+    },
+    {
+     "id": "pantano-2",
+     "nome": "Nuvem de mosquitos",
+     "nivel": 10,
+     "folego": 3,
+     "inimigos": [
+      {
+       "praga": "sapo",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "mosquito",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "mosquito",
+       "col": 0,
+       "linha": 2
+      },
+      {
+       "praga": "lesma",
+       "col": 1,
+       "linha": 1
+      }
+     ],
+     "recompensa": {
+      "moedas": 320,
+      "xp": 140
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 0.85
+      },
+      {
+       "carta": "fibra",
+       "chance": 0.5
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.26
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.24
+      }
+     ]
+    },
+    {
+     "id": "pantano-3",
+     "nome": "Lama até o joelho",
+     "nivel": 11,
+     "folego": 3,
+     "inimigos": [
+      {
+       "praga": "lesma",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "sapo",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "sapo",
+       "col": 0,
+       "linha": 2
+      },
+      {
+       "praga": "mosquito",
+       "col": 1,
+       "linha": 1
+      }
+     ],
+     "recompensa": {
+      "moedas": 350,
+      "xp": 150
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 0.85
+      },
+      {
+       "carta": "fibra",
+       "chance": 0.5
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.26
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.24
+      }
+     ]
+    },
+    {
+     "id": "pantano-4",
+     "nome": "Coaxar noturno",
+     "nivel": 12,
+     "folego": 3,
+     "inimigos": [
+      {
+       "praga": "sapo",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "sapo",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "sapo",
+       "col": 0,
+       "linha": 2
+      },
+      {
+       "praga": "aranha",
+       "col": 1,
+       "linha": 1
+      }
+     ],
+     "recompensa": {
+      "moedas": 380,
+      "xp": 170
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 0.85
+      },
+      {
+       "carta": "fibra",
+       "chance": 0.5
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.27
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.25
+      }
+     ]
+    },
+    {
+     "id": "pantano-5",
+     "nome": "Ponte de troncos",
+     "nivel": 13,
+     "folego": 3,
+     "inimigos": [
+      {
+       "praga": "besouro",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "mosquito",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "mosquito",
+       "col": 0,
+       "linha": 2
+      },
+      {
+       "praga": "sapo",
+       "col": 1,
+       "linha": 1
+      },
+      {
+       "praga": "lesma",
+       "col": 1,
+       "linha": 0
+      }
+     ],
+     "recompensa": {
+      "moedas": 410,
+      "xp": 180
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 0.85
+      },
+      {
+       "carta": "fibra",
+       "chance": 0.5
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.27
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.25
+      }
+     ]
+    },
+    {
+     "id": "pantano-6",
+     "nome": "Picada certeira",
+     "nivel": 14,
+     "folego": 3,
+     "inimigos": [
+      {
+       "praga": "toupeira",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "mosquito",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "mosquito",
+       "col": 0,
+       "linha": 2
+      },
+      {
+       "praga": "aranha",
+       "col": 1,
+       "linha": 1
+      },
+      {
+       "praga": "sapo",
+       "col": 1,
+       "linha": 0
+      }
+     ],
+     "recompensa": {
+      "moedas": 440,
+      "xp": 190
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 0.85
+      },
+      {
+       "carta": "fibra",
+       "chance": 0.5
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.28
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.26
+      }
+     ]
+    },
+    {
+     "id": "pantano-7",
+     "nome": "Névoa do brejo",
+     "nivel": 15,
+     "folego": 3,
+     "inimigos": [
+      {
+       "praga": "besouro",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "sapo",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "sapo",
+       "col": 0,
+       "linha": 2
+      },
+      {
+       "praga": "mosquito",
+       "col": 1,
+       "linha": 1
+      },
+      {
+       "praga": "aranha",
+       "col": 1,
+       "linha": 0
+      }
+     ],
+     "recompensa": {
+      "moedas": 470,
+      "xp": 210
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 0.85
+      },
+      {
+       "carta": "fibra",
+       "chance": 0.5
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.28
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.26
+      }
+     ]
+    },
+    {
+     "id": "pantano-8",
+     "nome": "Margem perigosa",
+     "nivel": 16,
+     "folego": 3,
+     "inimigos": [
+      {
+       "praga": "besouro",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "toupeira",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "sapo",
+       "col": 0,
+       "linha": 2
+      },
+      {
+       "praga": "mosquito",
+       "col": 1,
+       "linha": 1
+      },
+      {
+       "praga": "mosquito",
+       "col": 1,
+       "linha": 0
+      }
+     ],
+     "recompensa": {
+      "moedas": 500,
+      "xp": 220
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 0.85
+      },
+      {
+       "carta": "fibra",
+       "chance": 0.5
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.29
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.27
+      }
+     ]
+    },
+    {
+     "id": "pantano-9",
+     "nome": "Covil do Jacaré",
+     "nivel": 17,
+     "folego": 3,
+     "inimigos": [
+      {
+       "praga": "besouro",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "sapo",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "sapo",
+       "col": 0,
+       "linha": 2
+      },
+      {
+       "praga": "mosquito",
+       "col": 1,
+       "linha": 1
+      },
+      {
+       "praga": "aranha",
+       "col": 1,
+       "linha": 0
+      },
+      {
+       "praga": "lesma",
+       "col": 1,
+       "linha": 2
+      }
+     ],
+     "recompensa": {
+      "moedas": 530,
+      "xp": 230
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 0.85
+      },
+      {
+       "carta": "fibra",
+       "chance": 0.5
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.29
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.27
+      }
+     ]
+    },
+    {
+     "id": "pantano-10",
+     "nome": "O Jacaré Rabugento",
+     "nivel": 17,
+     "folego": 5,
+     "chefe": true,
+     "inimigos": [
+      {
+       "praga": "jacare",
+       "col": 1,
+       "linha": 1,
+       "nivel": 18
+      },
+      {
+       "praga": "besouro",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "sapo",
+       "col": 0,
+       "linha": 2
+      },
+      {
+       "praga": "sapo",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "mosquito",
+       "col": 1,
+       "linha": 0
+      }
+     ],
+     "recompensa": {
+      "moedas": 1350,
+      "xp": 500,
+      "orvalho": 5
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 1
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.75
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.65
+      },
+      {
+       "carta": "semente_misteriosa",
+       "chance": 0.55
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "estufa",
+   "nome": "Estufa",
+   "emoji": "🌡️",
+   "cor": "#4f9c8a",
+   "fases": [
+    {
+     "id": "estufa-1",
+     "nome": "Vidros embaçados",
+     "nivel": 19,
+     "folego": 3,
+     "inimigos": [
+      {
+       "praga": "barata",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "mariposa",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "lagarta",
+       "col": 0,
+       "linha": 2
+      }
+     ],
+     "recompensa": {
+      "moedas": 590,
+      "xp": 260
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 0.85
+      },
+      {
+       "carta": "fibra",
+       "chance": 0.5
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.3
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.28
+      }
+     ]
+    },
+    {
+     "id": "estufa-2",
+     "nome": "Pó nas folhas",
+     "nivel": 20,
+     "folego": 3,
+     "inimigos": [
+      {
+       "praga": "barata",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "mariposa",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "mariposa",
+       "col": 0,
+       "linha": 2
+      },
+      {
+       "praga": "gafanhoto",
+       "col": 1,
+       "linha": 1
+      }
+     ],
+     "recompensa": {
+      "moedas": 620,
+      "xp": 270
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 0.85
+      },
+      {
+       "carta": "fibra",
+       "chance": 0.5
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.3
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.28
+      }
+     ]
+    },
+    {
+     "id": "estufa-3",
+     "nome": "Correria no vaso",
+     "nivel": 21,
+     "folego": 3,
+     "inimigos": [
+      {
+       "praga": "barata",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "barata",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "vespa",
+       "col": 0,
+       "linha": 2
+      },
+      {
+       "praga": "mariposa",
+       "col": 1,
+       "linha": 1
+      }
+     ],
+     "recompensa": {
+      "moedas": 650,
+      "xp": 280
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 0.85
+      },
+      {
+       "carta": "fibra",
+       "chance": 0.5
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.31
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.29
+      }
+     ]
+    },
+    {
+     "id": "estufa-4",
+     "nome": "Calor abafado",
+     "nivel": 22,
+     "folego": 3,
+     "inimigos": [
+      {
+       "praga": "besouro",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "barata",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "mariposa",
+       "col": 0,
+       "linha": 2
+      },
+      {
+       "praga": "lagarta",
+       "col": 1,
+       "linha": 1
+      }
+     ],
+     "recompensa": {
+      "moedas": 680,
+      "xp": 300
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 0.85
+      },
+      {
+       "carta": "fibra",
+       "chance": 0.5
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.31
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.29
+      }
+     ]
+    },
+    {
+     "id": "estufa-5",
+     "nome": "Sono pesado",
+     "nivel": 23,
+     "folego": 3,
+     "inimigos": [
+      {
+       "praga": "barata",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "mariposa",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "mariposa",
+       "col": 0,
+       "linha": 2
+      },
+      {
+       "praga": "aranha",
+       "col": 1,
+       "linha": 1
+      },
+      {
+       "praga": "mariposa",
+       "col": 1,
+       "linha": 0
+      }
+     ],
+     "recompensa": {
+      "moedas": 710,
+      "xp": 310
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 0.85
+      },
+      {
+       "carta": "fibra",
+       "chance": 0.5
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.32
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.3
+      }
+     ]
+    },
+    {
+     "id": "estufa-6",
+     "nome": "Prateleiras tomadas",
+     "nivel": 24,
+     "folego": 3,
+     "inimigos": [
+      {
+       "praga": "besouro",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "barata",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "barata",
+       "col": 0,
+       "linha": 2
+      },
+      {
+       "praga": "mariposa",
+       "col": 1,
+       "linha": 1
+      },
+      {
+       "praga": "vespa",
+       "col": 1,
+       "linha": 0
+      }
+     ],
+     "recompensa": {
+      "moedas": 740,
+      "xp": 320
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 0.85
+      },
+      {
+       "carta": "fibra",
+       "chance": 0.5
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.32
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.3
+      }
+     ]
+    },
+    {
+     "id": "estufa-7",
+     "nome": "Luz apagada",
+     "nivel": 25,
+     "folego": 3,
+     "inimigos": [
+      {
+       "praga": "barata",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "vespa",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "vespa",
+       "col": 0,
+       "linha": 2
+      },
+      {
+       "praga": "mariposa",
+       "col": 1,
+       "linha": 1
+      },
+      {
+       "praga": "aranha",
+       "col": 1,
+       "linha": 0
+      }
+     ],
+     "recompensa": {
+      "moedas": 770,
+      "xp": 340
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 0.85
+      },
+      {
+       "carta": "fibra",
+       "chance": 0.5
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.33
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.31
+      }
+     ]
+    },
+    {
+     "id": "estufa-8",
+     "nome": "Estufa em ruínas",
+     "nivel": 26,
+     "folego": 3,
+     "inimigos": [
+      {
+       "praga": "besouro",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "barata",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "besouro",
+       "col": 0,
+       "linha": 2
+      },
+      {
+       "praga": "mariposa",
+       "col": 1,
+       "linha": 1
+      },
+      {
+       "praga": "mariposa",
+       "col": 1,
+       "linha": 0
+      }
+     ],
+     "recompensa": {
+      "moedas": 800,
+      "xp": 350
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 0.85
+      },
+      {
+       "carta": "fibra",
+       "chance": 0.5
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.33
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.31
+      }
+     ]
+    },
+    {
+     "id": "estufa-9",
+     "nome": "Olhos na folhagem",
+     "nivel": 27,
+     "folego": 3,
+     "inimigos": [
+      {
+       "praga": "besouro",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "barata",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "barata",
+       "col": 0,
+       "linha": 2
+      },
+      {
+       "praga": "mariposa",
+       "col": 1,
+       "linha": 1
+      },
+      {
+       "praga": "aranha",
+       "col": 1,
+       "linha": 0
+      },
+      {
+       "praga": "lagarta",
+       "col": 1,
+       "linha": 2
+      }
+     ],
+     "recompensa": {
+      "moedas": 830,
+      "xp": 360
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 0.85
+      },
+      {
+       "carta": "fibra",
+       "chance": 0.5
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.34
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.32
+      }
+     ]
+    },
+    {
+     "id": "estufa-10",
+     "nome": "O Camaleão Sombrio",
+     "nivel": 27,
+     "folego": 5,
+     "chefe": true,
+     "inimigos": [
+      {
+       "praga": "camaleao",
+       "col": 1,
+       "linha": 1,
+       "nivel": 28
+      },
+      {
+       "praga": "besouro",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "barata",
+       "col": 0,
+       "linha": 2
+      },
+      {
+       "praga": "barata",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "mariposa",
+       "col": 1,
+       "linha": 0
+      }
+     ],
+     "recompensa": {
+      "moedas": 2100,
+      "xp": 780,
+      "orvalho": 6
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 1
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.8
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.72
+      },
+      {
+       "carta": "semente_misteriosa",
+       "chance": 0.63
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "deserto",
+   "nome": "Deserto",
+   "emoji": "🏜️",
+   "cor": "#c9953a",
+   "fases": [
+    {
+     "id": "deserto-1",
+     "nome": "Areia escaldante",
+     "nivel": 29,
+     "folego": 3,
+     "inimigos": [
+      {
+       "praga": "escorpiao",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "gafanhoto",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "gafanhoto",
+       "col": 0,
+       "linha": 2
+      }
+     ],
+     "recompensa": {
+      "moedas": 890,
+      "xp": 390
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 0.85
+      },
+      {
+       "carta": "fibra",
+       "chance": 0.5
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.34
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.32
+      }
+     ]
+    },
+    {
+     "id": "deserto-2",
+     "nome": "Espinhos no caminho",
+     "nivel": 30,
+     "folego": 3,
+     "inimigos": [
+      {
+       "praga": "ourico",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "escorpiao",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "gafanhoto",
+       "col": 0,
+       "linha": 2
+      },
+      {
+       "praga": "vespa",
+       "col": 1,
+       "linha": 1
+      }
+     ],
+     "recompensa": {
+      "moedas": 920,
+      "xp": 400
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 0.85
+      },
+      {
+       "carta": "fibra",
+       "chance": 0.5
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.35
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.33
+      }
+     ]
+    },
+    {
+     "id": "deserto-3",
+     "nome": "Tempestade de areia",
+     "nivel": 31,
+     "folego": 3,
+     "inimigos": [
+      {
+       "praga": "escorpiao",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "gafanhoto",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "gafanhoto",
+       "col": 0,
+       "linha": 2
+      },
+      {
+       "praga": "toupeira",
+       "col": 1,
+       "linha": 1
+      }
+     ],
+     "recompensa": {
+      "moedas": 950,
+      "xp": 410
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 0.85
+      },
+      {
+       "carta": "fibra",
+       "chance": 0.5
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.35
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.33
+      }
+     ]
+    },
+    {
+     "id": "deserto-4",
+     "nome": "Oásis cercado",
+     "nivel": 32,
+     "folego": 3,
+     "inimigos": [
+      {
+       "praga": "ourico",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "ourico",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "escorpiao",
+       "col": 0,
+       "linha": 2
+      },
+      {
+       "praga": "vespa",
+       "col": 1,
+       "linha": 1
+      }
+     ],
+     "recompensa": {
+      "moedas": 980,
+      "xp": 430
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 0.85
+      },
+      {
+       "carta": "fibra",
+       "chance": 0.5
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.36
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.34
+      }
+     ]
+    },
+    {
+     "id": "deserto-5",
+     "nome": "Ferrões ao sol",
+     "nivel": 33,
+     "folego": 3,
+     "inimigos": [
+      {
+       "praga": "ourico",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "escorpiao",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "escorpiao",
+       "col": 0,
+       "linha": 2
+      },
+      {
+       "praga": "toupeira",
+       "col": 1,
+       "linha": 1
+      },
+      {
+       "praga": "gafanhoto",
+       "col": 1,
+       "linha": 0
+      }
+     ],
+     "recompensa": {
+      "moedas": 1010,
+      "xp": 440
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 0.85
+      },
+      {
+       "carta": "fibra",
+       "chance": 0.5
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.36
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.34
+      }
+     ]
+    },
+    {
+     "id": "deserto-6",
+     "nome": "Dunas que andam",
+     "nivel": 34,
+     "folego": 3,
+     "inimigos": [
+      {
+       "praga": "escorpiao",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "toupeira",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "toupeira",
+       "col": 0,
+       "linha": 2
+      },
+      {
+       "praga": "ourico",
+       "col": 1,
+       "linha": 1
+      },
+      {
+       "praga": "vespa",
+       "col": 1,
+       "linha": 0
+      }
+     ],
+     "recompensa": {
+      "moedas": 1040,
+      "xp": 450
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 0.85
+      },
+      {
+       "carta": "fibra",
+       "chance": 0.5
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.37
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.35
+      }
+     ]
+    },
+    {
+     "id": "deserto-7",
+     "nome": "Miragem",
+     "nivel": 35,
+     "folego": 3,
+     "inimigos": [
+      {
+       "praga": "ourico",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "escorpiao",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "escorpiao",
+       "col": 0,
+       "linha": 2
+      },
+      {
+       "praga": "vespa",
+       "col": 1,
+       "linha": 1
+      },
+      {
+       "praga": "vespa",
+       "col": 1,
+       "linha": 0
+      }
+     ],
+     "recompensa": {
+      "moedas": 1070,
+      "xp": 470
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 0.85
+      },
+      {
+       "carta": "fibra",
+       "chance": 0.5
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.37
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.35
+      }
+     ]
+    },
+    {
+     "id": "deserto-8",
+     "nome": "Cânion estreito",
+     "nivel": 36,
+     "folego": 3,
+     "inimigos": [
+      {
+       "praga": "besouro",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "escorpiao",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "ourico",
+       "col": 0,
+       "linha": 2
+      },
+      {
+       "praga": "escorpiao",
+       "col": 1,
+       "linha": 1
+      },
+      {
+       "praga": "toupeira",
+       "col": 1,
+       "linha": 0
+      }
+     ],
+     "recompensa": {
+      "moedas": 1100,
+      "xp": 480
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 0.85
+      },
+      {
+       "carta": "fibra",
+       "chance": 0.5
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.38
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.36
+      }
+     ]
+    },
+    {
+     "id": "deserto-9",
+     "nome": "Toca da Serpente",
+     "nivel": 37,
+     "folego": 3,
+     "inimigos": [
+      {
+       "praga": "ourico",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "escorpiao",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "escorpiao",
+       "col": 0,
+       "linha": 2
+      },
+      {
+       "praga": "toupeira",
+       "col": 1,
+       "linha": 1
+      },
+      {
+       "praga": "vespa",
+       "col": 1,
+       "linha": 0
+      },
+      {
+       "praga": "gafanhoto",
+       "col": 1,
+       "linha": 2
+      }
+     ],
+     "recompensa": {
+      "moedas": 1130,
+      "xp": 490
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 0.85
+      },
+      {
+       "carta": "fibra",
+       "chance": 0.5
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.38
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.36
+      }
+     ]
+    },
+    {
+     "id": "deserto-10",
+     "nome": "A Serpente das Dunas",
+     "nivel": 37,
+     "folego": 5,
+     "chefe": true,
+     "inimigos": [
+      {
+       "praga": "serpente",
+       "col": 1,
+       "linha": 1,
+       "nivel": 38
+      },
+      {
+       "praga": "ourico",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "escorpiao",
+       "col": 0,
+       "linha": 2
+      },
+      {
+       "praga": "escorpiao",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "vespa",
+       "col": 1,
+       "linha": 0
+      }
+     ],
+     "recompensa": {
+      "moedas": 2850,
+      "xp": 1060,
+      "orvalho": 8
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 1
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.85
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.78
+      },
+      {
+       "carta": "semente_misteriosa",
+       "chance": 0.72
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "telhado",
+   "nome": "Telhado",
+   "emoji": "🏠",
+   "cor": "#8a6d5a",
+   "fases": [
+    {
+     "id": "telhado-1",
+     "nome": "Subindo a calha",
+     "nivel": 39,
+     "folego": 3,
+     "inimigos": [
+      {
+       "praga": "pombo",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "pombo",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "aranha",
+       "col": 0,
+       "linha": 2
+      }
+     ],
+     "recompensa": {
+      "moedas": 1190,
+      "xp": 520
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 0.85
+      },
+      {
+       "carta": "fibra",
+       "chance": 0.5
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.39
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.37
+      }
+     ]
+    },
+    {
+     "id": "telhado-2",
+     "nome": "Telhas soltas",
+     "nivel": 40,
+     "folego": 3,
+     "inimigos": [
+      {
+       "praga": "morcego",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "pombo",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "vespa",
+       "col": 0,
+       "linha": 2
+      },
+      {
+       "praga": "aranha",
+       "col": 1,
+       "linha": 1
+      }
+     ],
+     "recompensa": {
+      "moedas": 1220,
+      "xp": 530
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 0.85
+      },
+      {
+       "carta": "fibra",
+       "chance": 0.5
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.39
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.37
+      }
+     ]
+    },
+    {
+     "id": "telhado-3",
+     "nome": "Antena torta",
+     "nivel": 41,
+     "folego": 3,
+     "inimigos": [
+      {
+       "praga": "pombo",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "pombo",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "morcego",
+       "col": 0,
+       "linha": 2
+      },
+      {
+       "praga": "gafanhoto",
+       "col": 1,
+       "linha": 1
+      }
+     ],
+     "recompensa": {
+      "moedas": 1250,
+      "xp": 540
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 0.85
+      },
+      {
+       "carta": "fibra",
+       "chance": 0.5
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.4
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.38
+      }
+     ]
+    },
+    {
+     "id": "telhado-4",
+     "nome": "Chaminé escura",
+     "nivel": 42,
+     "folego": 3,
+     "inimigos": [
+      {
+       "praga": "besouro",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "morcego",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "pombo",
+       "col": 0,
+       "linha": 2
+      },
+      {
+       "praga": "morcego",
+       "col": 1,
+       "linha": 1
+      }
+     ],
+     "recompensa": {
+      "moedas": 1280,
+      "xp": 560
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 0.85
+      },
+      {
+       "carta": "fibra",
+       "chance": 0.5
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.4
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.38
+      }
+     ]
+    },
+    {
+     "id": "telhado-5",
+     "nome": "Revoada urbana",
+     "nivel": 43,
+     "folego": 3,
+     "inimigos": [
+      {
+       "praga": "pombo",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "pombo",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "pombo",
+       "col": 0,
+       "linha": 2
+      },
+      {
+       "praga": "morcego",
+       "col": 1,
+       "linha": 1
+      },
+      {
+       "praga": "vespa",
+       "col": 1,
+       "linha": 0
+      }
+     ],
+     "recompensa": {
+      "moedas": 1310,
+      "xp": 570
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 0.85
+      },
+      {
+       "carta": "fibra",
+       "chance": 0.5
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.41
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.39
+      }
+     ]
+    },
+    {
+     "id": "telhado-6",
+     "nome": "Caixa d'água",
+     "nivel": 44,
+     "folego": 3,
+     "inimigos": [
+      {
+       "praga": "barata",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "sapo",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "mosquito",
+       "col": 0,
+       "linha": 2
+      },
+      {
+       "praga": "morcego",
+       "col": 1,
+       "linha": 1
+      },
+      {
+       "praga": "pombo",
+       "col": 1,
+       "linha": 0
+      }
+     ],
+     "recompensa": {
+      "moedas": 1340,
+      "xp": 580
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 0.85
+      },
+      {
+       "carta": "fibra",
+       "chance": 0.5
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.41
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.39
+      }
+     ]
+    },
+    {
+     "id": "telhado-7",
+     "nome": "Noite sem lua",
+     "nivel": 46,
+     "folego": 3,
+     "inimigos": [
+      {
+       "praga": "ourico",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "morcego",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "mariposa",
+       "col": 0,
+       "linha": 2
+      },
+      {
+       "praga": "morcego",
+       "col": 1,
+       "linha": 1
+      },
+      {
+       "praga": "pombo",
+       "col": 1,
+       "linha": 0
+      }
+     ],
+     "recompensa": {
+      "moedas": 1400,
+      "xp": 610
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 0.85
+      },
+      {
+       "carta": "fibra",
+       "chance": 0.5
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.42
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.4
+      }
+     ]
+    },
+    {
+     "id": "telhado-8",
+     "nome": "Beiral perigoso",
+     "nivel": 47,
+     "folego": 3,
+     "inimigos": [
+      {
+       "praga": "escorpiao",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "barata",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "pombo",
+       "col": 0,
+       "linha": 2
+      },
+      {
+       "praga": "morcego",
+       "col": 1,
+       "linha": 1
+      },
+      {
+       "praga": "morcego",
+       "col": 1,
+       "linha": 0
+      }
+     ],
+     "recompensa": {
+      "moedas": 1430,
+      "xp": 620
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 0.85
+      },
+      {
+       "carta": "fibra",
+       "chance": 0.5
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.42
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.4
+      }
+     ]
+    },
+    {
+     "id": "telhado-9",
+     "nome": "Ninho no telhado",
+     "nivel": 48,
+     "folego": 3,
+     "inimigos": [
+      {
+       "praga": "besouro",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "pombo",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "pombo",
+       "col": 0,
+       "linha": 2
+      },
+      {
+       "praga": "morcego",
+       "col": 1,
+       "linha": 1
+      },
+      {
+       "praga": "ourico",
+       "col": 1,
+       "linha": 0
+      },
+      {
+       "praga": "mariposa",
+       "col": 1,
+       "linha": 2
+      }
+     ],
+     "recompensa": {
+      "moedas": 1460,
+      "xp": 630
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 0.85
+      },
+      {
+       "carta": "fibra",
+       "chance": 0.5
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.43
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.41
+      }
+     ]
+    },
+    {
+     "id": "telhado-10",
+     "nome": "A Coruja Sombria",
+     "nivel": 49,
+     "folego": 5,
+     "chefe": true,
+     "inimigos": [
+      {
+       "praga": "coruja",
+       "col": 1,
+       "linha": 1,
+       "nivel": 50
+      },
+      {
+       "praga": "besouro",
+       "col": 0,
+       "linha": 0
+      },
+      {
+       "praga": "pombo",
+       "col": 0,
+       "linha": 2
+      },
+      {
+       "praga": "pombo",
+       "col": 0,
+       "linha": 1
+      },
+      {
+       "praga": "morcego",
+       "col": 1,
+       "linha": 0
+      }
+     ],
+     "recompensa": {
+      "moedas": 3750,
+      "xp": 1400,
+      "orvalho": 10
+     },
+     "cartas": [
+      {
+       "carta": "adubo",
+       "chance": 1
+      },
+      {
+       "carta": "seiva_dourada",
+       "chance": 0.9
+      },
+      {
+       "carta": "petala_rara",
+       "chance": 0.85
+      },
+      {
+       "carta": "semente_misteriosa",
+       "chance": 0.8
+      }
+     ]
+    }
+   ]
   }
  ]
 }

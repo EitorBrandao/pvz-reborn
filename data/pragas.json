@@ -42,7 +42,7 @@
     "habilidade": {
       "tipo": "escudo",
       "nome": "Carapaça",
-      "mult": 1.0,
+      "mult": 1,
       "turnos": 2
     }
   },
@@ -140,7 +140,200 @@
     "habilidade": {
       "tipo": "area_coluna",
       "nome": "Rasante",
-      "mult": 1.0
+      "mult": 1
+    }
+  },
+  {
+    "id": "sapo",
+    "nome": "Sapo Linguarudo",
+    "emoji": "🐸",
+    "projetil": "👅",
+    "vida": 220,
+    "atq": 30,
+    "def": 16,
+    "vel": 11,
+    "habilidade": {
+      "tipo": "lentidao",
+      "nome": "Língua Grudenta",
+      "mult": 1,
+      "reducao": 0.4,
+      "turnos": 2
+    }
+  },
+  {
+    "id": "mosquito",
+    "nome": "Mosquito Zumbidor",
+    "emoji": "🦟",
+    "projetil": "📍",
+    "vida": 140,
+    "atq": 34,
+    "def": 8,
+    "vel": 19,
+    "habilidade": {
+      "tipo": "rajada",
+      "nome": "Picadas",
+      "golpes": 3,
+      "mult": 0.55
+    }
+  },
+  {
+    "id": "jacare",
+    "nome": "Jacaré Rabugento",
+    "emoji": "🐊",
+    "projetil": "🫧",
+    "chefe": true,
+    "vida": 1900,
+    "atq": 54,
+    "def": 36,
+    "vel": 9,
+    "habilidade": {
+      "tipo": "area_coluna",
+      "nome": "Bocada do Brejo",
+      "mult": 1
+    }
+  },
+  {
+    "id": "barata",
+    "nome": "Barata Sorrateira",
+    "emoji": "🪳",
+    "projetil": "🟤",
+    "vida": 230,
+    "atq": 34,
+    "def": 22,
+    "vel": 14,
+    "habilidade": {
+      "tipo": "perfurar",
+      "nome": "Corrida Sorrateira",
+      "mult": 1.2
+    }
+  },
+  {
+    "id": "mariposa",
+    "nome": "Mariposa Noturna",
+    "emoji": "🦋",
+    "projetil": "✨",
+    "vida": 170,
+    "atq": 30,
+    "def": 12,
+    "vel": 15,
+    "habilidade": {
+      "tipo": "sono",
+      "nome": "Pó Sonolento",
+      "mult": 0.7,
+      "turnos": 1
+    }
+  },
+  {
+    "id": "camaleao",
+    "nome": "Camaleão Sombrio",
+    "emoji": "🦎",
+    "projetil": "👅",
+    "chefe": true,
+    "vida": 2300,
+    "atq": 58,
+    "def": 34,
+    "vel": 16,
+    "habilidade": {
+      "tipo": "rajada",
+      "nome": "Língua Relâmpago",
+      "golpes": 4,
+      "mult": 0.6
+    }
+  },
+  {
+    "id": "escorpiao",
+    "nome": "Escorpião Ferrão",
+    "emoji": "🦂",
+    "projetil": "💥",
+    "vida": 240,
+    "atq": 40,
+    "def": 24,
+    "vel": 11,
+    "habilidade": {
+      "tipo": "perfurar",
+      "nome": "Ferrão Venenoso",
+      "mult": 1.3
+    }
+  },
+  {
+    "id": "ourico",
+    "nome": "Ouriço Espinhento",
+    "emoji": "🦔",
+    "projetil": "🔸",
+    "vida": 320,
+    "atq": 28,
+    "def": 40,
+    "vel": 7,
+    "habilidade": {
+      "tipo": "espinhos",
+      "nome": "Bola de Espinhos",
+      "mult": 0.8,
+      "reflete": 0.3,
+      "turnos": 2
+    }
+  },
+  {
+    "id": "serpente",
+    "nome": "Serpente das Dunas",
+    "emoji": "🐍",
+    "projetil": "🟣",
+    "chefe": true,
+    "vida": 2700,
+    "atq": 64,
+    "def": 38,
+    "vel": 13,
+    "habilidade": {
+      "tipo": "area_coluna",
+      "nome": "Bote Duplo",
+      "mult": 1.05
+    }
+  },
+  {
+    "id": "pombo",
+    "nome": "Pombo Bagunceiro",
+    "emoji": "🕊️",
+    "projetil": "🪶",
+    "vida": 210,
+    "atq": 36,
+    "def": 16,
+    "vel": 18,
+    "habilidade": {
+      "tipo": "rajada",
+      "nome": "Bicadas",
+      "golpes": 3,
+      "mult": 0.6
+    }
+  },
+  {
+    "id": "morcego",
+    "nome": "Morcego Notívago",
+    "emoji": "🦇",
+    "projetil": "🌑",
+    "vida": 230,
+    "atq": 36,
+    "def": 18,
+    "vel": 16,
+    "habilidade": {
+      "tipo": "cura",
+      "nome": "Abraço Noturno",
+      "mult": 1.2
+    }
+  },
+  {
+    "id": "coruja",
+    "nome": "Coruja Sombria",
+    "emoji": "🦉",
+    "projetil": "🌙",
+    "chefe": true,
+    "vida": 3200,
+    "atq": 70,
+    "def": 42,
+    "vel": 15,
+    "habilidade": {
+      "tipo": "rajada",
+      "nome": "Revoada Noturna",
+      "golpes": 5,
+      "mult": 0.55
     }
   }
 ]

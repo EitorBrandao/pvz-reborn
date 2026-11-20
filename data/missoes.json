@@ -294,6 +294,154 @@
     },
     "xp": 120
    }
+  },
+  {
+   "id": "m16",
+   "icone": "🐸",
+   "titulo": "Pés na lama",
+   "fala": "O pântano tá coaxando alto demais. Vai lá dar uma olhada!",
+   "tarefas": [
+    {
+     "tipo": "fase",
+     "fase": "pantano-3",
+     "texto": "Concluir a fase 3 do Pântano"
+    }
+   ],
+   "premio": {
+    "moedas": 600,
+    "xp": 100
+   }
+  },
+  {
+   "id": "m17",
+   "icone": "🐊",
+   "titulo": "Bocão do brejo",
+   "fala": "Tem um jacaré mal-humorado comendo minhas mudas. Coragem!",
+   "tarefas": [
+    {
+     "tipo": "fase",
+     "fase": "pantano-10",
+     "texto": "Derrotar o Jacaré Rabugento"
+    }
+   ],
+   "premio": {
+    "orvalho": 10,
+    "cartas": {
+     "semente_misteriosa": 2
+    },
+    "xp": 160
+   }
+  },
+  {
+   "id": "m18",
+   "icone": "🌡️",
+   "titulo": "Calor na estufa",
+   "fala": "A estufa tá cheia de bicho escondido entre os vasos.",
+   "tarefas": [
+    {
+     "tipo": "fase",
+     "fase": "estufa-3",
+     "texto": "Concluir a fase 3 da Estufa"
+    }
+   ],
+   "premio": {
+    "moedas": 900,
+    "xp": 140
+   }
+  },
+  {
+   "id": "m19",
+   "icone": "🦎",
+   "titulo": "Cadê o camaleão?",
+   "fala": "Alguém some no meio das folhas... e as plantas somem junto!",
+   "tarefas": [
+    {
+     "tipo": "fase",
+     "fase": "estufa-10",
+     "texto": "Derrotar o Camaleão Sombrio"
+    }
+   ],
+   "premio": {
+    "orvalho": 12,
+    "cartas": {
+     "semente_misteriosa": 3
+    },
+    "xp": 200
+   }
+  },
+  {
+   "id": "m20",
+   "icone": "🏜️",
+   "titulo": "Travessia",
+   "fala": "Leva água! O deserto não perdoa planta com sede.",
+   "tarefas": [
+    {
+     "tipo": "fase",
+     "fase": "deserto-3",
+     "texto": "Concluir a fase 3 do Deserto"
+    }
+   ],
+   "premio": {
+    "moedas": 1300,
+    "xp": 180
+   }
+  },
+  {
+   "id": "m21",
+   "icone": "🐍",
+   "titulo": "Silêncio nas dunas",
+   "fala": "Tem uma serpente enorme debaixo da areia. Toma cuidado!",
+   "tarefas": [
+    {
+     "tipo": "fase",
+     "fase": "deserto-10",
+     "texto": "Derrotar a Serpente das Dunas"
+    }
+   ],
+   "premio": {
+    "orvalho": 15,
+    "cartas": {
+     "semente_misteriosa": 3
+    },
+    "xp": 250
+   }
+  },
+  {
+   "id": "m22",
+   "icone": "🏠",
+   "titulo": "Lá em cima",
+   "fala": "As últimas pragas fugiram pro telhado. Sobe lá!",
+   "tarefas": [
+    {
+     "tipo": "fase",
+     "fase": "telhado-3",
+     "texto": "Concluir a fase 3 do Telhado"
+    }
+   ],
+   "premio": {
+    "moedas": 1800,
+    "xp": 220
+   }
+  },
+  {
+   "id": "m23",
+   "icone": "🦉",
+   "titulo": "A última praga",
+   "fala": "A Coruja Sombria comanda tudo lá de cima. É agora ou nunca!",
+   "tarefas": [
+    {
+     "tipo": "fase",
+     "fase": "telhado-10",
+     "texto": "Derrotar a Coruja Sombria"
+    }
+   ],
+   "premio": {
+    "orvalho": 20,
+    "cartas": {
+     "semente_misteriosa": 4
+    },
+    "xp": 300
+   }
   }
  ]
 }
