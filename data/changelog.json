@@ -1,4 +1,5 @@
 [
+  { "versao": "0.7.7", "itens": ["Telhado mais difícil: fases 5 a 9 com 6 inimigos de tipos variados e nível maior", "Coruja Sombria agora dá pra vencer (antes não dava), mas pede um time bem montado"] },
   { "versao": "0.7.6", "itens": ["Telhado: fases 6, 7, 8 e 10 agora têm 6 inimigos (o máximo do campo)"] },
   { "versao": "0.7.5", "itens": ["Cópias que passam do necessário pra chegar a 5 ⭐ já viram 🧩 Muda Repetida", "🧩 também troca por material de equipamento sorteado (os raros saem menos)"] },
   { "versao": "0.7.4", "itens": ["Som ao abrir pacotes (e um brilho extra quando vem planta nova)", "Som ao treinar, subir de nível, ganhar estrela e melhorar equipamento"] },

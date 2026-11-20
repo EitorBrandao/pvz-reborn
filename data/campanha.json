@@ -3095,7 +3095,7 @@
     {
      "id": "telhado-5",
      "nome": "Revoada urbana",
-     "nivel": 43,
+     "nivel": 47,
      "folego": 3,
      "inimigos": [
       {
@@ -3109,7 +3109,7 @@
        "linha": 0
       },
       {
-       "praga": "pombo",
+       "praga": "vespa",
        "col": 0,
        "linha": 2
       },
@@ -3119,9 +3119,14 @@
        "linha": 1
       },
       {
-       "praga": "vespa",
+       "praga": "mariposa",
        "col": 1,
        "linha": 0
+      },
+      {
+       "praga": "mosquito",
+       "col": 1,
+       "linha": 2
       }
      ],
      "recompensa": {
@@ -3154,7 +3159,7 @@
     {
      "id": "telhado-6",
      "nome": "Caixa d'água",
-     "nivel": 44,
+     "nivel": 49,
      "folego": 3,
      "inimigos": [
       {
@@ -3218,7 +3223,7 @@
     {
      "id": "telhado-7",
      "nome": "Noite sem lua",
-     "nivel": 46,
+     "nivel": 51,
      "folego": 3,
      "inimigos": [
       {
@@ -3232,7 +3237,7 @@
        "linha": 0
       },
       {
-       "praga": "mariposa",
+       "praga": "escorpiao",
        "col": 0,
        "linha": 2
       },
@@ -3242,12 +3247,12 @@
        "linha": 1
       },
       {
-       "praga": "pombo",
+       "praga": "vespa",
        "col": 1,
        "linha": 0
       },
       {
-       "praga": "vespa",
+       "praga": "mariposa",
        "col": 1,
        "linha": 2
       }
@@ -3282,7 +3287,7 @@
     {
      "id": "telhado-8",
      "nome": "Beiral perigoso",
-     "nivel": 47,
+     "nivel": 52,
      "folego": 3,
      "inimigos": [
       {
@@ -3296,7 +3301,7 @@
        "linha": 0
       },
       {
-       "praga": "pombo",
+       "praga": "ourico",
        "col": 0,
        "linha": 2
       },
@@ -3311,7 +3316,7 @@
        "linha": 0
       },
       {
-       "praga": "morcego",
+       "praga": "pombo",
        "col": 1,
        "linha": 2
       }
@@ -3346,7 +3351,7 @@
     {
      "id": "telhado-9",
      "nome": "Ninho no telhado",
-     "nivel": 48,
+     "nivel": 53,
      "folego": 3,
      "inimigos": [
       {
@@ -3355,12 +3360,12 @@
        "linha": 1
       },
       {
-       "praga": "pombo",
+       "praga": "ourico",
        "col": 0,
        "linha": 0
       },
       {
-       "praga": "pombo",
+       "praga": "sapo",
        "col": 0,
        "linha": 2
       },
@@ -3370,12 +3375,12 @@
        "linha": 1
       },
       {
-       "praga": "ourico",
+       "praga": "mariposa",
        "col": 1,
        "linha": 0
       },
       {
-       "praga": "mariposa",
+       "praga": "pombo",
        "col": 1,
        "linha": 2
       }
@@ -3410,7 +3415,7 @@
     {
      "id": "telhado-10",
      "nome": "A Coruja Sombria",
-     "nivel": 49,
+     "nivel": 50,
      "folego": 5,
      "chefe": true,
      "inimigos": [
@@ -3439,11 +3444,6 @@
        "praga": "morcego",
        "col": 1,
        "linha": 0
-      },
-      {
-       "praga": "morcego",
-       "col": 1,
-       "linha": 2
       }
      ],
      "recompensa": {

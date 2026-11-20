@@ -325,9 +325,9 @@
     "emoji": "🦉",
     "projetil": "🌙",
     "chefe": true,
-    "vida": 3200,
+    "vida": 2000,
     "atq": 70,
-    "def": 42,
+    "def": 36,
     "vel": 15,
     "habilidade": {
       "tipo": "rajada",
