@@ -22,6 +22,7 @@ export function acordar() {
     mestre.connect(ac.destination);
   }
   if (ac.state === 'suspended') ac.resume();
+  if (desejada && !musica) tocarMusica(desejada);
 }
 
 export function ligarSom(sim) {
@@ -117,34 +118,70 @@ export function tocarSom(nome) {
   SONS[nome]();
 }
 
-// ---------- Música de fundo (um laço curto e calmo) ----------
+// ---------- Músicas de fundo ----------
+// Cada modo do jogo tem a sua música. Qual tela toca qual música fica em data/config.json (som.musicaPorTela).
 
-const BAIXO = [131, 131, 175, 175, 196, 196, 165, 165];
-const MELODIA = [523, 0, 659, 587, 523, 0, 440, 0, 587, 0, 698, 659, 587, 0, 494, 0,
-  523, 0, 659, 784, 880, 0, 784, 659, 587, 523, 494, 0, 523, 0, 0, 0];
+const MUSICAS = {
+  // Horta (menus, mapa, plantas...): calma, notas suaves.
+  horta: {
+    passo: 0.32,
+    baixo: { notas: [131, 196, 175, 131, 147, 196, 165, 131], cada: 4, timbre: 'sine', vol: 0.3 },
+    melodia: {
+      timbre: 'triangle', vol: 0.11,
+      notas: [659, 0, 784, 0, 880, 784, 659, 0, 587, 0, 659, 0, 523, 0, 0, 0,
+        659, 0, 784, 0, 1047, 0, 880, 784, 659, 0, 587, 659, 523, 0, 0, 0],
+    },
+  },
+  // Batalha: mais rápida e agitada.
+  batalha: {
+    passo: 0.22,
+    baixo: { notas: [131, 131, 175, 175, 196, 196, 165, 165], cada: 4, timbre: 'triangle', vol: 0.3 },
+    melodia: {
+      timbre: 'square', vol: 0.05,
+      notas: [523, 0, 659, 587, 523, 0, 440, 0, 587, 0, 698, 659, 587, 0, 494, 0,
+        523, 0, 659, 784, 880, 0, 784, 659, 587, 523, 494, 0, 523, 0, 0, 0],
+    },
+  },
+};
 
-export function comecarMusica() {
-  if (!ac || musica) return;
+let desejada = null; // música que deveria estar tocando (mesmo antes do primeiro toque na tela)
+
+export function tocarMusica(nome) {
+  desejada = MUSICAS[nome] ? nome : null;
+  if (musica && musica.nome === desejada) return;
+  pararMusica(false);
+  if (!ac || !desejada) return;
+  const m = MUSICAS[desejada];
   const saida = ac.createGain();
   saida.gain.value = cfg.volumeMusica;
   saida.connect(mestre);
-  const passo = 0.22;
   let i = 0;
   let proximo = ac.currentTime + 0.1;
   const id = setInterval(() => {
     while (proximo < ac.currentTime + 0.5) {
       const atraso = proximo - ac.currentTime;
-      if (i % 4 === 0) nota(BAIXO[(i / 4) % BAIXO.length], passo * 3.5, { tipo: 'triangle', vol: 0.3, atraso, destino: saida });
-      const f = MELODIA[i % MELODIA.length];
-      if (f) nota(f, passo * 0.9, { tipo: 'square', vol: 0.05, atraso, destino: saida });
+      const b = m.baixo;
+      if (i % b.cada === 0) nota(b.notas[(i / b.cada) % b.notas.length], m.passo * (b.cada - 0.5), { tipo: b.timbre, vol: b.vol, atraso, destino: saida });
+      const f = m.melodia.notas[i % m.melodia.notas.length];
+      if (f) nota(f, m.passo * 0.9, { tipo: m.melodia.timbre, vol: m.melodia.vol, atraso, destino: saida });
       i++;
-      proximo += passo;
+      proximo += m.passo;
     }
   }, 120);
-  musica = { id, saida };
+  musica = { nome: desejada, id, saida };
 }
 
-export function pararMusica() {
+// Troca a música conforme a tela que abriu.
+export function musicaDaTela(idTela) {
+  const mapa = cfg.musicaPorTela || {};
+  tocarMusica(idTela in mapa ? mapa[idTela] : cfg.musicaPadrao);
+}
+
+export function comecarMusica() { tocarMusica('batalha'); }
+
+// esquecer = true: não volta a tocar sozinha depois do primeiro toque na tela.
+export function pararMusica(esquecer = true) {
+  if (esquecer) desejada = null;
   if (!musica) return;
   clearInterval(musica.id);
   musica.saida.gain.setTargetAtTime(0, ac.currentTime, 0.1);

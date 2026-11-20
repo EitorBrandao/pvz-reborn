@@ -71,6 +71,8 @@
   "faccaoInfo": "{emoji} {nome}<br>forte contra {forteEmoji} {forteNome}<br>fraca contra {fracoEmoji} {fracoNome}",
   "bonusTime": "{emoji} {nome} ×{qtd}: +{pct}% {atributo}",
   "bonusTimeVazio": "Junte 2 ou 3 plantas da mesma facção pra ganhar bônus.",
+  "somLigado": "🔊 Som ligado",
+  "somDesligado": "🔇 Som desligado",
   "atualizado": "Jogo atualizado pra versão {versao}!",
   "subiuNivel": "{emoji} {nome} subiu pro Nv {nivel}!",
   "semMoedas": "Moedas insuficientes.",
