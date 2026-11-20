@@ -174,6 +174,9 @@ body {
 .painel h3 { margin: 0; }
 .painel p { margin: 0; }
 .info { font-size: .85rem; opacity: .8; }
+.changelog { display: flex; flex-direction: column; gap: 6px; }
+.changelog summary { font-weight: bold; cursor: pointer; }
+.changelog ul { margin: 4px 0 0; padding-left: 20px; font-size: .9rem; }
 
 /* Aviso flutuante */
 .aviso {

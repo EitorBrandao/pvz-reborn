@@ -1,0 +1,18 @@
+[
+  { "versao": "0.5.9", "itens": ["Novidades do jogo agora aparecem nas Opções"] },
+  { "versao": "0.5.8", "itens": ["Facção da planta aparece em 3 linhas centralizadas no detalhe"] },
+  { "versao": "0.5.7", "itens": ["\"Fraca contra\" ganhou uma linha própria no detalhe da planta"] },
+  { "versao": "0.5.6", "itens": ["Som próprio para cada efeito: veneno, queimadura, regeneração, fraqueza, casca e seiva", "Textos das habilidades no singular e plural certos"] },
+  { "versao": "0.5.5", "itens": ["Efeitos de status: veneno, queimadura, regeneração, fraqueza e casca rachada", "Facções por origem com vantagem de tipo", "4 plantas novas"] },
+  { "versao": "0.5.4", "itens": ["Habilidades ficam mais fortes conforme as estrelas da planta"] },
+  { "versao": "0.5.3", "itens": ["Fibra Verde cai mais e Pétala Rara cai menos"] },
+  { "versao": "0.5.2", "itens": ["Sons na batalha, música de fundo e botão de mudo"] },
+  { "versao": "0.5.1", "itens": ["Gramado da batalha com quadrados de verdade"] },
+  { "versao": "0.5.0", "itens": ["Campanha até o nível 50: Pântano, Estufa, Deserto e Telhado"] },
+  { "versao": "0.4.2", "itens": ["Velocidade 3x na batalha"] },
+  { "versao": "0.4.1", "itens": ["Botão para ordenar a coleção por nível ou estrela", "Plantas que podem melhorar ficam destacadas"] },
+  { "versao": "0.4.0", "itens": ["Campanha com mapas e chefes", "Fôlego, nível do jogador e missões"] },
+  { "versao": "0.3.0", "itens": ["Evolução das plantas", "Atualização automática do jogo"] },
+  { "versao": "0.2.0", "itens": ["Batalha automática", "Montagem de time e cartas de recompensa"] },
+  { "versao": "0.1.0", "itens": ["Jogo instalável no celular", "Save automático com exportar e importar"] }
+]
