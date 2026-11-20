@@ -3,77 +3,42 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Teste de cores 3</title>
-<!-- Página temporária: o modo escuro do navegador só desbota imagens com cara de "ícone"
-     (fundo transparente, poucas cores). Aqui testamos versões com cara de "foto". -->
+<title>Teste de cores 4</title>
+<!-- Página temporária: mede como o Samsung Internet muda as cores das imagens,
+     pra montar um filtro que desfaz a mudança com precisão. -->
 <style>
   body { margin: 0; padding: 12px; font: 14px "Trebuchet MS", sans-serif; color: #fff; background: #3d9a22; }
   h1 { font-size: 1.1rem; margin: 0 0 6px; }
-  p { margin: 0 0 8px; font-size: .8rem; }
-  .g { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  .c { background: #f6e7c1; color: #23301b; border: 3px solid #8a5a2b; border-radius: 12px; padding: 6px 2px; text-align: center; }
-  .c b { display: block; font-size: 1.3rem; }
-  .c small { display: block; font-size: .62rem; line-height: 1.15; }
-  .c img { width: 72px; height: 72px; display: block; margin: 0 auto; }
+  p { margin: 0 0 10px; font-size: .8rem; }
+  img { display: block; width: 360px; height: 120px; image-rendering: pixelated; }
   #info { font-size: .7rem; opacity: .9; word-break: break-all; margin-top: 10px; }
 </style>
 </head>
 <body>
-<h1>Teste de cores 3 (Samsung)</h1>
-<p>Mande um print. Quero saber quais letras ficaram com o Pimentão <b>igual ao do protótipo</b> (vermelho forte e contorno preto).</p>
-<div class="g" id="g"></div>
+<h1>Teste de cores 4 (medição)</h1>
+<p>Só tire um print desta tela, sem dar zoom, e me mande.</p>
+<img id="amostra" alt="">
 <div id="info"></div>
-<script type="module">
-import { urlArte } from './js/arte.js';
-
-const carregar = (src) => new Promise((ok) => { const i = new Image(); i.onload = () => ok(i); i.src = src; });
-const svg = await carregar(urlArte('u', 'pimentao'));
-
-// monta um PNG do desenho com as opções pedidas
-function gerar({ lado = 256, fundo = null, ruido = 0, alfaMin = 0 }) {
-  const c = document.createElement('canvas');
-  c.width = c.height = lado;
-  const x = c.getContext('2d');
-  if (fundo) { x.fillStyle = fundo; x.fillRect(0, 0, lado, lado); }
-  x.drawImage(svg, 0, 0, lado, lado);
-  if (ruido || alfaMin) {
-    const d = x.getImageData(0, 0, lado, lado);
-    const p = d.data;
-    for (let i = 0; i < p.length; i += 4) {
-      if (ruido && p[i + 3] > 0) {
-        const n = () => Math.round((Math.random() * 2 - 1) * ruido);
-        p[i] = Math.max(0, Math.min(255, p[i] + n()));
-        p[i + 1] = Math.max(0, Math.min(255, p[i + 1] + n()));
-        p[i + 2] = Math.max(0, Math.min(255, p[i + 2] + n()));
-      }
-      if (alfaMin && p[i + 3] < alfaMin) {
-        // pixel quase invisível com cor aleatória, pra imagem não parecer "transparente"
-        p[i] = Math.random() * 255; p[i + 1] = Math.random() * 255; p[i + 2] = Math.random() * 255;
-        p[i + 3] = alfaMin;
-      }
-    }
-    x.putImageData(d, 0, 0);
-  }
-  return c.toDataURL('image/png');
-}
-
-const casos = [
-  ['A', 'atual', {}],
-  ['B', 'granulado leve', { ruido: 4 }],
-  ['C', 'granulado forte', { ruido: 12 }],
-  ['D', 'fundo quase invisível', { alfaMin: 2 }],
-  ['E', 'fundo quase invisível + granulado', { alfaMin: 2, ruido: 6 }],
-  ['F', 'fundo leve visível + granulado', { alfaMin: 10, ruido: 6 }],
-  ['G', 'fundo bege', { fundo: '#f6e7c1' }],
-  ['H', 'fundo bege + granulado', { fundo: '#f6e7c1', ruido: 6 }],
-  ['I', 'imagem grande (1024)', { lado: 1024 }],
-  ['J', 'grande + granulado', { lado: 1024, ruido: 6 }],
-  ['K', 'grande + fundo invisível + granulado', { lado: 1024, alfaMin: 2, ruido: 6 }],
-  ['L', 'fundo grama + granulado', { fundo: '#4caf2e', ruido: 6 }],
+<script>
+// 2 fileiras de 9 quadrados (40x40 cada, em tamanho de tela). Fileira 1: cinzas. Fileira 2: cores do jogo.
+const CORES = [
+  [[0, 0, 0], [32, 32, 32], [64, 64, 64], [96, 96, 96], [128, 128, 128], [160, 160, 160], [192, 192, 192], [224, 224, 224], [255, 255, 255]],
+  [[232, 57, 43], [76, 175, 46], [58, 158, 230], [255, 210, 58], [155, 91, 209], [246, 231, 193], [43, 29, 20], [255, 122, 138], [138, 90, 43]],
 ];
-document.getElementById('g').innerHTML = casos
-  .map(([l, n, o]) => `<div class="c"><b>${l}</b><img src="${gerar(o)}" alt=""><small>${n}</small></div>`).join('');
-document.getElementById('info').textContent = navigator.userAgent;
+const c = document.createElement('canvas');
+c.width = 360; c.height = 120;
+const x = c.getContext('2d');
+x.fillStyle = '#ff00ff'; x.fillRect(0, 0, 360, 120);
+CORES.forEach((linha, j) => linha.forEach(([r, g, b], i) => {
+  x.fillStyle = `rgb(${r},${g},${b})`;
+  x.fillRect(i * 40, j * 40, 40, 40);
+}));
+// faixa de referência transparente embaixo (pra ver o que ele faz com transparência)
+x.clearRect(0, 80, 360, 40);
+x.fillStyle = 'rgba(232,57,43,.5)'; x.fillRect(0, 80, 120, 40);
+x.fillStyle = 'rgba(0,0,0,.5)'; x.fillRect(120, 80, 120, 40);
+document.getElementById('amostra').src = c.toDataURL('image/png');
+document.getElementById('info').textContent = `${window.devicePixelRatio} · ${navigator.userAgent}`;
 </script>
 </body>
 </html>
