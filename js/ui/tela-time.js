@@ -1,8 +1,8 @@
 // Tela de preparar batalha: ver a fase escolhida e montar o time.
 
-import { $, mostrarTela, avisar, preencher, selosPlanta } from './comum.js';
+import { $, mostrarTela, avisar, preencher, selosPlanta, textoHabilidade } from './comum.js';
 import * as jogo from '../estado.js';
-import { atributos, poder } from '../evolucao.js';
+import { atributos, poder, habilidadeComEstrelas } from '../evolucao.js';
 import { bonusFaccoes, poderLados } from '../batalha.js';
 
 let dados;
@@ -21,6 +21,10 @@ export function iniciarTelaTime(d, { lutar, voltar }) {
   $('btn-lutar').addEventListener('click', () => {
     if (!jogo.estado.time.length) return avisar(dados.textos.timeVazio);
     lutar(faseEscolhida);
+  });
+  $('planta-info').addEventListener('click', () => {
+    if (Date.now() < ignorarToqueAte) return; // o dedo ainda está soltando
+    $('planta-info').classList.add('escondido');
   });
   $('btn-ordenar-time').addEventListener('click', () => {
     ordem = ORDENS[(ORDENS.indexOf(ordem) + 1) % ORDENS.length];
@@ -189,7 +193,9 @@ function desenharPlantas() {
       <span class="poder">💪 ${s.poder}</span>
       <span class="atributos">❤️${s.vida} ⚔️${s.atq} 🛡️${s.def} 💨${s.vel}</span>
       ${viajando ? `<small class="selo-viagem">${dados.textos.rotina.emViagem}</small>` : ''}`;
+    segurarParaVer(cartao, p, registro, s);
     cartao.addEventListener('click', () => {
+      if (Date.now() < ignorarToqueAte) return; // soltou depois de segurar: não é toque
       const time = jogo.estado.time;
       if (noTime) {
         jogo.definirTime(time.filter((m) => m !== noTime));
@@ -207,4 +213,47 @@ function desenharPlantas() {
     });
     lista.appendChild(cartao);
   }
+}
+
+// ---------- Segurar a planta pra ver as habilidades ----------
+
+const TEMPO_SEGURAR = 450; // ms
+let ignorarToqueAte = 0;
+
+function segurarParaVer(cartao, p, registro, stats) {
+  let timer = null;
+  let x0 = 0;
+  let y0 = 0;
+  const cancelar = () => { clearTimeout(timer); timer = null; };
+  cartao.addEventListener('pointerdown', (e) => {
+    x0 = e.clientX; y0 = e.clientY;
+    cancelar();
+    timer = setTimeout(() => {
+      timer = null;
+      mostrarInfo(p, registro, stats);
+    }, TEMPO_SEGURAR);
+  });
+  cartao.addEventListener('pointermove', (e) => {
+    if (timer && Math.hypot(e.clientX - x0, e.clientY - y0) > 10) cancelar(); // está rolando a lista
+  });
+  ['pointerup', 'pointercancel', 'pointerleave'].forEach((ev) => cartao.addEventListener(ev, cancelar));
+  cartao.addEventListener('contextmenu', (e) => e.preventDefault());
+}
+
+function mostrarInfo(p, registro, stats) {
+  const t = dados.textos;
+  const h = habilidadeComEstrelas(p.habilidade, registro.estrelas);
+  const fac = dados.faccoes.faccoes.find((f) => f.id === p.faccao);
+  $('planta-info-conteudo').innerHTML = `
+    <div class="detalhe-topo">
+      <span class="detalhe-emoji">${p.emoji}</span>
+      <h3>${p.nome}</h3>
+      <small>${p.funcao}${fac ? ` · ${fac.emoji} ${fac.nome}` : ''}</small>
+      <div class="estrelas">${'⭐'.repeat(registro.estrelas)}</div>
+    </div>
+    <div class="bloco"><span class="atributos">💪 ${stats.poder} · ❤️${stats.vida} ⚔️${stats.atq} 🛡️${stats.def} 💨${stats.vel}</span></div>
+    <div class="bloco"><b>✨ ${h.nome}</b><p class="dica-pequena">${textoHabilidade(h, dados)}</p></div>
+    <p class="dica-pequena">${t.infoPlantaFechar}</p>`;
+  ignorarToqueAte = Date.now() + 700;
+  $('planta-info').classList.remove('escondido');
 }

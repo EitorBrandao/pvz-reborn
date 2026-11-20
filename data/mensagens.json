@@ -12,6 +12,7 @@
   "saveInvalido": "Esse arquivo não parece um save da Horta Selvagem.",
   "confirmarApagar": "Apagar TODO o progresso? Não dá pra desfazer.",
   "apagado": "Tudo apagado. Começando do zero!",
+  "infoPlantaFechar": "Toque em qualquer lugar pra fechar.",
   "timeVazio": "Coloca pelo menos uma planta no time!",
   "timeCheio": "O time já tem {max} plantas. Tira uma pra trocar.",
   "timeCheioProxima": "O time já tem {max} plantas. Nova vaga no nível {nivel}!",
@@ -125,6 +126,17 @@
     "energia": "Ataca e enche {seiva} de energia do especial de todos os aliados.",
     "protecao": "Ataca e dá um escudo de {pctVida}% da própria vida pras plantas da frente por {turnos} rodadas.",
     "devorar": "Morde a praga mais ferida ({forca}% do ataque). Se ela estiver com menos de {limite}% de vida, o dano sobe pra {bonus}%."
+  },
+  "alcance": {
+    "perto": "⚔️ Corpo a corpo: só alcança a fileira da frente, mas bate {bonus}% mais forte.",
+    "longe": "🏹 À distância: alcança qualquer fileira."
+  },
+  "padraoAtaque": {
+    "frente": "🎯 Ataca a praga da frente, na mesma fileira.",
+    "fraco": "🎯 Ataca a praga com menos vida.",
+    "forte": "🎯 Ataca a praga com mais vida.",
+    "tras": "🎯 Prefere as pragas de trás.",
+    "aleatorio": "🎯 Ataca pragas aleatórias."
   },
   "habilidadeProxima": "Com {estrelas} ⭐: {texto}",
   "ordensTime": {

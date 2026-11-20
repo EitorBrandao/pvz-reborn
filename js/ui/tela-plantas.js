@@ -1,6 +1,6 @@
 // Tela de plantas: coleção, cartas, pacote de sementes e evolução de cada planta.
 
-import { $, mostrarTela, avisar, preencher, selosPlanta } from './comum.js';
+import { $, mostrarTela, avisar, preencher, selosPlanta, textoHabilidade } from './comum.js';
 import * as jogo from '../estado.js';
 import { atributos, poder, xpParaProximo, nivelMaximo, classeTalento, pontosTalento, pontosGastos, custoAscensao, podeAscender, custoEstrela, custoEquip, temCartas, habilidadeComEstrelas } from '../evolucao.js';
 import * as som from '../som.js';
@@ -134,7 +134,7 @@ function desenharInventario() {
     if (!qtd) continue;
     vazio = false;
     const botao = document.createElement('button');
-    botao.className = `item-inventario ${c.raridade}`;
+    botao.className = `item-inventario ${c.raridade}${c.destaque ? ' destaque' : ''}`;
     botao.innerHTML = `<span>${c.emoji}</span><b>${qtd}</b>`;
     botao.addEventListener('click', () => {
       if (c.uso === 'troca') return abrirTroca();
@@ -240,24 +240,9 @@ function desenharDetalhe() {
 
   // Habilidade
   const h = habilidadeComEstrelas(p.habilidade, r.estrelas);
-  const textoStatus = (hab) => {
-    const a = hab.aplica;
-    const st = a && t.status[a.status];
-    return st ? ' ' + preencher(st.texto, { valor: Math.round(a.valor * 100), turnos: a.turnos }) : '';
-  };
-  // Plural: usa o texto "_varios" quando o número passa de 1 (ex.: cura 2 aliados).
-  const chaveHab = (hab) => {
-    const n = hab.tipo === 'cura' ? hab.alvos : hab.tipo === 'sono' ? hab.turnos : 1;
-    return n > 1 && t.habilidades[`${hab.tipo}_varios`] ? `${hab.tipo}_varios` : hab.tipo;
-  };
-  const textoHab = (hab) => preencher(t.habilidades[chaveHab(hab)] || '', {
-    reflete: Math.round((hab.reflete || 0) * 100), turnos: hab.turnos, golpes: hab.golpes,
-    reducao: Math.round((hab.reducao || 0) * 100), forca: Math.round((hab.mult || 0) * 100),
-    alvos: hab.alvos || 1, seiva: hab.seiva,
-    pctVida: Math.round((hab.pctVida || 0) * 100), limite: Math.round((hab.limite || 0) * 100),
-    bonus: Math.round((hab.mult || 0) * (hab.bonus || 0) * 100),
-  }) + textoStatus(hab);
+  const textoHab = (hab) => textoHabilidade(hab, dados);
   const descHab = textoHab(h);
+  const infoAtaque = `${preencher(t.alcance[p.alcance || 'longe'], { bonus: Math.round((dados.config.batalha.multPerto - 1) * 100) })}<br>${t.padraoAtaque[p.alvo || 'frente']}`;
   const fx = dados.faccoes;
   const fac = fx.faccoes.find((f) => f.id === p.faccao);
   const forte = fac && fx.categorias.find((c) => c.id === fac.forteContra);
@@ -372,6 +357,7 @@ function desenharDetalhe() {
       <div class="barra-xp grande"><span style="width:${noMax ? 100 : (r.xp / precisa) * 100}%"></span></div>
     </div>
     <div class="bloco">${linhas}</div>
+    <div class="bloco"><b>🗡️ Ataque</b><p class="dica-pequena">${infoAtaque}</p></div>
     <div class="bloco"><b>✨ ${h.nome}</b><p class="dica-pequena">${descHab}</p>${proxEstrela ? `<p class="previa">${proxEstrela}</p>` : ''}</div>
     <div class="bloco"><h4>Treinar${selo(m.treinar)}</h4><div class="botoes-grade">${treinos}</div></div>
     <div class="bloco"><h4>Estrela${selo(m.estrela)}</h4>${blocoEstrela}</div>

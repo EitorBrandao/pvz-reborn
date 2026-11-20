@@ -40,3 +40,20 @@ export function selosPlanta(registro, dados) {
     marca: (rank ? `<i class="marca-rank">${rank}✦</i>` : '') + (fusao ? '<i class="marca-fusao">🧬</i>' : ''),
   };
 }
+
+// Texto da habilidade (já com status e plural), igual na ficha da planta e na escolha do time.
+export function textoHabilidade(hab, dados) {
+  const t = dados.textos;
+  const a = hab.aplica;
+  const st = a && t.status[a.status];
+  const status = st ? ' ' + preencher(st.texto, { valor: Math.round(a.valor * 100), turnos: a.turnos }) : '';
+  const n = hab.tipo === 'cura' ? hab.alvos : hab.tipo === 'sono' ? hab.turnos : 1;
+  const chave = n > 1 && t.habilidades[`${hab.tipo}_varios`] ? `${hab.tipo}_varios` : hab.tipo;
+  return preencher(t.habilidades[chave] || '', {
+    reflete: Math.round((hab.reflete || 0) * 100), turnos: hab.turnos, golpes: hab.golpes,
+    reducao: Math.round((hab.reducao || 0) * 100), forca: Math.round((hab.mult || 0) * 100),
+    alvos: hab.alvos || 1, seiva: hab.seiva,
+    pctVida: Math.round((hab.pctVida || 0) * 100), limite: Math.round((hab.limite || 0) * 100),
+    bonus: Math.round((hab.mult || 0) * (hab.bonus || 0) * 100),
+  }) + status;
+}
