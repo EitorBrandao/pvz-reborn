@@ -132,7 +132,7 @@ Cada fase termina com algo jogável no celular, testado antes de seguir.
 2. **Batalha:** campo, time contra pragas, turnos, habilidades, números de dano, vitória e derrota, queda de cartas.
    - [x] Pronto quando: dá pra montar um time e vencer ou perder uma batalha de teste.
 3. **Evolução:** nível, estrelas, equipamentos, cartas de item, Pacote de Sementes, tela de plantas.
-   - [ ] Pronto quando: uma planta fica visivelmente mais forte depois de evoluir.
+   - [x] Pronto quando: uma planta fica visivelmente mais forte depois de evoluir.
 4. **Campanha:** mapas, fases, chefes, estrelas, fôlego, missões.
    - [ ] Pronto quando: o primeiro mapa inteiro dá pra jogar do começo ao chefe.
 5. **Arena e bots:** ranking, desafios, defesa offline, mural, recados.
