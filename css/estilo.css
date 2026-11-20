@@ -1,5 +1,5 @@
 :root {
-  color-scheme: only light; /* não deixa o modo escuro forçado do celular desbotar cores e desenhos */
+  color-scheme: light;
   --grama-1: #4caf2e;
   --grama-2: #3d9a22;
   --grama-3: #2f7d1f;
@@ -12,6 +12,23 @@
   --vermelho: #e5483a;
   --sombra: 0 4px 0 rgba(0, 0, 0, .35);
   --fonte: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+}
+
+/* Modo escuro do celular: o jogo avisa que tem tema escuro próprio (meta color-scheme + este bloco),
+   assim navegadores como o Samsung Internet não aplicam o filtro deles, que desbota cores e desenhos.
+   O "tema escuro" do jogo usa exatamente as mesmas cores do normal. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: light;
+    --grama-1: #4caf2e;
+    --grama-2: #3d9a22;
+    --grama-3: #2f7d1f;
+    --terra: #8a5a2b;
+    --bege: #f6e7c1;
+    --escuro: #23301b;
+  }
+  html, body { color: #fff; background-color: var(--grama-3); }
+  img, canvas { filter: none; }
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
