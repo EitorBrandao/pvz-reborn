@@ -87,11 +87,30 @@ const SONS = {
   lento() { nota(300, 0.35, { tipo: 'triangle', vol: 0.15, ate: 150 }); },
   espinhos() { nota(1500, 0.06, { tipo: 'square', vol: 0.05 }); nota(1700, 0.06, { tipo: 'square', vol: 0.05, atraso: 0.05 }); },
   reflexo() { nota(900, 0.1, { tipo: 'square', vol: 0.06, ate: 600 }); },
+  seiva() { nota(800, 0.12, { tipo: 'triangle', vol: 0.12, ate: 1600 }); },
+
+  // Efeitos de status: um som quando o efeito pega e outro a cada rodada que ele age.
+  status_veneno() { [0, 0.07, 0.14].forEach((a, i) => nota(300 + i * 90, 0.08, { vol: 0.12, ate: 500 + i * 90, atraso: a })); },
+  status_queimadura() { chiado(0.35, { vol: 0.25, corte: 4000 }); nota(200, 0.3, { tipo: 'sawtooth', vol: 0.08, ate: 600 }); },
+  status_regeneracao() { [523, 659, 784].forEach((f, i) => nota(f, 0.25, { tipo: 'triangle', vol: 0.12, atraso: i * 0.08 })); },
+  status_fraqueza() { nota(500, 0.4, { tipo: 'sawtooth', vol: 0.08, ate: 180 }); },
+  status_casca() { chiado(0.08, { vol: 0.4, corte: 5000 }); chiado(0.08, { vol: 0.3, corte: 3000, atraso: 0.07 }); nota(220, 0.12, { tipo: 'square', vol: 0.08, ate: 110 }); },
+  status_outro() { nota(600, 0.15, { tipo: 'triangle', vol: 0.12, ate: 400 }); nota(400, 0.15, { tipo: 'triangle', vol: 0.1, atraso: 0.1 }); },
+  tick_veneno() { nota(250, 0.12, { vol: 0.12, ate: 400 }); nota(330, 0.1, { vol: 0.1, ate: 500, atraso: 0.08 }); },
+  tick_queimadura() { chiado(0.2, { vol: 0.22, corte: 3500 }); },
+  tick_regeneracao() { nota(880, 0.2, { tipo: 'triangle', vol: 0.1 }); },
+
   vitoria() { [523, 659, 784, 1047].forEach((f, i) => nota(f, i === 3 ? 0.6 : 0.18, { tipo: 'triangle', vol: 0.22, atraso: i * 0.13 })); },
   derrota() { [392, 330, 262, 196].forEach((f, i) => nota(f, i === 3 ? 0.7 : 0.25, { tipo: 'triangle', vol: 0.2, atraso: i * 0.2 })); },
 };
 
 const INTERVALO = { tiro: 60, golpe: 50, critico: 80, cura: 80, escudo: 80, espinhos: 80, reflexo: 60 };
+
+// Som de um efeito de status. Status novo sem som próprio usa um som genérico.
+export function tocarStatus(nome, rodada = false) {
+  const chave = `${rodada ? 'tick' : 'status'}_${nome}`;
+  tocarSom(SONS[chave] ? chave : (rodada ? 'golpe' : 'status_outro'));
+}
 
 export function tocarSom(nome) {
   if (!SONS[nome] || !liberado(nome, INTERVALO[nome] || 30)) return;

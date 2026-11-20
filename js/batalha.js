@@ -302,13 +302,13 @@ export function simular(unidades, cfg, semente) {
         if (!st || u.vida <= 0) continue;
         const dano = Math.min(u.vida, st.valor);
         u.vida -= dano;
-        efeitos.push({ alvo: u.uid, tipo: 'dano', valor: dano, critico: false, absorvido: 0, [nome]: true, vidaDepois: u.vida, morreu: u.vida === 0 });
+        efeitos.push({ alvo: u.uid, tipo: 'dano', valor: dano, critico: false, absorvido: 0, [nome]: true, porStatus: nome, vidaDepois: u.vida, morreu: u.vida === 0 });
       }
       const rg = u.status.regeneracao;
       if (rg && u.vida > 0) {
         const valor = Math.min(rg.valor, u.vidaMax - u.vida);
         u.vida += valor;
-        if (valor > 0) efeitos.push({ alvo: u.uid, tipo: 'cura', valor, vidaDepois: u.vida });
+        if (valor > 0) efeitos.push({ alvo: u.uid, tipo: 'cura', valor, porStatus: 'regeneracao', vidaDepois: u.vida });
       }
     }
     for (const u of unidades) {

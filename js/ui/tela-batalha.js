@@ -230,7 +230,10 @@ function mostrarEfeito(ef) {
   const t = dados.textos.efeitos;
   if (!v) return;
   if (!pular) {
-    if (ef.tipo === 'dano') som.tocarSom(ef.morreu ? 'morte' : ef.reflexo ? 'reflexo' : ef.critico ? 'critico' : 'golpe');
+    if (ef.morreu) som.tocarSom('morte');
+    else if (ef.porStatus) som.tocarStatus(ef.porStatus, true);
+    else if (ef.tipo === 'status') som.tocarStatus(ef.status);
+    else if (ef.tipo === 'dano') som.tocarSom(ef.reflexo ? 'reflexo' : ef.critico ? 'critico' : 'golpe');
     else som.tocarSom(ef.tipo);
   }
   switch (ef.tipo) {
