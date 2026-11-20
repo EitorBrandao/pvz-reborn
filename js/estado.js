@@ -60,13 +60,8 @@ function completar(salvo) {
   const e = Object.assign(novoEstado(), salvo);
   // Plantas que já estavam no time de saves antigos entram na coleção
   for (const m of e.time) if (!e.colecao[m.planta]) e.colecao[m.planta] = evo.registroNovo();
-  // Cópias guardadas em plantas que já têm todas as estrelas viram Mudas Repetidas
-  for (const r of Object.values(e.colecao)) {
-    if (r.estrelas >= config.evolucao.estrelasMax && r.copias > 0) {
-      e.inventario[config.troca.carta] = (e.inventario[config.troca.carta] || 0) + r.copias;
-      r.copias = 0;
-    }
-  }
+  // Cópias além do que a planta ainda vai usar viram Mudas Repetidas
+  for (const r of Object.values(e.colecao)) guardarSobras(r, e.inventario);
   while (e.canteiro.length < dados.rotina.canteiro.vasos) e.canteiro.push(null);
   return e;
 }
@@ -477,31 +472,55 @@ export function melhorarEquip(idPlanta, idEspaco) {
   return { ok: true };
 }
 
-function estaNoMaximo(id) {
+// Passa as cópias que sobram (além do que falta pro máximo de estrelas) pra Muda Repetida.
+// Devolve quantas viraram muda.
+function guardarSobras(registro, inventario) {
+  const sobra = registro.copias - evo.copiasAteMaximo(registro, config.evolucao);
+  if (sobra <= 0) return 0;
+  registro.copias -= sobra;
+  inventario[config.troca.carta] = (inventario[config.troca.carta] || 0) + sobra;
+  return sobra;
+}
+
+// A planta já tem todas as cópias que vai precisar?
+function copiasCompletas(id) {
   const r = estado.colecao[id];
-  return !!r && r.estrelas >= config.evolucao.estrelasMax;
+  return !!r && r.copias >= evo.copiasAteMaximo(r, config.evolucao);
 }
 
 function abrirPacote(pesos = config.pacote.pesos) {
   const id = evo.sortearPlanta(pesos);
   const nova = !estado.colecao[id];
-  // Cópia de planta que já tem todas as estrelas vira Muda Repetida
-  const virouMuda = !nova && estaNoMaximo(id);
+  let virouMuda = false;
   if (nova) estado.colecao[id] = evo.registroNovo();
-  else if (virouMuda) estado.inventario[config.troca.carta] = (estado.inventario[config.troca.carta] || 0) + 1;
-  else estado.colecao[id].copias += 1;
+  else {
+    estado.colecao[id].copias += 1;
+    virouMuda = guardarSobras(estado.colecao[id], estado.inventario) > 0;
+  }
   contar('abrirPacote');
   salvarAgora();
   return { ok: true, id, nova, virouMuda };
 }
 
-// Troca Mudas Repetidas por uma planta aleatória (não sorteia as que já estão no máximo)
+// Troca Mudas Repetidas por uma planta aleatória (não sorteia as que já têm todas as cópias)
 export function trocarMudas() {
   const { carta, custo } = config.troca;
   if ((estado.inventario[carta] || 0) < custo) return { ok: false, erro: 'semMudas' };
-  const pesos = Object.fromEntries(Object.entries(config.pacote.pesos).filter(([id]) => !estaNoMaximo(id)));
+  const pesos = Object.fromEntries(Object.entries(config.pacote.pesos).filter(([id]) => !copiasCompletas(id)));
   estado.inventario[carta] -= custo;
   return abrirPacote(Object.keys(pesos).length ? pesos : config.pacote.pesos);
+}
+
+// Troca Mudas Repetidas por um material de equipamento sorteado (os raros saem menos)
+export function trocarMudasPorMaterial() {
+  const { carta, custoMaterial, materiais } = config.troca;
+  if ((estado.inventario[carta] || 0) < custoMaterial) return { ok: false, erro: 'semMudas' };
+  const pesos = Object.fromEntries(materiais.map((m, i) => [i, m.peso]));
+  const premio = materiais[evo.sortearPlanta(pesos)];
+  estado.inventario[carta] -= custoMaterial;
+  estado.inventario[premio.carta] = (estado.inventario[premio.carta] || 0) + premio.qtd;
+  salvarAgora();
+  return { ok: true, carta: premio.carta, qtd: premio.qtd };
 }
 
 // moeda: 'moedas' ou 'orvalho'

@@ -1,5 +1,5 @@
 {
-  "versaoJogo": "0.7.0",
+  "versaoJogo": "0.7.1",
   "inicio": {
     "moedas": 500,
     "orvalho": 10,
@@ -103,7 +103,13 @@
   },
   "troca": {
     "carta": "muda_repetida",
-    "custo": 3
+    "custo": 3,
+    "custoMaterial": 1,
+    "materiais": [
+      { "carta": "fibra", "qtd": 2, "peso": 70 },
+      { "carta": "petala_rara", "qtd": 1, "peso": 20 },
+      { "carta": "seiva_dourada", "qtd": 1, "peso": 10 }
+    ]
   },
   "folego": {
     "max": 30,

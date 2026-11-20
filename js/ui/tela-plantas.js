@@ -33,6 +33,10 @@ export function iniciarTelaPlantas(d, voltar) {
   $('pacote-resultado').addEventListener('click', () => { $('pacote-resultado').classList.add('escondido'); desenhar(); });
   $('detalhe-conteudo').addEventListener('click', acaoDetalhe);
   $('btn-ordenar').addEventListener('click', trocarOrdem);
+  $('troca-fechar').addEventListener('click', fecharTroca);
+  $('troca-mudas').addEventListener('click', (e) => { if (e.target.id === 'troca-mudas') fecharTroca(); });
+  $('troca-planta').addEventListener('click', () => { fecharTroca(); mostrarPacote(jogo.trocarMudas()); });
+  $('troca-material').addEventListener('click', () => { fecharTroca(); mostrarMaterial(jogo.trocarMudasPorMaterial()); });
 
   const { pacote } = dados.config;
   $('btn-pacote-moedas').textContent = `🌱 Pacote 🪙${pacote.moedas}`;
@@ -70,7 +74,7 @@ function custoTexto(custo) {
 }
 
 function erro(resultado) {
-  avisar(preencher(dados.textos[resultado.erro] || dados.textos.semMaterial, { n: dados.config.troca.custo }));
+  avisar(dados.textos[resultado.erro] || dados.textos.semMaterial);
 }
 
 // O que dá pra melhorar agora nessa planta, com o que o jogador tem.
@@ -122,7 +126,7 @@ function desenharInventario() {
     botao.innerHTML = `<span>${c.emoji}</span><b>${qtd}</b>`;
     botao.addEventListener('click', () => {
       if (c.uso === 'pacote') mostrarPacote(jogo.plantarSemente());
-      else if (c.uso === 'troca') mostrarPacote(jogo.trocarMudas());
+      else if (c.uso === 'troca') abrirTroca();
       else avisar(`${c.nome}: ${c.descricao}`);
     });
     area.appendChild(botao);
@@ -352,16 +356,46 @@ function acaoDetalhe(evento) {
   desenhar();
 }
 
+// ---------- Troca de Mudas Repetidas ----------
+
+function abrirTroca() {
+  const t = dados.textos;
+  const troca = dados.config.troca;
+  const tem = jogo.estado.inventario[troca.carta] || 0;
+  $('troca-titulo').textContent = t.trocaTitulo;
+  $('troca-tem').textContent = preencher(t.trocaTem, { n: tem });
+  $('troca-planta').innerHTML = `${t.trocaPlanta} <span class="custo-item${tem < troca.custo ? ' falta' : ''}">🧩${troca.custo}</span>`;
+  $('troca-material').innerHTML = `${t.trocaMaterial} <span class="custo-item${tem < troca.custoMaterial ? ' falta' : ''}">🧩${troca.custoMaterial}</span>`;
+  const total = troca.materiais.reduce((a, m) => a + m.peso, 0);
+  $('troca-chances').textContent = troca.materiais
+    .map((m) => `${carta(m.carta).emoji}×${m.qtd} ${Math.round((m.peso / total) * 100)}%`).join(' · ');
+  $('troca-mudas').classList.remove('escondido');
+}
+
+function fecharTroca() {
+  $('troca-mudas').classList.add('escondido');
+}
+
+function mostrarMaterial(res) {
+  if (!res.ok) return erro(res);
+  const c = carta(res.carta);
+  abrirResultado(c.emoji, preencher(dados.textos.materialGanho, { qtd: res.qtd, nome: c.nome }), c.raridade !== 'comum');
+}
+
 // ---------- Pacote de Sementes ----------
 
 function mostrarPacote(res) {
   if (!res.ok) return erro(res);
   const p = base(res.id);
   const t = dados.textos;
-  $('pacote-emoji').textContent = p.emoji;
   const texto = res.nova ? t.plantaNova : (res.virouMuda ? t.copiaVirouMuda : t.copiaNova);
-  $('pacote-titulo').textContent = preencher(texto, { nome: p.nome });
-  $('pacote-resultado').classList.toggle('nova', res.nova);
+  abrirResultado(p.emoji, preencher(texto, { nome: p.nome }), res.nova);
+}
+
+function abrirResultado(emoji, titulo, destaque) {
+  $('pacote-emoji').textContent = emoji;
+  $('pacote-titulo').textContent = titulo;
+  $('pacote-resultado').classList.toggle('nova', destaque);
   $('pacote-resultado').classList.remove('escondido');
   // reinicia a animação
   const caixa = $('pacote-resultado').firstElementChild;

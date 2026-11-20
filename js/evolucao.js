@@ -68,6 +68,13 @@ export function custoEstrela(registro, cfg) {
   return { copias: cfg.copiasPorEstrela[registro.estrelas], moedas: cfg.moedasPorEstrela[registro.estrelas] };
 }
 
+// Quantas cópias a planta ainda vai gastar até chegar ao máximo de estrelas
+export function copiasAteMaximo(registro, cfg) {
+  let total = 0;
+  for (let i = registro.estrelas; i < cfg.estrelasMax; i++) total += cfg.copiasPorEstrela[i];
+  return total;
+}
+
 export function custoEquip(registro, espacoId, dados) {
   const n = registro.equip[espacoId] || 0;
   const nivel = dados.equipamentos.niveis[n];
