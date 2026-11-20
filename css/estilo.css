@@ -842,3 +842,5 @@ body {
 .mapa-modo { display: flex; gap: 8px; margin-top: 8px; }
 .mapa-modo .aba { flex: 1; }
 .modo-pesadelo .mapa-trilha { --cor-mapa: #8b1e2d; background-blend-mode: multiply; filter: saturate(.75) brightness(.85); }
+.selos-detalhe { position: static; transform: none; justify-content: center; margin-top: 4px; }
+.selos-detalhe .selo { font-size: .85rem; padding: 2px 10px; }

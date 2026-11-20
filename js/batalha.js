@@ -67,6 +67,8 @@ export function prepararBatalha(batalha, time, dados, colecao = {}) {
     if (!base) continue;
     const registro = colecao[m.planta] || registroNovo();
     const u = montarUnidade(base, 'planta', m.col, m.linha, registro.nivel, `u${n++}`, cfg);
+    u.rank = registro.ascensao || 0;
+    u.fusao = registro.fusao || 0;
     const stats = atributos(base, registro, dados);
     Object.assign(u, stats, {
       vidaMax: stats.vida, estrelas: registro.estrelas,

@@ -566,11 +566,12 @@ function desenharUnidade(v) {
     }
 
     ctx.font = `bold ${Math.max(10, r * 0.32)}px "Trebuchet MS", sans-serif`;
-    ctx.fillStyle = '#fff';
+    const rotulo = `Nv${v.nivel}${v.rank ? ` ✦${v.rank}` : ''}${v.fusao ? ' 🧬' : ''}`;
+    ctx.fillStyle = v.rank ? '#ffd23a' : '#fff';
     ctx.strokeStyle = 'rgba(0,0,0,.6)';
     ctx.lineWidth = 3;
-    ctx.strokeText(`Nv${v.nivel}`, x, by + 20);
-    ctx.fillText(`Nv${v.nivel}`, x, by + 20);
+    ctx.strokeText(rotulo, x, by + 20);
+    ctx.fillText(rotulo, x, by + 20);
   }
   ctx.restore();
 }

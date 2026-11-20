@@ -1,4 +1,5 @@
 [
+  { "versao": "0.11.1", "itens": ["✦ Selo de Rank também na batalha (ao lado do nível) e na tela da planta"] },
   { "versao": "0.11.0", "itens": ["😈 Modo Pesadelo na campanha: cada mapa com 3 estrelas em todas as fases abre uma versão bem mais difícil (pragas de nível alto), com prêmio de 3x moedas, mais orvalho e mais cartas raras", "Música própria do Pesadelo"] },
   { "versao": "0.10.3", "itens": ["🌳 Talentos agora são diferentes por classe: Tanque (vida e defesa), Dano (ataque e crítico), Apoio (cura e seiva) e Controle (velocidade e seiva)", "Novos nós: velocidade e dano crítico. Talentos que não existem na classe da planta são devolvidos como pontos livres"] },
   { "versao": "0.10.2", "itens": ["Torre mais difícil: pragas sobem 2 níveis por andar, prêmio maior", "Desafio do Dia com 5 pragas, 3 níveis acima das suas plantas", "Invasão mais longa: chefe com mais vida e vizinhos batendo mais"] },

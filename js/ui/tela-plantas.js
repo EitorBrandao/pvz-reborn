@@ -365,7 +365,7 @@ function desenharDetalhe() {
       <small>${p.funcao}</small>
       ${infoFaccao ? `<small class="info-faccao">${infoFaccao}</small>` : ''}
       <div class="estrelas">${estrelasTexto(r.estrelas)}</div>
-      ${r.ascensao ? `<div class="selo-rank">${dados.ascensao.selos[r.ascensao]} Rank ${r.ascensao}</div>` : ''}
+      ${selosPlanta(r, dados).html.replace('class="selos"', 'class="selos selos-detalhe"')}
     </div>
     <div class="bloco">
       <p><b>Nv ${r.nivel}</b> / ${max} ${noMax ? '' : `· XP ${r.xp}/${precisa}`}</p>
