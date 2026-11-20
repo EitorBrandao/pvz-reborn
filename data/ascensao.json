@@ -1,0 +1,48 @@
+{
+  "rankMax": 5,
+  "selos": [
+    "",
+    "✦",
+    "✦✦",
+    "✦✦✦",
+    "✦✦✦✦",
+    "✦✦✦✦✦"
+  ],
+  "custos": [
+    {
+      "moedas": 5000,
+      "cartas": {
+        "muda_repetida": 10,
+        "fibra": 20
+      }
+    },
+    {
+      "moedas": 10000,
+      "cartas": {
+        "muda_repetida": 20,
+        "fibra": 40
+      }
+    },
+    {
+      "moedas": 20000,
+      "cartas": {
+        "muda_repetida": 30,
+        "fibra": 60
+      }
+    },
+    {
+      "moedas": 40000,
+      "cartas": {
+        "muda_repetida": 40,
+        "fibra": 80
+      }
+    },
+    {
+      "moedas": 80000,
+      "cartas": {
+        "muda_repetida": 50,
+        "fibra": 100
+      }
+    }
+  ]
+}

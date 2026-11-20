@@ -1,5 +1,5 @@
 {
-  "versaoJogo": "0.8.3",
+  "versaoJogo": "0.9.1",
   "inicio": {
     "moedas": 500,
     "orvalho": 10,
@@ -66,6 +66,8 @@
     "xpPorNivel": 25,
     "xpDerrota": 0.3,
     "niveisPorEstrela": 10,
+    "niveisPorRank": 10,
+    "bonusRank": 0.25,
     "estrelasMax": 5,
     "bonusEstrela": 0.2,
     "copiasPorEstrela": [
