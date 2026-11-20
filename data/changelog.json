@@ -1,5 +1,10 @@
 [
-  { "versao": "0.8.3", "itens": ["Torre mais difícil: pragas sobem 2 níveis por andar, prêmio maior", "Desafio do Dia com 5 pragas, 3 níveis acima das suas plantas", "Invasão mais longa: chefe com mais vida e vizinhos batendo mais"] },
+  { "versao": "0.10.2", "itens": ["Torre mais difícil: pragas sobem 2 níveis por andar, prêmio maior", "Desafio do Dia com 5 pragas, 3 níveis acima das suas plantas", "Invasão mais longa: chefe com mais vida e vizinhos batendo mais"] },
+  { "versao": "0.10.1", "itens": ["✦ Plantas com Ascensão ganham selo de Rank, moldura dourada e marca no espaço do time", "Pronto pra mostrar também o selo de Fusão"] },
+  { "versao": "0.10.0", "itens": ["🌳 Árvore de talentos: cada planta ganha 1 ponto a cada 5 níveis (+10 por rank de ascensão) pra gastar em Raiz (vida, defesa), Tronco (ataque, crítico) e Folha (habilidade, seiva)", "Resetar os talentos custa 💧3"] },
+  { "versao": "0.9.2", "itens": ["Troca de 🧩 por material de equipamento agora permite trocar vários de uma vez (×10)"] },
+  { "versao": "0.9.1", "itens": ["📖 Herbário: nova página de Fusão de plantas com as receitas (em breve)"] },
+  { "versao": "0.9.0", "itens": ["✦ Ascensão: planta 5⭐ no nível máximo pode ascender (até 5 vezes). Volta ao nível 1, mas ganha +25% de atributos pra sempre e +10 de nível máximo por rank", "Custa moedas, Mudas Repetidas e Fibras"] },
   { "versao": "0.8.2", "itens": ["Fim da batalha mostra o sumário de dano, com abas de dano causado e dano recebido por planta"] },
   { "versao": "0.8.1", "itens": ["Telhado mais difícil: fases 5 a 9 com 6 inimigos de tipos variados e nível maior", "Coruja Sombria agora dá pra vencer (antes não dava), mas pede um time bem montado"] },
   { "versao": "0.8.0", "itens": ["👹 Invasão de Chefe em Desafios: chefe gigante de 3 dias, todos os vizinhos batem nele, ranking de dano com prêmios", "🛒 Feira: ofertas que mudam todo dia e trocas de materiais", "📖 Herbário: álbum de plantas e pragas com prêmio por página completa", "Músicas próprias para Desafios, Invasão, Feira e Herbário"] },

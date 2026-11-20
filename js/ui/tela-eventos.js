@@ -199,8 +199,19 @@ function desenharHerbario() {
   const paginas = jogo.herbario();
   const total = paginas.reduce((s, p) => s + p.itens.length, 0);
   const vistos = paginas.reduce((s, p) => s + p.itens.filter((x) => x.visto).length, 0);
+  const fusoes = jogo.fusoes().map((f) => `
+      <div class="fusao-receita">
+        ${f.ing.map((i) => `<span class="item-herbario${i.tem ? '' : ' oculto'}" title="${i.nome}"><span>${i.emoji}</span><small>${i.nome}</small></span>`).join('<b>+</b>')}
+        <b>=</b>
+        <span class="item-herbario oculto" title="${f.nome}"><span>${f.emoji}</span><small>${f.nome}</small></span>
+      </div>`).join('');
   $('herbario-conteudo').innerHTML = `
     <p class="dica-pequena">${preencher(th().progresso, { vistos, total })}</p>
+    <div class="pagina-herbario">
+      <div class="pagina-topo"><b>${th().fusaoTitulo}</b><small>${th().fusaoEmBreve}</small></div>
+      <p class="dica-pequena">${th().fusaoTexto}</p>
+      ${fusoes}
+    </div>
     ${paginas.map((p) => {
     const feitos = p.itens.filter((x) => x.visto).length;
     let rodape;

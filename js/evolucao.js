@@ -2,15 +2,54 @@
 // Só cálculos: quem salva é o estado.js.
 
 export function registroNovo() {
-  return { nivel: 1, xp: 0, estrelas: 1, copias: 0, equip: { vaso: 0, adubo: 0, regador: 0 } };
+  return { nivel: 1, xp: 0, estrelas: 1, ascensao: 0, talentos: {}, copias: 0, equip: { vaso: 0, adubo: 0, regador: 0 } };
 }
 
 export function xpParaProximo(nivel, cfg) {
   return cfg.xpBase + (nivel - 1) * cfg.xpPorNivel;
 }
 
-export function nivelMaximo(estrelas, cfg) {
-  return estrelas * cfg.niveisPorEstrela;
+export function nivelMaximo(estrelas, cfg, ascensao = 0) {
+  return estrelas * cfg.niveisPorEstrela + ascensao * cfg.niveisPorRank;
+}
+
+// ---------- Talentos ----------
+export function pontosTalento(registro, dados) {
+  const t = dados.talentos;
+  return Math.floor(registro.nivel / t.niveisPorPonto) + (registro.ascensao || 0) * t.pontosPorRank;
+}
+
+export function pontosGastos(registro) {
+  return Object.values(registro.talentos || {}).reduce((a, b) => a + b, 0);
+}
+
+export function noTalento(dados, idNo) {
+  for (const ramo of dados.talentos.ramos) {
+    const no = ramo.nos.find((n) => n.id === idNo);
+    if (no) return no;
+  }
+  return null;
+}
+
+// Soma os bônus dos talentos: { vida, atq, def, critico, potencia, seivaInicial, seivaTurno }
+export function bonusTalentos(registro, dados) {
+  const b = { vida: 0, atq: 0, def: 0, critico: 0, potencia: 0, seivaInicial: 0, seivaTurno: 0 };
+  if (!dados.talentos) return b;
+  for (const [id, n] of Object.entries(registro.talentos || {})) {
+    const no = noTalento(dados, id);
+    if (no) b[no.efeito] += no.porPonto * n;
+  }
+  return b;
+}
+
+// Ascensão: planta no nível máximo com todas as estrelas volta ao nível 1 e ganha um rank.
+export function custoAscensao(registro, dados) {
+  const rank = registro.ascensao || 0;
+  return rank >= dados.ascensao.rankMax ? null : dados.ascensao.custos[rank];
+}
+
+export function podeAscender(registro, cfg) {
+  return registro.estrelas >= cfg.estrelasMax && registro.nivel >= nivelMaximo(registro.estrelas, cfg, registro.ascensao || 0);
 }
 
 // Atributos finais de uma planta. "mudanca" permite prever como fica depois de evoluir.
@@ -18,12 +57,15 @@ export function atributos(base, registro, dados, mudanca = {}) {
   const r = { ...registro, ...mudanca, equip: { ...registro.equip, ...(mudanca.equip || {}) } };
   const fNivel = 1 + dados.config.batalha.crescimentoPorNivel * (r.nivel - 1);
   const fEstrela = 1 + dados.config.evolucao.bonusEstrela * (r.estrelas - 1);
+  const fRank = 1 + dados.config.evolucao.bonusRank * (r.ascensao || 0);
   const bonus = { vida: 0, atq: 0, def: 0, vel: 0 };
+  const tal = bonusTalentos(r, dados);
+  bonus.vida += tal.vida; bonus.atq += tal.atq; bonus.def += tal.def;
   for (const espaco of dados.equipamentos.espacos) {
     const n = r.equip[espaco.id] || 0;
     if (n > 0) bonus[espaco.atributo] += dados.equipamentos.niveis[n - 1].bonus;
   }
-  const calc = (attr) => Math.round(base[attr] * fNivel * fEstrela * (1 + bonus[attr]));
+  const calc = (attr) => Math.round(base[attr] * fNivel * fEstrela * fRank * (1 + bonus[attr]));
   return { vida: calc('vida'), atq: calc('atq'), def: calc('def'), vel: base.vel };
 }
 
@@ -50,7 +92,7 @@ export function habilidadeComEstrelas(hab, estrelas = 1) {
 
 // Dá XP e sobe de nível. Devolve quantos níveis subiu.
 export function darXp(registro, xp, cfg) {
-  const max = nivelMaximo(registro.estrelas, cfg);
+  const max = nivelMaximo(registro.estrelas, cfg, registro.ascensao || 0);
   if (registro.nivel >= max) { registro.xp = 0; return 0; }
   registro.xp += xp;
   let subiu = 0;
