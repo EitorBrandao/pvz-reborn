@@ -355,6 +355,15 @@ body {
 }
 .item-inventario b { font-size: 1rem; }
 .item-inventario.rara { border-color: var(--azul); }
+.item-inventario.destaque {
+  position: relative; border-color: #ffb800; background: #fff6d6;
+  box-shadow: 0 0 0 2px #ffd23a, 0 0 12px 3px rgba(255, 190, 0, .75);
+  animation: brilho-item 1.6s ease-in-out infinite;
+}
+.item-inventario.destaque::after {
+  content: '⭐'; position: absolute; top: -9px; right: -7px; font-size: .85rem;
+}
+@keyframes brilho-item { 50% { box-shadow: 0 0 0 2px #ffd23a, 0 0 4px 1px rgba(255, 190, 0, .4); } }
 .item-inventario.epica { border-color: #a24be0; background: #f6ebff; }
 .cartao-planta.bloqueada .planta-emoji { filter: grayscale(1) brightness(.3); }
 .cartao-planta.bloqueada { opacity: .75; }

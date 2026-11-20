@@ -20,6 +20,7 @@ export function montarUnidade(base, lado, col, linha, nivel, uid, cfg) {
   return {
     uid, id: base.id, nome: base.nome, emoji: base.emoji, projetil: base.projetil,
     habilidade: base.habilidade, chefe: !!base.chefe,
+    alcance: base.alcance || 'longe', alvoTipo: base.alvo || 'frente',
     faccao: base.faccao || null, categoria: base.categoria || null, forteContra: null, vantagem: 0,
     lado, col, linha, nivel,
     vidaMax: vida, vida,
@@ -155,12 +156,23 @@ export function simular(unidades, cfg, semente) {
     return snap;
   }
 
-  // Alvo padrão: a linha de frente inimiga, de preferência na mesma fileira.
+  // Alvo padrão, conforme o padrão de ataque da unidade (campo "alvo" nos dados):
+  // frente (padrão), fraco (menos vida), forte (mais vida), tras (coluna de trás) ou aleatorio.
+  // Quem luta corpo a corpo ("alcance": "perto") só alcança a linha da frente.
   function alvoPadrao(u) {
     const todos = inimigos(u);
     if (!todos.length) return null;
+    const tipo = u.alvoTipo || 'frente';
     const frente = todos.filter((i) => i.col === 0);
-    const opcoes = frente.length ? frente : todos;
+    let opcoes = todos;
+    if (u.alcance === 'perto' || tipo === 'frente') opcoes = frente.length ? frente : todos;
+    else if (tipo === 'tras') {
+      const tras = todos.filter((i) => i.col === 1);
+      opcoes = tras.length ? tras : todos;
+    }
+    if (tipo === 'fraco') return [...opcoes].sort((a, b) => a.vida / a.vidaMax - b.vida / b.vidaMax)[0];
+    if (tipo === 'forte') return [...opcoes].sort((a, b) => b.vida - a.vida)[0];
+    if (tipo === 'aleatorio') return opcoes[Math.floor(rng() * opcoes.length)];
     let menor = Infinity;
     for (const o of opcoes) menor = Math.min(menor, Math.abs(o.linha - u.linha));
     const perto = opcoes.filter((o) => Math.abs(o.linha - u.linha) === menor);
@@ -174,6 +186,7 @@ export function simular(unidades, cfg, semente) {
     const def = alvo.def * (1 - reducao(alvo, 'casca'));
     let bruto = atq * mult * cfg.multDano * (100 / (100 + def));
     if (eficaz) bruto *= 1 + atacante.vantagem;
+    if (atacante.alcance === 'perto') bruto *= cfg.multPerto || 1;
     bruto *= 1 - cfg.variacao + rng() * 2 * cfg.variacao;
     const critico = rng() < cfg.chanceCritico;
     if (critico) bruto *= cfg.multCritico;
@@ -303,7 +316,7 @@ export function simular(unidades, cfg, semente) {
       u.seiva = Math.min(100, u.seiva + cfg.seivaPorTurno);
     }
     eventos.push({
-      tipo: 'acao', de: u.uid, especial,
+      tipo: 'acao', de: u.uid, especial, perto: u.alcance === 'perto',
       nomeHab: especial ? u.habilidade.nome : null,
       habTipo: especial ? u.habilidade.tipo : null,
       efeitos, snap: foto(),

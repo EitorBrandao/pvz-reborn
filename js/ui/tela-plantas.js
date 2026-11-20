@@ -131,7 +131,7 @@ function desenharInventario() {
     if (!qtd) continue;
     vazio = false;
     const botao = document.createElement('button');
-    botao.className = `item-inventario ${c.raridade}`;
+    botao.className = `item-inventario ${c.raridade}${c.destaque ? ' destaque' : ''}`;
     botao.innerHTML = `<span>${c.emoji}</span><b>${qtd}</b>`;
     botao.addEventListener('click', () => {
       if (c.uso === 'troca') return abrirTroca();
@@ -253,6 +253,7 @@ function desenharDetalhe() {
     bonus: Math.round((hab.mult || 0) * (hab.bonus || 0) * 100),
   }) + textoStatus(hab);
   const descHab = textoHab(h);
+  const infoAtaque = `${preencher(t.alcance[p.alcance || 'longe'], { bonus: Math.round((dados.config.batalha.multPerto - 1) * 100) })}<br>${t.padraoAtaque[p.alvo || 'frente']}`;
   const fx = dados.faccoes;
   const fac = fx.faccoes.find((f) => f.id === p.faccao);
   const forte = fac && fx.categorias.find((c) => c.id === fac.forteContra);
@@ -328,6 +329,7 @@ function desenharDetalhe() {
       <div class="barra-xp grande"><span style="width:${noMax ? 100 : (r.xp / precisa) * 100}%"></span></div>
     </div>
     <div class="bloco">${linhas}</div>
+    <div class="bloco"><b>🗡️ Ataque</b><p class="dica-pequena">${infoAtaque}</p></div>
     <div class="bloco"><b>✨ ${h.nome}</b><p class="dica-pequena">${descHab}</p>${proxEstrela ? `<p class="previa">${proxEstrela}</p>` : ''}</div>
     <div class="bloco"><h4>Treinar${selo(m.treinar)}</h4><div class="botoes-grade">${treinos}</div></div>
     <div class="bloco"><h4>Estrela${selo(m.estrela)}</h4>${blocoEstrela}</div>

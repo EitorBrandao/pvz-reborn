@@ -10,7 +10,7 @@
     "habilidade": { "tipo": "espinhos", "nome": "Pele de Espinho", "mult": 1.0, "reflete": 0.4, "turnos": 2, "porEstrela": { "reflete": 0.1 } }
   },
   {
-    "id": "milho", "faccao": "roca", "nome": "Milho Pipoqueiro", "emoji": "🌽", "projetil": "🍿", "funcao": "Dano rápido",
+    "id": "milho", "alvo": "fraco", "faccao": "roca", "nome": "Milho Pipoqueiro", "emoji": "🌽", "projetil": "🍿", "funcao": "Dano rápido",
     "vida": 200, "atq": 30, "def": 12, "vel": 15,
     "habilidade": { "tipo": "rajada", "nome": "Pipocaria", "golpes": 3, "mult": 0.6, "porEstrela": { "golpes": 0.5 } }
   },
@@ -25,7 +25,7 @@
     "habilidade": { "tipo": "escudo", "nome": "Folha Couraça", "mult": 1.2, "turnos": 2, "porEstrela": { "mult": 0.15 } }
   },
   {
-    "id": "bambu", "faccao": "mata", "nome": "Bambu Lanceiro", "emoji": "🎋", "projetil": "🥢", "funcao": "Dano perfurante",
+    "id": "bambu", "alvo": "forte", "faccao": "mata", "nome": "Bambu Lanceiro", "emoji": "🎋", "projetil": "🥢", "funcao": "Dano perfurante",
     "vida": 230, "atq": 40, "def": 16, "vel": 12,
     "habilidade": { "tipo": "perfurar", "nome": "Lança de Bambu", "mult": 1.3, "aplica": { "status": "casca", "valor": 0.3, "turnos": 2 }, "porEstrela": { "mult": 0.1, "aplica": { "valor": 0.04 } } }
   },
@@ -35,17 +35,17 @@
     "habilidade": { "tipo": "sono", "nome": "Nuvem de Esporos", "mult": 0.6, "turnos": 1, "aplica": { "status": "fraqueza", "valor": 0.25, "turnos": 2 }, "porEstrela": { "mult": 0.1, "turnos": 0.25, "aplica": { "valor": 0.03 } } }
   },
   {
-    "id": "trepadeira", "faccao": "mata", "nome": "Trepadeira Laço", "emoji": "🌿", "projetil": "🌀", "funcao": "Controle",
+    "id": "trepadeira", "alvo": "tras", "faccao": "mata", "nome": "Trepadeira Laço", "emoji": "🌿", "projetil": "🌀", "funcao": "Controle",
     "vida": 240, "atq": 26, "def": 18, "vel": 12,
     "habilidade": { "tipo": "lentidao", "nome": "Laço de Cipó", "mult": 0.8, "reducao": 0.4, "turnos": 2, "porEstrela": { "reducao": 0.05, "turnos": 0.25 } }
   },
   {
-    "id": "agave", "faccao": "sertao", "nome": "Agave Arpão", "emoji": "🌱", "projetil": "🧪", "funcao": "Veneno",
+    "id": "agave", "alvo": "forte", "faccao": "sertao", "nome": "Agave Arpão", "emoji": "🌱", "projetil": "🧪", "funcao": "Veneno",
     "vida": 230, "atq": 36, "def": 20, "vel": 11,
     "habilidade": { "tipo": "golpe", "nome": "Ponta Venenosa", "mult": 1.0, "aplica": { "status": "veneno", "valor": 0.3, "turnos": 3 }, "porEstrela": { "mult": 0.05, "aplica": { "valor": 0.05, "turnos": 0.25 } } }
   },
   {
-    "id": "bromelia", "faccao": "mata", "nome": "Bromélia Cálice", "emoji": "🌺", "projetil": "✨", "funcao": "Suporte",
+    "id": "bromelia", "alvo": "tras", "faccao": "mata", "nome": "Bromélia Cálice", "emoji": "🌺", "projetil": "✨", "funcao": "Suporte",
     "vida": 220, "atq": 26, "def": 16, "vel": 14,
     "habilidade": { "tipo": "energia", "nome": "Néctar Energético", "mult": 0.8, "seiva": 25, "porEstrela": { "seiva": 5 } }
   },
@@ -58,5 +58,25 @@
     "id": "jarro", "faccao": "brejo", "nome": "Jarro Devorador", "emoji": "🌷", "projetil": "🦷", "funcao": "Finalizador",
     "vida": 210, "atq": 38, "def": 14, "vel": 11,
     "habilidade": { "tipo": "devorar", "nome": "Bocada Final", "mult": 1.2, "limite": 0.5, "bonus": 2.0, "porEstrela": { "mult": 0.1, "bonus": 0.15 } }
+  },
+  {
+    "id": "mandioca", "faccao": "roca", "nome": "Mandioca Machadinha", "emoji": "🥔", "projetil": "💥", "funcao": "Corpo a corpo", "alcance": "perto", "alvo": "forte",
+    "vida": 300, "atq": 36, "def": 24, "vel": 10,
+    "habilidade": { "tipo": "golpe", "nome": "Raiz Pesada", "mult": 1.5, "aplica": { "status": "fraqueza", "valor": 0.2, "turnos": 2 }, "porEstrela": { "mult": 0.1, "aplica": { "valor": 0.03 } } }
+  },
+  {
+    "id": "melancia", "faccao": "sertao", "nome": "Melancia Marreta", "emoji": "🍉", "projetil": "💥", "funcao": "Corpo a corpo", "alcance": "perto",
+    "vida": 360, "atq": 30, "def": 28, "vel": 9,
+    "habilidade": { "tipo": "golpe", "nome": "Rolada Pesada", "mult": 1.8, "porEstrela": { "mult": 0.12 } }
+  },
+  {
+    "id": "coco", "faccao": "mata", "nome": "Coco Machado", "emoji": "🥥", "projetil": "💥", "funcao": "Corpo a corpo", "alcance": "perto", "alvo": "fraco",
+    "vida": 250, "atq": 34, "def": 18, "vel": 13,
+    "habilidade": { "tipo": "rajada", "nome": "Cocada Dupla", "golpes": 2, "mult": 0.9, "porEstrela": { "golpes": 0.5 } }
+  },
+  {
+    "id": "taboa", "faccao": "brejo", "nome": "Taboa Cajado", "emoji": "🌾", "projetil": "💥", "funcao": "Corpo a corpo", "alcance": "perto", "alvo": "fraco",
+    "vida": 280, "atq": 28, "def": 22, "vel": 11,
+    "habilidade": { "tipo": "sono", "nome": "Cajadada Tonta", "mult": 0.8, "turnos": 1, "porEstrela": { "mult": 0.1, "turnos": 0.25 } }
   }
 ]
