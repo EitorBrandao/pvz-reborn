@@ -7,7 +7,8 @@ export let estado = null;
 
 export function iniciar(cfg) {
   config = cfg;
-  estado = save.carregar() || novoEstado();
+  // Completa saves antigos com os campos novos (ex.: quem jogou a versão 0.1)
+  estado = Object.assign(novoEstado(), save.carregar() || {});
   salvarAgora();
   setInterval(salvarAgora, config.save.intervaloSegundos * 1000);
   // Salva também quando o jogador sai do app ou troca de aba
@@ -28,6 +29,10 @@ export function novoEstado() {
     orvalho: config.inicio.orvalho,
     nivel: config.inicio.nivel,
     broto: { regas: 0 },
+    time: structuredClone(config.timeInicial),
+    inventario: {},
+    vencidas: [],
+    velocidadeBatalha: 1,
   };
 }
 
@@ -36,7 +41,7 @@ export function salvarAgora() {
 }
 
 export function substituir(novo) {
-  estado = novo;
+  estado = Object.assign(novoEstado(), novo);
   salvarAgora();
 }
 
@@ -61,4 +66,21 @@ export function estagioBroto() {
   const indice = Math.floor(estado.broto.regas / regasPorEstagio) % estagios.length;
   const progresso = (estado.broto.regas % regasPorEstagio) / regasPorEstagio;
   return { emoji: estagios[indice], progresso };
+}
+
+export function definirTime(time) {
+  estado.time = time;
+  salvarAgora();
+}
+
+export function definirVelocidade(v) {
+  estado.velocidadeBatalha = v;
+  salvarAgora();
+}
+
+export function registrarVitoria(idBatalha, moedas, cartas) {
+  estado.moedas += moedas;
+  for (const c of cartas) estado.inventario[c] = (estado.inventario[c] || 0) + 1;
+  if (!estado.vencidas.includes(idBatalha)) estado.vencidas.push(idBatalha);
+  salvarAgora();
 }

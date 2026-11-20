@@ -1,0 +1,58 @@
+[
+  {
+    "id": "teste-1",
+    "nome": "Lagartas famintas",
+    "dificuldade": 1,
+    "nivel": 1,
+    "inimigos": [
+      { "praga": "lagarta", "col": 0, "linha": 0 },
+      { "praga": "lagarta", "col": 0, "linha": 2 },
+      { "praga": "lesma", "col": 1, "linha": 1 }
+    ],
+    "recompensa": { "moedas": 40 },
+    "cartas": [
+      { "carta": "adubo", "chance": 0.9 },
+      { "carta": "fibra", "chance": 0.5 },
+      { "carta": "seiva_dourada", "chance": 0.1 }
+    ]
+  },
+  {
+    "id": "teste-2",
+    "nome": "Revoada no quintal",
+    "dificuldade": 2,
+    "nivel": 3,
+    "inimigos": [
+      { "praga": "besouro", "col": 0, "linha": 1 },
+      { "praga": "gafanhoto", "col": 0, "linha": 0 },
+      { "praga": "gafanhoto", "col": 0, "linha": 2 },
+      { "praga": "toupeira", "col": 1, "linha": 0 },
+      { "praga": "lagarta", "col": 1, "linha": 2 }
+    ],
+    "recompensa": { "moedas": 80 },
+    "cartas": [
+      { "carta": "adubo", "chance": 1 },
+      { "carta": "fibra", "chance": 0.7 },
+      { "carta": "seiva_dourada", "chance": 0.3 },
+      { "carta": "petala_rara", "chance": 0.2 }
+    ]
+  },
+  {
+    "id": "teste-3",
+    "nome": "A Rainha Formiga",
+    "dificuldade": 3,
+    "nivel": 4,
+    "inimigos": [
+      { "praga": "rainha", "col": 1, "linha": 1, "nivel": 5 },
+      { "praga": "besouro", "col": 0, "linha": 0 },
+      { "praga": "besouro", "col": 0, "linha": 2 },
+      { "praga": "gafanhoto", "col": 0, "linha": 1 }
+    ],
+    "recompensa": { "moedas": 200 },
+    "cartas": [
+      { "carta": "adubo", "chance": 1 },
+      { "carta": "seiva_dourada", "chance": 0.6 },
+      { "carta": "petala_rara", "chance": 0.5 },
+      { "carta": "semente_misteriosa", "chance": 0.25 }
+    ]
+  }
+]

@@ -1,0 +1,216 @@
+// Regras da batalha automática. Não desenha nada: só calcula o que acontece
+// e devolve uma lista de eventos pra tela animar.
+
+// Gerador de números aleatórios com semente (mesma semente = mesma batalha).
+export function criarRng(semente) {
+  let a = semente >>> 0;
+  return () => {
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+export function montarUnidade(base, lado, col, linha, nivel, uid, cfg) {
+  const f = 1 + cfg.crescimentoPorNivel * (nivel - 1);
+  const vida = Math.round(base.vida * f);
+  return {
+    uid, id: base.id, nome: base.nome, emoji: base.emoji, projetil: base.projetil,
+    habilidade: base.habilidade, chefe: !!base.chefe,
+    lado, col, linha, nivel,
+    vidaMax: vida, vida,
+    atq: Math.round(base.atq * f), def: Math.round(base.def * f), vel: base.vel,
+    seiva: 0, escudo: 0, escudoTurnos: 0, reflete: 0, refleteTurnos: 0,
+    sono: 0, lento: 0, lentoTurnos: 0,
+  };
+}
+
+// Monta as unidades dos dois lados a partir do time do jogador e da batalha escolhida.
+export function prepararBatalha(batalha, time, dados) {
+  const cfg = dados.config.batalha;
+  const unidades = [];
+  let n = 0;
+  for (const m of time) {
+    const base = dados.plantas.find((p) => p.id === m.planta);
+    if (base) unidades.push(montarUnidade(base, 'planta', m.col, m.linha, m.nivel || 1, `u${n++}`, cfg));
+  }
+  for (const i of batalha.inimigos) {
+    const base = dados.pragas.find((p) => p.id === i.praga);
+    if (base) unidades.push(montarUnidade(base, 'praga', i.col, i.linha, i.nivel || batalha.nivel, `u${n++}`, cfg));
+  }
+  return unidades;
+}
+
+export function rolarCartas(batalha, rng) {
+  return batalha.cartas.filter((c) => rng() < c.chance).map((c) => c.carta);
+}
+
+// Roda a batalha inteira. ATENÇÃO: altera as unidades recebidas (passe uma cópia).
+export function simular(unidades, cfg, semente) {
+  const rng = criarRng(semente);
+  const eventos = [];
+
+  const vivos = (lado) => unidades.filter((u) => u.lado === lado && u.vida > 0);
+  const inimigos = (u) => vivos(u.lado === 'planta' ? 'praga' : 'planta');
+  const aliados = (u) => vivos(u.lado);
+  const velEfetiva = (u) => u.vel * (1 - u.lento);
+  const acabou = () => !vivos('planta').length || !vivos('praga').length;
+
+  function foto() {
+    const snap = {};
+    for (const u of unidades) {
+      snap[u.uid] = { vida: u.vida, seiva: u.seiva, escudo: u.escudo, sono: u.sono, lento: u.lento };
+    }
+    return snap;
+  }
+
+  // Alvo padrão: a linha de frente inimiga, de preferência na mesma fileira.
+  function alvoPadrao(u) {
+    const todos = inimigos(u);
+    if (!todos.length) return null;
+    const frente = todos.filter((i) => i.col === 0);
+    const opcoes = frente.length ? frente : todos;
+    let menor = Infinity;
+    for (const o of opcoes) menor = Math.min(menor, Math.abs(o.linha - u.linha));
+    const perto = opcoes.filter((o) => Math.abs(o.linha - u.linha) === menor);
+    return perto[Math.floor(rng() * perto.length)];
+  }
+
+  function bater(atacante, alvo, mult, efeitos) {
+    if (atacante.vida <= 0) return; // morreu no meio do ataque (espinhos)
+    let bruto = atacante.atq * mult * (100 / (100 + alvo.def));
+    bruto *= 1 - cfg.variacao + rng() * 2 * cfg.variacao;
+    const critico = rng() < cfg.chanceCritico;
+    if (critico) bruto *= cfg.multCritico;
+    const dano = Math.max(1, Math.round(bruto));
+    const absorvido = Math.min(alvo.escudo, dano);
+    alvo.escudo -= absorvido;
+    const resto = dano - absorvido;
+    alvo.vida = Math.max(0, alvo.vida - resto);
+    alvo.seiva = Math.min(100, alvo.seiva + cfg.seivaAoApanhar);
+    efeitos.push({ alvo: alvo.uid, tipo: 'dano', valor: dano, critico, absorvido, vidaDepois: alvo.vida, morreu: alvo.vida === 0 });
+
+    if (alvo.reflete > 0 && resto > 0 && atacante.vida > 0) {
+      const volta = Math.max(1, Math.round(resto * alvo.reflete));
+      atacante.vida = Math.max(0, atacante.vida - volta);
+      efeitos.push({ alvo: atacante.uid, tipo: 'dano', valor: volta, critico: false, absorvido: 0, reflexo: true, vidaDepois: atacante.vida, morreu: atacante.vida === 0 });
+    }
+  }
+
+  function usarHabilidade(u, efeitos) {
+    const h = u.habilidade;
+    const alvo = alvoPadrao(u);
+    switch (h.tipo) {
+      case 'area_coluna':
+        if (alvo) inimigos(u).filter((i) => i.col === alvo.col).forEach((i) => bater(u, i, h.mult, efeitos));
+        break;
+      case 'espinhos':
+        u.reflete = h.reflete;
+        u.refleteTurnos = h.turnos;
+        efeitos.push({ alvo: u.uid, tipo: 'espinhos' });
+        if (alvo) bater(u, alvo, h.mult, efeitos);
+        break;
+      case 'rajada':
+        for (let i = 0; i < h.golpes; i++) {
+          const lista = inimigos(u);
+          if (!lista.length) break;
+          bater(u, lista[Math.floor(rng() * lista.length)], h.mult, efeitos);
+        }
+        break;
+      case 'cura': {
+        const ferido = aliados(u).sort((a, b) => a.vida / a.vidaMax - b.vida / b.vidaMax)[0];
+        const valor = Math.round(u.atq * h.mult);
+        ferido.vida = Math.min(ferido.vidaMax, ferido.vida + valor);
+        efeitos.push({ alvo: ferido.uid, tipo: 'cura', valor, vidaDepois: ferido.vida });
+        break;
+      }
+      case 'escudo': {
+        const valor = Math.round(u.atq * h.mult);
+        for (const a of aliados(u)) {
+          a.escudo = Math.max(a.escudo, valor);
+          a.escudoTurnos = h.turnos;
+          efeitos.push({ alvo: a.uid, tipo: 'escudo', valor: a.escudo });
+        }
+        break;
+      }
+      case 'perfurar':
+        if (alvo) {
+          bater(u, alvo, h.mult, efeitos);
+          const atras = inimigos(u).find((i) => i.linha === alvo.linha && i.col === 1 && i !== alvo);
+          if (atras) bater(u, atras, h.mult, efeitos);
+        }
+        break;
+      case 'sono':
+        if (alvo) {
+          bater(u, alvo, h.mult, efeitos);
+          if (alvo.vida > 0) { alvo.sono = h.turnos; efeitos.push({ alvo: alvo.uid, tipo: 'sono' }); }
+        }
+        break;
+      case 'lentidao':
+        if (alvo) {
+          bater(u, alvo, h.mult, efeitos);
+          if (alvo.vida > 0) {
+            alvo.lento = h.reducao;
+            alvo.lentoTurnos = h.turnos;
+            efeitos.push({ alvo: alvo.uid, tipo: 'lento' });
+          }
+        }
+        break;
+      default:
+        if (alvo) bater(u, alvo, 1, efeitos);
+    }
+  }
+
+  function agir(u) {
+    if (u.sono > 0) {
+      u.sono -= 1;
+      eventos.push({ tipo: 'acao', de: u.uid, dormindo: true, efeitos: [], snap: foto() });
+      return;
+    }
+    const efeitos = [];
+    const especial = u.seiva >= 100;
+    if (especial) {
+      u.seiva = 0;
+      usarHabilidade(u, efeitos);
+    } else {
+      const alvo = alvoPadrao(u);
+      if (alvo) bater(u, alvo, 1, efeitos);
+      u.seiva = Math.min(100, u.seiva + cfg.seivaPorTurno);
+    }
+    eventos.push({
+      tipo: 'acao', de: u.uid, especial,
+      nomeHab: especial ? u.habilidade.nome : null,
+      habTipo: especial ? u.habilidade.tipo : null,
+      efeitos, snap: foto(),
+    });
+  }
+
+  function passarTurno() {
+    for (const u of unidades) {
+      if (u.escudoTurnos > 0 && --u.escudoTurnos === 0) u.escudo = 0;
+      if (u.refleteTurnos > 0 && --u.refleteTurnos === 0) u.reflete = 0;
+      if (u.lentoTurnos > 0 && --u.lentoTurnos === 0) u.lento = 0;
+    }
+  }
+
+  let rodada = 0;
+  while (!acabou() && rodada < cfg.maxRodadas) {
+    rodada += 1;
+    eventos.push({ tipo: 'rodada', n: rodada });
+    const ordem = unidades
+      .filter((u) => u.vida > 0)
+      .map((u) => ({ u, r: velEfetiva(u) + rng() }))
+      .sort((a, b) => b.r - a.r)
+      .map((o) => o.u);
+    for (const u of ordem) {
+      if (acabou()) break;
+      if (u.vida > 0) agir(u);
+    }
+    passarTurno();
+  }
+
+  const vitoria = vivos('praga').length === 0 && vivos('planta').length > 0;
+  eventos.push({ tipo: 'fim', vitoria, rodadas: rodada, snap: foto() });
+  return { vitoria, rodadas: rodada, eventos };
+}

@@ -1,0 +1,7 @@
+[
+  { "id": "adubo", "nome": "Adubo Simples", "emoji": "🟫", "raridade": "comum" },
+  { "id": "fibra", "nome": "Fibra Verde", "emoji": "🧶", "raridade": "comum" },
+  { "id": "seiva_dourada", "nome": "Seiva Dourada", "emoji": "🍯", "raridade": "rara" },
+  { "id": "petala_rara", "nome": "Pétala Rara", "emoji": "🌸", "raridade": "rara" },
+  { "id": "semente_misteriosa", "nome": "Semente Misteriosa", "emoji": "🌰", "raridade": "epica" }
+]

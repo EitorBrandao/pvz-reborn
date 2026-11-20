@@ -1,0 +1,429 @@
+// Desenha e anima a batalha no Canvas, tocando os eventos calculados em batalha.js.
+
+import { $, mostrarTela, avisar, sortear, preencher } from './comum.js';
+import * as jogo from '../estado.js';
+import { prepararBatalha, simular, rolarCartas, criarRng } from '../batalha.js';
+
+let dados, aoSair;
+let canvas, ctx, W = 0, H = 0, raio = 30;
+let vis = {};            // aparência atual de cada unidade
+let projeteis = [];
+let flutuantes = [];
+let banner = null;
+let tremor = 0;
+let pular = false;
+let loopId = null;
+let partida = 0;         // muda a cada batalha nova, pra cancelar animações antigas
+let batalhaAtual = null;
+
+const agora = () => performance.now();
+const vel = () => jogo.estado.velocidadeBatalha || 1;
+
+export function iniciarTelaBatalha(d, sair) {
+  dados = d;
+  aoSair = sair;
+  canvas = $('campo');
+  ctx = canvas.getContext('2d');
+  window.addEventListener('resize', medir);
+
+  $('btn-velocidade').addEventListener('click', () => {
+    jogo.definirVelocidade(vel() === 1 ? 2 : 1);
+    atualizarBotoes();
+  });
+  $('btn-pular').addEventListener('click', () => {
+    if (!podePular()) return avisar(dados.textos.pularBloqueado);
+    pular = true;
+  });
+  $('btn-de-novo').addEventListener('click', () => comecarBatalha(batalhaAtual));
+  $('btn-sair-batalha').addEventListener('click', () => {
+    parar();
+    aoSair();
+  });
+}
+
+function podePular() {
+  return jogo.estado.vencidas.includes(batalhaAtual.id);
+}
+
+function atualizarBotoes() {
+  $('btn-velocidade').textContent = `${vel()}x`;
+  $('btn-pular').classList.toggle('bloqueado', !podePular());
+}
+
+export function comecarBatalha(batalha) {
+  batalhaAtual = batalha;
+  const minhaPartida = ++partida;
+  pular = false;
+  projeteis = [];
+  flutuantes = [];
+  banner = null;
+  tremor = 0;
+
+  const unidades = prepararBatalha(batalha, jogo.estado.time, dados);
+  const semente = (Date.now() ^ Math.floor(Math.random() * 1e9)) >>> 0;
+  const resultado = simular(structuredClone(unidades), dados.config.batalha, semente);
+
+  vis = {};
+  for (const u of unidades) vis[u.uid] = { ...u, ox: 0, oy: 0, dx: 0, dy: 0, alpha: 1, brilho: 0, flash: 0 };
+
+  $('resultado').classList.add('escondido');
+  $('batalha-nome').textContent = batalha.nome;
+  $('batalha-rodada').textContent = '1';
+  atualizarBotoes();
+  mostrarTela('tela-batalha');
+  medir();
+  if (!loopId) loopId = requestAnimationFrame(desenhar);
+
+  tocar(resultado.eventos, minhaPartida).then(() => {
+    if (minhaPartida === partida) terminar(resultado, semente);
+  });
+}
+
+function parar() {
+  partida++;
+  if (loopId) cancelAnimationFrame(loopId);
+  loopId = null;
+}
+
+function medir() {
+  if (!canvas || !canvas.parentElement) return;
+  const r = canvas.parentElement.getBoundingClientRect();
+  if (!r.width || !r.height) return;
+  const dpr = window.devicePixelRatio || 1;
+  W = r.width;
+  H = r.height;
+  canvas.width = Math.round(W * dpr);
+  canvas.height = Math.round(H * dpr);
+  canvas.style.width = `${W}px`;
+  canvas.style.height = `${H}px`;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  raio = Math.min(W * 0.075, H * 0.085);
+  for (const v of Object.values(vis)) {
+    const xs = v.lado === 'planta' ? [0.34, 0.13] : [0.66, 0.87];
+    v.x = W * xs[v.col];
+    v.y = H * (0.2 + 0.3 * v.linha);
+  }
+}
+
+// ---------- Tocar os eventos ----------
+
+function espera(ms) {
+  if (pular) return Promise.resolve();
+  return new Promise((r) => setTimeout(r, ms / vel()));
+}
+
+async function tocar(eventos, minhaPartida) {
+  for (const ev of eventos) {
+    if (pular || minhaPartida !== partida) break;
+    if (ev.tipo === 'rodada') $('batalha-rodada').textContent = ev.n;
+    else if (ev.tipo === 'acao') await animarAcao(ev);
+  }
+  if (minhaPartida !== partida) return;
+  const fim = eventos[eventos.length - 1];
+  aplicarFoto(fim.snap);
+  $('batalha-rodada').textContent = fim.rodadas;
+  projeteis.forEach((p) => p.resolver());
+  projeteis = [];
+  await espera(400);
+}
+
+async function animarAcao(ev) {
+  const a = vis[ev.de];
+  const t = dados.textos.efeitos;
+  if (ev.dormindo) {
+    flutuar(a.x, a.y - raio, t.dormindo, '#ffffff', 18);
+    await espera(500);
+    aplicarFoto(ev.snap);
+    return;
+  }
+
+  if (ev.especial) {
+    banner = { texto: ev.nomeHab, x: a.x, y: a.y - raio * 1.9, t0: agora(), dur: 1100 / vel() };
+    a.brilho = 1;
+    tremor += 3;
+    await espera(450);
+  }
+
+  const golpes = ev.efeitos.filter((e) => e.tipo === 'dano' && !e.reflexo);
+  if (golpes.length) {
+    const alvo = vis[golpes[0].alvo];
+    const ang = Math.atan2(alvo.y - a.y, alvo.x - a.x);
+    a.dx = Math.cos(ang) * raio * 0.7;
+    a.dy = Math.sin(ang) * raio * 0.7;
+    await espera(140);
+    a.dx = 0;
+    a.dy = 0;
+  }
+
+  let atraso = 0;
+  const chegadas = golpes.map((ef) => {
+    const voo = lancar(a, vis[ef.alvo], a.projetil, atraso).then(() => mostrarEfeito(ef));
+    atraso += ev.habTipo === 'rajada' ? 130 : 50;
+    return voo;
+  });
+  await Promise.all(chegadas);
+
+  for (const ef of ev.efeitos) {
+    if (!(ef.tipo === 'dano' && !ef.reflexo)) mostrarEfeito(ef);
+  }
+  aplicarFoto(ev.snap);
+  await espera(ev.especial ? 500 : 280);
+  a.brilho = 0;
+}
+
+function lancar(de, para, emoji, atraso) {
+  if (pular) return Promise.resolve();
+  return new Promise((resolver) => {
+    projeteis.push({
+      x0: de.x, y0: de.y, x1: para.x, y1: para.y, emoji,
+      t0: agora() + atraso / vel(), dur: 320 / vel(), resolver,
+    });
+  });
+}
+
+function mostrarEfeito(ef) {
+  const v = vis[ef.alvo];
+  const t = dados.textos.efeitos;
+  if (!v) return;
+  switch (ef.tipo) {
+    case 'dano':
+      v.vida = ef.vidaDepois;
+      v.flash = 1;
+      if (ef.reflexo) flutuar(v.x, v.y - raio, `-${ef.valor}`, '#d08cff', 22);
+      else if (ef.critico) { flutuar(v.x, v.y - raio, `${ef.valor}!`, '#ff3b2f', 36); tremor += 9; }
+      else { flutuar(v.x, v.y - raio, `${ef.valor}`, '#ffe14d', 26); tremor += 1.5; }
+      break;
+    case 'cura':
+      v.vida = ef.vidaDepois;
+      flutuar(v.x, v.y - raio, `+${ef.valor}`, '#7dff6a', 26);
+      break;
+    case 'escudo':
+      v.escudo = ef.valor;
+      flutuar(v.x, v.y - raio, preencher(t.escudo, { valor: ef.valor }), '#7fe3ff', 18);
+      break;
+    case 'espinhos':
+      flutuar(v.x, v.y - raio * 1.4, t.espinhos, '#b6ff5c', 18);
+      break;
+    case 'sono':
+      v.sono = 1;
+      flutuar(v.x, v.y - raio * 1.4, t.sono, '#ffffff', 18);
+      break;
+    case 'lento':
+      v.lento = 1;
+      flutuar(v.x, v.y - raio * 1.4, t.lento, '#9fd0ff', 18);
+      break;
+  }
+}
+
+function aplicarFoto(snap) {
+  for (const uid in snap) if (vis[uid]) Object.assign(vis[uid], snap[uid]);
+}
+
+function flutuar(x, y, texto, cor, tam) {
+  if (pular) return;
+  flutuantes.push({ x, y, texto, cor, tam, t0: agora(), dur: 900 / vel() });
+}
+
+// ---------- Resultado ----------
+
+function terminar(resultado, semente) {
+  const { textos } = dados;
+  let cartas = [];
+  let moedas = 0;
+  if (resultado.vitoria) {
+    cartas = rolarCartas(batalhaAtual, criarRng(semente ^ 0x9e3779b9));
+    moedas = batalhaAtual.recompensa.moedas;
+    jogo.registrarVitoria(batalhaAtual.id, moedas, cartas);
+  }
+  atualizarBotoes();
+
+  const caixa = $('resultado');
+  caixa.classList.toggle('vitoria', resultado.vitoria);
+  $('resultado-titulo').textContent = sortear(resultado.vitoria ? textos.vitoria : textos.derrota);
+  $('resultado-texto').textContent = resultado.vitoria
+    ? preencher(textos.vitoriaTexto, { moedas })
+    : textos.derrotaTexto;
+
+  const area = $('resultado-cartas');
+  area.innerHTML = '';
+  if (resultado.vitoria && !cartas.length) area.innerHTML = `<p>${textos.semCartas}</p>`;
+  cartas.forEach((id, i) => {
+    const c = dados.cartas.find((x) => x.id === id);
+    if (!c) return;
+    const div = document.createElement('div');
+    div.className = `carta ${c.raridade}`;
+    div.style.animationDelay = `${0.3 + i * 0.2}s`;
+    div.innerHTML = `<span>${c.emoji}</span><small>${c.nome}</small>`;
+    area.appendChild(div);
+  });
+  caixa.classList.remove('escondido');
+}
+
+// ---------- Desenho ----------
+
+function desenhar() {
+  loopId = requestAnimationFrame(desenhar);
+  if (!W) { medir(); if (!W) return; }
+  const t = agora();
+  ctx.save();
+  ctx.clearRect(0, 0, W, H);
+  if (tremor > 0.2) {
+    ctx.translate((Math.random() - 0.5) * tremor, (Math.random() - 0.5) * tremor);
+    tremor *= 0.86;
+  } else tremor = 0;
+
+  desenharGrama();
+  Object.values(vis).sort((a, b) => a.y - b.y).forEach(desenharUnidade);
+  desenharProjeteis(t);
+  desenharFlutuantes(t);
+  desenharBanner(t);
+  ctx.restore();
+}
+
+function desenharGrama() {
+  const colunas = 8;
+  const linhas = 6;
+  const lw = W / colunas;
+  const lh = H / linhas;
+  for (let i = 0; i < colunas; i++) {
+    for (let j = 0; j < linhas; j++) {
+      ctx.fillStyle = (i + j) % 2 ? '#4caf2e' : '#43a326';
+      ctx.fillRect(i * lw, j * lh, lw + 1, lh + 1);
+    }
+  }
+  ctx.strokeStyle = 'rgba(255,255,255,.25)';
+  ctx.setLineDash([8, 8]);
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(W / 2, 8);
+  ctx.lineTo(W / 2, H - 8);
+  ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+function desenharUnidade(v) {
+  const r = raio * (v.chefe ? 1.35 : 1);
+  v.ox += (v.dx - v.ox) * 0.35;
+  v.oy += (v.dy - v.oy) * 0.35;
+  v.alpha += ((v.vida > 0 ? 1 : 0.18) - v.alpha) * 0.12;
+  v.flash *= 0.85;
+  const x = v.x + v.ox;
+  const y = v.y + v.oy;
+
+  ctx.save();
+  ctx.globalAlpha = v.alpha;
+
+  ctx.fillStyle = 'rgba(0,0,0,.25)';
+  ctx.beginPath();
+  ctx.ellipse(x, y + r * 0.75, r * 0.9, r * 0.3, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  if (v.brilho > 0) {
+    ctx.fillStyle = 'rgba(255,225,80,.45)';
+    ctx.beginPath();
+    ctx.arc(x, y, r * 1.25, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  if (v.escudo > 0 && v.vida > 0) {
+    ctx.strokeStyle = 'rgba(127,227,255,.9)';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(x, y, r * 1.1, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  ctx.font = `${r * 1.5}px serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#000'; // cor opaca, senão o emoji fica transparente no Chrome
+  ctx.fillText(v.emoji, x, y);
+
+  if (v.flash > 0.05) {
+    ctx.fillStyle = `rgba(255,255,255,${v.flash * 0.55})`;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  if (v.vida > 0) {
+    const larg = r * 2;
+    const bx = x - larg / 2;
+    const by = y + r + 4;
+    const pv = v.vida / v.vidaMax;
+    ctx.fillStyle = 'rgba(0,0,0,.55)';
+    ctx.fillRect(bx - 1, by - 1, larg + 2, 12);
+    ctx.fillStyle = pv > 0.5 ? '#5cc23a' : pv > 0.25 ? '#ffb020' : '#e5483a';
+    ctx.fillRect(bx, by, larg * pv, 6);
+    ctx.fillStyle = v.seiva >= 100 ? '#ffd23a' : '#3a9ee6';
+    ctx.fillRect(bx, by + 7, larg * (v.seiva / 100), 3);
+
+    ctx.font = `${r * 0.5}px serif`;
+    if (v.sono > 0) ctx.fillText('💤', x + r * 0.8, y - r * 0.8);
+    if (v.lento > 0) ctx.fillText('🐢', x - r * 0.8, y - r * 0.8);
+
+    ctx.font = `bold ${Math.max(10, r * 0.32)}px "Trebuchet MS", sans-serif`;
+    ctx.fillStyle = '#fff';
+    ctx.strokeStyle = 'rgba(0,0,0,.6)';
+    ctx.lineWidth = 3;
+    ctx.strokeText(`Nv${v.nivel}`, x, by + 20);
+    ctx.fillText(`Nv${v.nivel}`, x, by + 20);
+  }
+  ctx.restore();
+}
+
+function desenharProjeteis(t) {
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.font = `${raio * 0.8}px serif`;
+  ctx.fillStyle = '#000';
+  projeteis = projeteis.filter((p) => {
+    const k = (t - p.t0) / p.dur;
+    if (k < 0) return true;
+    if (k >= 1) { p.resolver(); return false; }
+    const x = p.x0 + (p.x1 - p.x0) * k;
+    const y = p.y0 + (p.y1 - p.y0) * k - Math.sin(Math.PI * k) * raio;
+    ctx.fillText(p.emoji, x, y);
+    return true;
+  });
+}
+
+function desenharFlutuantes(t) {
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.lineJoin = 'round';
+  flutuantes = flutuantes.filter((f) => {
+    const k = (t - f.t0) / f.dur;
+    if (k >= 1) return false;
+    const escala = k < 0.15 ? 0.5 + (k / 0.15) * 0.7 : 1.2 - Math.min(0.2, k - 0.15);
+    ctx.globalAlpha = k < 0.6 ? 1 : 1 - (k - 0.6) / 0.4;
+    ctx.font = `900 ${f.tam * escala}px "Trebuchet MS", sans-serif`;
+    const y = f.y - 45 * k;
+    ctx.strokeStyle = '#2a1600';
+    ctx.lineWidth = 5;
+    ctx.strokeText(f.texto, f.x, y);
+    ctx.fillStyle = f.cor;
+    ctx.fillText(f.texto, f.x, y);
+    ctx.globalAlpha = 1;
+    return true;
+  });
+}
+
+function desenharBanner(t) {
+  if (!banner) return;
+  const k = (t - banner.t0) / banner.dur;
+  if (k >= 1) { banner = null; return; }
+  ctx.globalAlpha = k > 0.75 ? 1 - (k - 0.75) / 0.25 : 1;
+  ctx.font = '900 16px "Trebuchet MS", sans-serif';
+  const larg = ctx.measureText(banner.texto).width + 20;
+  const x = Math.min(Math.max(banner.x, larg / 2 + 4), W - larg / 2 - 4);
+  const y = Math.max(banner.y, 18);
+  ctx.fillStyle = 'rgba(35,48,27,.9)';
+  ctx.beginPath();
+  ctx.roundRect(x - larg / 2, y - 14, larg, 28, 14);
+  ctx.fill();
+  ctx.fillStyle = '#ffd23a';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(banner.texto, x, y + 1);
+  ctx.globalAlpha = 1;
+}

@@ -46,11 +46,53 @@
       </main>
 
       <nav class="menu-base">
-        <button class="btn btn-menu" data-breve="Batalha">⚔️<span>Batalha</span></button>
+        <button id="btn-batalha" class="btn btn-menu btn-laranja">⚔️<span>Batalha</span></button>
         <button class="btn btn-menu" data-breve="Plantas">🌿<span>Plantas</span></button>
         <button class="btn btn-menu" data-breve="Campanha">🗺️<span>Campanha</span></button>
         <button class="btn btn-menu" data-breve="Arena">🏆<span>Arena</span></button>
       </nav>
+    </section>
+
+    <!-- Preparar batalha -->
+    <section id="tela-time" class="tela">
+      <header class="topo">
+        <button id="time-voltar" class="btn-icone" aria-label="Voltar">⬅️</button>
+        <h2>Preparar batalha</h2>
+      </header>
+      <div class="rolagem">
+        <h3 class="titulo-secao">Escolha a batalha</h3>
+        <div id="lista-batalhas" class="lista-batalhas"></div>
+        <h3 class="titulo-secao">Seu time <small id="time-contagem"></small></h3>
+        <div class="grade-rotulos"><span>Fundo</span><span>Frente ➡️</span></div>
+        <div id="grade-time" class="grade"></div>
+        <p class="dica-pequena">Toque numa planta pra colocar no time. Pra escolher o lugar, toque antes num espaço vazio. Toque numa planta do time pra tirar.</p>
+        <div id="lista-plantas" class="lista-plantas"></div>
+      </div>
+      <button id="btn-lutar" class="btn btn-grande btn-laranja btn-fixo">Lutar!</button>
+    </section>
+
+    <!-- Batalha -->
+    <section id="tela-batalha" class="tela">
+      <header class="topo topo-batalha">
+        <span id="batalha-nome" class="pilula"></span>
+        <span class="pilula">Rodada <b id="batalha-rodada">1</b></span>
+      </header>
+      <div class="campo"><canvas id="campo"></canvas></div>
+      <div class="controles">
+        <button id="btn-velocidade" class="btn btn-azul">1x</button>
+        <button id="btn-pular" class="btn btn-verde">Pular ⏭️</button>
+      </div>
+      <div id="resultado" class="resultado escondido">
+        <div class="resultado-caixa">
+          <h2 id="resultado-titulo"></h2>
+          <p id="resultado-texto"></p>
+          <div id="resultado-cartas" class="cartas"></div>
+          <div class="resultado-botoes">
+            <button id="btn-de-novo" class="btn btn-laranja">Lutar de novo</button>
+            <button id="btn-sair-batalha" class="btn btn-azul">Voltar</button>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Opções -->

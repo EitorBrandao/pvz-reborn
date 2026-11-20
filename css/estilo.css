@@ -195,3 +195,114 @@ body {
 
 @keyframes balanca { 0%, 100% { transform: rotate(-6deg); } 50% { transform: rotate(6deg); } }
 @keyframes pulo { 0% { transform: scale(1); } 50% { transform: scale(1.25) translateY(-8px); } 100% { transform: scale(1); } }
+
+/* ---------- Preparar batalha ---------- */
+.rolagem { flex: 1; min-height: 0; overflow-y: auto; padding-bottom: 12px; }
+.titulo-secao { margin: 16px 0 8px; text-shadow: 0 2px 0 rgba(0, 0, 0, .3); }
+.titulo-secao small { font-size: .85rem; opacity: .85; }
+.lista-batalhas { display: flex; flex-direction: column; gap: 8px; }
+.cartao-batalha, .cartao-planta, .espaco {
+  font-family: inherit;
+  color: var(--escuro);
+  background: var(--bege);
+  border: 3px solid var(--terra);
+  border-radius: 14px;
+  cursor: pointer;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, .3);
+}
+.cartao-batalha {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px 8px;
+  text-align: left;
+  padding: 10px 12px;
+}
+.cartao-batalha .inimigos { grid-column: 1 / -1; font-size: 1.4rem; }
+.cartao-batalha.escolhida { border-color: var(--laranja); background: #fff3d6; outline: 3px solid var(--laranja); }
+
+.grade-rotulos { display: grid; grid-template-columns: 1fr 1fr; text-align: center; font-weight: 700; font-size: .85rem; }
+.grade { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; max-width: 240px; margin: 4px auto 0; }
+.grade-rotulos { max-width: 240px; margin: 0 auto; }
+.espaco { height: 64px; font-size: 2.2rem; background: rgba(246, 231, 193, .45); border-style: dashed; }
+.espaco.cheio { background: var(--bege); border-style: solid; }
+.espaco.marcado { border-color: var(--laranja); background: #fff3d6; }
+.dica-pequena { font-size: .8rem; opacity: .9; text-align: center; margin: 8px 0; }
+
+.lista-plantas { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.cartao-planta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 4px;
+  gap: 2px;
+}
+.cartao-planta .planta-emoji { font-size: 2rem; }
+.cartao-planta b { font-size: .85rem; }
+.cartao-planta small { font-size: .7rem; opacity: .8; }
+.cartao-planta .atributos { font-size: .7rem; }
+.cartao-planta.no-time { background: #d9f5c8; border-color: #3d9a22; }
+.btn-fixo { margin: 8px 0 12px; }
+
+/* ---------- Batalha ---------- */
+.topo-batalha { justify-content: space-between; }
+.campo {
+  flex: 1;
+  min-height: 0;
+  margin-top: 12px;
+  border: 4px solid var(--terra);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: var(--sombra);
+}
+.campo canvas { display: block; }
+.controles { display: flex; gap: 12px; justify-content: center; padding: 12px 0; }
+.btn.bloqueado { filter: grayscale(.8); opacity: .7; }
+
+.resultado {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, .55);
+  padding: 16px;
+  z-index: 5;
+}
+.resultado-caixa {
+  background: var(--bege);
+  color: var(--escuro);
+  border: 4px solid var(--terra);
+  border-radius: 22px;
+  padding: 20px 16px;
+  width: 100%;
+  max-width: 360px;
+  text-align: center;
+  animation: entrar .35s ease-out;
+}
+.resultado-caixa h2 { margin: 0; font-size: 2rem; color: var(--vermelho); }
+.resultado.vitoria h2 { color: #e08a00; }
+.resultado-botoes { display: flex; gap: 10px; justify-content: center; margin-top: 16px; flex-wrap: wrap; }
+.cartas { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; min-height: 20px; }
+.carta {
+  width: 70px;
+  padding: 8px 4px;
+  background: #fff;
+  border: 3px solid #bbb;
+  border-radius: 10px;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, .25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 0;
+  animation: carta-voa .6s cubic-bezier(.2, 1.4, .4, 1) forwards;
+}
+.carta span { font-size: 1.8rem; }
+.carta small { font-size: .65rem; font-weight: 700; }
+.carta.rara { border-color: var(--azul); }
+.carta.epica { border-color: #a24be0; background: #f6ebff; }
+
+@keyframes entrar { from { transform: scale(.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes carta-voa {
+  from { opacity: 0; transform: translateY(-140px) rotate(-25deg) scale(.4); }
+  to { opacity: 1; transform: none; }
+}

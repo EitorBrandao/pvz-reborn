@@ -1,6 +1,6 @@
 // Guarda os arquivos do jogo no celular pra funcionar sem internet.
 // IMPORTANTE: ao mudar qualquer arquivo do jogo, aumente o número da versão abaixo.
-const VERSAO = 'horta-v0.1.0';
+const VERSAO = 'horta-v0.2.0';
 
 const ARQUIVOS = [
   './',
@@ -10,8 +10,16 @@ const ARQUIVOS = [
   'js/main.js',
   'js/estado.js',
   'js/save.js',
+  'js/batalha.js',
+  'js/ui/comum.js',
+  'js/ui/tela-time.js',
+  'js/ui/tela-batalha.js',
   'data/config.json',
   'data/mensagens.json',
+  'data/plantas.json',
+  'data/pragas.json',
+  'data/cartas.json',
+  'data/batalhas.json',
   'art/icones/icone.svg',
   'art/icones/icone-192.png',
   'art/icones/icone-512.png',

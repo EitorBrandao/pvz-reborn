@@ -11,5 +11,21 @@
   "saveImportado": "Save carregado!",
   "saveInvalido": "Esse arquivo não parece um save da Horta Selvagem.",
   "confirmarApagar": "Apagar TODO o progresso? Não dá pra desfazer.",
-  "apagado": "Tudo apagado. Começando do zero!"
+  "apagado": "Tudo apagado. Começando do zero!",
+
+  "timeVazio": "Coloca pelo menos uma planta no time!",
+  "timeCheio": "O time já tem {max} plantas. Tira uma pra trocar.",
+  "pularBloqueado": "Vença essa batalha uma vez pra liberar o Pular.",
+  "vitoria": ["Vitória!", "Horta salva!", "Pragas no chão!"],
+  "derrota": ["Derrota...", "As pragas venceram", "Quase!"],
+  "vitoriaTexto": "+{moedas} moedas",
+  "derrotaTexto": "Tente outra formação ou outras plantas.",
+  "semCartas": "Nenhuma carta dessa vez.",
+  "efeitos": {
+    "dormindo": "💤 zzz",
+    "espinhos": "🌵 Espinhos!",
+    "sono": "💤 Dormiu!",
+    "lento": "🐢 Lento!",
+    "escudo": "🛡️ +{valor}"
+  }
 }

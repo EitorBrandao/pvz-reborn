@@ -2,30 +2,15 @@
 
 import * as jogo from './estado.js';
 import * as save from './save.js';
+import { $, mostrarTela, avisar, sortear, preencher } from './ui/comum.js';
+import { iniciarTelaTime, abrirTelaTime } from './ui/tela-time.js';
+import { iniciarTelaBatalha, comecarBatalha } from './ui/tela-batalha.js';
 
-const $ = (id) => document.getElementById(id);
-let config, textos;
+let dados;
 
 async function lerJson(caminho) {
   const resposta = await fetch(caminho);
   return resposta.json();
-}
-
-function mostrarTela(id) {
-  document.querySelectorAll('.tela').forEach((t) => t.classList.toggle('ativa', t.id === id));
-}
-
-let timerAviso;
-function avisar(texto) {
-  const aviso = $('aviso');
-  aviso.textContent = texto;
-  aviso.classList.add('mostra');
-  clearTimeout(timerAviso);
-  timerAviso = setTimeout(() => aviso.classList.remove('mostra'), 2200);
-}
-
-function sortear(lista) {
-  return lista[Math.floor(Math.random() * lista.length)];
 }
 
 function atualizarTela() {
@@ -41,11 +26,17 @@ function atualizarTela() {
   $('info-save').textContent = `Último save: ${data}`;
 }
 
+function irParaBase() {
+  atualizarTela();
+  mostrarTela('tela-base');
+}
+
 function ligarBotoes() {
+  const { textos } = dados;
+
   $('btn-jogar').addEventListener('click', () => {
     $('saudacao').textContent = sortear(textos.saudacoes);
-    atualizarTela();
-    mostrarTela('tela-base');
+    irParaBase();
   });
 
   $('broto').addEventListener('click', () => {
@@ -54,16 +45,18 @@ function ligarBotoes() {
     broto.classList.remove('regou');
     void broto.offsetWidth; // reinicia a animação
     broto.classList.add('regou');
-    if (ganhou) avisar(textos.brotoCresceu.replace('{moedas}', ganhou));
+    if (ganhou) avisar(preencher(textos.brotoCresceu, { moedas: ganhou }));
     atualizarTela();
   });
 
+  $('btn-batalha').addEventListener('click', abrirTelaTime);
+
   document.querySelectorAll('[data-breve]').forEach((botao) => {
-    botao.addEventListener('click', () => avisar(textos.emBreve.replace('{nome}', botao.dataset.breve)));
+    botao.addEventListener('click', () => avisar(preencher(textos.emBreve, { nome: botao.dataset.breve })));
   });
 
   $('btn-opcoes').addEventListener('click', () => { atualizarTela(); mostrarTela('tela-opcoes'); });
-  $('btn-voltar').addEventListener('click', () => { atualizarTela(); mostrarTela('tela-base'); });
+  $('btn-voltar').addEventListener('click', irParaBase);
 
   $('btn-exportar').addEventListener('click', () => {
     jogo.salvarAgora();
@@ -76,9 +69,9 @@ function ligarBotoes() {
     const arquivo = evento.target.files[0];
     evento.target.value = '';
     if (!arquivo) return;
-    const dados = await save.importar(arquivo);
-    if (!dados) return avisar(textos.saveInvalido);
-    jogo.substituir(dados);
+    const novo = await save.importar(arquivo);
+    if (!novo) return avisar(textos.saveInvalido);
+    jogo.substituir(novo);
     atualizarTela();
     avisar(textos.saveImportado);
   });
@@ -118,11 +111,23 @@ function registrarServiceWorker() {
 }
 
 async function comecar() {
-  [config, textos] = await Promise.all([lerJson('data/config.json'), lerJson('data/mensagens.json')]);
+  const [config, textos, plantas, pragas, cartas, batalhas] = await Promise.all([
+    lerJson('data/config.json'),
+    lerJson('data/mensagens.json'),
+    lerJson('data/plantas.json'),
+    lerJson('data/pragas.json'),
+    lerJson('data/cartas.json'),
+    lerJson('data/batalhas.json'),
+  ]);
+  dados = { config, textos, plantas, pragas, cartas, batalhas };
+
   jogo.iniciar(config);
   save.pedirArmazenamentoPersistente();
   $('versao').textContent = `versão ${config.versaoJogo}`;
+
   ligarBotoes();
+  iniciarTelaTime(dados, { lutar: comecarBatalha, voltar: irParaBase });
+  iniciarTelaBatalha(dados, abrirTelaTime);
   prepararInstalacao();
   registrarServiceWorker();
   atualizarTela();

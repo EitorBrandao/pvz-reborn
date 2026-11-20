@@ -1,5 +1,5 @@
 {
-  "versaoJogo": "0.1.0",
+  "versaoJogo": "0.2.0",
   "inicio": {
     "moedas": 500,
     "orvalho": 10,
@@ -12,5 +12,21 @@
   },
   "save": {
     "intervaloSegundos": 10
+  },
+  "timeInicial": [
+    { "planta": "cacto", "col": 0, "linha": 1 },
+    { "planta": "milho", "col": 0, "linha": 0 },
+    { "planta": "bambu", "col": 0, "linha": 2 },
+    { "planta": "babosa", "col": 1, "linha": 1 }
+  ],
+  "batalha": {
+    "tamanhoTime": 5,
+    "maxRodadas": 30,
+    "seivaPorTurno": 25,
+    "seivaAoApanhar": 10,
+    "chanceCritico": 0.1,
+    "multCritico": 1.5,
+    "variacao": 0.1,
+    "crescimentoPorNivel": 0.15
   }
 }

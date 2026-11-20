@@ -1,0 +1,32 @@
+[
+  {
+    "id": "lagarta", "nome": "Lagarta Gulosa", "emoji": "🐛", "projetil": "🟢",
+    "vida": 160, "atq": 22, "def": 10, "vel": 8,
+    "habilidade": { "tipo": "cura", "nome": "Mastigada Revigorante", "mult": 1.2 }
+  },
+  {
+    "id": "gafanhoto", "nome": "Gafanhoto Saqueador", "emoji": "🦗", "projetil": "💢",
+    "vida": 130, "atq": 28, "def": 8, "vel": 16,
+    "habilidade": { "tipo": "rajada", "nome": "Revoada", "golpes": 2, "mult": 0.7 }
+  },
+  {
+    "id": "besouro", "nome": "Besouro Blindado", "emoji": "🪲", "projetil": "🪨",
+    "vida": 300, "atq": 20, "def": 38, "vel": 6,
+    "habilidade": { "tipo": "escudo", "nome": "Carapaça", "mult": 1.0, "turnos": 2 }
+  },
+  {
+    "id": "lesma", "nome": "Lesma Ácida", "emoji": "🐌", "projetil": "💚",
+    "vida": 180, "atq": 20, "def": 14, "vel": 7,
+    "habilidade": { "tipo": "lentidao", "nome": "Gosma Grudenta", "mult": 0.8, "reducao": 0.4, "turnos": 2 }
+  },
+  {
+    "id": "toupeira", "nome": "Toupeira Escavadora", "emoji": "🦫", "projetil": "🪨",
+    "vida": 200, "atq": 30, "def": 18, "vel": 9,
+    "habilidade": { "tipo": "perfurar", "nome": "Túnel Surpresa", "mult": 1.2 }
+  },
+  {
+    "id": "rainha", "nome": "Rainha Formiga", "emoji": "🐜", "projetil": "🐜", "chefe": true,
+    "vida": 1100, "atq": 40, "def": 28, "vel": 10,
+    "habilidade": { "tipo": "area_coluna", "nome": "Ataque da Colônia", "mult": 0.9 }
+  }
+]
