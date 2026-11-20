@@ -692,6 +692,14 @@ body {
 .treino-nivel { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 10px 0 0; }
 .treino-nivel b { min-width: 64px; text-align: center; font-size: 1.1rem; text-shadow: 0 2px 0 rgba(0, 0, 0, .3); }
 
+/* ---------- Poder ---------- */
+.cartao-planta .poder { font-size: .75rem; font-weight: 800; color: #8a3b00; }
+.linha-poder b { font-size: 1.1rem; color: #8a3b00; }
+.poder-previa { font-size: .7rem; color: #8a3b00; }
+.poder-comparar { font-weight: 800; font-size: .9rem; margin-top: 2px; }
+.poder-comparar.mais-forte { color: #2f7d1f; }
+.poder-comparar.mais-fraco { color: #c0392b; }
+
 /* ---------- Rotina: canteiro, expedição e calendário ---------- */
 .rotina { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: 100%; max-width: 340px; margin-top: 6px; }
 .vaso {

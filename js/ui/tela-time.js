@@ -2,12 +2,18 @@
 
 import { $, mostrarTela, avisar, preencher } from './comum.js';
 import * as jogo from '../estado.js';
-import { atributos } from '../evolucao.js';
-import { bonusFaccoes } from '../batalha.js';
+import { atributos, poder } from '../evolucao.js';
+import { bonusFaccoes, poderLados } from '../batalha.js';
 
 let dados;
 let faseEscolhida = null;
 let espacoEscolhido = null; // { col, linha } quando o jogador toca num espaço vazio
+
+// Ordem da lista de plantas (lembrada só neste aparelho). Plantas do time sempre em cima.
+const ORDENS = ['padrao', 'poder', 'nivel', 'estrela', 'vida', 'atq', 'def', 'vel'];
+let ordem = 'padrao';
+try { ordem = localStorage.getItem('horta-ordem-time') || 'padrao'; } catch { /* sem storage */ }
+if (!ORDENS.includes(ordem)) ordem = 'padrao';
 
 export function iniciarTelaTime(d, { lutar, voltar }) {
   dados = d;
@@ -15,6 +21,11 @@ export function iniciarTelaTime(d, { lutar, voltar }) {
   $('btn-lutar').addEventListener('click', () => {
     if (!jogo.estado.time.length) return avisar(dados.textos.timeVazio);
     lutar(faseEscolhida);
+  });
+  $('btn-ordenar-time').addEventListener('click', () => {
+    ordem = ORDENS[(ORDENS.indexOf(ordem) + 1) % ORDENS.length];
+    try { localStorage.setItem('horta-ordem-time', ordem); } catch { /* sem storage */ }
+    desenharPlantas();
   });
 }
 
@@ -30,13 +41,15 @@ function desenhar() {
   desenharGrade();
   desenharPlantas();
   desenharBonus();
-  $('time-contagem').textContent = `${jogo.estado.time.length}/${tamanhoMax()}`;
+  const proxima = faseEscolhida.timeMax ? null : jogo.proximaVaga();
+  $('time-contagem').textContent = `${jogo.estado.time.length}/${tamanhoMax()}`
+    + (proxima ? ` ${preencher(dados.textos.proximaVaga, { nivel: proxima })}` : '');
   $('btn-lutar').textContent = faseEscolhida.folego ? `Lutar! ⚡${faseEscolhida.folego}` : 'Lutar!';
 }
 
-// Limite de plantas: regra da batalha (ex.: Desafio "Time de três") ou o normal
+// Limite de plantas: vagas liberadas pelo nível, ou menos se a batalha tiver regra própria (ex.: Desafio "Time de três")
 function tamanhoMax() {
-  return faseEscolhida.timeMax || dados.config.batalha.tamanhoTime;
+  return Math.min(faseEscolhida.timeMax || Infinity, jogo.vagasTime());
 }
 
 // Linha de cima do resumo: mapa e fase na campanha, nome da atividade fora dela
@@ -57,7 +70,17 @@ function desenharFase() {
     <b>${f.nome}</b>
     <span class="inimigos">${inimigos} <small>Nv ${f.nivel}</small></span>
     <small class="categorias">${cats}</small>
-    ${f.regra ? `<small class="regra-desafio">📜 ${f.regra.texto}</small>` : ''}`;
+    ${f.regra ? `<small class="regra-desafio">📜 ${f.regra.texto}</small>` : ''}
+    ${textoPoder()}`;
+}
+
+// Poder do time contra o das pragas: verde se o time é mais forte, vermelho se é mais fraco.
+function textoPoder() {
+  const t = dados.textos;
+  const { planta: nosso, praga: deles } = poderLados(faseEscolhida, jogo.estado.time, dados, jogo.estado.colecao);
+  if (!jogo.estado.time.length) return `<span class="poder-comparar">${preencher(t.poderVazio, { deles })}</span>`;
+  const classe = nosso >= deles ? 'mais-forte' : 'mais-fraco';
+  return `<span class="poder-comparar ${classe}">${preencher(t.poderComparar, { nosso, deles })}</span>`;
 }
 
 function desenharBonus() {
@@ -103,13 +126,40 @@ function primeiroEspacoLivre() {
   return null;
 }
 
+function comPoder(s) {
+  return { ...s, poder: poder(s, dados) };
+}
+
+// Time primeiro (frente antes do fundo, de cima pra baixo); depois o resto na ordem escolhida.
+// Empate mantém a ordem original.
+function plantasOrdenadas() {
+  const col = jogo.estado.colecao;
+  const time = jogo.estado.time;
+  const itens = dados.plantas.filter((x) => col[x.id]).map((p, i) => ({
+    p, i, r: col[p.id], s: comPoder(atributos(p, col[p.id], dados)), m: time.find((t) => t.planta === p.id),
+  }));
+  const chave = ({ r, s }) => {
+    if (ordem === 'nivel') return [r.nivel, r.estrelas];
+    if (ordem === 'estrela') return [r.estrelas, r.nivel];
+    if (ordem === 'padrao') return [0, 0];
+    if (ordem === 'poder') return [s.poder, r.nivel];
+    return [s[ordem], 0];
+  };
+  return itens.sort((a, b) => {
+    if (!!a.m !== !!b.m) return a.m ? -1 : 1;
+    if (a.m) return (a.m.col - b.m.col) || (a.m.linha - b.m.linha);
+    const [a1, a2] = chave(a);
+    const [b1, b2] = chave(b);
+    return (b1 - a1) || (b2 - a2) || (a.i - b.i);
+  });
+}
+
 function desenharPlantas() {
   const lista = $('lista-plantas');
   lista.innerHTML = '';
   const max = tamanhoMax();
-  for (const p of dados.plantas.filter((x) => jogo.estado.colecao[x.id])) {
-    const registro = jogo.estado.colecao[p.id];
-    const s = atributos(p, registro, dados);
+  $('btn-ordenar-time').textContent = dados.textos.ordensTime[ordem];
+  for (const { p, r: registro, s } of plantasOrdenadas()) {
     const noTime = jogo.estado.time.find((m) => m.planta === p.id);
     const cartao = document.createElement('button');
     const fora = faseEscolhida.faccao && p.faccao !== faseEscolhida.faccao;
@@ -119,6 +169,7 @@ function desenharPlantas() {
       <span class="planta-emoji">${p.emoji}</span>
       <b>${p.nome}</b>
       <small>${dados.faccoes.faccoes.find((f) => f.id === p.faccao)?.emoji || ''} Nv ${registro.nivel} · ${'⭐'.repeat(registro.estrelas)}</small>
+      <span class="poder">💪 ${s.poder}</span>
       <span class="atributos">❤️${s.vida} ⚔️${s.atq} 🛡️${s.def} 💨${s.vel}</span>
       ${viajando ? `<small class="selo-viagem">${dados.textos.rotina.emViagem}</small>` : ''}`;
     cartao.addEventListener('click', () => {
@@ -128,7 +179,8 @@ function desenharPlantas() {
       } else if (viajando) {
         return avisar(dados.textos.rotina.plantaViajando);
       } else if (time.length >= max) {
-        return avisar(preencher(dados.textos.timeCheio, { max }));
+        const nivel = faseEscolhida.timeMax ? null : jogo.proximaVaga();
+        return avisar(preencher(nivel ? dados.textos.timeCheioProxima : dados.textos.timeCheio, { max, nivel }));
       } else {
         const lugar = espacoEscolhido || primeiroEspacoLivre();
         jogo.definirTime([...time, { planta: p.id, ...lugar }]);

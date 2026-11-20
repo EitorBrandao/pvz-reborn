@@ -32,7 +32,7 @@
         <div class="pilula">🪙 <b id="hud-moedas">0</b></div>
         <div class="pilula">💧 <b id="hud-orvalho">0</b></div>
         <button id="hud-folego" class="pilula pilula-btn botao-folego">⚡<b class="folego-valor">30</b><small class="folego-tempo"></small></button>
-        <div class="pilula pilula-nivel">⭐<b id="hud-nivel">1</b><span class="mini-xp"><span id="hud-xp"></span></span></div>
+        <button id="btn-nivel" class="pilula pilula-btn pilula-nivel">⭐<b id="hud-nivel">1</b><span class="mini-xp"><span id="hud-xp"></span></span></button>
         <button id="btn-opcoes" class="btn-icone" aria-label="Opções">⚙️</button>
       </header>
 
@@ -130,6 +130,10 @@
         <div id="grade-time" class="grade"></div>
         <div id="time-bonus" class="time-bonus"></div>
         <p class="dica-pequena">Toque numa planta pra colocar no time. Pra escolher o lugar, toque antes num espaço vazio. Toque numa planta do time pra tirar.</p>
+        <div class="cabecalho-colecao">
+          <h3 class="titulo-secao">Plantas</h3>
+          <button id="btn-ordenar-time" class="btn btn-azul btn-peq"></button>
+        </div>
         <div id="lista-plantas" class="lista-plantas"></div>
       </div>
       <button id="btn-lutar" class="btn btn-grande btn-laranja btn-fixo">Lutar!</button>
@@ -210,6 +214,10 @@
         <h2>Opções</h2>
       </header>
       <div class="rolagem">
+      <div class="painel">
+        <h3>Som</h3>
+        <button id="btn-som-opcoes" class="btn btn-azul">🔊 Som ligado</button>
+      </div>
       <div class="painel">
         <h3>Seu progresso</h3>
         <p>O jogo salva sozinho no celular. Pra não perder nada ao trocar de aparelho, exporte um backup.</p>

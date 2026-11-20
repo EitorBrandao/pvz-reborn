@@ -12,6 +12,7 @@ import { iniciarRotina, desenharRotina, mostrarPresenca } from './ui/painel-roti
 import { iniciarTelaAtividades, abrirTelaAtividades } from './ui/tela-atividades.js';
 import { prepararCampanha, proximaFase, faseLiberada } from './campanha.js';
 import { gerarAndar, checarTime } from './atividades.js';
+import * as som from './som.js';
 
 let dados;
 
@@ -96,6 +97,12 @@ function ligarBotoes() {
     atualizarTela();
   });
 
+  $('btn-nivel').addEventListener('click', () => {
+    const xp = jogo.xpJogadorInfo();
+    const proxima = jogo.proximaVaga();
+    avisar(preencher(proxima ? dados.textos.nivelInfo : dados.textos.nivelInfoMax,
+      { nivel: xp.nivel, xp: xp.xp, precisa: xp.precisa, vagas: jogo.vagasTime(), proxima }));
+  });
   $('btn-campanha').addEventListener('click', () => abrirTelaMapa());
   document.querySelectorAll('.botao-folego').forEach((b) => b.addEventListener('click', pedirRecarga));
   $('btn-plantas').addEventListener('click', abrirTelaPlantas);
@@ -213,6 +220,30 @@ function desenharChangelog(lista) {
   });
 }
 
+// Som: o navegador só deixa tocar depois do primeiro toque na tela.
+function ligarSom() {
+  som.configurarSom(dados.config.som);
+  som.ligarSom(jogo.estado.somLigado !== false);
+  const acordar = () => som.acordar();
+  document.addEventListener('pointerdown', acordar, { once: true });
+  document.addEventListener('keydown', acordar, { once: true });
+  const atualizar = () => {
+    const ligado = jogo.estado.somLigado !== false;
+    $('btn-som').textContent = ligado ? '🔊' : '🔇';
+    $('btn-som-opcoes').textContent = ligado ? dados.textos.somLigado : dados.textos.somDesligado;
+  };
+  const alternar = () => {
+    som.acordar();
+    jogo.definirSom(jogo.estado.somLigado === false);
+    som.ligarSom(jogo.estado.somLigado);
+    atualizar();
+  };
+  $('btn-som').addEventListener('click', alternar);
+  $('btn-som-opcoes').addEventListener('click', alternar);
+  atualizar();
+  som.musicaDaTela('tela-inicio');
+}
+
 async function comecar() {
   const [config, textos, plantas, pragas, cartas, campanha, equipamentos, missoes, faccoes, atividades, changelog, rotina] = await Promise.all([
     lerJson('data/config.json'),
@@ -236,6 +267,7 @@ async function comecar() {
   desenharChangelog(changelog);
 
   ligarBotoes();
+  ligarSom();
   // Voltar de uma batalha: atividades voltam pra tela de Desafios, a campanha pro mapa
   const mapaDaFase = (fase) => (fase && fase.tipo ? abrirTelaAtividades() : abrirTelaMapa(fase ? fase.mapaIndice : undefined));
   iniciarTelaMapa(dados, { voltar: irParaBase, preparar: abrirTelaTime });

@@ -40,15 +40,13 @@
       "planta": "bambu",
       "col": 0,
       "linha": 2
-    },
-    {
-      "planta": "babosa",
-      "col": 1,
-      "linha": 1
     }
   ],
   "batalha": {
-    "tamanhoTime": 5,
+    "vagasTime": {
+      "inicial": 3,
+      "liberaNoNivel": [20, 30, 40]
+    },
     "maxRodadas": 15,
     "multDano": 1.7,
     "seivaPorTurno": 25,
@@ -119,7 +117,14 @@
   },
   "som": {
     "volume": 0.5,
-    "volumeMusica": 0.25
+    "volumeMusica": 0.25,
+    "musicaPadrao": "horta",
+    "musicaPorTela": {
+      "tela-batalha": "batalha"
+    }
+  },
+  "poder": {
+    "pesos": { "vida": 0.2, "atq": 2, "def": 1, "vel": 1 }
   },
   "estrelasFase": {
     "tres": 1.0,

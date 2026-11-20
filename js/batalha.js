@@ -1,7 +1,7 @@
 // Regras da batalha automática. Não desenha nada: só calcula o que acontece
 // e devolve uma lista de eventos pra tela animar.
 
-import { atributos, registroNovo, habilidadeComEstrelas } from './evolucao.js';
+import { atributos, registroNovo, habilidadeComEstrelas, poder } from './evolucao.js';
 
 // Gerador de números aleatórios com semente (mesma semente = mesma batalha).
 export function criarRng(semente) {
@@ -96,6 +96,13 @@ export function prepararBatalha(batalha, time, dados, colecao = {}) {
     unidades.push(u);
   }
   return unidades;
+}
+
+// Poder total de cada lado, já com bônus de facção e regras da batalha.
+export function poderLados(batalha, time, dados, colecao = {}) {
+  const soma = { planta: 0, praga: 0 };
+  for (const u of prepararBatalha(batalha, time, dados, colecao)) soma[u.lado] += poder(u, dados);
+  return soma;
 }
 
 export function rolarCartas(batalha, rng) {

@@ -1,9 +1,11 @@
 // Pequenas ajudas usadas por todas as telas.
+import * as som from '../som.js';
 
 export const $ = (id) => document.getElementById(id);
 
 export function mostrarTela(id) {
   document.querySelectorAll('.tela').forEach((t) => t.classList.toggle('ativa', t.id === id));
+  som.musicaDaTela(id);
 }
 
 let timerAviso;

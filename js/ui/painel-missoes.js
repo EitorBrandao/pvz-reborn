@@ -77,7 +77,12 @@ function resgatarAberta() {
   const res = jogo.resgatarMissao(aberta);
   if (!res.ok) return;
   fechar();
-  if (res.subiuJogador) avisar(preencher(t.jogadorSubiu, { nivel: jogo.estado.nivel, orvalho: dados.config.jogador.orvalhoPorNivel * res.subiuJogador }));
+  if (res.subiuJogador) {
+    const vagas = jogo.vagasTime();
+    avisar(vagas > jogo.vagasTime(jogo.estado.nivel - res.subiuJogador)
+      ? preencher(t.vagaLiberada, { vagas })
+      : preencher(t.jogadorSubiu, { nivel: jogo.estado.nivel, orvalho: dados.config.jogador.orvalhoPorNivel * res.subiuJogador }));
+  }
   else if (res.novas.length) avisar(preencher(t.missaoNova, { titulo: res.novas[0].titulo }));
   else if (!jogo.missoesAtivas().length) avisar(t.semMissoes);
   else avisar(t.missaoResgatada);
