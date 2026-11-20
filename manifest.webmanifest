@@ -1,0 +1,18 @@
+{
+  "name": "Horta Selvagem",
+  "short_name": "Horta",
+  "description": "RPG de batalha com plantas contra pragas.",
+  "lang": "pt-BR",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#2f7d1f",
+  "theme_color": "#2f7d1f",
+  "icons": [
+    { "src": "art/icones/icone-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "art/icones/icone-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "art/icones/icone-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "art/icones/icone.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

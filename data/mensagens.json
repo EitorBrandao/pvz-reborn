@@ -1,0 +1,15 @@
+{
+  "saudacoes": [
+    "Bem-vindo de volta, jardineiro!",
+    "A horta sentiu sua falta.",
+    "As pragas estão quietas... por enquanto.",
+    "Bora regar esse broto?"
+  ],
+  "emBreve": "{nome} chega numa próxima fase. Segura a ansiedade!",
+  "brotoCresceu": "O broto cresceu! +{moedas} moedas",
+  "saveExportado": "Backup baixado!",
+  "saveImportado": "Save carregado!",
+  "saveInvalido": "Esse arquivo não parece um save da Horta Selvagem.",
+  "confirmarApagar": "Apagar TODO o progresso? Não dá pra desfazer.",
+  "apagado": "Tudo apagado. Começando do zero!"
+}

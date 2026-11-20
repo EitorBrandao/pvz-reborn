@@ -1,0 +1,16 @@
+{
+  "versaoJogo": "0.1.0",
+  "inicio": {
+    "moedas": 500,
+    "orvalho": 10,
+    "nivel": 1
+  },
+  "broto": {
+    "regasPorEstagio": 5,
+    "estagios": ["🌱", "🌿", "🪴", "🌻"],
+    "moedasPorEstagio": 25
+  },
+  "save": {
+    "intervaloSegundos": 10
+  }
+}

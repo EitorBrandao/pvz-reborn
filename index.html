@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#2f7d1f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Horta Selvagem">
+  <title>Horta Selvagem</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="art/icones/icone.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="art/icones/icone-192.png">
+  <link rel="stylesheet" href="css/estilo.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Tela inicial -->
+    <section id="tela-inicio" class="tela ativa">
+      <div class="logo">
+        <div class="logo-broto">🌱</div>
+        <h1>Horta<br><span>Selvagem</span></h1>
+      </div>
+      <button id="btn-jogar" class="btn btn-grande btn-laranja">Jogar</button>
+      <button id="btn-instalar" class="btn btn-verde escondido">Instalar no celular</button>
+      <p class="versao" id="versao"></p>
+    </section>
+
+    <!-- Base do jogador -->
+    <section id="tela-base" class="tela">
+      <header class="hud">
+        <div class="pilula">🪙 <b id="hud-moedas">0</b></div>
+        <div class="pilula">💧 <b id="hud-orvalho">0</b></div>
+        <div class="pilula">⭐ Nv <b id="hud-nivel">1</b></div>
+        <button id="btn-opcoes" class="btn-icone" aria-label="Opções">⚙️</button>
+      </header>
+
+      <main class="base-centro">
+        <p class="saudacao" id="saudacao"></p>
+        <button id="broto" class="broto" aria-label="Regar o broto">
+          <span id="broto-emoji">🌱</span>
+        </button>
+        <p class="dica">Toque no broto pra regar</p>
+        <div class="barra"><div id="broto-barra" class="barra-cheia"></div></div>
+        <p class="regas">Regas: <b id="broto-regas">0</b></p>
+      </main>
+
+      <nav class="menu-base">
+        <button class="btn btn-menu" data-breve="Batalha">⚔️<span>Batalha</span></button>
+        <button class="btn btn-menu" data-breve="Plantas">🌿<span>Plantas</span></button>
+        <button class="btn btn-menu" data-breve="Campanha">🗺️<span>Campanha</span></button>
+        <button class="btn btn-menu" data-breve="Arena">🏆<span>Arena</span></button>
+      </nav>
+    </section>
+
+    <!-- Opções -->
+    <section id="tela-opcoes" class="tela">
+      <header class="topo">
+        <button id="btn-voltar" class="btn-icone" aria-label="Voltar">⬅️</button>
+        <h2>Opções</h2>
+      </header>
+      <div class="painel">
+        <h3>Seu progresso</h3>
+        <p>O jogo salva sozinho no celular. Pra não perder nada ao trocar de aparelho, exporte um backup.</p>
+        <button id="btn-exportar" class="btn btn-azul">Exportar save</button>
+        <button id="btn-importar" class="btn btn-azul">Importar save</button>
+        <input id="arquivo-importar" type="file" accept="application/json,.json" hidden>
+        <p class="info" id="info-save"></p>
+      </div>
+      <div class="painel">
+        <h3>Zona de perigo</h3>
+        <button id="btn-apagar" class="btn btn-vermelho">Apagar tudo</button>
+      </div>
+    </section>
+  </div>
+
+  <div id="aviso" class="aviso" role="status"></div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
