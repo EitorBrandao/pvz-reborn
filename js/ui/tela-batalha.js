@@ -34,15 +34,6 @@ export function iniciarTelaBatalha(d, a) {
   canvas = $('campo');
   ctx = canvas.getContext('2d');
   window.addEventListener('resize', medir);
-  som.configurarSom(dados.config.som);
-  som.ligarSom(jogo.estado.somLigado !== false);
-
-  $('btn-som').addEventListener('click', () => {
-    som.acordar();
-    jogo.definirSom(jogo.estado.somLigado === false);
-    som.ligarSom(jogo.estado.somLigado);
-    atualizarBotoes();
-  });
 
   $('btn-velocidade').addEventListener('click', () => {
     // passa pra próxima velocidade da lista (1x → 2x → 3x → 1x)
@@ -75,7 +66,6 @@ function podePular() {
 function atualizarBotoes() {
   $('btn-velocidade').textContent = `${velEscolhida()}x`;
   $('btn-pular').classList.toggle('bloqueado', !podePular());
-  $('btn-som').textContent = jogo.estado.somLigado === false ? '🔇' : '🔊';
 }
 
 export function comecarBatalha(batalha) {
@@ -105,8 +95,8 @@ export function comecarBatalha(batalha) {
   medir();
   if (!loopId) loopId = requestAnimationFrame(desenhar);
   som.acordar();
-  som.pararMusica();
-  som.comecarMusica();
+  som.pararMusica(false);
+  som.tocarMusica('batalha');
 
   tocar(resultado.eventos, minhaPartida).then(() => {
     if (minhaPartida === partida) terminar(resultado, semente);

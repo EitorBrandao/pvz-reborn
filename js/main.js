@@ -11,6 +11,7 @@ import { iniciarMissoes, desenharMissoes } from './ui/painel-missoes.js';
 import { iniciarTelaAtividades, abrirTelaAtividades } from './ui/tela-atividades.js';
 import { prepararCampanha, proximaFase, faseLiberada } from './campanha.js';
 import { gerarAndar, checarTime } from './atividades.js';
+import * as som from './som.js';
 
 let dados;
 
@@ -210,6 +211,30 @@ function desenharChangelog(lista) {
   });
 }
 
+// Som: o navegador só deixa tocar depois do primeiro toque na tela.
+function ligarSom() {
+  som.configurarSom(dados.config.som);
+  som.ligarSom(jogo.estado.somLigado !== false);
+  const acordar = () => som.acordar();
+  document.addEventListener('pointerdown', acordar, { once: true });
+  document.addEventListener('keydown', acordar, { once: true });
+  const atualizar = () => {
+    const ligado = jogo.estado.somLigado !== false;
+    $('btn-som').textContent = ligado ? '🔊' : '🔇';
+    $('btn-som-opcoes').textContent = ligado ? dados.textos.somLigado : dados.textos.somDesligado;
+  };
+  const alternar = () => {
+    som.acordar();
+    jogo.definirSom(jogo.estado.somLigado === false);
+    som.ligarSom(jogo.estado.somLigado);
+    atualizar();
+  };
+  $('btn-som').addEventListener('click', alternar);
+  $('btn-som-opcoes').addEventListener('click', alternar);
+  atualizar();
+  som.musicaDaTela('tela-inicio');
+}
+
 async function comecar() {
   const [config, textos, plantas, pragas, cartas, campanha, equipamentos, missoes, faccoes, atividades, changelog] = await Promise.all([
     lerJson('data/config.json'),
@@ -232,6 +257,7 @@ async function comecar() {
   desenharChangelog(changelog);
 
   ligarBotoes();
+  ligarSom();
   // Voltar de uma batalha: atividades voltam pra tela de Desafios, a campanha pro mapa
   const mapaDaFase = (fase) => (fase && fase.tipo ? abrirTelaAtividades() : abrirTelaMapa(fase ? fase.mapaIndice : undefined));
   iniciarTelaMapa(dados, { voltar: irParaBase, preparar: abrirTelaTime });

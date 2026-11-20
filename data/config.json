@@ -1,5 +1,5 @@
 {
-  "versaoJogo": "0.6.2",
+  "versaoJogo": "0.6.3",
   "inicio": {
     "moedas": 500,
     "orvalho": 10,
@@ -115,7 +115,11 @@
   },
   "som": {
     "volume": 0.5,
-    "volumeMusica": 0.25
+    "volumeMusica": 0.25,
+    "musicaPadrao": "horta",
+    "musicaPorTela": {
+      "tela-batalha": "batalha"
+    }
   },
   "estrelasFase": {
     "tres": 1.0,
