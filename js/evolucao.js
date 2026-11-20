@@ -51,7 +51,8 @@ export function bonusTalentos(registro, dados, base) {
 // Ascensão: planta no nível máximo com todas as estrelas volta ao nível 1 e ganha um rank.
 export function custoAscensao(registro, dados) {
   const rank = registro.ascensao || 0;
-  return rank >= dados.ascensao.rankMax ? null : dados.ascensao.custos[rank];
+  const max = registro.fusao ? dados.ascensao.rankMax : dados.ascensao.rankMaxSemFusao;
+  return rank >= max ? null : dados.ascensao.custos[rank];
 }
 
 export function podeAscender(registro, cfg) {

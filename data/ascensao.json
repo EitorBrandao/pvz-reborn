@@ -1,5 +1,6 @@
 {
   "rankMax": 5,
+  "rankMaxSemFusao": 3,
   "selos": [
     "",
     "✦",

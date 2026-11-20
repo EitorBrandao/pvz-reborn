@@ -1,4 +1,5 @@
 [
+  { "versao": "0.13.1", "itens": ["✦ Plantas normais agora ascendem até o Rank 3. Só as plantas híbridas (da Fusão) chegam ao Rank 5"] },
   { "versao": "0.13.0", "itens": ["🧬 Fusão de plantas (Herbário → Fusão): duas plantas 5⭐ com Rank 1+ viram uma híbrida nova, uma por classe: Cacto Vulcão (tanque), Teia Esporenta (controle), Jarro Peçonhento (dano) e Lírio Curativo (apoio)", "As duas plantas são consumidas na fusão (precisa juntar cópias delas de novo). A híbrida nasce com 5⭐ e o menor rank das duas, e pode ascender e usar talentos normalmente", "Custa moedas, orvalho, Sementes do Labirinto, Pétalas Raras e Seiva Dourada"] },
   { "versao": "0.12.0", "itens": ["🌳 Labirinto das Raízes (em Desafios): corrida de 8 andares com portas, bênçãos, recrutas, elites e chefes. Qualquer planta serve: as pragas se ajustam ao poder do seu time", "Prêmio: Sementes do Labirinto (material de Fusão) e pontos de talento pra usar em qualquer planta", "Música própria do Labirinto"] },
   { "versao": "0.11.5", "itens": ["Ordem Padrão da coleção agora mostra primeiro a última equipe usada, depois o resto por poder"] },
