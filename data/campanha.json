@@ -3181,6 +3181,11 @@
        "praga": "pombo",
        "col": 1,
        "linha": 0
+      },
+      {
+       "praga": "mariposa",
+       "col": 1,
+       "linha": 2
       }
      ],
      "recompensa": {
@@ -3240,6 +3245,11 @@
        "praga": "pombo",
        "col": 1,
        "linha": 0
+      },
+      {
+       "praga": "vespa",
+       "col": 1,
+       "linha": 2
       }
      ],
      "recompensa": {
@@ -3299,6 +3309,11 @@
        "praga": "morcego",
        "col": 1,
        "linha": 0
+      },
+      {
+       "praga": "morcego",
+       "col": 1,
+       "linha": 2
       }
      ],
      "recompensa": {
@@ -3424,6 +3439,11 @@
        "praga": "morcego",
        "col": 1,
        "linha": 0
+      },
+      {
+       "praga": "morcego",
+       "col": 1,
+       "linha": 2
       }
      ],
      "recompensa": {
