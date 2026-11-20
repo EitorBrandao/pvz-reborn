@@ -38,7 +38,6 @@ export function iniciarTelaPlantas(d, voltar) {
   $('usar-lote').addEventListener('click', () => usarCarta(usarLote));
   $('detalhe-fechar').addEventListener('click', fecharDetalhe);
   $('detalhe').addEventListener('click', (e) => { if (e.target.id === 'detalhe') fecharDetalhe(); });
-  $('detalhe-fechar-baixo').addEventListener('click', fecharDetalhe);
   // Fecha o resultado do pacote tocando em qualquer lugar
   $('pacote-resultado').addEventListener('click', () => { $('pacote-resultado').classList.add('escondido'); desenhar(); });
   $('detalhe-conteudo').addEventListener('click', acaoDetalhe);
