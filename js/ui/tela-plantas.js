@@ -215,7 +215,12 @@ function desenharDetalhe() {
     const st = a && t.status[a.status];
     return st ? ' ' + preencher(st.texto, { valor: Math.round(a.valor * 100), turnos: a.turnos }) : '';
   };
-  const textoHab = (hab) => preencher(t.habilidades[hab.tipo] || '', {
+  // Plural: usa o texto "_varios" quando o número passa de 1 (ex.: cura 2 aliados).
+  const chaveHab = (hab) => {
+    const n = hab.tipo === 'cura' ? hab.alvos : hab.tipo === 'sono' ? hab.turnos : 1;
+    return n > 1 && t.habilidades[`${hab.tipo}_varios`] ? `${hab.tipo}_varios` : hab.tipo;
+  };
+  const textoHab = (hab) => preencher(t.habilidades[chaveHab(hab)] || '', {
     reflete: Math.round((hab.reflete || 0) * 100), turnos: hab.turnos, golpes: hab.golpes,
     reducao: Math.round((hab.reducao || 0) * 100), forca: Math.round((hab.mult || 0) * 100),
     alvos: hab.alvos || 1, seiva: hab.seiva,
