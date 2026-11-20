@@ -413,7 +413,7 @@ body {
 }
 .detalhe-topo { text-align: center; }
 .detalhe-topo h3 { margin: 4px 0 0; }
-.detalhe-topo .info-faccao { display: block; margin-top: 4px; font-size: .78rem; opacity: .85; }
+.detalhe-topo .info-faccao { display: block; text-align: center; margin-top: 4px; font-size: .78rem; opacity: .85; }
 .detalhe-emoji { font-size: 4rem; display: inline-block; }
 .detalhe-topo.evoluiu .detalhe-emoji { animation: pulo .5s ease-out; }
 .bloco { border-top: 2px dashed rgba(138, 90, 43, .4); padding: 10px 0; }
