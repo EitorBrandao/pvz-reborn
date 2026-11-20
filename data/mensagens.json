@@ -139,6 +139,8 @@
     "aleatorio": "🎯 Ataca pragas aleatórias."
   },
   "habilidadeProxima": "Com {estrelas} ⭐: {texto}",
+  "grupoNoTime": "✅ No time ({qtd}/{max})",
+  "grupoForaTime": "Fora do time · toque pra colocar",
   "ordensTime": {
     "padrao": "↕️ Padrão",
     "poder": "↕️ 💪 Poder",

@@ -173,13 +173,35 @@ function plantasOrdenadas() {
   });
 }
 
+// Número mostrado no cartão: o atributo da ordem escolhida, ou o Poder.
+const ICONE_ATRIBUTO = { vida: '❤️', atq: '⚔️', def: '🛡️', vel: '💨' };
+function numeroCartao(s) {
+  return ICONE_ATRIBUTO[ordem] ? `${ICONE_ATRIBUTO[ordem]} ${s[ordem]}` : `💪 ${s.poder}`;
+}
+
+function tituloGrupo(texto) {
+  const h = document.createElement('h4');
+  h.className = 'grupo-lista';
+  h.textContent = texto;
+  return h;
+}
+
 function desenharPlantas() {
   const lista = $('lista-plantas');
   lista.innerHTML = '';
   const max = tamanhoMax();
-  $('btn-ordenar-time').textContent = dados.textos.ordensTime[ordem];
-  for (const { p, r: registro, s } of plantasOrdenadas()) {
-    const noTime = jogo.estado.time.find((m) => m.planta === p.id);
+  const t = dados.textos;
+  $('btn-ordenar-time').textContent = t.ordensTime[ordem];
+  const itens = plantasOrdenadas();
+  const qtdTime = itens.filter((x) => x.m).length;
+  // Dois grupos com título: quem está no time e quem está de fora
+  if (qtdTime) lista.appendChild(tituloGrupo(preencher(t.grupoNoTime, { qtd: qtdTime, max })));
+  let foraTitulo = false;
+  for (const { p, r: registro, s, m: noTime } of itens) {
+    if (!noTime && !foraTitulo) {
+      lista.appendChild(tituloGrupo(t.grupoForaTime));
+      foraTitulo = true;
+    }
     const cartao = document.createElement('button');
     const fora = faseEscolhida.faccao && p.faccao !== faseEscolhida.faccao;
     const viajando = jogo.emExpedicao(p.id);
@@ -187,12 +209,12 @@ function desenharPlantas() {
     cartao.className = 'cartao-planta' + (noTime ? ' no-time' : '') + (fora || viajando ? ' fora-regra' : '') + selos.classe;
     cartao.innerHTML = `
       ${selos.html}
+      ${noTime ? '<span class="marca-no-time" aria-label="No time">✓</span>' : ''}
       <span class="planta-emoji">${p.emoji}</span>
       <b>${p.nome}</b>
-      <small>${dados.faccoes.faccoes.find((f) => f.id === p.faccao)?.emoji || ''} Nv ${registro.nivel} · ${'⭐'.repeat(registro.estrelas)}</small>
-      <span class="poder">💪 ${s.poder}</span>
-      <span class="atributos">❤️${s.vida} ⚔️${s.atq} 🛡️${s.def} 💨${s.vel}</span>
-      ${viajando ? `<small class="selo-viagem">${dados.textos.rotina.emViagem}</small>` : ''}`;
+      <small>${dados.faccoes.faccoes.find((f) => f.id === p.faccao)?.emoji || ''} Nv ${registro.nivel} · ${registro.estrelas}⭐</small>
+      <span class="poder">${numeroCartao(s)}</span>
+      ${viajando ? `<small class="selo-viagem">${t.rotina.emViagem}</small>` : ''}`;
     segurarParaVer(cartao, p, registro, s);
     cartao.addEventListener('click', () => {
       if (Date.now() < ignorarToqueAte) return; // soltou depois de segurar: não é toque
