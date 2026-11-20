@@ -81,6 +81,8 @@
   "nivelMaximo": "Nível máximo! Evolua a estrela pra continuar subindo.",
   "plantaNova": "Planta nova: {nome}!",
   "copiaNova": "+1 cópia de {nome}",
+  "resumoPacotes": "{n} pacotes abertos!",
+  "usarQuantos": "Quantas vezes usar {emoji} {nome}?",
   "copiaVirouMuda": "{nome} já tem todas as estrelas: virou 🧩 Muda Repetida",
   "semMudas": "Junte {n} 🧩 Mudas Repetidas pra trocar por uma planta.",
   "estrelaSubiu": "{nome} agora tem {estrelas} ⭐!",

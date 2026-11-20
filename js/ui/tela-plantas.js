@@ -26,6 +26,12 @@ export function iniciarTelaPlantas(d, voltar) {
   $('plantas-voltar').addEventListener('click', voltar);
   $('btn-pacote-moedas').addEventListener('click', () => mostrarPacote(jogo.comprarPacote('moedas')));
   $('btn-pacote-orvalho').addEventListener('click', () => mostrarPacote(jogo.comprarPacote('orvalho')));
+  const lote = dados.config.pacote.lote;
+  $('btn-pacote-moedas-lote').addEventListener('click', () => mostrarPacote(jogo.comprarPacotes('moedas', lote)));
+  $('btn-pacote-orvalho-lote').addEventListener('click', () => mostrarPacote(jogo.comprarPacotes('orvalho', lote)));
+  $('usar-quantos').addEventListener('click', (e) => { if (e.target.id === 'usar-quantos') $('usar-quantos').classList.add('escondido'); });
+  $('usar-1').addEventListener('click', () => usarCarta(1));
+  $('usar-lote').addEventListener('click', () => usarCarta(usarLote));
   $('detalhe-fechar').addEventListener('click', fecharDetalhe);
   $('detalhe').addEventListener('click', (e) => { if (e.target.id === 'detalhe') fecharDetalhe(); });
   $('detalhe-fechar-baixo').addEventListener('click', fecharDetalhe);
@@ -37,6 +43,8 @@ export function iniciarTelaPlantas(d, voltar) {
   const { pacote } = dados.config;
   $('btn-pacote-moedas').textContent = `🌱 Pacote 🪙${pacote.moedas}`;
   $('btn-pacote-orvalho').textContent = `🌱 Pacote 💧${pacote.orvalho}`;
+  $('btn-pacote-moedas-lote').textContent = `🌱×${lote} 🪙${pacote.moedas * lote}`;
+  $('btn-pacote-orvalho-lote').textContent = `🌱×${lote} 💧${pacote.orvalho * lote}`;
 }
 
 export function abrirTelaPlantas() {
@@ -121,9 +129,17 @@ function desenharInventario() {
     botao.className = `item-inventario ${c.raridade}`;
     botao.innerHTML = `<span>${c.emoji}</span><b>${qtd}</b>`;
     botao.addEventListener('click', () => {
-      if (c.uso === 'pacote') mostrarPacote(jogo.plantarSemente());
-      else if (c.uso === 'troca') mostrarPacote(jogo.trocarMudas());
-      else avisar(`${c.nome}: ${c.descricao}`);
+      if (c.uso !== 'pacote' && c.uso !== 'troca') return avisar(`${c.nome}: ${c.descricao}`);
+      // Com 10 itens ou mais, pergunta se usa 1 ou vários de uma vez
+      const porUso = c.uso === 'troca' ? dados.config.troca.custo : 1;
+      const usos = Math.min(dados.config.pacote.lote, Math.floor(qtd / porUso));
+      usando = c;
+      if (qtd >= dados.config.pacote.lote && usos > 1) {
+        usarLote = usos;
+        $('usar-quantos-titulo').textContent = preencher(dados.textos.usarQuantos, { emoji: c.emoji, nome: c.nome });
+        $('usar-lote').textContent = `×${usos}`;
+        $('usar-quantos').classList.remove('escondido');
+      } else usarCarta(1);
     });
     area.appendChild(botao);
   }
@@ -354,8 +370,19 @@ function acaoDetalhe(evento) {
 
 // ---------- Pacote de Sementes ----------
 
+let usando = null;   // carta do inventário sendo usada
+let usarLote = 1;
+
+function usarCarta(n) {
+  $('usar-quantos').classList.add('escondido');
+  if (usando.uso === 'pacote') mostrarPacote(n > 1 ? jogo.plantarSementes(n) : jogo.plantarSemente());
+  else mostrarPacote(n > 1 ? jogo.trocarMudasVarias(n) : jogo.trocarMudas());
+}
+
 function mostrarPacote(res) {
   if (!res.ok) return erro(res);
+  if (res.resultados) return mostrarResumo(res.resultados);
+  $('pacote-resumo').innerHTML = '';
   const p = base(res.id);
   const t = dados.textos;
   $('pacote-emoji').textContent = p.emoji;
@@ -364,6 +391,33 @@ function mostrarPacote(res) {
   $('pacote-resultado').classList.toggle('nova', res.nova);
   $('pacote-resultado').classList.remove('escondido');
   // reinicia a animação
+  const caixa = $('pacote-resultado').firstElementChild;
+  caixa.style.animation = 'none';
+  void caixa.offsetWidth;
+  caixa.style.animation = '';
+  desenhar();
+}
+
+// Vários pacotes de uma vez: só os ícones e quantidades (plantas novas brilham)
+function mostrarResumo(resultados) {
+  const grupos = new Map();
+  let mudas = 0;
+  for (const r of resultados) {
+    if (r.virouMuda) { mudas++; continue; }
+    const g = grupos.get(r.id) || { qtd: 0, nova: false };
+    g.qtd++;
+    g.nova = g.nova || r.nova;
+    grupos.set(r.id, g);
+  }
+  const itens = [...grupos].map(([id, g]) =>
+    `<span class="resumo-item${g.nova ? ' nova' : ''}">${base(id).emoji}<b>×${g.qtd}</b></span>`);
+  if (mudas) itens.push(`<span class="resumo-item">${carta(dados.config.troca.carta).emoji}<b>×${mudas}</b></span>`);
+  const algumaNova = resultados.some((r) => r.nova);
+  $('pacote-emoji').textContent = '🌱';
+  $('pacote-titulo').textContent = preencher(dados.textos.resumoPacotes, { n: resultados.length });
+  $('pacote-resumo').innerHTML = itens.join('');
+  $('pacote-resultado').classList.toggle('nova', algumaNova);
+  $('pacote-resultado').classList.remove('escondido');
   const caixa = $('pacote-resultado').firstElementChild;
   caixa.style.animation = 'none';
   void caixa.offsetWidth;

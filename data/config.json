@@ -1,5 +1,5 @@
 {
-  "versaoJogo": "0.7.0",
+  "versaoJogo": "0.7.1",
   "inicio": {
     "moedas": 500,
     "orvalho": 10,
@@ -84,6 +84,7 @@
     ]
   },
   "pacote": {
+    "lote": 10,
     "moedas": 300,
     "orvalho": 5,
     "pesos": {
