@@ -669,28 +669,36 @@ function urlDe(tipo, chave) {
 const porEmoji = new Map();
 export function iniciarArte(dados) {
   for (const u of [...(dados.plantas || []), ...(dados.pragas || [])]) if (!porEmoji.has(u.emoji)) porEmoji.set(u.emoji, u.id);
+  // Já transforma os desenhos em imagem comum, antes das telas precisarem.
+  Object.keys(PLANTAS).forEach((id) => imagem('u', id));
+  Object.keys(PRAGAS).forEach((id) => imagem('u', id));
+  Object.keys(HABILIDADES).forEach((k) => imagem('hab', k));
+  Object.keys(STATUS).forEach((k) => imagem('st', k));
 }
+
+// ---------- Desenho → imagem PNG ----------
+// O "modo escuro forçado" de alguns navegadores de celular (ex.: Samsung Internet) recolore
+// desenhos SVG e deixa tudo desbotado, mas não mexe em imagens comuns. Por isso cada desenho
+// é pintado num canvas e vira PNG; o SVG só aparece nos primeiros instantes, até o PNG ficar pronto.
+const pngs = new Map();
+const urlTela = (tipo, chave) => pngs.get(`${tipo}:${chave}`) || urlDe(tipo, chave);
+const img = (tipo, chave, classe) => {
+  const url = urlTela(tipo, chave);
+  return url ? `<img class="${classe}" src="${url}" data-arte="${tipo}:${chave}" alt="" draggable="false">` : '';
+};
 
 // ---------- Para o HTML ----------
 // arte(planta ou praga): <img> do desenho, do tamanho da letra (substitui o emoji). Sem desenho, devolve o emoji.
 export function arte(u, classe = '') {
   if (!u) return '';
   const id = (u.id && (PLANTAS[u.id] || PRAGAS[u.id])) ? u.id : porEmoji.get(u.emoji);
-  const url = id && urlDe('u', id);
-  if (!url) return u.emoji || '';
-  return `<img class="arte${classe ? ` ${classe}` : ''}" src="${url}" alt="" draggable="false">`;
+  return (id && img('u', id, `arte${classe ? ` ${classe}` : ''}`)) || u.emoji || '';
 }
-export function iconeHabilidade(tipo) {
-  const url = urlDe('hab', tipo);
-  return url ? `<img class="icone-hab" src="${url}" alt="" draggable="false">` : '✨';
-}
-export function iconeStatus(nome) {
-  const url = urlDe('st', nome);
-  return url ? `<img class="icone-status" src="${url}" alt="" draggable="false">` : '';
-}
+export const iconeHabilidade = (tipo) => img('hab', tipo, 'icone-hab') || '✨';
+export const iconeStatus = (nome) => img('st', nome, 'icone-status');
 
 // ---------- Para o Canvas ----------
-// Imagens prontas pra desenhar; a "branca" é a silhueta usada no piscar de dano.
+// Imagens prontas pra desenhar (já em canvas, sem SVG); a "branca" é a silhueta do piscar de dano.
 const imagens = new Map();
 export function imagem(tipo, chave) {
   const k = `${tipo}:${chave}`;
@@ -698,24 +706,34 @@ export function imagem(tipo, chave) {
   const url = urlDe(tipo, chave);
   const item = { img: null, branca: null, pronta: false };
   imagens.set(k, item);
-  if (!url) return item;
-  const img = new Image();
-  img.onload = () => {
+  if (!url || typeof Image === 'undefined') return item;
+  const fonteImg = new Image();
+  fonteImg.onload = () => {
+    const lado = tipo === 'u' ? 256 : 128;
+    const c = document.createElement('canvas');
+    c.width = lado;
+    c.height = lado;
+    c.getContext('2d').drawImage(fonteImg, 0, 0, lado, lado);
+    item.img = c;
     item.pronta = true;
+    try {
+      const png = c.toDataURL('image/png');
+      pngs.set(k, png);
+      document.querySelectorAll(`img[data-arte="${k}"]`).forEach((el) => { el.src = png; });
+    } catch { /* navegador não deixou exportar: fica o SVG */ }
     if (tipo === 'u') {
-      const c = document.createElement('canvas');
-      c.width = img.width || 128;
-      c.height = img.height || 128;
-      const g = c.getContext('2d');
-      g.drawImage(img, 0, 0, c.width, c.height);
+      const b = document.createElement('canvas');
+      b.width = lado;
+      b.height = lado;
+      const g = b.getContext('2d');
+      g.drawImage(c, 0, 0);
       g.globalCompositeOperation = 'source-in';
       g.fillStyle = '#fff';
-      g.fillRect(0, 0, c.width, c.height);
-      item.branca = c;
+      g.fillRect(0, 0, lado, lado);
+      item.branca = b;
     }
   };
-  img.src = url;
-  item.img = img;
+  fonteImg.src = url;
   return item;
 }
 export const imagemUnidade = (id) => imagem('u', id);
@@ -724,7 +742,8 @@ export const imagemHabilidade = (tipo) => imagem('hab', tipo);
 export function infoTiro(emoji) {
   const chave = TIRO_DO_EMOJI[emoji];
   if (!chave) return null;
-  return { ...imagem('tiro', chave), gira: !!TIROS[chave].gira, rastro: TIROS[chave].rastro };
+  const it = imagem('tiro', chave);
+  return { get pronta() { return it.pronta; }, get img() { return it.img; }, gira: !!TIROS[chave].gira, rastro: TIROS[chave].rastro };
 }
 export const corHabilidade = (tipo) => CORES_HAB[tipo] || '#ffd23a';
 
