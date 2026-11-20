@@ -616,11 +616,19 @@ export function fundirPlanta(idHibrida) {
   if (s.fundida) return { ok: false, erro: 'fusaoJaFeita' };
   if (!s.paisOk) return { ok: false, erro: 'fusaoPais' };
   if (!s.custoOk) return { ok: false, erro: 'fusaoCusto' };
+  const pais = [receita.a, receita.b];
+  if (pais.some((id) => emExpedicao(id))) return { ok: false, erro: 'fusaoViagem' };
+  const run = estado.labirinto.run;
+  if (run && run.time.some((m) => pais.includes(m.planta))) return { ok: false, erro: 'fusaoLabirinto' };
   const c = dados.fusoes.custo;
   estado.moedas -= c.moedas;
   estado.orvalho -= c.orvalho;
   evo.gastarCartas(estado.inventario, c.cartas);
-  estado.colecao[idHibrida] = registroHibrida(receita, estado, dados);
+  const nova = registroHibrida(receita, estado, dados);
+  // as duas plantas são consumidas: somem da coleção e do time (precisa juntar cópias de novo)
+  for (const id of pais) delete estado.colecao[id];
+  estado.time = estado.time.filter((m) => !pais.includes(m.planta));
+  estado.colecao[idHibrida] = nova;
   contar('fundir');
   salvarAgora();
   return { ok: true };

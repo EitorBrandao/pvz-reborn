@@ -244,6 +244,8 @@ function desenharHerbario() {
     </div>`;
   }).join('')}`;
   $('herbario-conteudo').querySelectorAll('[data-fundir]').forEach((b) => b.addEventListener('click', () => {
+    const rec = jogo.fusoes().find((x) => x.receita && x.receita.id === b.dataset.fundir);
+    if (!confirm(preencher(th().fusaoConfirma, { a: rec.ing[0].nome, b: rec.ing[1].nome, nova: rec.nome }))) return;
     const r = jogo.fundirPlanta(b.dataset.fundir);
     if (!r.ok) return avisar(dados.textos[r.erro] || dados.textos.semMaterial);
     som.tocarSom('estrela');
