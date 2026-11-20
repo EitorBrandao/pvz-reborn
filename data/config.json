@@ -1,5 +1,5 @@
 {
-  "versaoJogo": "0.7.7",
+  "versaoJogo": "0.8.1",
   "inicio": {
     "moedas": 500,
     "orvalho": 10,
@@ -127,7 +127,12 @@
     "volumeMusica": 0.25,
     "musicaPadrao": "horta",
     "musicaPorTela": {
-      "tela-batalha": "batalha"
+      "tela-batalha": "batalha",
+      "tela-atividades": "desafios",
+      "tela-treino": "desafios",
+      "tela-invasao": "invasao",
+      "tela-feira": "feira",
+      "tela-herbario": "herbario"
     }
   },
   "poder": {

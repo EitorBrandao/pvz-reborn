@@ -9,6 +9,7 @@ import { iniciarTelaPlantas, abrirTelaPlantas } from './ui/tela-plantas.js';
 import { iniciarTelaMapa, abrirTelaMapa } from './ui/tela-mapa.js';
 import { iniciarMissoes, desenharMissoes } from './ui/painel-missoes.js';
 import { iniciarRotina, desenharRotina, mostrarPresenca } from './ui/painel-rotina.js';
+import { iniciarTelasEventos, abrirInvasao, montarBatalhaInvasao, desenharAtalhos } from './ui/tela-eventos.js';
 import { iniciarTelaAtividades, abrirTelaAtividades } from './ui/tela-atividades.js';
 import { prepararCampanha, proximaFase, faseLiberada } from './campanha.js';
 import { gerarAndar, checarTime } from './atividades.js';
@@ -31,6 +32,7 @@ function atualizarTela() {
   atualizarFolego();
   desenharMissoes();
   desenharRotina();
+  desenharAtalhos();
   const broto = jogo.estagioBroto();
   $('broto-emoji').textContent = broto.emoji;
   $('broto-barra').style.width = `${broto.progresso * 100}%`;
@@ -65,6 +67,14 @@ function pedirRecarga() {
 function lutar(fase) {
   const problema = checarTime(fase, jogo.estado.time, dados);
   if (problema) return avisar(preencher(dados.textos[problema.erro], problema));
+  if (fase.tipo === 'invasao') {
+    // cada ataque usa a vida atual do chefe e gasta um ataque do dia
+    const nova = montarBatalhaInvasao();
+    if (!nova) return avisar(dados.textos.invasao.invasaoAcabou);
+    const r = jogo.gastarAtaqueInvasao();
+    if (!r.ok) return avisar(dados.textos.invasao[r.erro] || dados.textos[r.erro]);
+    return comecarBatalha(nova);
+  }
   if (!jogo.gastarFolego(fase.folego)) {
     const { textos, config } = dados;
     return avisar(preencher(textos.semFolego, { tempo: formatarTempo(jogo.folego().falta), custo: config.folego.recargaOrvalho }));
@@ -245,7 +255,7 @@ function ligarSom() {
 }
 
 async function comecar() {
-  const [config, textos, plantas, pragas, cartas, campanha, equipamentos, missoes, faccoes, atividades, changelog, rotina] = await Promise.all([
+  const [config, textos, plantas, pragas, cartas, campanha, equipamentos, missoes, faccoes, atividades, changelog, rotina, invasao, feira, herbario] = await Promise.all([
     lerJson('data/config.json'),
     lerJson('data/mensagens.json'),
     lerJson('data/plantas.json'),
@@ -258,8 +268,11 @@ async function comecar() {
     lerJson('data/atividades.json'),
     lerJson('data/changelog.json'),
     lerJson('data/rotina.json'),
+    lerJson('data/invasao.json'),
+    lerJson('data/feira.json'),
+    lerJson('data/herbario.json'),
   ]);
-  dados = { config, textos, plantas, pragas, cartas, campanha: prepararCampanha(campanha), equipamentos, missoes, faccoes, atividades, rotina };
+  dados = { config, textos, plantas, pragas, cartas, campanha: prepararCampanha(campanha), equipamentos, missoes, faccoes, atividades, rotina, invasao, feira, herbario };
 
   jogo.iniciar(dados);
   save.pedirArmazenamentoPersistente();
@@ -269,7 +282,11 @@ async function comecar() {
   ligarBotoes();
   ligarSom();
   // Voltar de uma batalha: atividades voltam pra tela de Desafios, a campanha pro mapa
-  const mapaDaFase = (fase) => (fase && fase.tipo ? abrirTelaAtividades() : abrirTelaMapa(fase ? fase.mapaIndice : undefined));
+  const mapaDaFase = (fase) => {
+    if (fase && fase.tipo === 'invasao') return abrirInvasao();
+    if (fase && fase.tipo) return abrirTelaAtividades();
+    return abrirTelaMapa(fase ? fase.mapaIndice : undefined);
+  };
   iniciarTelaMapa(dados, { voltar: irParaBase, preparar: abrirTelaTime });
   iniciarTelaAtividades(dados, { voltar: irParaBase, preparar: abrirTelaTime });
   iniciarTelaTime(dados, { lutar, voltar: mapaDaFase });
@@ -287,6 +304,7 @@ async function comecar() {
   iniciarTelaPlantas(dados, irParaBase);
   iniciarMissoes(dados, atualizarTela);
   iniciarRotina(dados, atualizarTela);
+  iniciarTelasEventos(dados, { voltarDesafios: abrirTelaAtividades, voltarBase: irParaBase, preparar: abrirTelaTime, mudou: atualizarTela });
   setInterval(atualizarFolego, 1000);
   prepararInstalacao();
   registrarServiceWorker();

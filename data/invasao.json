@@ -1,0 +1,132 @@
+{
+  "diasPorChefe": 3,
+  "ataquesGratis": 3,
+  "custoAtaqueExtra": 2,
+  "nivelExtra": 0,
+  "multVida": 12,
+  "lacaios": 2,
+  "danoBotsPorHora": 0.17,
+  "madrugada": [
+    1,
+    7
+  ],
+  "moedasPorVidaChefe": 300,
+  "xpBase": 20,
+  "xpPorNivel": 5,
+  "cartasAtaque": [
+    {
+      "carta": "adubo",
+      "chance": 0.7
+    },
+    {
+      "carta": "fibra",
+      "chance": 0.7
+    },
+    {
+      "carta": "seiva_dourada",
+      "chance": 0.15
+    },
+    {
+      "carta": "petala_rara",
+      "chance": 0.1
+    }
+  ],
+  "bots": [
+    {
+      "nome": "Lavínia",
+      "emoji": "👩‍🌾",
+      "peso": 1.6
+    },
+    {
+      "nome": "Seu Bento",
+      "emoji": "👴",
+      "peso": 0.7
+    },
+    {
+      "nome": "Kauã",
+      "emoji": "🧑",
+      "peso": 1.4
+    },
+    {
+      "nome": "Duda",
+      "emoji": "👧",
+      "peso": 0.9
+    },
+    {
+      "nome": "Rodrigo",
+      "emoji": "🧔",
+      "peso": 0.25
+    },
+    {
+      "nome": "Tainá",
+      "emoji": "👩",
+      "peso": 1.2
+    },
+    {
+      "nome": "Zé Carlos",
+      "emoji": "👨‍🦳",
+      "peso": 0.8
+    },
+    {
+      "nome": "Bia",
+      "emoji": "👱‍♀️",
+      "peso": 1.0
+    },
+    {
+      "nome": "Otávio",
+      "emoji": "🧑‍🦱",
+      "peso": 1.1
+    },
+    {
+      "nome": "Dona Lurdes",
+      "emoji": "👵",
+      "peso": 0.6
+    }
+  ],
+  "premiosRanking": [
+    {
+      "ate": 1,
+      "premio": {
+        "orvalho": 10,
+        "cartas": {
+          "semente_misteriosa": 1,
+          "seiva_dourada": 3
+        }
+      }
+    },
+    {
+      "ate": 3,
+      "premio": {
+        "orvalho": 6,
+        "cartas": {
+          "seiva_dourada": 2
+        }
+      }
+    },
+    {
+      "ate": 6,
+      "premio": {
+        "orvalho": 3,
+        "cartas": {
+          "petala_rara": 2
+        }
+      }
+    },
+    {
+      "ate": 99,
+      "premio": {
+        "moedas": 300,
+        "cartas": {
+          "adubo": 2
+        }
+      }
+    }
+  ],
+  "premioDerrotado": {
+    "orvalho": 3
+  },
+  "moedasBase": 40,
+  "multChefe": {
+    "atq": 0.6
+  }
+}

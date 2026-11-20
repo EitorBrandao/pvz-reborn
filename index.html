@@ -37,6 +37,10 @@
       </header>
 
       <aside id="missoes-lado" class="missoes-lado"></aside>
+      <aside class="atalhos-lado">
+        <button id="btn-feira" class="missao-icone" aria-label="Feira"><span>🛒</span><small>Feira</small></button>
+        <button id="btn-herbario" class="missao-icone" aria-label="Herbário"><span>📖</span><small>Herbário</small></button>
+      </aside>
       <main class="base-centro">
         <p class="saudacao" id="saudacao"></p>
         <button id="broto" class="broto" aria-label="Regar o broto">
@@ -92,6 +96,34 @@
         <p class="dica-pequena">Aqui não gasta fôlego. Bora testar esse time!</p>
         <div id="atividades-lista" class="atividades-lista"></div>
       </div>
+    </section>
+
+    <!-- Invasão de Chefe -->
+    <section id="tela-invasao" class="tela">
+      <header class="topo">
+        <button id="invasao-voltar" class="btn-icone" aria-label="Voltar">⬅️</button>
+        <h2>Invasão</h2>
+      </header>
+      <div class="rolagem"><div id="invasao-conteudo" class="painel-invasao"></div></div>
+    </section>
+
+    <!-- Feira -->
+    <section id="tela-feira" class="tela">
+      <header class="topo">
+        <button id="feira-voltar" class="btn-icone" aria-label="Voltar">⬅️</button>
+        <h2>Feira</h2>
+        <span class="pilula topo-dir">🪙 <b id="feira-moedas">0</b></span>
+      </header>
+      <div id="feira-conteudo" class="rolagem"></div>
+    </section>
+
+    <!-- Herbário -->
+    <section id="tela-herbario" class="tela">
+      <header class="topo">
+        <button id="herbario-voltar" class="btn-icone" aria-label="Voltar">⬅️</button>
+        <h2>Herbário</h2>
+      </header>
+      <div id="herbario-conteudo" class="rolagem"></div>
     </section>
 
     <!-- Horta de Treino -->

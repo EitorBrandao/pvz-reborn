@@ -771,3 +771,40 @@ body {
 }
 .reducao { color: #2f7d1f; font-weight: 800; }
 .escolha-planta .estrelas-mini { font-size: .5rem; letter-spacing: -1px; }
+
+/* ---------- Atalhos da horta (Feira e Herbário) ---------- */
+.atalhos-lado { position: absolute; right: 0; top: 70px; display: flex; flex-direction: column; gap: 10px; z-index: 2; }
+.atalhos-lado .missao-icone span { font-size: 1.4rem; }
+.atalhos-lado .missao-icone small { font-size: .55rem; }
+
+/* ---------- Invasão ---------- */
+.painel-invasao { display: flex; flex-direction: column; align-items: center; gap: 4px; padding-bottom: 12px; }
+.painel-invasao h3 { margin: 0; text-shadow: 0 2px 0 rgba(0, 0, 0, .3); text-align: center; }
+.painel-invasao h4 { margin: 12px 0 4px; align-self: flex-start; }
+.invasao-chefe { font-size: 5rem; line-height: 1.1; filter: drop-shadow(0 4px 0 rgba(0, 0, 0, .3)); animation: chefe-respira 2s ease-in-out infinite; }
+@keyframes chefe-respira { 50% { transform: scale(1.06); } }
+.invasao-vida { width: 100%; height: 18px; background: rgba(0, 0, 0, .45); border: 2px solid var(--terra); border-radius: 999px; overflow: hidden; }
+.invasao-vida span { display: block; height: 100%; background: linear-gradient(90deg, #e5483a, #ff9a1f); transition: width .3s; }
+.invasao-numeros { margin: 0; font-weight: 800; }
+.invasao-fim { font-weight: 800; text-align: center; }
+.ranking-invasao { list-style: none; padding: 0; margin: 0; width: 100%; display: flex; flex-direction: column; gap: 4px; }
+.ranking-invasao li {
+  display: flex; align-items: center; gap: 8px; padding: 6px 10px;
+  background: var(--bege); color: var(--escuro); border: 2px solid var(--terra); border-radius: 12px; font-size: .9rem;
+}
+.ranking-invasao li span:nth-child(2) { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ranking-invasao li.voce { border-color: var(--laranja); background: #fff3d6; box-shadow: 0 0 0 2px var(--laranja); }
+.ranking-invasao .pos { font-weight: 900; width: 28px; }
+
+/* ---------- Herbário ---------- */
+.pagina-herbario { background: var(--bege); color: var(--escuro); border: 3px solid var(--terra); border-radius: 14px; padding: 8px 10px; margin-bottom: 10px; }
+.pagina-herbario.pronta { border-color: var(--laranja); box-shadow: 0 0 0 2px var(--laranja); }
+.pagina-topo { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+.pagina-itens { display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: 6px; }
+.item-herbario { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 4px 2px; background: #fff8e6; border-radius: 10px; }
+.item-herbario span { font-size: 1.7rem; }
+.item-herbario small { font-size: .6rem; line-height: 1.1; overflow-wrap: anywhere; }
+.item-herbario.oculto span { filter: brightness(0); opacity: .35; }
+.item-herbario.chefe { box-shadow: inset 0 0 0 2px var(--vermelho); }
+.pagina-rodape { margin-top: 6px; text-align: right; font-size: .8rem; }
+.pagina-ok { color: #2f7d1f; font-weight: 800; }

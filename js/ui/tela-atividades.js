@@ -3,6 +3,7 @@
 import { $, mostrarTela, avisar, preencher } from './comum.js';
 import * as jogo from '../estado.js';
 import { gerarAndar, desafioDoDia, batalhaTreino, pragasConhecidas } from '../atividades.js';
+import { resumoInvasao, abrirInvasao } from './tela-eventos.js';
 
 let dados;
 let aoPreparar;
@@ -86,6 +87,23 @@ function desenhar() {
     botao: desafio.feito ? t.desafioBotaoFeito : t.desafioBotao,
     cor: desafio.feito ? 'btn-azul' : 'btn-laranja',
     acao: () => aoPreparar(desafioDoDia(dados, jogo.estado)),
+  }));
+
+  // Invasão de Chefe
+  const inv = resumoInvasao();
+  const s = inv.sit;
+  const linhasInv = inv.pendente
+    ? [t.invasaoPremio]
+    : [`${s.chefe.emoji} ${s.chefe.nome} <span class="nv">Nv ${s.nivel}</span>`,
+      s.derrotado ? t.invasaoDerrotado : preencher(t.invasaoVida, { pct: Math.ceil((s.restante / s.vidaTotal) * 100), pos: s.posicao }),
+      preencher(t.invasaoAtaques, { n: s.gratis, max: dados.invasao.ataquesGratis })];
+  lista.appendChild(cartao({
+    emoji: '👹',
+    titulo: t.invasaoTitulo,
+    linhas: linhasInv,
+    botao: inv.pendente ? t.invasaoBotaoPremio : t.invasaoBotao,
+    cor: 'btn-vermelho',
+    acao: abrirInvasao,
   }));
 
   // Treino

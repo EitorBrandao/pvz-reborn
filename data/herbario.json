@@ -1,0 +1,46 @@
+{
+  "premioFaccao": {
+    "orvalho": 3,
+    "cartas": {
+      "seiva_dourada": 1
+    }
+  },
+  "premioMapa": [
+    {
+      "moedas": 300,
+      "orvalho": 2
+    },
+    {
+      "moedas": 600,
+      "orvalho": 2
+    },
+    {
+      "moedas": 900,
+      "orvalho": 3
+    },
+    {
+      "moedas": 1200,
+      "orvalho": 3
+    },
+    {
+      "moedas": 1500,
+      "orvalho": 4
+    },
+    {
+      "moedas": 2000,
+      "orvalho": 5
+    }
+  ],
+  "titulos": {
+    "sertao": "Plantas do Sertão",
+    "mata": "Plantas da Mata",
+    "brejo": "Plantas do Brejo",
+    "roca": "Plantas da Roça",
+    "quintal": "Pragas do Quintal",
+    "pomar": "Pragas do Pomar",
+    "pantano": "Pragas do Pântano",
+    "estufa": "Pragas da Estufa",
+    "deserto": "Pragas do Deserto",
+    "telhado": "Pragas do Telhado"
+  }
+}

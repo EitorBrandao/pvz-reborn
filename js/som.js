@@ -156,6 +156,46 @@ const MUSICAS = {
         523, 0, 659, 784, 880, 0, 784, 659, 587, 523, 494, 0, 523, 0, 0, 0],
     },
   },
+  // Desafios (torre, desafio do dia, treino): marchinha animada, de quem vai encarar.
+  desafios: {
+    passo: 0.26,
+    baixo: { notas: [147, 220, 196, 147, 165, 220, 196, 147], cada: 4, timbre: 'triangle', vol: 0.28 },
+    melodia: {
+      timbre: 'triangle', vol: 0.1,
+      notas: [587, 0, 587, 659, 740, 0, 659, 0, 587, 0, 494, 0, 440, 0, 0, 0,
+        494, 0, 587, 0, 659, 740, 880, 0, 740, 659, 587, 0, 587, 0, 0, 0],
+    },
+  },
+  // Invasão de Chefe: grave e ameaçadora, em tom menor.
+  invasao: {
+    passo: 0.24,
+    baixo: { notas: [110, 110, 131, 123, 110, 110, 98, 104], cada: 4, timbre: 'sawtooth', vol: 0.16 },
+    melodia: {
+      timbre: 'square', vol: 0.045,
+      notas: [440, 0, 523, 0, 494, 0, 440, 415, 440, 0, 0, 0, 330, 0, 0, 0,
+        440, 0, 523, 587, 659, 0, 587, 523, 494, 0, 415, 0, 440, 0, 0, 0],
+    },
+  },
+  // Feira: alegre e saltitante, de mercado.
+  feira: {
+    passo: 0.2,
+    baixo: { notas: [175, 262, 220, 262, 196, 294, 233, 294], cada: 2, timbre: 'triangle', vol: 0.24 },
+    melodia: {
+      timbre: 'sine', vol: 0.12,
+      notas: [698, 880, 1047, 0, 880, 0, 698, 0, 784, 932, 1175, 0, 932, 0, 784, 0,
+        698, 0, 880, 0, 1047, 1175, 1047, 880, 784, 0, 659, 0, 698, 0, 0, 0],
+    },
+  },
+  // Herbário: lenta e delicada, de folhear um álbum.
+  herbario: {
+    passo: 0.42,
+    baixo: { notas: [196, 165, 175, 131], cada: 8, timbre: 'sine', vol: 0.26 },
+    melodia: {
+      timbre: 'sine', vol: 0.1,
+      notas: [784, 0, 659, 0, 587, 0, 523, 0, 659, 0, 0, 0, 587, 0, 0, 0,
+        698, 0, 587, 0, 523, 0, 494, 0, 523, 0, 0, 0, 0, 0, 0, 0],
+    },
+  },
 };
 
 let desejada = null; // música que deveria estar tocando (mesmo antes do primeiro toque na tela)
