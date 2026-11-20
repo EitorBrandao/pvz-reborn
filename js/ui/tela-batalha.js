@@ -19,7 +19,10 @@ let partida = 0;         // muda a cada batalha nova, pra cancelar animações a
 let batalhaAtual = null;
 
 const agora = () => performance.now();
-const vel = () => jogo.estado.velocidadeBatalha || 1;
+// Ritmo base: abaixo de 1 deixa o combate mais lento pra dar tempo de ver os ataques.
+const RITMO = 0.6;
+const velEscolhida = () => jogo.estado.velocidadeBatalha || 1;
+const vel = () => velEscolhida() * RITMO;
 
 export function iniciarTelaBatalha(d, sair) {
   dados = d;
@@ -29,7 +32,7 @@ export function iniciarTelaBatalha(d, sair) {
   window.addEventListener('resize', medir);
 
   $('btn-velocidade').addEventListener('click', () => {
-    jogo.definirVelocidade(vel() === 1 ? 2 : 1);
+    jogo.definirVelocidade(velEscolhida() === 1 ? 2 : 1);
     atualizarBotoes();
   });
   $('btn-pular').addEventListener('click', () => {
@@ -48,7 +51,7 @@ function podePular() {
 }
 
 function atualizarBotoes() {
-  $('btn-velocidade').textContent = `${vel()}x`;
+  $('btn-velocidade').textContent = `${velEscolhida()}x`;
   $('btn-pular').classList.toggle('bloqueado', !podePular());
 }
 
