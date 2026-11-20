@@ -257,6 +257,9 @@ function ligarSom() {
 }
 
 async function comecar() {
+  // Samsung Internet: o modo escuro dele desbota imagens e a batalha e não deixa o site desligar isso.
+  // A classe liga filtros que compensam (css/estilo.css, fim do arquivo).
+  if (/SamsungBrowser/i.test(navigator.userAgent)) document.documentElement.classList.add('samsung');
   const [config, textos, plantas, pragas, cartas, campanha, equipamentos, missoes, faccoes, atividades, changelog, rotina, invasao, feira, herbario, ascensao, talentos, pesadelo, labirinto, fusoes] = await Promise.all([
     lerJson('data/config.json'),
     lerJson('data/mensagens.json'),

@@ -909,3 +909,11 @@ body {
 .icone-hab { display: inline-block; width: 1.7em; height: 1.7em; vertical-align: middle; flex-shrink: 0; }
 .nome-hab { display: inline-flex; align-items: center; gap: 6px; }
 .icone-status { display: inline-block; width: 1.2em; height: 1.2em; vertical-align: middle; }
+
+/* Samsung Internet: o modo escuro dele (que o site não consegue desligar) escurece e desbota
+   imagens e o canvas da batalha. Estes filtros devolvem a cor; doses medidas no celular (teste-cores). */
+.samsung .arte, .samsung .icone-hab, .samsung .icone-status { filter: contrast(1.8) saturate(1.65) brightness(.88); }
+.samsung .planta-emoji .arte, .samsung .detalhe-emoji .arte, .samsung .escolha-planta .arte {
+  filter: contrast(1.8) saturate(1.65) brightness(.88) drop-shadow(0 2px 0 rgba(0, 0, 0, .22));
+}
+.samsung #campo { filter: brightness(.85) contrast(1.3) saturate(1.35); }
