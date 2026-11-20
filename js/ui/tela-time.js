@@ -2,15 +2,15 @@
 
 import { $, mostrarTela, avisar, preencher } from './comum.js';
 import * as jogo from '../estado.js';
-import { atributos } from '../evolucao.js';
-import { bonusFaccoes } from '../batalha.js';
+import { atributos, poder } from '../evolucao.js';
+import { bonusFaccoes, poderLados } from '../batalha.js';
 
 let dados;
 let faseEscolhida = null;
 let espacoEscolhido = null; // { col, linha } quando o jogador toca num espaço vazio
 
 // Ordem da lista de plantas (lembrada só neste aparelho). Plantas do time sempre em cima.
-const ORDENS = ['padrao', 'nivel', 'estrela', 'vida', 'atq', 'def', 'vel'];
+const ORDENS = ['padrao', 'poder', 'nivel', 'estrela', 'vida', 'atq', 'def', 'vel'];
 let ordem = 'padrao';
 try { ordem = localStorage.getItem('horta-ordem-time') || 'padrao'; } catch { /* sem storage */ }
 if (!ORDENS.includes(ordem)) ordem = 'padrao';
@@ -70,7 +70,17 @@ function desenharFase() {
     <b>${f.nome}</b>
     <span class="inimigos">${inimigos} <small>Nv ${f.nivel}</small></span>
     <small class="categorias">${cats}</small>
-    ${f.regra ? `<small class="regra-desafio">📜 ${f.regra.texto}</small>` : ''}`;
+    ${f.regra ? `<small class="regra-desafio">📜 ${f.regra.texto}</small>` : ''}
+    ${textoPoder()}`;
+}
+
+// Poder do time contra o das pragas: verde se o time é mais forte, vermelho se é mais fraco.
+function textoPoder() {
+  const t = dados.textos;
+  const { planta: nosso, praga: deles } = poderLados(faseEscolhida, jogo.estado.time, dados, jogo.estado.colecao);
+  if (!jogo.estado.time.length) return `<span class="poder-comparar">${preencher(t.poderVazio, { deles })}</span>`;
+  const classe = nosso >= deles ? 'mais-forte' : 'mais-fraco';
+  return `<span class="poder-comparar ${classe}">${preencher(t.poderComparar, { nosso, deles })}</span>`;
 }
 
 function desenharBonus() {
@@ -116,18 +126,23 @@ function primeiroEspacoLivre() {
   return null;
 }
 
+function comPoder(s) {
+  return { ...s, poder: poder(s, dados) };
+}
+
 // Time primeiro (frente antes do fundo, de cima pra baixo); depois o resto na ordem escolhida.
 // Empate mantém a ordem original.
 function plantasOrdenadas() {
   const col = jogo.estado.colecao;
   const time = jogo.estado.time;
   const itens = dados.plantas.filter((x) => col[x.id]).map((p, i) => ({
-    p, i, r: col[p.id], s: atributos(p, col[p.id], dados), m: time.find((t) => t.planta === p.id),
+    p, i, r: col[p.id], s: comPoder(atributos(p, col[p.id], dados)), m: time.find((t) => t.planta === p.id),
   }));
   const chave = ({ r, s }) => {
     if (ordem === 'nivel') return [r.nivel, r.estrelas];
     if (ordem === 'estrela') return [r.estrelas, r.nivel];
     if (ordem === 'padrao') return [0, 0];
+    if (ordem === 'poder') return [s.poder, r.nivel];
     return [s[ordem], 0];
   };
   return itens.sort((a, b) => {
@@ -153,6 +168,7 @@ function desenharPlantas() {
       <span class="planta-emoji">${p.emoji}</span>
       <b>${p.nome}</b>
       <small>${dados.faccoes.faccoes.find((f) => f.id === p.faccao)?.emoji || ''} Nv ${registro.nivel} · ${'⭐'.repeat(registro.estrelas)}</small>
+      <span class="poder">💪 ${s.poder}</span>
       <span class="atributos">❤️${s.vida} ⚔️${s.atq} 🛡️${s.def} 💨${s.vel}</span>`;
     cartao.addEventListener('click', () => {
       const time = jogo.estado.time;

@@ -27,6 +27,13 @@ export function atributos(base, registro, dados, mudanca = {}) {
   return { vida: calc('vida'), atq: calc('atq'), def: calc('def'), vel: base.vel };
 }
 
+// Poder: um número só pra comparar plantas (e pragas). Soma os atributos finais
+// com os pesos do config. Habilidades ainda não contam.
+export function poder(stats, dados) {
+  const pesos = dados.config.poder.pesos;
+  return Math.round(Object.entries(pesos).reduce((soma, [attr, peso]) => soma + (stats[attr] || 0) * peso, 0));
+}
+
 // Habilidade com o bônus das estrelas. Cada estrela acima da 1ª soma "porEstrela".
 // Campos inteiros (golpes, alvos, turnos) são arredondados.
 const INTEIROS = ['golpes', 'alvos', 'turnos', 'seiva'];

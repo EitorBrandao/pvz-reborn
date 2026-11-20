@@ -2,7 +2,7 @@
 
 import { $, mostrarTela, avisar, preencher } from './comum.js';
 import * as jogo from '../estado.js';
-import { atributos, xpParaProximo, nivelMaximo, custoEstrela, custoEquip, temCartas, habilidadeComEstrelas } from '../evolucao.js';
+import { atributos, poder, xpParaProximo, nivelMaximo, custoEstrela, custoEquip, temCartas, habilidadeComEstrelas } from '../evolucao.js';
 
 let dados;
 let aberta = null;      // id da planta aberta no detalhe
@@ -13,6 +13,7 @@ const ATRIBUTOS = ['vida', 'atq', 'def', 'vel'];
 // Ordenação da coleção (lembrada só neste aparelho)
 const ORDENS = [
   { id: 'padrao', rotulo: '↕️ Padrão' },
+  { id: 'poder', rotulo: '↕️ 💪 Poder' },
   { id: 'nivel', rotulo: '↕️ Nível' },
   { id: 'estrela', rotulo: '↕️ Estrela' },
 ];
@@ -89,6 +90,10 @@ function melhorias(r) {
   return { treinar, estrela, equip, algumEquip, alguma: treinar || estrela || algumEquip };
 }
 
+function poderDe(p, r, mudancaReg) {
+  return poder(atributos(p, r, dados, mudancaReg), dados);
+}
+
 function selo(ok) {
   return ok ? ' <span class="selo-melhorar">!</span>' : '';
 }
@@ -138,6 +143,7 @@ function plantasOrdenadas() {
   const chave = (p) => {
     const r = col[p.id];
     if (!r) return [-1, -1];
+    if (ordem === 'poder') return [poderDe(p, r), r.nivel];
     return ordem === 'estrela' ? [r.estrelas, r.nivel] : [r.nivel, r.estrelas];
   };
   if (ordem === 'padrao') {
@@ -177,6 +183,7 @@ function desenharLista() {
         <b>${p.nome}</b>
         <small class="estrelas-peq">${estrelasTexto(r.estrelas)}</small>
         <small>Nv ${r.nivel}/${max}</small>
+        <span class="poder">💪 ${poderDe(p, r)}</span>
         <span class="barra-xp"><span style="width:${pxp * 100}%"></span></span>`;
       botao.addEventListener('click', () => { aberta = p.id; mudanca = null; desenharDetalhe(); });
     }
@@ -205,7 +212,10 @@ function desenharDetalhe() {
   const m = melhorias(r);
 
   // Atributos (com o ganho da última evolução, se teve)
-  const linhas = ATRIBUTOS.map((a) => {
+  const poderAgora = poder(stats, dados);
+  const ganhoPoder = mudanca ? poderAgora - poder(mudanca.antes, dados) : 0;
+  const linhaPoder = `<div class="linha-attr linha-poder"><span>${t.poder}</span><b>${poderAgora}${ganhoPoder > 0 ? ` <em class="ganho">+${ganhoPoder}</em>` : ''}</b></div>`;
+  const linhas = linhaPoder + ATRIBUTOS.map((a) => {
     const ganho = mudanca ? mudanca.depois[a] - mudanca.antes[a] : 0;
     return `<div class="linha-attr"><span>${t.atributos[a]}</span><b>${stats[a]}${ganho > 0 ? ` <em class="ganho">+${ganho}</em>` : ''}</b></div>`;
   }).join('');
@@ -259,6 +269,7 @@ function desenharDetalhe() {
         <span class="custo"><span class="custo-item${r.copias < custo.copias ? ' falta' : ''}">🃏 Cópias ${r.copias}/${custo.copias}</span><span class="custo-item${jogo.estado.moedas < custo.moedas ? ' falta' : ''}">🪙${custo.moedas}</span></span>
         <div class="previa-grade">
           <span>Nv máx</span><b>${max} → ${max + cfg.niveisPorEstrela}</b>
+          <span>💪</span><b>${poderAgora} → ${poder(prev, dados)}</b>
           <span>⚔️</span><b>${stats.atq} → ${prev.atq}</b>
           <span>❤️</span><b>${stats.vida} → ${prev.vida}</b>
         </div>
@@ -278,7 +289,7 @@ function desenharDetalhe() {
     const pronto = m.equip[esp.id] ? ' pronto' : '';
     if (c) {
       const prev = atributos(p, r, dados, { equip: { [esp.id]: n + 1 } });
-      previa = `<b>${emojiAttr} ${stats[esp.atributo]} → ${prev[esp.atributo]}</b>`;
+      previa = `<b>${emojiAttr} ${stats[esp.atributo]} → ${prev[esp.atributo]} <small class="poder-previa">💪+${poder(prev, dados) - poderAgora}</small></b>`;
       botao = `<button class="btn btn-verde btn-peq btn-equip${pronto}" data-acao="equip" data-espaco="${esp.id}">
         <span>Melhorar</span>${custoTexto(c)}</button>`;
     }

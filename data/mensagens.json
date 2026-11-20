@@ -105,6 +105,7 @@
   "habilidadeProxima": "Com {estrelas} ⭐: {texto}",
   "ordensTime": {
     "padrao": "↕️ Padrão",
+    "poder": "↕️ 💪 Poder",
     "nivel": "↕️ Nível",
     "estrela": "↕️ Estrela",
     "vida": "↕️ ❤️ Vida",
@@ -112,6 +113,9 @@
     "def": "↕️ 🛡️ Defesa",
     "vel": "↕️ 💨 Velocidade"
   },
+  "poder": "💪 Poder",
+  "poderComparar": "💪 Seu time {nosso} × {deles} Pragas",
+  "poderVazio": "💪 Pragas: {deles}",
   "atributos": {
     "vida": "❤️ Vida",
     "atq": "⚔️ Ataque",

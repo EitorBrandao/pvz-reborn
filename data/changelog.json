@@ -1,4 +1,5 @@
 [
+  { "versao": "0.6.7", "itens": ["Novo 💪 Poder: um número que mostra rápido qual planta é mais forte (conta nível, estrelas e equipamentos)", "Em Preparar batalha, compare o Poder do seu time com o das pragas", "Ordenar por Poder na coleção e na montagem do time"] },
   { "versao": "0.6.6", "itens": ["Em Preparar batalha, as plantas do time aparecem primeiro", "Botão pra ordenar a lista por nível, estrela, vida, ataque, defesa ou velocidade"] },
   { "versao": "0.6.5", "itens": ["Música própria fora da batalha, diferente da música da luta", "Liga e desliga o som também nas Opções"] },
   { "versao": "0.6.4", "itens": ["Time começa com 3 vagas e ganha mais uma nos níveis 20, 30 e 40", "Toque no seu nível na tela inicial pra ver o XP e as vagas do time"] },

@@ -1,5 +1,5 @@
 {
-  "versaoJogo": "0.6.6",
+  "versaoJogo": "0.6.7",
   "inicio": {
     "moedas": 500,
     "orvalho": 10,
@@ -122,6 +122,9 @@
     "musicaPorTela": {
       "tela-batalha": "batalha"
     }
+  },
+  "poder": {
+    "pesos": { "vida": 0.2, "atq": 2, "def": 1, "vel": 1 }
   },
   "estrelasFase": {
     "tres": 1.0,
