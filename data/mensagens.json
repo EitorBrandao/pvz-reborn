@@ -299,9 +299,14 @@
     "premio": "Prêmio:",
     "pegou": "Página completa! {premio}",
     "fusaoTitulo": "🧬 Fusão de plantas",
-    "fusaoTexto": "Duas plantas raras se juntam e viram uma planta nova e mais forte. A fusão chega numa próxima fase. Já vá juntando as plantas das receitas!",
+    "fusaoTexto": "Duas plantas 5⭐ e ascendidas (Rank 1 ou mais) se juntam e viram uma planta híbrida nova. As duas plantas continuam com você. A híbrida nasce com 5⭐, nível 1 e o menor rank das duas.",
     "fusaoEmBreve": "Em breve",
-    "fusaoTem": "Você tem"
+    "fusaoTem": "Você tem",
+    "fusaoPais": "Plantas (5⭐ e Rank 1+):",
+    "fusaoCusto": "Custo:",
+    "fundir": "Fundir",
+    "fusaoFeita": "Fundida! Está na sua coleção.",
+    "fusaoNova": "{emoji} {nome} nasceu da fusão!"
   },
   "labirinto": {
     "titulo": "Labirinto das Raízes",
@@ -375,5 +380,9 @@
     "recebeu": "Recebeu 🌰 {sementes} e 🌳 {pontos} pontos de talento!",
     "pontosTalento": "Pontos do Labirinto: {n}",
     "usarPonto": "Usar ponto do Labirinto"
-  }
+  },
+  "fusaoInvalida": "Receita de fusão desconhecida.",
+  "fusaoJaFeita": "Essa planta já foi fundida.",
+  "fusaoPais": "As duas plantas precisam ter 5⭐ e pelo menos Rank 1 de ascensão.",
+  "fusaoCusto": "Faltam moedas, orvalho ou materiais pra fundir."
 }

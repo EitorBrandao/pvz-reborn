@@ -5,6 +5,7 @@ import * as evo from './evolucao.js';
 import { missaoCompleta } from './missoes.js';
 import { hoje } from './atividades.js';
 import * as lab from './labirinto.js';
+import { receitaDe, situacaoFusao, registroHibrida } from './fusao.js';
 import {
   cicloAtual, situacaoInvasao, premioDoRanking, novoCicloInvasao, ofertasDoDia, paginasHerbario, fusoesHerbario,
 } from './eventos.js';
@@ -606,6 +607,23 @@ export function fazerTroca(id) {
 
 export function fusoes() {
   return fusoesHerbario(dados, estado);
+}
+
+export function fundirPlanta(idHibrida) {
+  const receita = receitaDe(dados, idHibrida);
+  if (!receita) return { ok: false, erro: 'fusaoInvalida' };
+  const s = situacaoFusao(receita, dados, estado);
+  if (s.fundida) return { ok: false, erro: 'fusaoJaFeita' };
+  if (!s.paisOk) return { ok: false, erro: 'fusaoPais' };
+  if (!s.custoOk) return { ok: false, erro: 'fusaoCusto' };
+  const c = dados.fusoes.custo;
+  estado.moedas -= c.moedas;
+  estado.orvalho -= c.orvalho;
+  evo.gastarCartas(estado.inventario, c.cartas);
+  estado.colecao[idHibrida] = registroHibrida(receita, estado, dados);
+  contar('fundir');
+  salvarAgora();
+  return { ok: true };
 }
 
 export function herbario() {

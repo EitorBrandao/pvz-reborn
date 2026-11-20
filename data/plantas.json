@@ -1,82 +1,533 @@
 [
   {
-    "id": "pimentao", "faccao": "roca", "nome": "Pimentão Pavio", "emoji": "🌶️", "projetil": "🔥", "funcao": "Dano em área",
-    "vida": 220, "atq": 42, "def": 15, "vel": 11,
-    "habilidade": { "tipo": "area_coluna", "nome": "Explosão Ardida", "mult": 0.9, "aplica": { "status": "queimadura", "valor": 0.2, "turnos": 2 }, "porEstrela": { "mult": 0.1, "aplica": { "valor": 0.03 } } }
+    "id": "pimentao",
+    "faccao": "roca",
+    "nome": "Pimentão Pavio",
+    "emoji": "🌶️",
+    "projetil": "🔥",
+    "funcao": "Dano em área",
+    "vida": 220,
+    "atq": 42,
+    "def": 15,
+    "vel": 11,
+    "habilidade": {
+      "tipo": "area_coluna",
+      "nome": "Explosão Ardida",
+      "mult": 0.9,
+      "aplica": {
+        "status": "queimadura",
+        "valor": 0.2,
+        "turnos": 2
+      },
+      "porEstrela": {
+        "mult": 0.1,
+        "aplica": {
+          "valor": 0.03
+        }
+      }
+    }
   },
   {
-    "id": "cacto", "faccao": "sertao", "nome": "Cacto Espeto", "emoji": "🌵", "projetil": "✴️", "funcao": "Tanque",
-    "vida": 420, "atq": 24, "def": 40, "vel": 7,
-    "habilidade": { "tipo": "espinhos", "nome": "Pele de Espinho", "mult": 1.0, "reflete": 0.4, "turnos": 2, "porEstrela": { "reflete": 0.1 } }
+    "id": "cacto",
+    "faccao": "sertao",
+    "nome": "Cacto Espeto",
+    "emoji": "🌵",
+    "projetil": "✴️",
+    "funcao": "Tanque",
+    "vida": 420,
+    "atq": 24,
+    "def": 40,
+    "vel": 7,
+    "habilidade": {
+      "tipo": "espinhos",
+      "nome": "Pele de Espinho",
+      "mult": 1.0,
+      "reflete": 0.4,
+      "turnos": 2,
+      "porEstrela": {
+        "reflete": 0.1
+      }
+    }
   },
   {
-    "id": "milho", "alvo": "fraco", "faccao": "roca", "nome": "Milho Pipoqueiro", "emoji": "🌽", "projetil": "🍿", "funcao": "Dano rápido",
-    "vida": 200, "atq": 30, "def": 12, "vel": 15,
-    "habilidade": { "tipo": "rajada", "nome": "Pipocaria", "golpes": 3, "mult": 0.6, "porEstrela": { "golpes": 0.5 } }
+    "id": "milho",
+    "alvo": "fraco",
+    "faccao": "roca",
+    "nome": "Milho Pipoqueiro",
+    "emoji": "🌽",
+    "projetil": "🍿",
+    "funcao": "Dano rápido",
+    "vida": 200,
+    "atq": 30,
+    "def": 12,
+    "vel": 15,
+    "habilidade": {
+      "tipo": "rajada",
+      "nome": "Pipocaria",
+      "golpes": 3,
+      "mult": 0.6,
+      "porEstrela": {
+        "golpes": 0.5
+      }
+    }
   },
   {
-    "id": "babosa", "faccao": "sertao", "nome": "Babosa Curandeira", "emoji": "🪴", "projetil": "💧", "funcao": "Cura",
-    "vida": 260, "atq": 28, "def": 20, "vel": 10,
-    "habilidade": { "tipo": "cura", "nome": "Gel Curativo", "mult": 1.8, "alvos": 1, "aplica": { "status": "regeneracao", "valor": 0.25, "turnos": 2 }, "porEstrela": { "alvos": 0.5, "mult": 0.1, "aplica": { "valor": 0.03 } } }
+    "id": "babosa",
+    "faccao": "sertao",
+    "nome": "Babosa Curandeira",
+    "emoji": "🪴",
+    "projetil": "💧",
+    "funcao": "Cura",
+    "vida": 260,
+    "atq": 28,
+    "def": 20,
+    "vel": 10,
+    "habilidade": {
+      "tipo": "cura",
+      "nome": "Gel Curativo",
+      "mult": 1.8,
+      "alvos": 1,
+      "aplica": {
+        "status": "regeneracao",
+        "valor": 0.25,
+        "turnos": 2
+      },
+      "porEstrela": {
+        "alvos": 0.5,
+        "mult": 0.1,
+        "aplica": {
+          "valor": 0.03
+        }
+      }
+    }
   },
   {
-    "id": "couve", "faccao": "roca", "nome": "Couve Couraça", "emoji": "🥬", "projetil": "🍃", "funcao": "Tanque",
-    "vida": 380, "atq": 20, "def": 35, "vel": 8,
-    "habilidade": { "tipo": "escudo", "nome": "Folha Couraça", "mult": 1.2, "turnos": 2, "porEstrela": { "mult": 0.15 } }
+    "id": "couve",
+    "faccao": "roca",
+    "nome": "Couve Couraça",
+    "emoji": "🥬",
+    "projetil": "🍃",
+    "funcao": "Tanque",
+    "vida": 380,
+    "atq": 20,
+    "def": 35,
+    "vel": 8,
+    "habilidade": {
+      "tipo": "escudo",
+      "nome": "Folha Couraça",
+      "mult": 1.2,
+      "turnos": 2,
+      "porEstrela": {
+        "mult": 0.15
+      }
+    }
   },
   {
-    "id": "bambu", "alvo": "forte", "faccao": "mata", "nome": "Bambu Lanceiro", "emoji": "🎋", "projetil": "🥢", "funcao": "Dano perfurante",
-    "vida": 230, "atq": 40, "def": 16, "vel": 12,
-    "habilidade": { "tipo": "perfurar", "nome": "Lança de Bambu", "mult": 1.3, "aplica": { "status": "casca", "valor": 0.3, "turnos": 2 }, "porEstrela": { "mult": 0.1, "aplica": { "valor": 0.04 } } }
+    "id": "bambu",
+    "alvo": "forte",
+    "faccao": "mata",
+    "nome": "Bambu Lanceiro",
+    "emoji": "🎋",
+    "projetil": "🥢",
+    "funcao": "Dano perfurante",
+    "vida": 230,
+    "atq": 40,
+    "def": 16,
+    "vel": 12,
+    "habilidade": {
+      "tipo": "perfurar",
+      "nome": "Lança de Bambu",
+      "mult": 1.3,
+      "aplica": {
+        "status": "casca",
+        "valor": 0.3,
+        "turnos": 2
+      },
+      "porEstrela": {
+        "mult": 0.1,
+        "aplica": {
+          "valor": 0.04
+        }
+      }
+    }
   },
   {
-    "id": "cogumelo", "faccao": "brejo", "nome": "Cogumelo Esporento", "emoji": "🍄", "projetil": "💨", "funcao": "Controle",
-    "vida": 210, "atq": 30, "def": 15, "vel": 13,
-    "habilidade": { "tipo": "sono", "nome": "Nuvem de Esporos", "mult": 0.6, "turnos": 1, "aplica": { "status": "fraqueza", "valor": 0.25, "turnos": 2 }, "porEstrela": { "mult": 0.1, "turnos": 0.25, "aplica": { "valor": 0.03 } } }
+    "id": "cogumelo",
+    "faccao": "brejo",
+    "nome": "Cogumelo Esporento",
+    "emoji": "🍄",
+    "projetil": "💨",
+    "funcao": "Controle",
+    "vida": 210,
+    "atq": 30,
+    "def": 15,
+    "vel": 13,
+    "habilidade": {
+      "tipo": "sono",
+      "nome": "Nuvem de Esporos",
+      "mult": 0.6,
+      "turnos": 1,
+      "aplica": {
+        "status": "fraqueza",
+        "valor": 0.25,
+        "turnos": 2
+      },
+      "porEstrela": {
+        "mult": 0.1,
+        "turnos": 0.25,
+        "aplica": {
+          "valor": 0.03
+        }
+      }
+    }
   },
   {
-    "id": "trepadeira", "alvo": "tras", "faccao": "mata", "nome": "Trepadeira Laço", "emoji": "🌿", "projetil": "🌀", "funcao": "Controle",
-    "vida": 240, "atq": 26, "def": 18, "vel": 12,
-    "habilidade": { "tipo": "lentidao", "nome": "Laço de Cipó", "mult": 0.8, "reducao": 0.4, "turnos": 2, "porEstrela": { "reducao": 0.05, "turnos": 0.25 } }
+    "id": "trepadeira",
+    "alvo": "tras",
+    "faccao": "mata",
+    "nome": "Trepadeira Laço",
+    "emoji": "🌿",
+    "projetil": "🌀",
+    "funcao": "Controle",
+    "vida": 240,
+    "atq": 26,
+    "def": 18,
+    "vel": 12,
+    "habilidade": {
+      "tipo": "lentidao",
+      "nome": "Laço de Cipó",
+      "mult": 0.8,
+      "reducao": 0.4,
+      "turnos": 2,
+      "porEstrela": {
+        "reducao": 0.05,
+        "turnos": 0.25
+      }
+    }
   },
   {
-    "id": "agave", "alvo": "forte", "faccao": "sertao", "nome": "Agave Arpão", "emoji": "🌱", "projetil": "🧪", "funcao": "Veneno",
-    "vida": 230, "atq": 36, "def": 20, "vel": 11,
-    "habilidade": { "tipo": "golpe", "nome": "Ponta Venenosa", "mult": 1.0, "aplica": { "status": "veneno", "valor": 0.3, "turnos": 3 }, "porEstrela": { "mult": 0.05, "aplica": { "valor": 0.05, "turnos": 0.25 } } }
+    "id": "agave",
+    "alvo": "forte",
+    "faccao": "sertao",
+    "nome": "Agave Arpão",
+    "emoji": "🌱",
+    "projetil": "🧪",
+    "funcao": "Veneno",
+    "vida": 230,
+    "atq": 36,
+    "def": 20,
+    "vel": 11,
+    "habilidade": {
+      "tipo": "golpe",
+      "nome": "Ponta Venenosa",
+      "mult": 1.0,
+      "aplica": {
+        "status": "veneno",
+        "valor": 0.3,
+        "turnos": 3
+      },
+      "porEstrela": {
+        "mult": 0.05,
+        "aplica": {
+          "valor": 0.05,
+          "turnos": 0.25
+        }
+      }
+    }
   },
   {
-    "id": "bromelia", "alvo": "tras", "faccao": "mata", "nome": "Bromélia Cálice", "emoji": "🌺", "projetil": "✨", "funcao": "Suporte",
-    "vida": 220, "atq": 26, "def": 16, "vel": 14,
-    "habilidade": { "tipo": "energia", "nome": "Néctar Energético", "mult": 0.8, "seiva": 25, "porEstrela": { "seiva": 5 } }
+    "id": "bromelia",
+    "alvo": "tras",
+    "faccao": "mata",
+    "nome": "Bromélia Cálice",
+    "emoji": "🌺",
+    "projetil": "✨",
+    "funcao": "Suporte",
+    "vida": 220,
+    "atq": 26,
+    "def": 16,
+    "vel": 14,
+    "habilidade": {
+      "tipo": "energia",
+      "nome": "Néctar Energético",
+      "mult": 0.8,
+      "seiva": 25,
+      "porEstrela": {
+        "seiva": 5
+      }
+    }
   },
   {
-    "id": "vitoria", "faccao": "brejo", "nome": "Vitória-Régia", "emoji": "🪷", "projetil": "🌊", "funcao": "Tanque",
-    "vida": 400, "atq": 18, "def": 32, "vel": 8,
-    "habilidade": { "tipo": "protecao", "nome": "Folha Flutuante", "mult": 0.6, "pctVida": 0.15, "turnos": 2, "porEstrela": { "pctVida": 0.03 } }
+    "id": "vitoria",
+    "faccao": "brejo",
+    "nome": "Vitória-Régia",
+    "emoji": "🪷",
+    "projetil": "🌊",
+    "funcao": "Tanque",
+    "vida": 400,
+    "atq": 18,
+    "def": 32,
+    "vel": 8,
+    "habilidade": {
+      "tipo": "protecao",
+      "nome": "Folha Flutuante",
+      "mult": 0.6,
+      "pctVida": 0.15,
+      "turnos": 2,
+      "porEstrela": {
+        "pctVida": 0.03
+      }
+    }
   },
   {
-    "id": "jarro", "faccao": "brejo", "nome": "Jarro Devorador", "emoji": "🌷", "projetil": "🦷", "funcao": "Finalizador",
-    "vida": 210, "atq": 38, "def": 14, "vel": 11,
-    "habilidade": { "tipo": "devorar", "nome": "Bocada Final", "mult": 1.2, "limite": 0.5, "bonus": 2.0, "porEstrela": { "mult": 0.1, "bonus": 0.15 } }
+    "id": "jarro",
+    "faccao": "brejo",
+    "nome": "Jarro Devorador",
+    "emoji": "🌷",
+    "projetil": "🦷",
+    "funcao": "Finalizador",
+    "vida": 210,
+    "atq": 38,
+    "def": 14,
+    "vel": 11,
+    "habilidade": {
+      "tipo": "devorar",
+      "nome": "Bocada Final",
+      "mult": 1.2,
+      "limite": 0.5,
+      "bonus": 2.0,
+      "porEstrela": {
+        "mult": 0.1,
+        "bonus": 0.15
+      }
+    }
   },
   {
-    "id": "mandioca", "faccao": "roca", "nome": "Mandioca Machadinha", "emoji": "🥔", "projetil": "💥", "funcao": "Corpo a corpo", "alcance": "perto", "alvo": "forte",
-    "vida": 300, "atq": 36, "def": 24, "vel": 10,
-    "habilidade": { "tipo": "golpe", "nome": "Raiz Pesada", "mult": 1.5, "aplica": { "status": "fraqueza", "valor": 0.2, "turnos": 2 }, "porEstrela": { "mult": 0.1, "aplica": { "valor": 0.03 } } }
+    "id": "mandioca",
+    "faccao": "roca",
+    "nome": "Mandioca Machadinha",
+    "emoji": "🥔",
+    "projetil": "💥",
+    "funcao": "Corpo a corpo",
+    "alcance": "perto",
+    "alvo": "forte",
+    "vida": 300,
+    "atq": 36,
+    "def": 24,
+    "vel": 10,
+    "habilidade": {
+      "tipo": "golpe",
+      "nome": "Raiz Pesada",
+      "mult": 1.5,
+      "aplica": {
+        "status": "fraqueza",
+        "valor": 0.2,
+        "turnos": 2
+      },
+      "porEstrela": {
+        "mult": 0.1,
+        "aplica": {
+          "valor": 0.03
+        }
+      }
+    }
   },
   {
-    "id": "melancia", "faccao": "sertao", "nome": "Melancia Marreta", "emoji": "🍉", "projetil": "💥", "funcao": "Corpo a corpo", "alcance": "perto",
-    "vida": 360, "atq": 30, "def": 28, "vel": 9,
-    "habilidade": { "tipo": "golpe", "nome": "Rolada Pesada", "mult": 1.8, "porEstrela": { "mult": 0.12 } }
+    "id": "melancia",
+    "faccao": "sertao",
+    "nome": "Melancia Marreta",
+    "emoji": "🍉",
+    "projetil": "💥",
+    "funcao": "Corpo a corpo",
+    "alcance": "perto",
+    "vida": 360,
+    "atq": 30,
+    "def": 28,
+    "vel": 9,
+    "habilidade": {
+      "tipo": "golpe",
+      "nome": "Rolada Pesada",
+      "mult": 1.8,
+      "porEstrela": {
+        "mult": 0.12
+      }
+    }
   },
   {
-    "id": "coco", "faccao": "mata", "nome": "Coco Machado", "emoji": "🥥", "projetil": "💥", "funcao": "Corpo a corpo", "alcance": "perto", "alvo": "fraco",
-    "vida": 250, "atq": 34, "def": 18, "vel": 13,
-    "habilidade": { "tipo": "rajada", "nome": "Cocada Dupla", "golpes": 2, "mult": 0.9, "porEstrela": { "golpes": 0.5 } }
+    "id": "coco",
+    "faccao": "mata",
+    "nome": "Coco Machado",
+    "emoji": "🥥",
+    "projetil": "💥",
+    "funcao": "Corpo a corpo",
+    "alcance": "perto",
+    "alvo": "fraco",
+    "vida": 250,
+    "atq": 34,
+    "def": 18,
+    "vel": 13,
+    "habilidade": {
+      "tipo": "rajada",
+      "nome": "Cocada Dupla",
+      "golpes": 2,
+      "mult": 0.9,
+      "porEstrela": {
+        "golpes": 0.5
+      }
+    }
   },
   {
-    "id": "taboa", "faccao": "brejo", "nome": "Taboa Cajado", "emoji": "🌾", "projetil": "💥", "funcao": "Corpo a corpo", "alcance": "perto", "alvo": "fraco",
-    "vida": 280, "atq": 28, "def": 22, "vel": 11,
-    "habilidade": { "tipo": "sono", "nome": "Cajadada Tonta", "mult": 0.8, "turnos": 1, "porEstrela": { "mult": 0.1, "turnos": 0.25 } }
+    "id": "taboa",
+    "faccao": "brejo",
+    "nome": "Taboa Cajado",
+    "emoji": "🌾",
+    "projetil": "💥",
+    "funcao": "Corpo a corpo",
+    "alcance": "perto",
+    "alvo": "fraco",
+    "vida": 280,
+    "atq": 28,
+    "def": 22,
+    "vel": 11,
+    "habilidade": {
+      "tipo": "sono",
+      "nome": "Cajadada Tonta",
+      "mult": 0.8,
+      "turnos": 1,
+      "porEstrela": {
+        "mult": 0.1,
+        "turnos": 0.25
+      }
+    }
+  },
+  {
+    "id": "cacto_vulcao",
+    "hibrida": true,
+    "faccao": "sertao",
+    "nome": "Cacto Vulcão",
+    "emoji": "🌋",
+    "projetil": "🔥",
+    "funcao": "Tanque",
+    "vida": 560,
+    "atq": 36,
+    "def": 50,
+    "vel": 9,
+    "habilidade": {
+      "tipo": "espinhos",
+      "nome": "Pele de Lava",
+      "mult": 1.2,
+      "reflete": 0.5,
+      "turnos": 3,
+      "aplica": {
+        "status": "queimadura",
+        "valor": 0.2,
+        "turnos": 2
+      },
+      "porEstrela": {
+        "reflete": 0.1,
+        "mult": 0.1,
+        "aplica": {
+          "valor": 0.03
+        }
+      }
+    }
+  },
+  {
+    "id": "teia_esporenta",
+    "hibrida": true,
+    "faccao": "brejo",
+    "nome": "Teia Esporenta",
+    "emoji": "🕸️",
+    "projetil": "💨",
+    "funcao": "Controle",
+    "alvo": "tras",
+    "vida": 300,
+    "atq": 36,
+    "def": 24,
+    "vel": 15,
+    "habilidade": {
+      "tipo": "lentidao",
+      "nome": "Teia Entorpecente",
+      "mult": 1.0,
+      "reducao": 0.5,
+      "turnos": 2,
+      "aplica": {
+        "status": "fraqueza",
+        "valor": 0.25,
+        "turnos": 2
+      },
+      "porEstrela": {
+        "reducao": 0.05,
+        "turnos": 0.25,
+        "mult": 0.1,
+        "aplica": {
+          "valor": 0.03
+        }
+      }
+    }
+  },
+  {
+    "id": "jarro_peconhento",
+    "hibrida": true,
+    "faccao": "brejo",
+    "nome": "Jarro Peçonhento",
+    "emoji": "☠️",
+    "projetil": "🧪",
+    "funcao": "Finalizador",
+    "vida": 290,
+    "atq": 52,
+    "def": 18,
+    "vel": 12,
+    "habilidade": {
+      "tipo": "devorar",
+      "nome": "Bocada Peçonhenta",
+      "mult": 1.4,
+      "limite": 0.5,
+      "bonus": 2.2,
+      "aplica": {
+        "status": "veneno",
+        "valor": 0.3,
+        "turnos": 3
+      },
+      "porEstrela": {
+        "mult": 0.1,
+        "bonus": 0.15,
+        "aplica": {
+          "valor": 0.05,
+          "turnos": 0.25
+        }
+      }
+    }
+  },
+  {
+    "id": "lirio_curativo",
+    "hibrida": true,
+    "faccao": "sertao",
+    "nome": "Lírio Curativo",
+    "emoji": "💧",
+    "projetil": "💧",
+    "funcao": "Cura",
+    "vida": 340,
+    "atq": 32,
+    "def": 28,
+    "vel": 11,
+    "habilidade": {
+      "tipo": "cura",
+      "nome": "Orvalho do Lírio",
+      "mult": 2.2,
+      "alvos": 2,
+      "aplica": {
+        "status": "regeneracao",
+        "valor": 0.3,
+        "turnos": 3
+      },
+      "porEstrela": {
+        "alvos": 0.5,
+        "mult": 0.1,
+        "aplica": {
+          "valor": 0.03
+        }
+      }
+    }
   }
 ]

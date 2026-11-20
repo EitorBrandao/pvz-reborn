@@ -869,3 +869,5 @@ body {
 .grade-plantas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
 .selos-detalhe { position: static; transform: none; justify-content: center; margin-top: 4px; }
 .selos-detalhe .selo { font-size: .85rem; padding: 2px 10px; }
+.fusao-bloco { margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px dashed rgba(0, 0, 0, .15); text-align: center; }
+.fusao-bloco small { display: block; margin-top: 4px; }

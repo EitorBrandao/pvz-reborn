@@ -1,0 +1,35 @@
+{
+ "estrelasMin": 5,
+ "rankMin": 1,
+ "custo": {
+  "moedas": 10000,
+  "orvalho": 10,
+  "cartas": {
+   "semente_labirinto": 40,
+   "petala_rara": 10,
+   "seiva_dourada": 3
+  }
+ },
+ "receitas": [
+  {
+   "id": "cacto_vulcao",
+   "a": "pimentao",
+   "b": "cacto"
+  },
+  {
+   "id": "teia_esporenta",
+   "a": "cogumelo",
+   "b": "trepadeira"
+  },
+  {
+   "id": "jarro_peconhento",
+   "a": "agave",
+   "b": "jarro"
+  },
+  {
+   "id": "lirio_curativo",
+   "a": "babosa",
+   "b": "vitoria"
+  }
+ ]
+}

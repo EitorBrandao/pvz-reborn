@@ -256,7 +256,7 @@ function ligarSom() {
 }
 
 async function comecar() {
-  const [config, textos, plantas, pragas, cartas, campanha, equipamentos, missoes, faccoes, atividades, changelog, rotina, invasao, feira, herbario, ascensao, talentos, pesadelo, labirinto] = await Promise.all([
+  const [config, textos, plantas, pragas, cartas, campanha, equipamentos, missoes, faccoes, atividades, changelog, rotina, invasao, feira, herbario, ascensao, talentos, pesadelo, labirinto, fusoes] = await Promise.all([
     lerJson('data/config.json'),
     lerJson('data/mensagens.json'),
     lerJson('data/plantas.json'),
@@ -276,8 +276,9 @@ async function comecar() {
     lerJson('data/talentos.json'),
     lerJson('data/pesadelo.json'),
     lerJson('data/labirinto.json'),
+    lerJson('data/fusoes.json'),
   ]);
-  dados = { config, textos, plantas, pragas, cartas, campanha: prepararCampanha(campanha, pesadelo), equipamentos, missoes, faccoes, atividades, rotina, invasao, feira, herbario, ascensao, talentos, pesadelo, labirinto };
+  dados = { config, textos, plantas, pragas, cartas, campanha: prepararCampanha(campanha, pesadelo), equipamentos, missoes, faccoes, atividades, rotina, invasao, feira, herbario, ascensao, talentos, pesadelo, labirinto, fusoes };
 
   jogo.iniciar(dados);
   save.pedirArmazenamentoPersistente();

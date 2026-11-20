@@ -1,5 +1,6 @@
 // Invasão de Chefe, Feira e Herbário: só contas e montagem (não desenha e não mexe no save).
 
+import { situacaoFusao } from './fusao.js';
 import { criarRng } from './batalha.js';
 import { hoje, pragasConhecidas, nivelDoJogador } from './atividades.js';
 
@@ -158,7 +159,9 @@ export function fusoesHerbario(dados, estado) {
       const p = dados.plantas.find((x) => x.id === id);
       return { emoji: p.emoji, nome: p.nome, tem: !!estado.colecao[id] };
     });
-    return { ...f, ing };
+    // receita já liberada no jogo (data/fusoes.json): traz o que falta e se dá pra fundir
+    const receita = dados.fusoes.receitas.find((r) => r.a === f.a && r.b === f.b);
+    return { ...f, ing, receita, situacao: receita ? situacaoFusao(receita, dados, estado) : null };
   });
 }
 
@@ -168,7 +171,7 @@ export function paginasHerbario(dados, estado) {
   const vistas = new Set(pragasConhecidas(dados, estado).map((p) => p.id));
   if (!estado.vencidas.length) vistas.clear();
   const paginas = dados.faccoes.faccoes.map((f) => {
-    const itens = dados.plantas.filter((p) => p.faccao === f.id)
+    const itens = dados.plantas.filter((p) => p.faccao === f.id && !p.hibrida)
       .map((p) => ({ emoji: p.emoji, nome: p.nome, visto: !!estado.colecao[p.id] }));
     return { id: `faccao-${f.id}`, titulo: `${f.emoji} ${h.titulos[f.id]}`, itens, premio: h.premioFaccao };
   });
