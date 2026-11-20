@@ -2,40 +2,209 @@
   "canteiro": {
     "vasos": 3,
     "mudas": [
-      { "id": "cenoura", "nome": "Cenoura", "emoji": "🥕", "minutos": 5, "custo": 20, "moedas": 45, "nivelMin": 1,
-        "cartas": [{ "carta": "fibra", "chance": 0.4 }] },
-      { "id": "tomate", "nome": "Tomate", "emoji": "🍅", "minutos": 30, "custo": 60, "moedas": 160, "nivelMin": 1,
-        "cartas": [{ "carta": "adubo", "chance": 0.7 }, { "carta": "fibra", "chance": 0.5 }] },
-      { "id": "morango", "nome": "Morango", "emoji": "🍓", "minutos": 120, "custo": 150, "moedas": 450, "nivelMin": 3,
-        "cartas": [{ "carta": "adubo", "chance": 0.9 }, { "carta": "seiva_dourada", "chance": 0.25 }, { "carta": "petala_rara", "chance": 0.15 }] },
-      { "id": "abobora", "nome": "Abóbora", "emoji": "🎃", "minutos": 480, "custo": 400, "moedas": 1400, "nivelMin": 5,
-        "cartas": [{ "carta": "seiva_dourada", "chance": 0.6 }, { "carta": "petala_rara", "chance": 0.4 }, { "carta": "semente_misteriosa", "chance": 0.1 }] }
+      {
+        "id": "cenoura",
+        "nome": "Cenoura",
+        "emoji": "🥕",
+        "minutos": 5,
+        "custo": 20,
+        "moedas": 45,
+        "nivelMin": 1,
+        "cartas": [
+          {
+            "carta": "fibra",
+            "chance": 0.4
+          }
+        ]
+      },
+      {
+        "id": "tomate",
+        "nome": "Tomate",
+        "emoji": "🍅",
+        "minutos": 30,
+        "custo": 60,
+        "moedas": 160,
+        "nivelMin": 1,
+        "cartas": [
+          {
+            "carta": "adubo",
+            "chance": 0.7
+          },
+          {
+            "carta": "fibra",
+            "chance": 0.5
+          }
+        ]
+      },
+      {
+        "id": "morango",
+        "nome": "Morango",
+        "emoji": "🍓",
+        "minutos": 120,
+        "custo": 150,
+        "moedas": 450,
+        "nivelMin": 3,
+        "cartas": [
+          {
+            "carta": "adubo",
+            "chance": 0.9
+          },
+          {
+            "carta": "seiva_dourada",
+            "chance": 0.25
+          },
+          {
+            "carta": "petala_rara",
+            "chance": 0.15
+          }
+        ]
+      },
+      {
+        "id": "abobora",
+        "nome": "Abóbora",
+        "emoji": "🎃",
+        "minutos": 480,
+        "custo": 400,
+        "moedas": 1400,
+        "nivelMin": 5,
+        "cartas": [
+          {
+            "carta": "seiva_dourada",
+            "chance": 0.6
+          },
+          {
+            "carta": "petala_rara",
+            "chance": 0.4
+          },
+          {
+            "carta": "semente_misteriosa",
+            "chance": 0.1
+          }
+        ]
+      }
     ],
-    "estagios": ["🌱", "🌿"]
+    "estagios": [
+      "🌱",
+      "🌿"
+    ]
   },
   "expedicao": {
     "maxPlantas": 3,
     "destinos": [
-      { "id": "riacho", "nome": "Beira do riacho", "emoji": "🏞️", "horas": 1,
-        "moedasPorPlanta": 40, "xpPorPlanta": 40, "moedasPorNivel": 4,
-        "cartas": [{ "carta": "fibra", "chance": 0.8 }, { "carta": "adubo", "chance": 0.5 }] },
-      { "id": "mata", "nome": "Mata fechada", "emoji": "🌳", "horas": 4,
-        "moedasPorPlanta": 150, "xpPorPlanta": 150, "moedasPorNivel": 12,
-        "cartas": [{ "carta": "adubo", "chance": 0.9 }, { "carta": "fibra", "chance": 0.9 }, { "carta": "seiva_dourada", "chance": 0.3 }, { "carta": "petala_rara", "chance": 0.2 }] },
-      { "id": "serra", "nome": "Serra distante", "emoji": "⛰️", "horas": 8,
-        "moedasPorPlanta": 300, "xpPorPlanta": 320, "moedasPorNivel": 25,
-        "cartas": [{ "carta": "seiva_dourada", "chance": 0.7 }, { "carta": "petala_rara", "chance": 0.5 }, { "carta": "semente_misteriosa", "chance": 0.12 }, { "carta": "adubo", "chance": 1 }] }
-    ]
+      {
+        "id": "riacho",
+        "nome": "Beira do riacho",
+        "emoji": "🏞️",
+        "horas": 1,
+        "moedasPorPlanta": 40,
+        "xpPorPlanta": 40,
+        "moedasPorNivel": 4,
+        "cartas": [
+          {
+            "carta": "fibra",
+            "chance": 0.8
+          },
+          {
+            "carta": "adubo",
+            "chance": 0.5
+          }
+        ],
+        "xpPorNivel": 6
+      },
+      {
+        "id": "mata",
+        "nome": "Mata fechada",
+        "emoji": "🌳",
+        "horas": 4,
+        "moedasPorPlanta": 150,
+        "xpPorPlanta": 150,
+        "moedasPorNivel": 12,
+        "cartas": [
+          {
+            "carta": "adubo",
+            "chance": 0.9
+          },
+          {
+            "carta": "fibra",
+            "chance": 0.9
+          },
+          {
+            "carta": "seiva_dourada",
+            "chance": 0.3
+          },
+          {
+            "carta": "petala_rara",
+            "chance": 0.2
+          }
+        ],
+        "xpPorNivel": 18
+      },
+      {
+        "id": "serra",
+        "nome": "Serra distante",
+        "emoji": "⛰️",
+        "horas": 8,
+        "moedasPorPlanta": 300,
+        "xpPorPlanta": 320,
+        "moedasPorNivel": 25,
+        "cartas": [
+          {
+            "carta": "seiva_dourada",
+            "chance": 0.7
+          },
+          {
+            "carta": "petala_rara",
+            "chance": 0.5
+          },
+          {
+            "carta": "semente_misteriosa",
+            "chance": 0.12
+          },
+          {
+            "carta": "adubo",
+            "chance": 1
+          }
+        ],
+        "xpPorNivel": 40
+      }
+    ],
+    "reducaoPorEstrela": 0.05,
+    "reducaoMax": 0.3,
+    "bonusCartaPorEstrela": 0.15
   },
   "presenca": {
     "premios": [
-      { "moedas": 100 },
-      { "cartas": { "adubo": 2 } },
-      { "moedas": 250 },
-      { "cartas": { "fibra": 3, "petala_rara": 1 } },
-      { "orvalho": 3 },
-      { "cartas": { "seiva_dourada": 2 } },
-      { "orvalho": 5, "cartas": { "semente_misteriosa": 1 } }
+      {
+        "moedas": 100
+      },
+      {
+        "cartas": {
+          "adubo": 2
+        }
+      },
+      {
+        "moedas": 250
+      },
+      {
+        "cartas": {
+          "fibra": 3,
+          "petala_rara": 1
+        }
+      },
+      {
+        "orvalho": 3
+      },
+      {
+        "cartas": {
+          "seiva_dourada": 2
+        }
+      },
+      {
+        "orvalho": 5,
+        "cartas": {
+          "semente_misteriosa": 1
+        }
+      }
     ]
   }
 }

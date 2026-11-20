@@ -765,3 +765,5 @@ body {
   .broto { width: 120px; height: 120px; font-size: 3.8rem; }
   .base-centro { gap: 6px; }
 }
+.reducao { color: #2f7d1f; font-weight: 800; }
+.escolha-planta .estrelas-mini { font-size: .5rem; letter-spacing: -1px; }

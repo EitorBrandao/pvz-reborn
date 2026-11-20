@@ -372,11 +372,34 @@ export function emExpedicao(idPlanta) {
   return !!estado.expedicao && estado.expedicao.plantas.includes(idPlanta);
 }
 
+// Quanto a expedição rende e demora com essas plantas.
+// Nível: mais moedas e XP. Estrelas acima de 1: mais chance de cartas e viagem mais curta.
+export function previaExpedicao(idDestino, plantas) {
+  const d = destinoPorId(idDestino);
+  const c = dados.rotina.expedicao;
+  let moedas = 0;
+  let estrelasExtras = 0;
+  const xp = {};
+  for (const id of plantas) {
+    const r = estado.colecao[id];
+    if (!r) continue;
+    moedas += d.moedasPorPlanta + d.moedasPorNivel * r.nivel;
+    xp[id] = d.xpPorPlanta + (d.xpPorNivel || 0) * r.nivel;
+    estrelasExtras += r.estrelas - 1;
+  }
+  const reducao = Math.min(c.reducaoMax, c.reducaoPorEstrela * estrelasExtras);
+  return {
+    moedas, xp, reducao,
+    duracao: Math.round(d.horas * 3600000 * (1 - reducao)),
+    xpTotal: Object.values(xp).reduce((s, n) => s + n, 0),
+  };
+}
+
 export function expedicaoInfo() {
   const e = estado.expedicao;
   const destino = e && destinoPorId(e.destino);
   if (!destino) return null;
-  const total = destino.horas * 3600000;
+  const total = e.duracao || destino.horas * 3600000;
   const passou = Date.now() - e.desde;
   return { destino, plantas: e.plantas, pronta: passou >= total, falta: Math.max(0, total - passou), progresso: Math.min(1, passou / total) };
 }
@@ -387,7 +410,8 @@ export function enviarExpedicao(idDestino, plantas) {
   if (!plantas.length) return { ok: false, erro: 'expedicaoVazia' };
   if (plantas.length > dados.rotina.expedicao.maxPlantas) return { ok: false, erro: 'semMaterial' };
   if (plantas.some((id) => !estado.colecao[id] || estado.time.some((m) => m.planta === id))) return { ok: false, erro: 'expedicaoNoTime' };
-  estado.expedicao = { destino: destino.id, plantas: [...plantas], desde: Date.now() };
+  const previa = previaExpedicao(destino.id, plantas);
+  estado.expedicao = { destino: destino.id, plantas: [...plantas], desde: Date.now(), duracao: previa.duracao };
   contar('enviarExpedicao');
   salvarAgora();
   return { ok: true };
@@ -397,22 +421,25 @@ export function receberExpedicao() {
   const info = expedicaoInfo();
   if (!info || !info.pronta) return { ok: false, erro: 'naoPronto' };
   const d = info.destino;
-  let moedas = 0;
+  const previa = previaExpedicao(d.id, info.plantas);
+  const bonus = dados.rotina.expedicao.bonusCartaPorEstrela;
+  const moedas = previa.moedas;
   let cartas = [];
   const subiram = [];
   for (const id of info.plantas) {
     const registro = estado.colecao[id];
     if (!registro) continue;
-    moedas += d.moedasPorPlanta + d.moedasPorNivel * registro.nivel;
-    cartas = cartas.concat(sortearCartas(d.cartas));
-    if (evo.darXp(registro, d.xpPorPlanta, config.evolucao) > 0) subiram.push({ id, nivel: registro.nivel });
+    // cada estrela acima de 1 aumenta a chance de cada carta
+    const mult = 1 + bonus * (registro.estrelas - 1);
+    cartas = cartas.concat(sortearCartas(d.cartas.map((c) => ({ ...c, chance: c.chance * mult }))));
+    if (evo.darXp(registro, previa.xp[id], config.evolucao) > 0) subiram.push({ id, nivel: registro.nivel });
   }
   estado.moedas += moedas;
   guardarCartas(cartas);
   estado.expedicao = null;
   contar('voltarExpedicao');
   salvarAgora();
-  return { ok: true, moedas, cartas, subiram, xp: d.xpPorPlanta };
+  return { ok: true, moedas, cartas, subiram, xp: previa.xpTotal };
 }
 
 // Calendário: um prêmio por dia em que o jogador entra (não precisa ser seguido).

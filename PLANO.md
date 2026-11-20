@@ -119,7 +119,7 @@ pvz-reborn/
 **Rotina diária (na tela da horta, abaixo do broto):**
 
 - **Canteiro:** 3 vasos. Compra-se uma muda com moedas (Cenoura 5min, Tomate 30min, Morango 2h, Abóbora 8h; as maiores liberam por nível do jogador). Ela cresce com o jogo fechado; toque pra colher moedas e cartas.
-- **Expedição:** até 3 plantas fora do time vão pra um destino de 1h, 4h ou 8h e voltam com moedas, XP e cartas. Enquanto viajam, não podem entrar no time.
+- **Expedição:** até 3 plantas fora do time vão pra um destino de 1h, 4h ou 8h e voltam com moedas, XP e cartas. Nível maior rende mais moedas e XP; cada estrela acima de 1 aumenta a chance de cartas e encurta a viagem em 5% (até 30%). A janela mostra o prêmio e o tempo previstos. Enquanto viajam, não podem entrar no time.
 - **Calendário da horta:** abre ao entrar no jogo, um prêmio por dia (não precisa ser seguido); o 7º dia é o maior e depois recomeça.
 - Números em `data/rotina.json`.
 
