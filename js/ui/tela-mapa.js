@@ -1,5 +1,6 @@
 // Mapa da campanha: abas dos mapas, caminho de fases e painel da fase escolhida.
 
+import { arte } from '../arte.js';
 import { $, mostrarTela, avisar, preencher } from './comum.js';
 import * as jogo from '../estado.js';
 import * as som from '../som.js';
@@ -43,7 +44,7 @@ function estrelas(n) {
 }
 
 function emojiPraga(id) {
-  return dados.pragas.find((p) => p.id === id)?.emoji || '?';
+  return arte(dados.pragas.find((p) => p.id === id)) || '?';
 }
 
 function desenhar() {

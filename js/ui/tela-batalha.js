@@ -5,6 +5,7 @@ import * as jogo from '../estado.js';
 import { prepararBatalha, simular, rolarCartas, criarRng } from '../batalha.js';
 import { calcularEstrelas } from '../campanha.js';
 import * as som from '../som.js';
+import { arte, imagemUnidade, imagemStatus, imagemHabilidade, infoTiro, corHabilidade, preCarregar } from '../arte.js';
 
 let dados, acoes;
 let missoesAntes = new Set();
@@ -13,6 +14,8 @@ let vis = {};            // aparência atual de cada unidade
 let projeteis = [];
 let flutuantes = [];
 let particulas = [];
+let ondas = [];
+let selos = [];          // ícone de status que pula quando o efeito pega          // anéis que se expandem (habilidades, cura, escudo)
 let clarao = 0;         // tela pisca branco em golpe crítico
 let banner = null;
 let tremor = 0;
@@ -78,6 +81,8 @@ export function comecarBatalha(batalha) {
   projeteis = [];
   flutuantes = [];
   particulas = [];
+  ondas = [];
+  selos = [];
   clarao = 0;
   banner = null;
   tremor = 0;
@@ -90,7 +95,8 @@ export function comecarBatalha(batalha) {
   chefeInvasao = chefe ? { uid: chefe.uid, vida: chefe.vida } : null;
 
   vis = {};
-  for (const u of unidades) vis[u.uid] = { ...u, ox: 0, oy: 0, dx: 0, dy: 0, kx: 0, alpha: 1, brilho: 0, flash: 0 };
+  for (const u of unidades) vis[u.uid] = { ...u, ox: 0, oy: 0, dx: 0, dy: 0, kx: 0, alpha: 1, brilho: 0, flash: 0, estica: 0, fase: Math.random() * 6 };
+  preCarregar(unidades.map((u) => u.id));
 
   $('resultado').classList.add('escondido');
   $('batalha-nome').textContent = batalha.nome;
@@ -171,7 +177,9 @@ async function animarAcao(ev) {
   }
 
   if (ev.especial) {
-    banner = { texto: ev.nomeHab, x: a.x, y: a.y - raio * 1.9, t0: agora(), dur: 1100 / vel() };
+    banner = { texto: ev.nomeHab, hab: ev.habTipo, x: a.x, y: a.y - raio * 1.9, t0: agora(), dur: 1100 / vel() };
+    anel(a.x, a.y, corHabilidade(ev.habTipo), raio * 0.6, raio * 2.2, 600);
+    estourar(a.x, a.y, 12, [corHabilidade(ev.habTipo), '#fff'], 'estrela');
     a.brilho = 1;
     tremor += 3;
     if (!pular) som.tocarSom('especial');
@@ -184,6 +192,7 @@ async function animarAcao(ev) {
     const ang = Math.atan2(alvo.y - a.y, alvo.x - a.x);
     if (!ev.perto) {
       if (!pular) som.tocarSom('tiro');
+      a.estica = 1;
       a.dx = Math.cos(ang) * raio * 0.7;
       a.dy = Math.sin(ang) * raio * 0.7;
       await espera(140);
@@ -200,8 +209,10 @@ async function animarAcao(ev) {
       const dist = Math.max(0, Math.hypot(alvo.x - a.x, alvo.y - a.y) - raio * 1.6);
       a.dx = Math.cos(ang) * dist;
       a.dy = Math.sin(ang) * dist;
+      a.estica = 1;
       await espera(200);
       mostrarEfeito(ef);
+      if (ev.especial) impacto(ev.habTipo, vis[ef.alvo]);
       await espera(120);
     }
     a.dx = 0;
@@ -209,7 +220,10 @@ async function animarAcao(ev) {
   } else {
     let atraso = 0;
     const chegadas = golpes.map((ef) => {
-      const voo = lancar(a, vis[ef.alvo], a.projetil, atraso).then(() => mostrarEfeito(ef));
+      const voo = lancar(a, vis[ef.alvo], a.projetil, atraso, ev.especial).then(() => {
+        mostrarEfeito(ef);
+        if (ev.especial) impacto(ev.habTipo, vis[ef.alvo]);
+      });
       atraso += ev.habTipo === 'rajada' ? 130 : 50;
       return voo;
     });
@@ -230,11 +244,11 @@ async function animarStatus(ev) {
   await espera(350);
 }
 
-function lancar(de, para, emoji, atraso) {
+function lancar(de, para, emoji, atraso, especial = false) {
   if (pular) return Promise.resolve();
   return new Promise((resolver) => {
     projeteis.push({
-      x0: de.x, y0: de.y, x1: para.x, y1: para.y, emoji,
+      x0: de.x, y0: de.y, x1: para.x, y1: para.y, emoji, tiro: infoTiro(emoji), especial,
       t0: agora() + atraso / vel(), dur: 320 / vel(), resolver,
     });
   });
@@ -278,31 +292,39 @@ function mostrarEfeito(ef) {
     }
     case 'cura':
       v.vida = ef.vidaDepois;
+      anel(v.x, v.y, '#7dff6a', raio * 0.5, raio * 1.5, 500);
+      subir(v.x, v.y, 7, '#7dff6a', 'mais');
       flutuar(v.x, v.y - raio, `+${ef.valor}`, '#7dff6a', 26);
       break;
     case 'escudo':
       v.escudo = ef.valor;
+      anel(v.x, v.y, '#7fe3ff', raio * 1.6, raio * 1.1, 450);
       flutuar(v.x, v.y - raio, preencher(t.escudo, { valor: ef.valor }), '#7fe3ff', 18);
       break;
     case 'espinhos':
+      estourar(v.x, v.y, 10, ['#d7e8a8', '#4f9a3a'], 'espinho');
       flutuar(v.x, v.y - raio * 1.4, t.espinhos, '#b6ff5c', 18);
       break;
     case 'sono':
       v.sono = 1;
+      anel(v.x, v.y, '#b388ff', raio * 0.4, raio * 1.4, 500);
       flutuar(v.x, v.y - raio * 1.4, t.sono, '#ffffff', 18);
       break;
     case 'status': {
       const st = dados.textos.status[ef.status];
       const lista = Array.isArray(v.status) ? v.status : [];
       if (!lista.includes(ef.status)) v.status = [...lista, ef.status];
+      selos.push({ x: v.x, y: v.y - raio * 0.4, nome: ef.status, t0: agora(), dur: 900 / vel() });
       if (st) flutuar(v.x, v.y - raio * 1.4, st.nome, ef.status === 'regeneracao' ? '#7dff6a' : '#ffb0e0', 18);
       break;
     }
     case 'seiva':
+      subir(v.x, v.y, 6, '#ffd23a', 'estrela');
       flutuar(v.x, v.y - raio * 1.4, preencher(t.seiva, { valor: ef.valor }), '#ffd23a', 18);
       break;
     case 'lento':
       v.lento = 1;
+      selos.push({ x: v.x, y: v.y - raio * 0.4, nome: 'lento', t0: agora(), dur: 900 / vel() });
       flutuar(v.x, v.y - raio * 1.4, t.lento, '#9fd0ff', 18);
       break;
   }
@@ -317,16 +339,42 @@ function flutuar(x, y, texto, cor, tam, grande = false) {
   flutuantes.push({ x, y, texto, cor, tam, grande, t0: agora(), dur: (grande ? 1200 : 900) / vel() });
 }
 
-function estourar(x, y, quantidade, cores) {
+function estourar(x, y, quantidade, cores, forma = 'bola') {
   if (pular) return;
   for (let i = 0; i < quantidade; i++) {
     const ang = Math.random() * Math.PI * 2;
     const forca = raio * (0.08 + Math.random() * 0.12);
     particulas.push({
       x, y, vx: Math.cos(ang) * forca, vy: Math.sin(ang) * forca - raio * 0.05,
-      cor: cores[i % cores.length], tam: 2 + Math.random() * 4, vida: 1,
+      cor: cores[i % cores.length], tam: 2 + Math.random() * 4, vida: 1, forma, ang,
     });
   }
+}
+
+// partículas que sobem devagar (cura, energia)
+function subir(x, y, quantidade, cor, forma) {
+  if (pular) return;
+  for (let i = 0; i < quantidade; i++) {
+    particulas.push({
+      x: x + (Math.random() - 0.5) * raio * 1.4, y: y + (Math.random() - 0.2) * raio,
+      vx: 0, vy: -raio * (0.03 + Math.random() * 0.03), leve: true,
+      cor, tam: 4 + Math.random() * 3, vida: 1, forma, ang: 0,
+    });
+  }
+}
+
+function anel(x, y, cor, r0, r1, dur) {
+  if (pular) return;
+  ondas.push({ x, y, cor, r0, r1, t0: agora(), dur: dur / vel() });
+}
+
+// Impacto da habilidade especial no alvo: anel e faíscas da cor da habilidade.
+function impacto(tipo, v) {
+  if (!v || !tipo) return;
+  const cor = corHabilidade(tipo);
+  anel(v.x, v.y, cor, raio * 0.3, raio * (tipo === 'area_coluna' ? 2 : 1.4), 450);
+  if (tipo === 'area_coluna') { estourar(v.x, v.y, 14, ['#ffd23a', '#ff6a2f', '#fff']); tremor += 6; }
+  else estourar(v.x, v.y, 8, [cor, '#fff'], 'estrela');
 }
 
 // ---------- Resultado ----------
@@ -361,7 +409,7 @@ function mostrarDano(soma, aba) {
   $('aba-dano-recebido').classList.toggle('ativa', aba === 'recebido');
   const lista = $('resultado-dano');
   lista.innerHTML = '';
-  const linhas = Object.entries(soma[aba]).map(([uid, v]) => ({ nome: `${vis[uid].emoji} ${vis[uid].nome}`, v }));
+  const linhas = Object.entries(soma[aba]).map(([uid, v]) => ({ nome: `${arte(vis[uid])} ${vis[uid].nome}`, v }));
   if (aba === 'causado' && soma.status > 0) linhas.push({ nome: t.status, v: soma.status });
   linhas.sort((a, b) => b.v - a.v);
   const max = linhas.length ? linhas[0].v : 1;
@@ -372,7 +420,7 @@ function mostrarDano(soma, aba) {
     const barra = document.createElement('i');
     barra.style.width = `${Math.round((l.v / max) * 100)}%`;
     const nome = document.createElement('span');
-    nome.textContent = l.nome;
+    nome.innerHTML = l.nome;
     const num = document.createElement('span');
     num.textContent = l.v.toLocaleString('pt-BR');
     li.append(barra, nome, num);
@@ -495,8 +543,10 @@ function desenhar() {
 
   desenharGrama();
   Object.values(vis).sort((a, b) => a.y - b.y).forEach(desenharUnidade);
+  desenharOndas(t);
   desenharProjeteis(t);
   desenharParticulas();
+  desenharSelos(t);
   desenharFlutuantes(t);
   desenharBanner(t);
   ctx.restore();
@@ -536,8 +586,11 @@ function desenharUnidade(v) {
   v.alpha += ((v.vida > 0 ? 1 : 0.18) - v.alpha) * 0.12;
   v.flash *= 0.85;
   v.kx *= 0.82;
+  v.estica *= 0.86;
   const x = v.x + v.ox + v.kx;
   const y = v.y + v.oy;
+  const vivo = v.vida > 0;
+  const t = agora() / 1000;
 
   ctx.save();
   ctx.globalAlpha = v.alpha;
@@ -548,41 +601,72 @@ function desenharUnidade(v) {
   ctx.fill();
 
   if (v.brilho > 0) {
-    ctx.fillStyle = 'rgba(255,225,80,.45)';
+    const g = ctx.createRadialGradient(x, y, r * 0.2, x, y, r * 1.4);
+    g.addColorStop(0, 'rgba(255,240,140,.75)');
+    g.addColorStop(1, 'rgba(255,210,60,0)');
+    ctx.fillStyle = g;
     ctx.beginPath();
-    ctx.arc(x, y, r * 1.25, 0, Math.PI * 2);
+    ctx.arc(x, y, r * 1.4, 0, Math.PI * 2);
     ctx.fill();
   }
-  if (v.escudo > 0 && v.vida > 0) {
-    ctx.strokeStyle = 'rgba(127,227,255,.9)';
-    ctx.lineWidth = 3;
+
+  // Corpo: respira parado, estica ao atacar, amassa ao levar golpe, tomba ao cair.
+  const sprite = imagemUnidade(v.id);
+  const lento = v.sono > 0 ? 0.45 : 1;
+  const resp = vivo ? Math.sin(t * 3.2 * lento + v.fase) * 0.045 : 0;
+  const amassa = Math.min(0.25, Math.abs(v.kx) / r * 0.35);
+  const sx = 1 - resp + v.estica * 0.22 + amassa;
+  const sy = 1 + resp - v.estica * 0.12 - amassa;
+  const lado = r * 2.15;
+  const base = y + r * 0.82;
+  ctx.save();
+  ctx.translate(x, base);
+  if (!vivo) ctx.rotate((v.lado === 'planta' ? -1 : 1) * 0.5);
+  else if (v.sono > 0) ctx.rotate(Math.sin(t * 1.5 + v.fase) * 0.06);
+  ctx.scale(sx, sy);
+  if (sprite.pronta) {
+    ctx.drawImage(sprite.img, -lado / 2, -lado, lado, lado);
+    if (v.flash > 0.05 && sprite.branca) {
+      ctx.globalAlpha = v.alpha * Math.min(1, v.flash * 0.9);
+      ctx.drawImage(sprite.branca, -lado / 2, -lado, lado, lado);
+      ctx.globalAlpha = v.alpha;
+    }
+  } else {
+    ctx.font = `${r * 1.5}px serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#000'; // cor opaca, senão o emoji fica transparente no Chrome
+    ctx.fillText(v.emoji, 0, -r * 0.82);
+  }
+  ctx.restore();
+
+  if (v.escudo > 0 && vivo) {
+    const g = ctx.createRadialGradient(x - r * 0.4, y - r * 0.5, r * 0.1, x, y, r * 1.15);
+    g.addColorStop(0, 'rgba(255,255,255,.45)');
+    g.addColorStop(0.6, 'rgba(127,227,255,.12)');
+    g.addColorStop(1, 'rgba(127,227,255,.4)');
+    ctx.fillStyle = g;
+    ctx.strokeStyle = 'rgba(160,236,255,.95)';
+    ctx.lineWidth = 2.5;
     ctx.beginPath();
-    ctx.arc(x, y, r * 1.1, 0, Math.PI * 2);
+    ctx.arc(x, y, r * 1.15, 0, Math.PI * 2);
+    ctx.fill();
     ctx.stroke();
   }
 
-  ctx.font = `${r * 1.5}px serif`;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillStyle = '#000'; // cor opaca, senão o emoji fica transparente no Chrome
-  ctx.fillText(v.emoji, x, y);
-
-  if (v.flash > 0.05) {
-    ctx.fillStyle = `rgba(255,255,255,${v.flash * 0.55})`;
-    ctx.beginPath();
-    ctx.arc(x, y, r, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  if (v.vida > 0) {
+  if (vivo) {
     const larg = r * 2;
     const bx = x - larg / 2;
     const by = y + r + 4;
     const pv = v.vida / v.vidaMax;
     ctx.fillStyle = 'rgba(0,0,0,.55)';
-    ctx.fillRect(bx - 1, by - 1, larg + 2, 12);
+    ctx.beginPath();
+    ctx.roundRect(bx - 1.5, by - 1.5, larg + 3, 13, 3);
+    ctx.fill();
     ctx.fillStyle = pv > 0.5 ? '#5cc23a' : pv > 0.25 ? '#ffb020' : '#e5483a';
     ctx.fillRect(bx, by, larg * pv, 6);
+    ctx.fillStyle = 'rgba(255,255,255,.35)';
+    ctx.fillRect(bx, by, larg * pv, 2);
     if (v.escudo > 0) {
       ctx.fillStyle = 'rgba(0,0,0,.55)';
       ctx.fillRect(bx - 1, by - 7, larg + 2, 6);
@@ -592,16 +676,22 @@ function desenharUnidade(v) {
     ctx.fillStyle = v.seiva >= 100 ? '#ffd23a' : '#3a9ee6';
     ctx.fillRect(bx, by + 7, larg * (v.seiva / 100), 3);
 
-    ctx.font = `${r * 0.5}px serif`;
-    if (v.sono > 0) ctx.fillText('💤', x + r * 0.8, y - r * 0.8);
-    if (v.lento > 0) ctx.fillText('🐢', x - r * 0.8, y - r * 0.8);
-    const sts = Array.isArray(v.status) ? v.status : [];
+    // ícones de status numa fileira em cima da cabeça
+    const sts = Array.isArray(v.status) ? [...v.status] : [];
+    if (v.sono > 0) sts.unshift('sono');
+    if (v.lento > 0) sts.push('lento');
     if (sts.length) {
-      ctx.font = `${r * 0.38}px serif`;
-      const icones = sts.map((n) => dados.textos.status[n]?.icone || '').join('');
-      ctx.fillText(icones, x, y - r * 1.15);
+      const tam = Math.max(14, r * 0.5);
+      const x0 = x - ((sts.length - 1) * tam * 0.9) / 2;
+      sts.forEach((n, i) => {
+        const ic = imagemStatus(n);
+        const yy = y - r * 1.25 + Math.sin(t * 4 + i) * 1.5;
+        if (ic.pronta) ctx.drawImage(ic.img, x0 + i * tam * 0.9 - tam / 2, yy - tam / 2, tam, tam);
+      });
     }
 
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
     ctx.font = `bold ${Math.max(10, r * 0.32)}px "Trebuchet MS", sans-serif`;
     const rotulo = `Nv${v.nivel}${v.rank ? ` ✦${v.rank}` : ''}${v.fusao ? ' 🧬' : ''}`;
     ctx.fillStyle = v.rank ? '#ffd23a' : '#fff';
@@ -624,7 +714,27 @@ function desenharProjeteis(t) {
     if (k >= 1) { p.resolver(); return false; }
     const x = p.x0 + (p.x1 - p.x0) * k;
     const y = p.y0 + (p.y1 - p.y0) * k - Math.sin(Math.PI * k) * raio;
-    ctx.fillText(p.emoji, x, y);
+    const tiro = p.tiro;
+    if (!tiro || !tiro.pronta) { ctx.fillText(p.emoji, x, y); return true; }
+    // rastro: faíscas que ficam pra trás
+    if (Math.random() < 0.8) {
+      particulas.push({ x, y, vx: (Math.random() - 0.5) * 0.6, vy: (Math.random() - 0.5) * 0.6, leve: true,
+        cor: tiro.rastro, tam: (p.especial ? 3 : 2) + Math.random() * 2.5, vida: 0.7, forma: 'bola', ang: 0 });
+    }
+    // direção do voo (derivada da curva) ou giro
+    const dx = p.x1 - p.x0;
+    const dy = p.y1 - p.y0 - Math.cos(Math.PI * k) * Math.PI * raio;
+    const ang = tiro.gira ? (t - p.t0) / 60 : Math.atan2(dy, dx);
+    const tam = raio * (p.especial ? 1.15 : 0.9);
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(ang);
+    if (p.especial) {
+      ctx.shadowColor = tiro.rastro;
+      ctx.shadowBlur = 12;
+    }
+    ctx.drawImage(tiro.img, -tam / 2, -tam / 2, tam, tam);
+    ctx.restore();
     return true;
   });
 }
@@ -633,14 +743,74 @@ function desenharParticulas() {
   particulas = particulas.filter((p) => {
     p.x += p.vx;
     p.y += p.vy;
-    p.vy += raio * 0.012;
-    p.vida -= 0.035;
+    if (!p.leve) p.vy += raio * 0.012;
+    p.vida -= p.leve ? 0.025 : 0.035;
     if (p.vida <= 0) return false;
-    ctx.globalAlpha = p.vida;
+    ctx.globalAlpha = Math.min(1, p.vida);
     ctx.fillStyle = p.cor;
+    ctx.strokeStyle = 'rgba(43,29,20,.7)';
+    ctx.lineWidth = 1.2;
     ctx.beginPath();
-    ctx.arc(p.x, p.y, p.tam, 0, Math.PI * 2);
-    ctx.fill();
+    if (p.forma === 'mais') {
+      const s = p.tam;
+      ctx.rect(p.x - s, p.y - s / 3, s * 2, s * 2 / 3);
+      ctx.rect(p.x - s / 3, p.y - s, s * 2 / 3, s * 2);
+      ctx.fill();
+    } else if (p.forma === 'estrela') {
+      const s = p.tam * 1.2;
+      for (let i = 0; i < 8; i++) {
+        const a = (i / 8) * Math.PI * 2 + p.vida * 3;
+        const rr = i % 2 ? s * 0.4 : s;
+        ctx.lineTo(p.x + Math.cos(a) * rr, p.y + Math.sin(a) * rr);
+      }
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+    } else if (p.forma === 'espinho') {
+      const s = p.tam * 1.6;
+      const c = Math.cos(p.ang), sn = Math.sin(p.ang);
+      ctx.moveTo(p.x + c * s, p.y + sn * s);
+      ctx.lineTo(p.x - sn * s * 0.3, p.y + c * s * 0.3);
+      ctx.lineTo(p.x + sn * s * 0.3, p.y - c * s * 0.3);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+    } else {
+      ctx.arc(p.x, p.y, p.tam, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    return true;
+  });
+}
+
+function desenharOndas(t) {
+  ondas = ondas.filter((o) => {
+    const k = (t - o.t0) / o.dur;
+    if (k >= 1) return false;
+    if (k < 0) return true;
+    const e = 1 - (1 - k) * (1 - k);
+    ctx.globalAlpha = 1 - k;
+    ctx.strokeStyle = o.cor;
+    ctx.lineWidth = 2 + 5 * (1 - k);
+    ctx.beginPath();
+    ctx.arc(o.x, o.y, o.r0 + (o.r1 - o.r0) * e, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+    return true;
+  });
+}
+
+// ícone do status que acabou de pegar: pula e some
+function desenharSelos(t) {
+  selos = selos.filter((s) => {
+    const k = (t - s.t0) / s.dur;
+    if (k >= 1) return false;
+    const ic = imagemStatus(s.nome);
+    if (!ic.pronta) return true;
+    const tam = raio * (0.6 + Math.sin(Math.min(1, k * 3) * Math.PI) * 0.5);
+    ctx.globalAlpha = k < 0.7 ? 1 : 1 - (k - 0.7) / 0.3;
+    ctx.drawImage(ic.img, s.x - tam / 2, s.y - raio * 0.5 * k - tam / 2, tam, tam);
     ctx.globalAlpha = 1;
     return true;
   });
@@ -674,16 +844,28 @@ function desenharBanner(t) {
   if (k >= 1) { banner = null; return; }
   ctx.globalAlpha = k > 0.75 ? 1 - (k - 0.75) / 0.25 : 1;
   ctx.font = '900 16px "Trebuchet MS", sans-serif';
-  const larg = ctx.measureText(banner.texto).width + 20;
+  const ic = banner.hab ? imagemHabilidade(banner.hab) : null;
+  const comIcone = ic && ic.pronta;
+  const extra = comIcone ? 26 : 0;
+  const larg = ctx.measureText(banner.texto).width + 20 + extra;
   const x = Math.min(Math.max(banner.x, larg / 2 + 4), W - larg / 2 - 4);
   const y = Math.max(banner.y, 18);
-  ctx.fillStyle = 'rgba(35,48,27,.9)';
+  const pop = k < 0.1 ? 0.6 + (k / 0.1) * 0.4 : 1;
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(pop, pop);
+  ctx.fillStyle = 'rgba(35,48,27,.92)';
+  ctx.strokeStyle = banner.hab ? corHabilidade(banner.hab) : '#ffd23a';
+  ctx.lineWidth = 2.5;
   ctx.beginPath();
-  ctx.roundRect(x - larg / 2, y - 14, larg, 28, 14);
+  ctx.roundRect(-larg / 2, -14, larg, 28, 14);
   ctx.fill();
+  ctx.stroke();
+  if (comIcone) ctx.drawImage(ic.img, -larg / 2 + 1, -16, 32, 32);
   ctx.fillStyle = '#ffd23a';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText(banner.texto, x, y + 1);
+  ctx.fillText(banner.texto, extra / 2 + 2, 1);
+  ctx.restore();
   ctx.globalAlpha = 1;
 }

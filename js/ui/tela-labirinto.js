@@ -1,5 +1,6 @@
 // Tela do Labirinto das Raízes: escolher o time, as portas de cada andar, bênçãos, recrutas e o prêmio final.
 
+import { arte } from '../arte.js';
 import { $, mostrarTela, avisar, preencher } from './comum.js';
 import * as jogo from '../estado.js';
 import { atributos, poder } from '../evolucao.js';
@@ -58,7 +59,7 @@ function resumoTime(run) {
     const v = run.vidas[m.planta] ?? 1;
     const celula = document.createElement('div');
     celula.className = 'lab-planta' + (v <= 0 ? ' caida' : '');
-    celula.innerHTML = `<span class="planta-emoji">${p.emoji}</span><span class="barra-xp"><span style="width:${Math.round(v * 100)}%"></span></span>`;
+    celula.innerHTML = `<span class="planta-emoji">${arte(p)}</span><span class="barra-xp"><span style="width:${Math.round(v * 100)}%"></span></span>`;
     div.append(celula);
   }
   return div;
@@ -112,7 +113,7 @@ function desenharInicio(raiz) {
     const marcada = escolhidas.includes(p.id);
     const cartao = document.createElement('button');
     cartao.className = 'cartao-planta' + (marcada ? ' no-time' : '') + (viajando ? ' fora-regra' : '');
-    cartao.innerHTML = `<span class="planta-emoji">${p.emoji}</span><b>${p.nome}</b><small>Nv ${r.nivel} · ${'⭐'.repeat(r.estrelas)}</small><span class="poder">💪 ${poder(s, dados)}</span>`;
+    cartao.innerHTML = `<span class="planta-emoji">${arte(p)}</span><b>${p.nome}</b><small>Nv ${r.nivel} · ${'⭐'.repeat(r.estrelas)}</small><span class="poder">💪 ${poder(s, dados)}</span>`;
     cartao.addEventListener('click', () => {
       if (viajando) return avisar(dados.textos.rotina.plantaViajando);
       if (marcada) escolhidas = escolhidas.filter((id) => id !== p.id);
@@ -189,7 +190,7 @@ function desenharRecruta(raiz, run) {
     const r = jogo.estado.colecao[id];
     const cartao = document.createElement('button');
     cartao.className = 'cartao-planta';
-    cartao.innerHTML = `<span class="planta-emoji">${p.emoji}</span><b>${p.nome}</b><small>Nv ${r.nivel} · ${'⭐'.repeat(r.estrelas)}</small><small>${p.funcao}</small>`;
+    cartao.innerHTML = `<span class="planta-emoji">${arte(p)}</span><b>${p.nome}</b><small>Nv ${r.nivel} · ${'⭐'.repeat(r.estrelas)}</small><small>${p.funcao}</small>`;
     cartao.addEventListener('click', () => {
       jogo.recrutarLabirinto(id);
       avisar(preencher(t.recrutou, { nome: p.nome }));

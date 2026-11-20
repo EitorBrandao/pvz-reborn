@@ -1,5 +1,6 @@
 // Tela "Desafios": Torre das Pragas, Desafio do Dia e Horta de Treino.
 
+import { arte } from '../arte.js';
 import { $, mostrarTela, avisar, preencher } from './comum.js';
 import * as jogo from '../estado.js';
 import { gerarAndar, desafioDoDia, batalhaTreino, pragasConhecidas } from '../atividades.js';
@@ -30,7 +31,7 @@ export function abrirTelaAtividades() {
   mostrarTela('tela-atividades');
 }
 
-const emojiPraga = (id) => dados.pragas.find((p) => p.id === id)?.emoji || '?';
+const emojiPraga = (id) => arte(dados.pragas.find((p) => p.id === id)) || '?';
 const emojis = (batalha) => batalha.inimigos.map((i) => emojiPraga(i.praga)).join('');
 
 function textoPremio(r) {
@@ -95,7 +96,7 @@ function desenhar() {
   const s = inv.sit;
   const linhasInv = inv.pendente
     ? [t.invasaoPremio]
-    : [`${s.chefe.emoji} ${s.chefe.nome} <span class="nv">Nv ${s.nivel}</span>`,
+    : [`${arte(s.chefe)} ${s.chefe.nome} <span class="nv">Nv ${s.nivel}</span>`,
       s.derrotado ? t.invasaoDerrotado : preencher(t.invasaoVida, { pct: Math.ceil((s.restante / s.vidaTotal) * 100), pos: s.posicao }),
       preencher(t.invasaoAtaques, { n: s.gratis, max: dados.invasao.ataquesGratis })];
   lista.appendChild(cartao({
@@ -157,7 +158,7 @@ function desenharTreino() {
     const id = treino.inimigos[i];
     const espaco = document.createElement('button');
     espaco.className = 'espaco' + (id ? ' cheio' : '');
-    espaco.textContent = id ? emojiPraga(id) : '';
+    espaco.innerHTML = id ? emojiPraga(id) : '';
     if (id) {
       espaco.addEventListener('click', () => {
         treino.inimigos.splice(i, 1);
@@ -172,7 +173,7 @@ function desenharTreino() {
   for (const p of pragasConhecidas(dados, jogo.estado)) {
     const botao = document.createElement('button');
     botao.className = 'cartao-planta' + (p.chefe ? ' chefe' : '');
-    botao.innerHTML = `<span class="planta-emoji">${p.emoji}</span><b>${p.nome}</b>${p.chefe ? '<small>CHEFE</small>' : ''}`;
+    botao.innerHTML = `<span class="planta-emoji">${arte(p)}</span><b>${p.nome}</b>${p.chefe ? '<small>CHEFE</small>' : ''}`;
     botao.addEventListener('click', () => {
       if (treino.inimigos.length >= max) return avisar(preencher(dados.textos.treinoCheio, { max }));
       treino.inimigos.push(p.id);

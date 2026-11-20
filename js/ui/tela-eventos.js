@@ -1,5 +1,6 @@
 // Telas da Invasão de Chefe, da Feira e do Herbário.
 
+import { arte } from '../arte.js';
 import { $, mostrarTela, avisar, preencher } from './comum.js';
 import * as jogo from '../estado.js';
 import { batalhaInvasao } from '../eventos.js';
@@ -73,7 +74,7 @@ function desenharInvasao() {
   const pendente = jogo.invasaoPendente();
   if (pendente) {
     area.innerHTML = `
-      <div class="invasao-chefe">${pendente.chefe.emoji}</div>
+      <div class="invasao-chefe">${arte(pendente.chefe)}</div>
       <h3>${pendente.derrotado ? t().foiDerrotado : t().fugiu}</h3>
       <p>${preencher(t().suaPosicao, { pos: pendente.posicao })}</p>
       ${desenharRanking(pendente.ranking)}
@@ -99,7 +100,7 @@ function desenharInvasao() {
   }
   const meu = sit.ranking.find((r) => r.voce);
   area.innerHTML = `
-    <div class="invasao-chefe">${sit.chefe.emoji}</div>
+    <div class="invasao-chefe">${arte(sit.chefe)}</div>
     <h3>${sit.chefe.nome} <small>Nv ${sit.nivel}</small></h3>
     <div class="invasao-vida"><span style="width:${pct}%"></span></div>
     <p class="invasao-numeros">❤️ ${num(sit.restante)} / ${num(sit.vidaTotal)}</p>
@@ -204,14 +205,14 @@ function desenharHerbario() {
     const s = f.situacao;
     const receita = `
       <div class="fusao-receita">
-        ${f.ing.map((i) => `<span class="item-herbario${i.tem ? '' : ' oculto'}" title="${i.nome}"><span>${i.emoji}</span><small>${i.nome}</small></span>`).join('<b>+</b>')}
+        ${f.ing.map((i) => `<span class="item-herbario${i.tem ? '' : ' oculto'}" title="${i.nome}"><span>${arte(i)}</span><small>${i.nome}</small></span>`).join('<b>+</b>')}
         <b>=</b>
-        <span class="item-herbario${s && s.fundida ? '' : ' oculto'}" title="${f.nome}"><span>${f.emoji}</span><small>${f.nome}</small></span>
+        <span class="item-herbario${s && s.fundida ? '' : ' oculto'}" title="${f.nome}"><span>${arte(f)}</span><small>${f.nome}</small></span>
       </div>`;
     if (!s) return `<div class="fusao-bloco">${receita}<small class="dica-pequena">${th().fusaoEmBreve}</small></div>`;
     if (s.fundida) return `<div class="fusao-bloco">${receita}<small class="pagina-ok">${th().fusaoFeita}</small></div>`;
     const c = dados.fusoes;
-    const pais = s.pais.map((p) => `<span class="custo-item${p.estrelasOk && p.rankOk ? '' : ' falta'}">${p.emoji} ${p.tem ? `${p.estrelasOk ? '5⭐' : 'falta ⭐'} · ${p.rankOk ? '✦' : 'falta ✦'}` : 'não tenho'}</span>`).join('');
+    const pais = s.pais.map((p) => `<span class="custo-item${p.estrelasOk && p.rankOk ? '' : ' falta'}">${arte(p)} ${p.tem ? `${p.estrelasOk ? '5⭐' : 'falta ⭐'} · ${p.rankOk ? '✦' : 'falta ✦'}` : 'não tenho'}</span>`).join('');
     const custo = [
       `<span class="custo-item${jogo.estado.moedas >= c.custo.moedas ? '' : ' falta'}">🪙${c.custo.moedas}</span>`,
       `<span class="custo-item${jogo.estado.orvalho >= c.custo.orvalho ? '' : ' falta'}">💧${c.custo.orvalho}</span>`,
@@ -239,7 +240,7 @@ function desenharHerbario() {
       <div class="pagina-topo"><b>${p.titulo}</b><small>${feitos}/${p.itens.length}</small></div>
       <div class="pagina-itens">${p.itens.map((x) => `
         <span class="item-herbario${x.visto ? '' : ' oculto'}${x.chefe ? ' chefe' : ''}" title="${x.visto ? x.nome : '???'}">
-          <span>${x.emoji}</span><small>${x.visto ? x.nome : '???'}</small></span>`).join('')}</div>
+          <span>${arte(x)}</span><small>${x.visto ? x.nome : '???'}</small></span>`).join('')}</div>
       <div class="pagina-rodape">${rodape}</div>
     </div>`;
   }).join('')}`;

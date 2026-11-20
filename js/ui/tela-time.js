@@ -1,5 +1,6 @@
 // Tela de preparar batalha: ver a fase escolhida e montar o time.
 
+import { arte, iconeHabilidade } from '../arte.js';
 import { $, mostrarTela, avisar, preencher, selosPlanta, textoHabilidade } from './comum.js';
 import * as jogo from '../estado.js';
 import { atributos, poder, habilidadeComEstrelas } from '../evolucao.js';
@@ -65,7 +66,7 @@ function rotuloFase(f) {
 
 function desenharFase() {
   const f = faseEscolhida;
-  const inimigos = f.inimigos.map((i) => dados.pragas.find((p) => p.id === i.praga)?.emoji || '?').join('');
+  const inimigos = f.inimigos.map((i) => arte(dados.pragas.find((p) => p.id === i.praga)) || '?').join('');
   const cats = [...new Set(f.inimigos.map((i) => dados.pragas.find((p) => p.id === i.praga)?.categoria))]
     .map((id) => dados.faccoes.categorias.find((c) => c.id === id)).filter(Boolean)
     .map((c) => `${c.emoji} ${c.nome}`).join(' · ');
@@ -117,7 +118,7 @@ function desenharGrade() {
       espaco.className = 'espaco' + (planta ? ' cheio' : '') + (marcado ? ' marcado' : '');
       const reg = planta && jogo.estado.colecao[planta.id];
       espaco.className += reg ? selosPlanta(reg, dados).classe : '';
-      espaco.innerHTML = planta ? `${planta.emoji}${selosPlanta(reg, dados).marca}` : (marcado ? '➕' : '');
+      espaco.innerHTML = planta ? `${arte(planta)}${selosPlanta(reg, dados).marca}` : (marcado ? '➕' : '');
       espaco.addEventListener('click', () => {
         if (planta) {
           jogo.definirTime(jogo.estado.time.filter((m) => m !== membro));
@@ -187,7 +188,7 @@ function desenharPlantas() {
     cartao.className = 'cartao-planta' + (noTime ? ' no-time' : '') + (fora || viajando ? ' fora-regra' : '') + selos.classe;
     cartao.innerHTML = `
       ${selos.html}
-      <span class="planta-emoji">${p.emoji}</span>
+      <span class="planta-emoji">${arte(p)}</span>
       <b>${p.nome}</b>
       <small>${dados.faccoes.faccoes.find((f) => f.id === p.faccao)?.emoji || ''} Nv ${registro.nivel} · ${'⭐'.repeat(registro.estrelas)}</small>
       <span class="poder">💪 ${s.poder}</span>
@@ -246,13 +247,13 @@ function mostrarInfo(p, registro, stats) {
   const fac = dados.faccoes.faccoes.find((f) => f.id === p.faccao);
   $('planta-info-conteudo').innerHTML = `
     <div class="detalhe-topo">
-      <span class="detalhe-emoji">${p.emoji}</span>
+      <span class="detalhe-emoji">${arte(p)}</span>
       <h3>${p.nome}</h3>
       <small>${p.funcao}${fac ? ` · ${fac.emoji} ${fac.nome}` : ''}</small>
       <div class="estrelas">${'⭐'.repeat(registro.estrelas)}</div>
     </div>
     <div class="bloco"><span class="atributos">💪 ${stats.poder} · ❤️${stats.vida} ⚔️${stats.atq} 🛡️${stats.def} 💨${stats.vel}</span></div>
-    <div class="bloco"><b>✨ ${h.nome}</b><p class="dica-pequena">${textoHabilidade(h, dados)}</p></div>
+    <div class="bloco"><b class="nome-hab">${iconeHabilidade(h.tipo)} ${h.nome}</b><p class="dica-pequena">${textoHabilidade(h, dados)}</p></div>
     <p class="dica-pequena">${t.infoPlantaFechar}</p>`;
   ignorarToqueAte = Date.now() + 700;
   $('planta-info').classList.remove('escondido');

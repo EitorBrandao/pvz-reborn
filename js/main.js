@@ -1,5 +1,6 @@
 // Ponto de partida do jogo: carrega dados, liga botões e troca de telas.
 
+import { iniciarArte } from './arte.js';
 import * as jogo from './estado.js';
 import * as save from './save.js';
 import { $, mostrarTela, avisar, sortear, preencher } from './ui/comum.js';
@@ -280,6 +281,7 @@ async function comecar() {
   ]);
   dados = { config, textos, plantas, pragas, cartas, campanha: prepararCampanha(campanha, pesadelo), equipamentos, missoes, faccoes, atividades, rotina, invasao, feira, herbario, ascensao, talentos, pesadelo, labirinto, fusoes };
 
+  iniciarArte(dados);
   jogo.iniciar(dados);
   save.pedirArmazenamentoPersistente();
   $('versao').textContent = `versão ${config.versaoJogo}`;

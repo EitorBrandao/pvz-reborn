@@ -1,5 +1,6 @@
 // Rotina diária na tela da horta: Canteiro (3 vasos), Expedição e Calendário de presença.
 
+import { arte } from '../arte.js';
 import { $, avisar, preencher } from './comum.js';
 import * as jogo from '../estado.js';
 
@@ -142,7 +143,7 @@ function abrirExpedicao() {
   if (exp && exp.pronta) {
     const r = jogo.receberExpedicao();
     if (r.ok) {
-      const subiram = r.subiram.map((s) => dados.plantas.find((p) => p.id === s.id)?.emoji).join('');
+      const subiram = r.subiram.map((s) => arte(dados.plantas.find((p) => p.id === s.id))).join('');
       abrirJanela('resultado', `<h3>${t().voltaram}</h3>
         <p class="rotina-premio">🪙 ${r.moedas} · ✨ ${r.xp} XP ${nomesCartas(r.cartas)}</p>
         ${subiram ? `<p>${preencher(t().subiramNivel, { plantas: subiram })}</p>` : ''}
@@ -169,7 +170,7 @@ function desenharExpedicao() {
   const caixa = $('rotina-conteudo');
   const botaoFechar = '<button class="fechar rotina-fechar" aria-label="Fechar">✖</button>';
   if (exp) {
-    const plantas = exp.plantas.map((id) => dados.plantas.find((p) => p.id === id)?.emoji).join(' ');
+    const plantas = exp.plantas.map((id) => arte(dados.plantas.find((p) => p.id === id))).join(' ');
     caixa.innerHTML = `${botaoFechar}<h3>${exp.destino.emoji} ${exp.destino.nome}</h3>
       <p class="rotina-plantas">${plantas}</p>
       <div class="barra-xp grande"><span style="width:${exp.progresso * 100}%"></span></div>
@@ -196,7 +197,7 @@ function desenharExpedicao() {
   const livres = dados.plantas.filter((p) => podeIr(p.id));
   const plantas = livres.length
     ? livres.map((p) => `<button class="escolha-planta${escolhidas.includes(p.id) ? ' marcada' : ''}" data-planta="${p.id}">
-        <span>${p.emoji}</span><small>Nv ${jogo.estado.colecao[p.id].nivel}</small>
+        <span>${arte(p)}</span><small>Nv ${jogo.estado.colecao[p.id].nivel}</small>
         <small class="estrelas-mini">${'⭐'.repeat(jogo.estado.colecao[p.id].estrelas)}</small></button>`).join('')
     : `<p class="dica-pequena">${t().semPlantasLivres}</p>`;
   caixa.innerHTML = `${botaoFechar}<h3>🧭 ${t().expedicao}</h3>

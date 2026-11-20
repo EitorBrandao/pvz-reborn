@@ -1,5 +1,6 @@
 // Tela de plantas: coleção, cartas, pacote de sementes e evolução de cada planta.
 
+import { arte, iconeHabilidade } from '../arte.js';
 import { $, mostrarTela, avisar, preencher, selosPlanta, textoHabilidade } from './comum.js';
 import * as jogo from '../estado.js';
 import { atributos, poder, xpParaProximo, nivelMaximo, classeTalento, pontosTalento, pontosGastos, custoAscensao, podeAscender, custoEstrela, custoEquip, temCartas, habilidadeComEstrelas } from '../evolucao.js';
@@ -190,7 +191,7 @@ function desenharLista() {
     if (!r) {
       botao.className = 'cartao-planta bloqueada';
       botao.innerHTML = `
-        <span class="planta-emoji">${p.emoji}</span>
+        <span class="planta-emoji">${arte(p)}</span>
         <b>${p.nome}</b>
         <small>🔒 ${dados.textos.bloqueada}</small>`;
       botao.addEventListener('click', () => avisar(dados.textos.bloqueada));
@@ -205,7 +206,7 @@ function desenharLista() {
       botao.innerHTML = `
         ${selos.html}
         ${m.alguma ? `<span class="aviso-melhorar" title="Dá pra melhorar">⬆️ ${icones}</span>` : ''}
-        <span class="planta-emoji">${p.emoji}</span>
+        <span class="planta-emoji">${arte(p)}</span>
         <b>${p.nome}</b>
         <small class="estrelas-peq">${estrelasTexto(r.estrelas)}</small>
         <small>Nv ${r.nivel}/${max}</small>
@@ -366,7 +367,7 @@ function desenharDetalhe() {
       </div>
       <div class="bloco">${linhas}</div>
       <div class="bloco"><b>🗡️ Ataque</b><p class="dica-pequena">${infoAtaque}</p></div>
-      <div class="bloco"><b>✨ ${h.nome}</b><p class="dica-pequena">${descHab}</p>${proxEstrela ? `<p class="previa">${proxEstrela}</p>` : ''}</div>`,
+      <div class="bloco"><b class="nome-hab">${iconeHabilidade(h.tipo)} ${h.nome}</b><p class="dica-pequena">${descHab}</p>${proxEstrela ? `<p class="previa">${proxEstrela}</p>` : ''}</div>`,
     evoluir: `
       <div class="bloco"><h4>Treinar${selo(m.treinar)}</h4><div class="botoes-grade">${treinos}</div></div>
       <div class="bloco"><h4>Estrela${selo(m.estrela)}</h4>${blocoEstrela}</div>
@@ -377,7 +378,7 @@ function desenharDetalhe() {
 
   $('detalhe-conteudo').innerHTML = `
     <div class="detalhe-topo ${mudanca ? 'evoluiu' : ''}">
-      <span class="detalhe-emoji">${p.emoji}</span>
+      <span class="detalhe-emoji">${arte(p)}</span>
       <div class="detalhe-texto">
         <h3>${p.nome}</h3>
         <small>${p.funcao}</small>
@@ -527,11 +528,11 @@ function mostrarPacote(res) {
   const p = base(res.id);
   const t = dados.textos;
   const texto = res.nova ? t.plantaNova : (res.virouMuda ? t.copiaVirouMuda : t.copiaNova);
-  abrirResultado(p.emoji, preencher(texto, { nome: p.nome }), res.nova);
+  abrirResultado(arte(p), preencher(texto, { nome: p.nome }), res.nova);
 }
 
 function abrirResultado(emoji, titulo, destaque) {
-  $('pacote-emoji').textContent = emoji;
+  $('pacote-emoji').innerHTML = emoji;
   $('pacote-titulo').textContent = titulo;
   $('pacote-resultado').classList.toggle('nova', destaque);
   $('pacote-resultado').classList.remove('escondido');
@@ -555,7 +556,7 @@ function mostrarResumo(resultados) {
     grupos.set(r.id, g);
   }
   const itens = [...grupos].map(([id, g]) =>
-    `<span class="resumo-item${g.nova ? ' nova' : ''}">${base(id).emoji}<b>×${g.qtd}</b></span>`);
+    `<span class="resumo-item${g.nova ? ' nova' : ''}">${arte(base(id))}<b>×${g.qtd}</b></span>`);
   if (mudas) itens.push(`<span class="resumo-item">${carta(dados.config.troca.carta).emoji}<b>×${mudas}</b></span>`);
   const algumaNova = resultados.some((r) => r.nova);
   $('pacote-emoji').textContent = '🌱';
