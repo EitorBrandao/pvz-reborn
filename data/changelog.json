@@ -1,5 +1,7 @@
 [
-  { "versao": "0.5.10", "itens": ["Time começa com 3 vagas e ganha mais uma nos níveis 20, 30 e 40"] },
+  { "versao": "0.6.2", "itens": ["Time começa com 3 vagas e ganha mais uma nos níveis 20, 30 e 40"] },
+  { "versao": "0.6.1", "itens": ["Tela de detalhe da planta mais organizada: custos em pílulas, equipamentos sem quebrar linha"] },
+  { "versao": "0.6.0", "itens": ["Tela Desafios: Torre das Pragas, Desafio do Dia e Horta de Treino", "Nenhuma delas gasta fôlego"] },
   { "versao": "0.5.9", "itens": ["Novidades do jogo agora aparecem nas Opções"] },
   { "versao": "0.5.8", "itens": ["Facção da planta aparece em 3 linhas centralizadas no detalhe"] },
   { "versao": "0.5.7", "itens": ["\"Fraca contra\" ganhou uma linha própria no detalhe da planta"] },

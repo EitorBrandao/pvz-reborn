@@ -58,13 +58,14 @@ function estrelasTexto(n) {
 }
 
 function custoTexto(custo) {
+  // Cada item vira uma "pílula" que nunca quebra no meio; vermelha se falta.
   const partes = [];
-  if (custo.moedas) partes.push(`🪙${custo.moedas}`);
+  if (custo.moedas) partes.push(`<span class="custo-item${jogo.estado.moedas < custo.moedas ? ' falta' : ''}">🪙${custo.moedas}</span>`);
   for (const [id, qtd] of Object.entries(custo.cartas || {})) {
     const tem = jogo.estado.inventario[id] || 0;
-    partes.push(`${carta(id).emoji}${tem}/${qtd}`);
+    partes.push(`<span class="custo-item${tem < qtd ? ' falta' : ''}">${carta(id).emoji}${tem}/${qtd}</span>`);
   }
-  return partes.join(' ');
+  return `<span class="custo">${partes.join('')}</span>`;
 }
 
 function erro(resultado) {
@@ -253,9 +254,15 @@ function desenharDetalhe() {
   if (custo) {
     const prev = atributos(p, r, dados, { estrelas: r.estrelas + 1 });
     blocoEstrela = `
-      <p>Cópias: <b>${r.copias}/${custo.copias}</b> · 🪙${custo.moedas}</p>
-      <p class="previa">Nv máx ${max} → ${max + cfg.niveisPorEstrela} · ⚔️ ${stats.atq} → ${prev.atq} · ❤️ ${stats.vida} → ${prev.vida}</p>
-      <button class="btn btn-laranja" data-acao="estrela" ${r.copias >= custo.copias ? '' : 'disabled'}>Evoluir pra ${r.estrelas + 1} ⭐</button>`;
+      <div class="estrela-info">
+        <span class="custo"><span class="custo-item${r.copias < custo.copias ? ' falta' : ''}">🃏 Cópias ${r.copias}/${custo.copias}</span><span class="custo-item${jogo.estado.moedas < custo.moedas ? ' falta' : ''}">🪙${custo.moedas}</span></span>
+        <div class="previa-grade">
+          <span>Nv máx</span><b>${max} → ${max + cfg.niveisPorEstrela}</b>
+          <span>⚔️</span><b>${stats.atq} → ${prev.atq}</b>
+          <span>❤️</span><b>${stats.vida} → ${prev.vida}</b>
+        </div>
+      </div>
+      <button class="btn btn-laranja btn-largo" data-acao="estrela" ${r.copias >= custo.copias ? '' : 'disabled'}>Evoluir pra ${r.estrelas + 1} ⭐</button>`;
   }
 
   // Equipamentos
@@ -264,16 +271,22 @@ function desenharDetalhe() {
     const nomeNivel = n ? dados.equipamentos.niveis[n - 1].nome : 'Vazio';
     const bonus = n ? `+${Math.round(dados.equipamentos.niveis[n - 1].bonus * 100)}%` : '';
     const c = custoEquip(r, esp.id, dados);
-    let botao = '<small>Máximo!</small>';
+    const emojiAttr = t.atributos[esp.atributo].split(' ')[0];
+    let previa = `<b>${emojiAttr} ${stats[esp.atributo]}</b>`;
+    let botao = '<span class="equip-max">Máximo!</span>';
     const pronto = m.equip[esp.id] ? ' pronto' : '';
     if (c) {
       const prev = atributos(p, r, dados, { equip: { [esp.id]: n + 1 } });
-      botao = `<button class="btn btn-verde btn-peq${pronto}" data-acao="equip" data-espaco="${esp.id}">
-        Melhorar <small>${custoTexto(c)}</small><br><small>${t.atributos[esp.atributo].split(' ')[0]} ${stats[esp.atributo]} → ${prev[esp.atributo]}</small></button>`;
+      previa = `<b>${emojiAttr} ${stats[esp.atributo]} → ${prev[esp.atributo]}</b>`;
+      botao = `<button class="btn btn-verde btn-peq btn-equip${pronto}" data-acao="equip" data-espaco="${esp.id}">
+        <span>Melhorar</span>${custoTexto(c)}</button>`;
     }
     return `<div class="linha-equip nivel-${n}">
       <span class="equip-emoji">${esp.emoji}</span>
-      <div><b>${esp.nome}</b><br><small>${nomeNivel} ${bonus} ${t.atributos[esp.atributo]}</small></div>
+      <div class="equip-info">
+        <div class="equip-nome"><b>${esp.nome}</b><span class="equip-nivel">${nomeNivel}</span></div>
+        <div class="equip-efeito"><small>${bonus || '—'} ${t.atributos[esp.atributo]}</small>${previa}</div>
+      </div>
       ${botao}</div>`;
   }).join('');
 
@@ -291,7 +304,7 @@ function desenharDetalhe() {
     </div>
     <div class="bloco">${linhas}</div>
     <div class="bloco"><b>✨ ${h.nome}</b><p class="dica-pequena">${descHab}</p>${proxEstrela ? `<p class="previa">${proxEstrela}</p>` : ''}</div>
-    <div class="bloco"><h4>Treinar${selo(m.treinar)}</h4><div class="botoes-linha">${treinos}</div></div>
+    <div class="bloco"><h4>Treinar${selo(m.treinar)}</h4><div class="botoes-grade">${treinos}</div></div>
     <div class="bloco"><h4>Estrela${selo(m.estrela)}</h4>${blocoEstrela}</div>
     <div class="bloco"><h4>Equipamentos${selo(m.algumEquip)}</h4>${equips}</div>`;
   $('detalhe').classList.remove('escondido');

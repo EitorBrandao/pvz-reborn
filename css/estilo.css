@@ -138,9 +138,9 @@ body {
 
 .menu-base {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  padding: 12px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  padding: 10px;
   margin-bottom: 12px;
   background: var(--bege);
   border: 3px solid var(--terra);
@@ -428,7 +428,30 @@ body {
 .botoes-linha { display: flex; flex-wrap: wrap; gap: 8px; }
 .btn-peq { font-size: .85rem; padding: 6px 10px; border-radius: 12px; }
 .btn:disabled { filter: grayscale(1); opacity: .5; cursor: default; }
-.linha-equip { display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: center; padding: 6px 0; }
+.botoes-grade { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.botoes-grade .btn { white-space: nowrap; }
+.btn-largo { width: 100%; }
+.custo { display: inline-flex; flex-wrap: wrap; gap: 4px; justify-content: center; }
+.custo-item { white-space: nowrap; background: rgba(0, 0, 0, .08); border-radius: 8px; padding: 1px 6px; font-size: .8rem; }
+.custo-item.falta { color: #c0392b; }
+.btn .custo-item { background: rgba(0, 0, 0, .2); }
+.btn .custo-item.falta { color: #ffd6cf; }
+.estrela-info { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
+.estrela-info .custo { justify-content: flex-start; }
+.estrela-info .custo-item { font-size: .9rem; }
+.previa-grade { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; font-size: .85rem; color: #2f7d1f; }
+.previa-grade b { white-space: nowrap; }
+.linha-equip { display: grid; grid-template-columns: 48px 1fr; gap: 6px 10px; align-items: center; padding: 8px 0; }
+.linha-equip + .linha-equip { border-top: 1px solid rgba(138, 90, 43, .25); }
+.equip-info { min-width: 0; }
+.equip-nome { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.equip-nivel { font-size: .72rem; padding: 1px 7px; border-radius: 8px; background: rgba(138, 90, 43, .25); white-space: nowrap; }
+.equip-efeito { display: flex; justify-content: space-between; gap: 6px; flex-wrap: wrap; }
+.equip-efeito small, .equip-efeito b { white-space: nowrap; }
+.equip-efeito b { color: #2f7d1f; font-size: .85rem; }
+.btn-equip, .equip-max { grid-column: 1 / -1; }
+.btn-equip { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 8px; width: 100%; }
+.equip-max { text-align: center; font-size: .85rem; opacity: .8; }
 .equip-emoji { font-size: 1.8rem; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 10px; background: #e8d9b0; border: 3px solid #bbb; }
 .linha-equip.nivel-1 .equip-emoji { border-color: #8a8a8a; }
 .linha-equip.nivel-2 .equip-emoji { border-color: var(--azul); }
@@ -619,3 +642,32 @@ body {
 
 .cabecalho-colecao { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .cabecalho-colecao .titulo-secao { margin-bottom: 8px; }
+
+/* ---------- Desafios (atividades fora da campanha) ---------- */
+.atividades-lista { display: flex; flex-direction: column; gap: 10px; }
+.cartao-atividade {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bege);
+  color: var(--escuro);
+  border: 3px solid var(--terra);
+  border-radius: 14px;
+  padding: 10px;
+  box-shadow: var(--sombra);
+}
+.atividade-emoji { font-size: 2.4rem; flex-shrink: 0; }
+.atividade-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.atividade-info > b { font-size: 1.05rem; }
+.atividade-info small { font-size: .8rem; overflow-wrap: anywhere; }
+.atividade-info .nv { font-size: .75rem; opacity: .8; }
+.cartao-atividade > .btn { flex-shrink: 0; }
+.regra-desafio { color: #b0520a; font-weight: 700; }
+.cartao-planta.fora-regra { opacity: .45; filter: grayscale(.7); }
+.cartao-planta.chefe { border-color: var(--vermelho); }
+
+/* Horta de Treino */
+.treino-escolhidos { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.treino-escolhidos .espaco { height: 56px; font-size: 1.9rem; }
+.treino-nivel { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 10px 0 0; }
+.treino-nivel b { min-width: 64px; text-align: center; font-size: 1.1rem; text-shadow: 0 2px 0 rgba(0, 0, 0, .3); }

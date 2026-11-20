@@ -52,7 +52,7 @@ export function iniciarTelaBatalha(d, a) {
     atualizarBotoes();
   });
   $('btn-pular').addEventListener('click', () => {
-    if (!podePular()) return avisar(dados.textos.pularBloqueado);
+    if (!podePular()) return avisar(batalhaAtual.tipo ? dados.textos.pularBloqueadoAtividade : dados.textos.pularBloqueado);
     pular = true;
     som.pararMusica();
   });
@@ -69,7 +69,7 @@ export function iniciarTelaBatalha(d, a) {
 }
 
 function podePular() {
-  return jogo.estado.vencidas.includes(batalhaAtual.id);
+  return !!batalhaAtual.podePular || jogo.estado.vencidas.includes(batalhaAtual.id);
 }
 
 function atualizarBotoes() {
@@ -321,19 +321,22 @@ function terminar(resultado, semente) {
   som.pararMusica();
   som.tocarSom(resultado.vitoria ? 'vitoria' : 'derrota');
   const cartas = resultado.vitoria ? rolarCartas(batalhaAtual, criarRng(semente ^ 0x9e3779b9)) : [];
-  const moedas = batalhaAtual.recompensa.moedas;
-  const estrelas = resultado.vitoria
+  const campanha = !batalhaAtual.tipo;
+  const estrelas = resultado.vitoria && campanha
     ? calcularEstrelas(resultado.plantasVivas, resultado.plantasTotal, dados.config.estrelasFase)
     : 0;
-  const { xp, subiram, subiuJogador } = jogo.registrarBatalha(batalhaAtual, resultado.vitoria, cartas, estrelas);
+  const { xp, moedas, orvalho, subiram, subiuJogador } = jogo.registrarBatalha(batalhaAtual, resultado.vitoria, cartas, estrelas);
   atualizarBotoes();
 
   const caixa = $('resultado');
   caixa.classList.toggle('vitoria', resultado.vitoria);
   $('resultado-titulo').textContent = sortear(resultado.vitoria ? textos.vitoria : textos.derrota);
-  $('resultado-texto').textContent = resultado.vitoria
-    ? preencher(textos.vitoriaTexto, { moedas, xp })
-    : preencher(textos.derrotaTexto, { xp });
+  let texto;
+  if (batalhaAtual.tipo === 'treino') texto = textos.treinoTexto;
+  else if (resultado.vitoria && !moedas && !xp) texto = textos.semPremioTexto;
+  else if (resultado.vitoria) texto = preencher(textos.vitoriaTexto, { moedas, xp }) + (orvalho ? ` · +${orvalho} 💧` : '');
+  else texto = preencher(textos.derrotaTexto, { xp });
+  $('resultado-texto').textContent = texto;
 
   const niveis = $('resultado-niveis');
   niveis.innerHTML = '';
@@ -359,10 +362,14 @@ function terminar(resultado, semente) {
     niveis.appendChild(li);
   }
 
-  $('resultado-estrelas').innerHTML = resultado.vitoria
+  $('resultado-estrelas').innerHTML = resultado.vitoria && campanha
     ? [1, 2, 3].map((n) => `<span class="${n <= estrelas ? 'ganha' : ''}" style="animation-delay:${0.2 + n * 0.25}s">⭐</span>`).join('')
     : '';
   $('btn-proxima').classList.toggle('escondido', !(resultado.vitoria && acoes.proxima(batalhaAtual)));
+  $('btn-proxima').textContent = textos.botaoProxima[batalhaAtual.tipo || 'campanha'];
+  $('btn-sair-batalha').textContent = textos.botaoSair[batalhaAtual.tipo || 'campanha'];
+  // na torre, depois de vencer, o caminho é subir (repetir o andar não dá nada)
+  $('btn-de-novo').classList.toggle('escondido', resultado.vitoria && batalhaAtual.tipo === 'torre');
 
   const area = $('resultado-cartas');
   area.innerHTML = '';

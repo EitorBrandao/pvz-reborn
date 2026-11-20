@@ -30,24 +30,36 @@ function desenhar() {
   desenharGrade();
   desenharPlantas();
   desenharBonus();
-  const proxima = jogo.proximaVaga();
-  $('time-contagem').textContent = `${jogo.estado.time.length}/${jogo.vagasTime()}`
+  const proxima = faseEscolhida.timeMax ? null : jogo.proximaVaga();
+  $('time-contagem').textContent = `${jogo.estado.time.length}/${tamanhoMax()}`
     + (proxima ? ` ${preencher(dados.textos.proximaVaga, { nivel: proxima })}` : '');
-  $('btn-lutar').textContent = `Lutar! ⚡${faseEscolhida.folego}`;
+  $('btn-lutar').textContent = faseEscolhida.folego ? `Lutar! ⚡${faseEscolhida.folego}` : 'Lutar!';
+}
+
+// Limite de plantas: vagas liberadas pelo nível, ou menos se a batalha tiver regra própria (ex.: Desafio "Time de três")
+function tamanhoMax() {
+  return Math.min(faseEscolhida.timeMax || Infinity, jogo.vagasTime());
+}
+
+// Linha de cima do resumo: mapa e fase na campanha, nome da atividade fora dela
+function rotuloFase(f) {
+  if (f.tipo) return dados.textos.rotuloAtividade[f.tipo] + (f.chefe ? ' · CHEFE' : '');
+  const mapa = dados.campanha.mapas[f.mapaIndice];
+  return `${mapa.emoji} ${mapa.nome} · Fase ${f.indice + 1}${f.chefe ? ' · CHEFE' : ''}`;
 }
 
 function desenharFase() {
   const f = faseEscolhida;
-  const mapa = dados.campanha.mapas[f.mapaIndice];
   const inimigos = f.inimigos.map((i) => dados.pragas.find((p) => p.id === i.praga)?.emoji || '?').join('');
   const cats = [...new Set(f.inimigos.map((i) => dados.pragas.find((p) => p.id === i.praga)?.categoria))]
     .map((id) => dados.faccoes.categorias.find((c) => c.id === id)).filter(Boolean)
     .map((c) => `${c.emoji} ${c.nome}`).join(' · ');
   $('time-fase').innerHTML = `
-    <small>${mapa.emoji} ${mapa.nome} · Fase ${f.indice + 1}${f.chefe ? ' · CHEFE' : ''}</small>
+    <small>${rotuloFase(f)}</small>
     <b>${f.nome}</b>
     <span class="inimigos">${inimigos} <small>Nv ${f.nivel}</small></span>
-    <small class="categorias">${cats}</small>`;
+    <small class="categorias">${cats}</small>
+    ${f.regra ? `<small class="regra-desafio">📜 ${f.regra.texto}</small>` : ''}`;
 }
 
 function desenharBonus() {
@@ -96,13 +108,14 @@ function primeiroEspacoLivre() {
 function desenharPlantas() {
   const lista = $('lista-plantas');
   lista.innerHTML = '';
-  const max = jogo.vagasTime();
+  const max = tamanhoMax();
   for (const p of dados.plantas.filter((x) => jogo.estado.colecao[x.id])) {
     const registro = jogo.estado.colecao[p.id];
     const s = atributos(p, registro, dados);
     const noTime = jogo.estado.time.find((m) => m.planta === p.id);
     const cartao = document.createElement('button');
-    cartao.className = 'cartao-planta' + (noTime ? ' no-time' : '');
+    const fora = faseEscolhida.faccao && p.faccao !== faseEscolhida.faccao;
+    cartao.className = 'cartao-planta' + (noTime ? ' no-time' : '') + (fora ? ' fora-regra' : '');
     cartao.innerHTML = `
       <span class="planta-emoji">${p.emoji}</span>
       <b>${p.nome}</b>
@@ -113,7 +126,7 @@ function desenharPlantas() {
       if (noTime) {
         jogo.definirTime(time.filter((m) => m !== noTime));
       } else if (time.length >= max) {
-        const nivel = jogo.proximaVaga();
+        const nivel = faseEscolhida.timeMax ? null : jogo.proximaVaga();
         return avisar(preencher(nivel ? dados.textos.timeCheioProxima : dados.textos.timeCheio, { max, nivel }));
       } else {
         const lugar = espacoEscolhido || primeiroEspacoLivre();

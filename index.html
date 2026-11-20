@@ -50,6 +50,7 @@
       <nav class="menu-base">
         <button id="btn-campanha" class="btn btn-menu btn-laranja">⚔️<span>Campanha</span></button>
         <button id="btn-plantas" class="btn btn-menu">🌿<span>Plantas</span></button>
+        <button id="btn-atividades" class="btn btn-menu btn-azul">🗼<span>Desafios</span></button>
         <button class="btn btn-menu" data-breve="Arena">🏆<span>Arena</span></button>
       </nav>
 
@@ -74,6 +75,41 @@
       <div id="fase-painel" class="modal escondido">
         <div id="fase-conteudo" class="modal-caixa"></div>
       </div>
+    </section>
+
+    <!-- Atividades fora da campanha -->
+    <section id="tela-atividades" class="tela">
+      <header class="topo">
+        <button id="atividades-voltar" class="btn-icone" aria-label="Voltar">⬅️</button>
+        <h2>Desafios</h2>
+      </header>
+      <div class="rolagem">
+        <p class="dica-pequena">Aqui não gasta fôlego. Bora testar esse time!</p>
+        <div id="atividades-lista" class="atividades-lista"></div>
+      </div>
+    </section>
+
+    <!-- Horta de Treino -->
+    <section id="tela-treino" class="tela">
+      <header class="topo">
+        <button id="treino-voltar" class="btn-icone" aria-label="Voltar">⬅️</button>
+        <h2>Horta de Treino</h2>
+      </header>
+      <div class="rolagem">
+        <p class="dica-pequena">Monte as pragas e teste seu time. Não ganha nem perde nada.</p>
+        <h3 class="titulo-secao">Pragas <small id="treino-contagem"></small></h3>
+        <div id="treino-escolhidos" class="treino-escolhidos"></div>
+        <div class="treino-nivel">
+          <button id="treino-menos5" class="btn btn-azul btn-peq">-5</button>
+          <button id="treino-menos" class="btn btn-azul btn-peq">-1</button>
+          <b id="treino-nivel">Nv 1</b>
+          <button id="treino-mais" class="btn btn-azul btn-peq">+1</button>
+          <button id="treino-mais5" class="btn btn-azul btn-peq">+5</button>
+        </div>
+        <p class="dica-pequena">Toque numa praga pra colocar. Toque em cima de uma escolhida pra tirar.</p>
+        <div id="treino-pragas" class="lista-plantas"></div>
+      </div>
+      <button id="treino-preparar" class="btn btn-grande btn-laranja btn-fixo">Preparar time</button>
     </section>
 
     <!-- Preparar batalha -->
