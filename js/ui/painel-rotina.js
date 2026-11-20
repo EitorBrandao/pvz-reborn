@@ -31,6 +31,13 @@ function formatar(ms) {
   return h ? `${h}:${String(m).padStart(2, '0')}:${seg}` : `${m}:${seg}`;
 }
 
+// 3h24 / 45min
+function formatarDuracao(ms) {
+  const min = Math.round(ms / 60000);
+  const h = Math.floor(min / 60);
+  return h ? `${h}h${min % 60 ? String(min % 60).padStart(2, '0') : ''}` : `${min}min`;
+}
+
 function nomesCartas(cartas) {
   return cartas.map((id) => dados.cartas.find((c) => c.id === id)?.emoji || '').join(' ');
 }
@@ -171,23 +178,32 @@ function desenharExpedicao() {
     return;
   }
   const max = dados.rotina.expedicao.maxPlantas;
+  // Com plantas escolhidas, cada destino mostra o prêmio e o tempo de verdade
   const destinos = dados.rotina.expedicao.destinos.map((d) => {
     const cartas = d.cartas.map((c) => dados.cartas.find((x) => x.id === c.carta)?.emoji).join('');
+    const p = escolhidas.length ? jogo.previaExpedicao(d.id, escolhidas) : null;
+    const tempo = p ? formatarDuracao(p.duracao) : `${d.horas}h`;
+    const corte = p && p.reducao ? ` <span class="reducao">-${Math.round(p.reducao * 100)}%</span>` : '';
+    const premio = p
+      ? preencher(t().previa, { moedas: p.moedas, xp: p.xpTotal })
+      : preencher(t().porPlanta, { moedas: d.moedasPorPlanta, xp: d.xpPorPlanta });
     return `<button class="linha-escolha${d.id === destinoEscolhido ? ' marcada' : ''}" data-destino="${d.id}">
       <span class="escolha-emoji">${d.emoji}</span>
-      <span class="escolha-info"><b>${d.nome} · ⏱️ ${d.horas}h</b>
-        <small>${preencher(t().porPlanta, { moedas: d.moedasPorPlanta, xp: d.xpPorPlanta })} ${cartas}</small></span>
+      <span class="escolha-info"><b>${d.nome} · ⏱️ ${tempo}${corte}</b>
+        <small>${premio} ${cartas}</small></span>
     </button>`;
   }).join('');
   const livres = dados.plantas.filter((p) => podeIr(p.id));
   const plantas = livres.length
     ? livres.map((p) => `<button class="escolha-planta${escolhidas.includes(p.id) ? ' marcada' : ''}" data-planta="${p.id}">
-        <span>${p.emoji}</span><small>Nv ${jogo.estado.colecao[p.id].nivel}</small></button>`).join('')
+        <span>${p.emoji}</span><small>Nv ${jogo.estado.colecao[p.id].nivel}</small>
+        <small class="estrelas-mini">${'⭐'.repeat(jogo.estado.colecao[p.id].estrelas)}</small></button>`).join('')
     : `<p class="dica-pequena">${t().semPlantasLivres}</p>`;
   caixa.innerHTML = `${botaoFechar}<h3>🧭 ${t().expedicao}</h3>
     <p class="dica-pequena">${t().expedicaoDica}</p>
     <div class="lista-escolha">${destinos}</div>
     <h4>${preencher(t().quemVai, { qtd: escolhidas.length, max })}</h4>
+    <p class="dica-pequena">${t().forcaDica}</p>
     <div class="grade-escolha">${plantas}</div>
     <button id="expedicao-enviar" class="btn btn-laranja btn-largo">${t().enviar}</button>`;
   caixa.querySelectorAll('[data-destino]').forEach((b) => b.addEventListener('click', () => {

@@ -203,6 +203,8 @@
     "presencaDica": "Um prêmio por dia que você entra. O 7º dia é o melhor!",
     "dia": "Dia {n}",
     "pegar": "Pegar prêmio",
-    "pegou": "Prêmio do dia: {premio}"
+    "pegou": "Prêmio do dia: {premio}",
+    "previa": "Total: 🪙 {moedas} · ✨ {xp} XP",
+    "forcaDica": "Nível maior: mais moedas e XP. Cada ⭐ além da 1ª: mais chance de cartas e viagem mais curta."
   }
 }
