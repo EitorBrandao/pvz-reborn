@@ -1,6 +1,6 @@
 {
   "torre": {
-    "nivelPorAndar": 0.8,
+    "nivelPorAndar": 2,
     "inimigosBase": 2,
     "andaresPorInimigo": 4,
     "maxInimigos": 5,
@@ -8,39 +8,99 @@
     "andaresPorPragaNova": 3,
     "chefeACada": 5,
     "moedasBase": 20,
-    "moedasPorAndar": 12,
+    "moedasPorAndar": 24,
     "xpBase": 15,
-    "xpPorAndar": 6,
+    "xpPorAndar": 12,
     "orvalhoChefe": 2,
     "cartas": [
-      { "carta": "adubo", "chance": 0.6 },
-      { "carta": "fibra", "chance": 0.6 },
-      { "carta": "seiva_dourada", "chance": 0.08 },
-      { "carta": "petala_rara", "chance": 0.05 }
+      {
+        "carta": "adubo",
+        "chance": 0.6
+      },
+      {
+        "carta": "fibra",
+        "chance": 0.6
+      },
+      {
+        "carta": "seiva_dourada",
+        "chance": 0.08
+      },
+      {
+        "carta": "petala_rara",
+        "chance": 0.05
+      }
     ],
     "cartasChefe": [
-      { "carta": "seiva_dourada", "chance": 0.6 },
-      { "carta": "petala_rara", "chance": 0.4 },
-      { "carta": "semente_misteriosa", "chance": 0.15 }
+      {
+        "carta": "seiva_dourada",
+        "chance": 0.6
+      },
+      {
+        "carta": "petala_rara",
+        "chance": 0.4
+      },
+      {
+        "carta": "semente_misteriosa",
+        "chance": 0.15
+      }
     ]
   },
   "desafio": {
-    "inimigos": 4,
-    "nivelExtra": 1,
+    "inimigos": 5,
+    "nivelExtra": 3,
     "orvalho": 3,
     "moedasPorNivel": 30,
     "xpPorNivel": 12,
     "cartas": [
-      { "carta": "seiva_dourada", "chance": 0.7 },
-      { "carta": "petala_rara", "chance": 0.5 },
-      { "carta": "semente_misteriosa", "chance": 0.1 }
+      {
+        "carta": "seiva_dourada",
+        "chance": 0.7
+      },
+      {
+        "carta": "petala_rara",
+        "chance": 0.5
+      },
+      {
+        "carta": "semente_misteriosa",
+        "chance": 0.1
+      }
     ],
     "regras": [
-      { "id": "faccao", "nome": "Só {emoji} {faccao}", "texto": "Só valem plantas da facção {emoji} {faccao}." },
-      { "id": "trio", "nome": "Time de três", "texto": "Seu time pode ter no máximo {max} plantas.", "max": 3 },
-      { "id": "parrudas", "nome": "Pragas parrudas", "texto": "As pragas têm +{pct}% de vida.", "mult": { "vida": 1.6 } },
-      { "id": "furiosas", "nome": "Pragas furiosas", "texto": "As pragas têm +{pct}% de ataque.", "mult": { "atq": 1.35 } },
-      { "id": "ligeiras", "nome": "Pragas ligeiras", "texto": "As pragas têm +{pct}% de velocidade.", "mult": { "vel": 1.4 } }
+      {
+        "id": "faccao",
+        "nome": "Só {emoji} {faccao}",
+        "texto": "Só valem plantas da facção {emoji} {faccao}."
+      },
+      {
+        "id": "trio",
+        "nome": "Time de três",
+        "texto": "Seu time pode ter no máximo {max} plantas.",
+        "max": 3
+      },
+      {
+        "id": "parrudas",
+        "nome": "Pragas parrudas",
+        "texto": "As pragas têm +{pct}% de vida.",
+        "mult": {
+          "vida": 1.6
+        }
+      },
+      {
+        "id": "furiosas",
+        "nome": "Pragas furiosas",
+        "texto": "As pragas têm +{pct}% de ataque.",
+        "mult": {
+          "atq": 1.35
+        }
+      },
+      {
+        "id": "ligeiras",
+        "nome": "Pragas ligeiras",
+        "texto": "As pragas têm +{pct}% de velocidade.",
+        "mult": {
+          "vel": 1.4
+        }
+      }
     ]
   },
   "treino": {
