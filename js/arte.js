@@ -652,6 +652,10 @@ const STATUS = {
 const EXTRAS = {
   chao: () => '<rect x="0" y="0" width="100" height="100" fill="#4caf2e"/><rect x="50" y="0" width="50" height="50" fill="#43a326"/><rect x="0" y="50" width="50" height="50" fill="#43a326"/>',
 };
+// Tintas: quadrados de uma cor só, esticados pra pintar barras (vida, XP, progresso).
+// Cor de fundo comum o modo escuro do Samsung escurece; letra colorida não.
+const TINTAS = { azul: '#3a9ee6', verde: '#5cc23a', amarelo: '#ffd23a', laranja: '#ffb020', vermelho: '#e5483a', ciano: '#7fe3ff' };
+for (const [nome, cor] of Object.entries(TINTAS)) EXTRAS[`tinta_${nome}`] = () => `<rect x="0" y="0" width="100" height="100" fill="${cor}"/>`;
 
 // ---------- Montagem ----------
 const svg = (miolo, vb) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${vb} ${vb}" width="${vb === 100 ? 128 : 64}" height="${vb === 100 ? 128 : 64}">${miolo}</svg>`;
@@ -679,6 +683,13 @@ export function iniciarArte(dados) {
   for (const u of [...(dados.plantas || []), ...(dados.pragas || [])]) if (!porEmoji.has(u.emoji)) porEmoji.set(u.emoji, u.id);
   if (typeof document !== 'undefined' && document.fonts) {
     document.fonts.load(`32px ${FONTE}`).then(() => { fontePronta = true; }).catch(() => {});
+  }
+  // As barras do HTML pintam com estas letras pelo CSS (content: var(--tinta-azul) etc.).
+  if (typeof document !== 'undefined') {
+    for (const nome of Object.keys(TINTAS)) {
+      const cp = GLIFOS[`extra:tinta_${nome}`];
+      if (cp) document.documentElement.style.setProperty(`--tinta-${nome}`, `"\\${cp.toString(16)}"`);
+    }
   }
 }
 
@@ -722,6 +733,23 @@ export function desenharGlifo(ctx, tipo, chave, x, y, lado) {
   return true;
 }
 export const artePronta = () => fontePronta;
+// Retângulo pintado com tinta da fonte (cor que o modo escuro não estraga). Sem fonte, pinta normal.
+export function pintarRetangulo(ctx, nome, x, y, larg, alt) {
+  if (larg <= 0 || alt <= 0) return;
+  if (!fontePronta || !glifo('extra', `tinta_${nome}`)) {
+    ctx.fillStyle = TINTAS[nome] || '#fff';
+    ctx.fillRect(x, y, larg, alt);
+    return;
+  }
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(x, y, larg, alt);
+  ctx.clip();
+  ctx.translate(x, y);
+  ctx.scale(larg / alt, 1);
+  desenharGlifo(ctx, 'extra', `tinta_${nome}`, -alt * 0.2, -alt * 0.2, alt * 1.4);
+  ctx.restore();
+}
 export function infoTiro(emoji) {
   const chave = TIRO_DO_EMOJI[emoji];
   if (!chave) return null;

@@ -5,7 +5,7 @@ import * as jogo from '../estado.js';
 import { prepararBatalha, simular, rolarCartas, criarRng } from '../batalha.js';
 import { calcularEstrelas } from '../campanha.js';
 import * as som from '../som.js';
-import { arte, desenharGlifo, glifo, artePronta, infoTiro, corHabilidade } from '../arte.js';
+import { arte, desenharGlifo, glifo, artePronta, infoTiro, corHabilidade, pintarRetangulo } from '../arte.js';
 
 let dados, acoes;
 let missoesAntes = new Set();
@@ -689,18 +689,16 @@ function desenharUnidade(v) {
     ctx.beginPath();
     ctx.roundRect(bx - 1.5, by - 1.5, larg + 3, 13, 3);
     ctx.fill();
-    ctx.fillStyle = pv > 0.5 ? '#5cc23a' : pv > 0.25 ? '#ffb020' : '#e5483a';
-    ctx.fillRect(bx, by, larg * pv, 6);
+    // barras pintadas com tinta da fonte, pro modo escuro do celular não escurecer as cores
+    pintarRetangulo(ctx, pv > 0.5 ? 'verde' : pv > 0.25 ? 'laranja' : 'vermelho', bx, by, larg * pv, 6);
     ctx.fillStyle = 'rgba(255,255,255,.35)';
     ctx.fillRect(bx, by, larg * pv, 2);
     if (v.escudo > 0) {
       ctx.fillStyle = 'rgba(0,0,0,.55)';
       ctx.fillRect(bx - 1, by - 7, larg + 2, 6);
-      ctx.fillStyle = '#7fe3ff';
-      ctx.fillRect(bx, by - 6, larg * Math.min(1, Math.max(0.12, v.escudo / v.vidaMax)), 4);
+      pintarRetangulo(ctx, 'ciano', bx, by - 6, larg * Math.min(1, Math.max(0.12, v.escudo / v.vidaMax)), 4);
     }
-    ctx.fillStyle = v.seiva >= 100 ? '#ffd23a' : '#3a9ee6';
-    ctx.fillRect(bx, by + 7, larg * (v.seiva / 100), 3);
+    pintarRetangulo(ctx, v.seiva >= 100 ? 'amarelo' : 'azul', bx, by + 7, larg * (v.seiva / 100), 3);
 
     // ícones de status numa fileira em cima da cabeça
     const sts = Array.isArray(v.status) ? [...v.status] : [];
