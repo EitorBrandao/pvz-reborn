@@ -31,6 +31,13 @@
   ],
   "vitoriaTexto": "+{moedas} moedas · +{xp} XP",
   "derrotaTexto": "+{xp} XP. Evolua suas plantas ou troque a formação.",
+  "sumarioDano": {
+    "causado": "⚔️ Dano causado",
+    "recebido": "🛡️ Dano recebido",
+    "status": "🧪 Veneno e fogo",
+    "total": "Total",
+    "nada": "Nenhum dano."
+  },
   "semCartas": "Nenhuma carta dessa vez.",
   "efeitos": {
     "dormindo": "💤 zzz",
