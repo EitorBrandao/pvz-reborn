@@ -37,11 +37,31 @@
     "seiva": "⚡+{valor}"
   },
   "status": {
-    "veneno": { "icone": "🧪", "nome": "🧪 Envenenado!", "texto": "Envenena: perde vida igual a {valor}% do ataque por {turnos} rodadas." },
-    "queimadura": { "icone": "🔥", "nome": "🔥 Queimando!", "texto": "Queima: perde vida igual a {valor}% do ataque por {turnos} rodadas." },
-    "regeneracao": { "icone": "💚", "nome": "💚 Regenerando!", "texto": "Regenera: recupera vida igual a {valor}% do ataque por {turnos} rodadas." },
-    "fraqueza": { "icone": "🔻", "nome": "🔻 Enfraquecido!", "texto": "Enfraquece: o alvo causa {valor}% menos dano por {turnos} rodadas." },
-    "casca": { "icone": "💢", "nome": "💢 Casca rachada!", "texto": "Racha a casca: o alvo perde {valor}% da defesa por {turnos} rodadas." }
+    "veneno": {
+      "icone": "🧪",
+      "nome": "🧪 Envenenado!",
+      "texto": "Envenena: perde vida igual a {valor}% do ataque por {turnos} rodadas."
+    },
+    "queimadura": {
+      "icone": "🔥",
+      "nome": "🔥 Queimando!",
+      "texto": "Queima: perde vida igual a {valor}% do ataque por {turnos} rodadas."
+    },
+    "regeneracao": {
+      "icone": "💚",
+      "nome": "💚 Regenerando!",
+      "texto": "Regenera: recupera vida igual a {valor}% do ataque por {turnos} rodadas."
+    },
+    "fraqueza": {
+      "icone": "🔻",
+      "nome": "🔻 Enfraquecido!",
+      "texto": "Enfraquece: o alvo causa {valor}% menos dano por {turnos} rodadas."
+    },
+    "casca": {
+      "icone": "💢",
+      "nome": "💢 Casca rachada!",
+      "texto": "Racha a casca: o alvo perde {valor}% da defesa por {turnos} rodadas."
+    }
   },
   "faccaoInfo": "{emoji} {nome} · forte contra {forteEmoji} {forteNome}<br>fraca contra {fracoEmoji} {fracoNome}",
   "bonusTime": "{emoji} {nome} ×{qtd}: +{pct}% {atributo}",
@@ -91,5 +111,41 @@
   "missaoCompleta": "Missão completa: {titulo}!",
   "missaoResgatada": "Prêmio resgatado!",
   "semMissoes": "Você completou todas as missões. Por enquanto!",
-  "pularBloqueado": "Vença essa fase uma vez pra liberar o Pular."
+  "pularBloqueado": "Vença essa fase uma vez pra liberar o Pular.",
+  "pularBloqueadoAtividade": "Aqui não dá pra pular. Use o 3x pra acelerar!",
+  "treinoTexto": "Treino feito! Treino não dá prêmio, mas ensina muito.",
+  "semPremioTexto": "Você já pegou o prêmio dessa. Valeu o treino!",
+  "botaoProxima": {
+    "campanha": "Próxima fase ➡️",
+    "torre": "Próximo andar ⬆️",
+    "desafio": "Próxima ➡️",
+    "treino": "Próxima ➡️"
+  },
+  "botaoSair": {
+    "campanha": "Mapa",
+    "torre": "Sair",
+    "desafio": "Sair",
+    "treino": "Sair"
+  },
+  "rotuloAtividade": {
+    "torre": "🗼 Torre das Pragas",
+    "desafio": "📅 Desafio do Dia",
+    "treino": "🎯 Horta de Treino"
+  },
+  "regraTimeMax": "Regra do desafio: no máximo {max} plantas no time.",
+  "regraFaccao": "Regra do desafio: só plantas {emoji} {faccao} no time.",
+  "treinoSemInimigos": "Escolha pelo menos uma praga pra treinar.",
+  "treinoCheio": "No máximo {max} pragas. Toque numa escolhida pra tirar.",
+  "atividades": {
+    "torreTitulo": "Torre das Pragas",
+    "torreAndar": "Andar {andar} · Recorde: {melhor}",
+    "torreBotao": "Subir",
+    "desafioTitulo": "Desafio do Dia",
+    "desafioFeito": "✅ Feito hoje! Amanhã tem outro.",
+    "desafioBotao": "Encarar",
+    "desafioBotaoFeito": "Jogar de novo",
+    "treinoTitulo": "Horta de Treino",
+    "treinoTexto": "Escolha pragas que você já venceu e teste seu time à vontade.",
+    "treinoBotao": "Treinar"
+  }
 }

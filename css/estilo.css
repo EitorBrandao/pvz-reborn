@@ -138,9 +138,9 @@ body {
 
 .menu-base {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  padding: 12px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  padding: 10px;
   margin-bottom: 12px;
   background: var(--bege);
   border: 3px solid var(--terra);
@@ -616,3 +616,32 @@ body {
 
 .cabecalho-colecao { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .cabecalho-colecao .titulo-secao { margin-bottom: 8px; }
+
+/* ---------- Desafios (atividades fora da campanha) ---------- */
+.atividades-lista { display: flex; flex-direction: column; gap: 10px; }
+.cartao-atividade {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bege);
+  color: var(--escuro);
+  border: 3px solid var(--terra);
+  border-radius: 14px;
+  padding: 10px;
+  box-shadow: var(--sombra);
+}
+.atividade-emoji { font-size: 2.4rem; flex-shrink: 0; }
+.atividade-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.atividade-info > b { font-size: 1.05rem; }
+.atividade-info small { font-size: .8rem; overflow-wrap: anywhere; }
+.atividade-info .nv { font-size: .75rem; opacity: .8; }
+.cartao-atividade > .btn { flex-shrink: 0; }
+.regra-desafio { color: #b0520a; font-weight: 700; }
+.cartao-planta.fora-regra { opacity: .45; filter: grayscale(.7); }
+.cartao-planta.chefe { border-color: var(--vermelho); }
+
+/* Horta de Treino */
+.treino-escolhidos { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.treino-escolhidos .espaco { height: 56px; font-size: 1.9rem; }
+.treino-nivel { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 10px 0 0; }
+.treino-nivel b { min-width: 64px; text-align: center; font-size: 1.1rem; text-shadow: 0 2px 0 rgba(0, 0, 0, .3); }

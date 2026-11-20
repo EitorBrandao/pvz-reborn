@@ -47,6 +47,8 @@ function novoEstado() {
     contadores: {},
     estrelasFases: {},
     missoes: { ativas: [], proxima: 0 },
+    torre: { andar: 1, melhor: 0 },
+    desafio: { dia: '', vencido: false, total: 0 },
   };
 }
 
@@ -230,11 +232,14 @@ export function definirVelocidade(v) {
   salvarAgora();
 }
 
-// Guarda o resultado da batalha. Devolve o XP dado, as plantas que subiram de nível
-// e quantos níveis o jogador subiu.
+// Guarda o resultado da batalha. Devolve o XP dado, as moedas e o orvalho ganhos,
+// as plantas que subiram de nível e quantos níveis o jogador subiu.
+// Batalhas da campanha não têm "tipo"; as atividades têm 'torre', 'desafio' ou 'treino'.
 export function registrarBatalha(batalha, vitoria, cartas, estrelas = 0) {
+  const tipo = batalha.tipo || 'campanha';
+  const premio = vitoria && premioValido(batalha);
   const xpCheio = batalha.recompensa.xp || 0;
-  const xp = vitoria ? xpCheio : Math.round(xpCheio * config.evolucao.xpDerrota);
+  const xp = vitoria ? (premio ? xpCheio : 0) : Math.round(xpCheio * config.evolucao.xpDerrota);
   const subiram = [];
   for (const m of estado.time) {
     const registro = estado.colecao[m.planta];
@@ -242,20 +247,43 @@ export function registrarBatalha(batalha, vitoria, cartas, estrelas = 0) {
       subiram.push({ id: m.planta, nivel: registro.nivel });
     }
   }
-  contar('batalhar');
-  if (vitoria) {
-    estado.moedas += batalha.recompensa.moedas;
-    estado.orvalho += batalha.recompensa.orvalho || 0;
+  if (tipo !== 'treino') contar('batalhar');
+  let moedas = 0;
+  let orvalho = 0;
+  if (premio) {
+    moedas = batalha.recompensa.moedas || 0;
+    orvalho = batalha.recompensa.orvalho || 0;
+    estado.moedas += moedas;
+    estado.orvalho += orvalho;
     for (const c of cartas) estado.inventario[c] = (estado.inventario[c] || 0) + 1;
+    contar('coletarCarta', cartas.length);
+  }
+  if (vitoria && tipo === 'campanha') {
     if (!estado.vencidas.includes(batalha.id)) estado.vencidas.push(batalha.id);
     estado.estrelasFases[batalha.id] = Math.max(estado.estrelasFases[batalha.id] || 0, estrelas);
     contar('vencerFase');
-    contar('coletarCarta', cartas.length);
     if (batalha.chefe) contar('vencerChefe');
+  }
+  if (premio && tipo === 'torre') {
+    estado.torre.melhor = Math.max(estado.torre.melhor, batalha.andar);
+    estado.torre.andar = batalha.andar + 1;
+    contar('subirTorre');
+  }
+  if (premio && tipo === 'desafio') {
+    estado.desafio = { dia: batalha.dia, vencido: true, total: (estado.desafio.total || 0) + 1 };
+    contar('vencerDesafio');
   }
   const subiuJogador = darXpJogador(xp);
   salvarAgora();
-  return { xp, subiram, subiuJogador };
+  return { xp, moedas, orvalho, subiram, subiuJogador };
+}
+
+// A vitória ainda dá prêmio? (andar da torre já passado, desafio já feito hoje e treino não dão)
+function premioValido(batalha) {
+  if (batalha.tipo === 'treino') return false;
+  if (batalha.tipo === 'torre') return batalha.andar === estado.torre.andar;
+  if (batalha.tipo === 'desafio') return !(estado.desafio.dia === batalha.dia && estado.desafio.vencido);
+  return true;
 }
 
 // ---------- Evolução ----------

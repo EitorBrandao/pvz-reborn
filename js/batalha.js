@@ -87,6 +87,11 @@ export function prepararBatalha(batalha, time, dados, colecao = {}) {
     const base = dados.pragas.find((p) => p.id === i.praga);
     if (!base) continue;
     const u = montarUnidade(base, 'praga', i.col, i.linha, i.nivel || batalha.nivel, `u${n++}`, cfg);
+    // regras especiais (ex.: Desafio do Dia com pragas mais fortes)
+    for (const [atributo, mult] of Object.entries(batalha.multPragas || {})) {
+      u[atributo] = Math.round(u[atributo] * mult);
+      if (atributo === 'vida') u.vidaMax = u.vida;
+    }
     marcarVantagem(u, dados);
     unidades.push(u);
   }
