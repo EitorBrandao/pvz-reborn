@@ -152,7 +152,7 @@ async function tocar(eventos, minhaPartida) {
     if (pular || minhaPartida !== partida) break;
     if (ev.tipo === 'rodada') $('batalha-rodada').textContent = ev.n;
     else if (ev.tipo === 'acao') await animarAcao(ev);
-    else if (ev.tipo === 'veneno') await animarVeneno(ev);
+    else if (ev.tipo === 'status') await animarStatus(ev);
   }
   if (minhaPartida !== partida) return;
   const fim = eventos[eventos.length - 1];
@@ -209,7 +209,7 @@ async function animarAcao(ev) {
   a.brilho = 0;
 }
 
-async function animarVeneno(ev) {
+async function animarStatus(ev) {
   for (const ef of ev.efeitos) mostrarEfeito(ef);
   aplicarFoto(ev.snap);
   await espera(350);
@@ -243,6 +243,7 @@ function mostrarEfeito(ef) {
       const tam = 28 + peso * 22;
       if (ef.reflexo) flutuar(v.x, v.y - raio, `-${ef.valor}`, '#d08cff', 24);
       else if (ef.veneno) flutuar(v.x, v.y - raio, `-${ef.valor}`, '#8dff4a', 22);
+      else if (ef.queimadura) flutuar(v.x, v.y - raio, `-${ef.valor}`, '#ff8a2f', 22);
       else if (ef.critico) {
         flutuar(v.x, v.y - raio * 1.2, `${ef.valor}!`, '#ff3b2f', tam + 16, true);
         tremor += 16;
@@ -272,10 +273,13 @@ function mostrarEfeito(ef) {
       v.sono = 1;
       flutuar(v.x, v.y - raio * 1.4, t.sono, '#ffffff', 18);
       break;
-    case 'envenenou':
-      v.veneno = 1;
-      flutuar(v.x, v.y - raio * 1.4, t.envenenou, '#8dff4a', 18);
+    case 'status': {
+      const st = dados.textos.status[ef.status];
+      const lista = Array.isArray(v.status) ? v.status : [];
+      if (!lista.includes(ef.status)) v.status = [...lista, ef.status];
+      if (st) flutuar(v.x, v.y - raio * 1.4, st.nome, ef.status === 'regeneracao' ? '#7dff6a' : '#ffb0e0', 18);
       break;
+    }
     case 'seiva':
       flutuar(v.x, v.y - raio * 1.4, preencher(t.seiva, { valor: ef.valor }), '#ffd23a', 18);
       break;
@@ -479,7 +483,12 @@ function desenharUnidade(v) {
     ctx.font = `${r * 0.5}px serif`;
     if (v.sono > 0) ctx.fillText('💤', x + r * 0.8, y - r * 0.8);
     if (v.lento > 0) ctx.fillText('🐢', x - r * 0.8, y - r * 0.8);
-    if (v.veneno > 0) ctx.fillText('🧪', x + r * 0.8, y + r * 0.6);
+    const sts = Array.isArray(v.status) ? v.status : [];
+    if (sts.length) {
+      ctx.font = `${r * 0.38}px serif`;
+      const icones = sts.map((n) => dados.textos.status[n]?.icone || '').join('');
+      ctx.fillText(icones, x, y - r * 1.15);
+    }
 
     ctx.font = `bold ${Math.max(10, r * 0.32)}px "Trebuchet MS", sans-serif`;
     ctx.fillStyle = '#fff';

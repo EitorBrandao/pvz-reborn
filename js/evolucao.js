@@ -34,6 +34,7 @@ export function habilidadeComEstrelas(hab, estrelas = 1) {
   const h = { ...hab };
   const extra = Math.max(0, estrelas - 1);
   for (const [campo, passo] of Object.entries(hab.porEstrela || {})) {
+    if (campo === 'aplica') { h.aplica = habilidadeComEstrelas({ ...hab.aplica, porEstrela: passo }, estrelas); continue; }
     const v = (hab[campo] || 0) + passo * extra;
     h[campo] = INTEIROS.includes(campo) ? Math.round(v) : Math.round(v * 100) / 100;
   }

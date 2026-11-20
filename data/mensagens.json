@@ -34,8 +34,14 @@
     "lento": "🐢 Lento!",
     "escudo": "🛡️ +{valor}",
     "eficaz": "Eficaz!",
-    "envenenou": "🧪 Envenenado!",
     "seiva": "⚡+{valor}"
+  },
+  "status": {
+    "veneno": { "icone": "🧪", "nome": "🧪 Envenenado!", "texto": "Envenena: perde vida igual a {valor}% do ataque por {turnos} rodadas." },
+    "queimadura": { "icone": "🔥", "nome": "🔥 Queimando!", "texto": "Queima: perde vida igual a {valor}% do ataque por {turnos} rodadas." },
+    "regeneracao": { "icone": "💚", "nome": "💚 Regenerando!", "texto": "Regenera: recupera vida igual a {valor}% do ataque por {turnos} rodadas." },
+    "fraqueza": { "icone": "🔻", "nome": "🔻 Enfraquecido!", "texto": "Enfraquece: o alvo causa {valor}% menos dano por {turnos} rodadas." },
+    "casca": { "icone": "💢", "nome": "💢 Casca rachada!", "texto": "Racha a casca: o alvo perde {valor}% da defesa por {turnos} rodadas." }
   },
   "faccaoInfo": "{emoji} {nome} · forte contra {forteEmoji} {forteNome} · fraca contra {fracoEmoji} {fracoNome}",
   "bonusTime": "{emoji} {nome} ×{qtd}: +{pct}% {atributo}",
@@ -60,7 +66,7 @@
     "perfurar": "Atravessa e acerta também quem está atrás ({forca}% do ataque).",
     "sono": "Ataca e faz o alvo dormir {turnos} rodada(s).",
     "lentidao": "Ataca e deixa o alvo {reducao}% mais lento por {turnos} rodadas.",
-    "veneno": "Ataca e envenena o alvo: perde {veneno}% do ataque por rodada, durante {turnos} rodadas.",
+    "golpe": "Golpe certeiro ({forca}% do ataque).",
     "energia": "Ataca e enche {seiva} de energia do especial de todos os aliados.",
     "protecao": "Ataca e dá um escudo de {pctVida}% da própria vida pras plantas da frente por {turnos} rodadas.",
     "devorar": "Morde a praga mais ferida ({forca}% do ataque). Se ela estiver com menos de {limite}% de vida, o dano sobe pra {bonus}%."

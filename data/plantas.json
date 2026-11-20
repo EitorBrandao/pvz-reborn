@@ -2,7 +2,7 @@
   {
     "id": "pimentao", "faccao": "roca", "nome": "Pimentão Pavio", "emoji": "🌶️", "projetil": "🔥", "funcao": "Dano em área",
     "vida": 220, "atq": 42, "def": 15, "vel": 11,
-    "habilidade": { "tipo": "area_coluna", "nome": "Explosão Ardida", "mult": 0.9, "porEstrela": { "mult": 0.1 } }
+    "habilidade": { "tipo": "area_coluna", "nome": "Explosão Ardida", "mult": 0.9, "aplica": { "status": "queimadura", "valor": 0.2, "turnos": 2 }, "porEstrela": { "mult": 0.1, "aplica": { "valor": 0.03 } } }
   },
   {
     "id": "cacto", "faccao": "sertao", "nome": "Cacto Espeto", "emoji": "🌵", "projetil": "✴️", "funcao": "Tanque",
@@ -17,7 +17,7 @@
   {
     "id": "babosa", "faccao": "sertao", "nome": "Babosa Curandeira", "emoji": "🪴", "projetil": "💧", "funcao": "Cura",
     "vida": 260, "atq": 28, "def": 20, "vel": 10,
-    "habilidade": { "tipo": "cura", "nome": "Gel Curativo", "mult": 1.8, "alvos": 1, "porEstrela": { "alvos": 0.5, "mult": 0.1 } }
+    "habilidade": { "tipo": "cura", "nome": "Gel Curativo", "mult": 1.8, "alvos": 1, "aplica": { "status": "regeneracao", "valor": 0.25, "turnos": 2 }, "porEstrela": { "alvos": 0.5, "mult": 0.1, "aplica": { "valor": 0.03 } } }
   },
   {
     "id": "couve", "faccao": "roca", "nome": "Couve Couraça", "emoji": "🥬", "projetil": "🍃", "funcao": "Tanque",
@@ -27,12 +27,12 @@
   {
     "id": "bambu", "faccao": "mata", "nome": "Bambu Lanceiro", "emoji": "🎋", "projetil": "🥢", "funcao": "Dano perfurante",
     "vida": 230, "atq": 40, "def": 16, "vel": 12,
-    "habilidade": { "tipo": "perfurar", "nome": "Lança de Bambu", "mult": 1.3, "porEstrela": { "mult": 0.1 } }
+    "habilidade": { "tipo": "perfurar", "nome": "Lança de Bambu", "mult": 1.3, "aplica": { "status": "casca", "valor": 0.3, "turnos": 2 }, "porEstrela": { "mult": 0.1, "aplica": { "valor": 0.04 } } }
   },
   {
     "id": "cogumelo", "faccao": "brejo", "nome": "Cogumelo Esporento", "emoji": "🍄", "projetil": "💨", "funcao": "Controle",
     "vida": 210, "atq": 30, "def": 15, "vel": 13,
-    "habilidade": { "tipo": "sono", "nome": "Nuvem de Esporos", "mult": 0.6, "turnos": 1, "porEstrela": { "mult": 0.1, "turnos": 0.25 } }
+    "habilidade": { "tipo": "sono", "nome": "Nuvem de Esporos", "mult": 0.6, "turnos": 1, "aplica": { "status": "fraqueza", "valor": 0.25, "turnos": 2 }, "porEstrela": { "mult": 0.1, "turnos": 0.25, "aplica": { "valor": 0.03 } } }
   },
   {
     "id": "trepadeira", "faccao": "mata", "nome": "Trepadeira Laço", "emoji": "🌿", "projetil": "🌀", "funcao": "Controle",
@@ -42,7 +42,7 @@
   {
     "id": "agave", "faccao": "sertao", "nome": "Agave Arpão", "emoji": "🌱", "projetil": "🧪", "funcao": "Veneno",
     "vida": 230, "atq": 36, "def": 20, "vel": 11,
-    "habilidade": { "tipo": "veneno", "nome": "Ponta Venenosa", "mult": 1.0, "dano": 0.3, "turnos": 2, "porEstrela": { "dano": 0.05, "turnos": 0.25 } }
+    "habilidade": { "tipo": "golpe", "nome": "Ponta Venenosa", "mult": 1.0, "aplica": { "status": "veneno", "valor": 0.3, "turnos": 3 }, "porEstrela": { "mult": 0.05, "aplica": { "valor": 0.05, "turnos": 0.25 } } }
   },
   {
     "id": "bromelia", "faccao": "mata", "nome": "Bromélia Cálice", "emoji": "🌺", "projetil": "✨", "funcao": "Suporte",

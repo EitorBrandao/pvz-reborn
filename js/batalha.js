@@ -25,7 +25,8 @@ export function montarUnidade(base, lado, col, linha, nivel, uid, cfg) {
     vidaMax: vida, vida,
     atq: Math.round(base.atq * f), def: Math.round(base.def * f), vel: base.vel,
     seiva: 0, escudo: 0, escudoTurnos: 0, reflete: 0, refleteTurnos: 0,
-    sono: 0, lento: 0, lentoTurnos: 0, veneno: 0, venenoTurnos: 0,
+    sono: 0, lento: 0, lentoTurnos: 0,
+    status: {}, // efeitos de status: { veneno: { valor, turnos }, ... }
   };
 }
 
@@ -105,12 +106,32 @@ export function simular(unidades, cfg, semente) {
   const inimigos = (u) => vivos(u.lado === 'planta' ? 'praga' : 'planta');
   const aliados = (u) => vivos(u.lado);
   const velEfetiva = (u) => u.vel * (1 - u.lento);
+  const reducao = (u, nome) => (u.status[nome] ? u.status[nome].valor : 0);
+  const BONS = ['regeneracao'];
+
+  // Aplica o efeito de status da habilidade ("aplica") em quem ela acertou ou ajudou.
+  function aplicarStatus(u, h, efeitos) {
+    const a = h.aplica;
+    if (!a) return;
+    const bom = BONS.includes(a.status);
+    const tipos = bom ? ['cura', 'escudo'] : ['dano'];
+    const alvos = new Set(efeitos.filter((e) => tipos.includes(e.tipo) && !e.reflexo).map((e) => e.alvo));
+    for (const uid of alvos) {
+      const alvo = unidades.find((x) => x.uid === uid);
+      if (!alvo || alvo.vida <= 0 || alvo.lado !== (bom ? u.lado : (u.lado === 'planta' ? 'praga' : 'planta'))) continue;
+      // veneno, queimadura e regeneração guardam o valor por rodada; fraqueza e casca guardam a redução
+      const porRodada = ['veneno', 'queimadura', 'regeneracao'].includes(a.status);
+      const valor = porRodada ? Math.max(1, Math.round(u.atq * a.valor)) : a.valor;
+      alvo.status[a.status] = { valor, turnos: a.turnos };
+      efeitos.push({ alvo: uid, tipo: 'status', status: a.status });
+    }
+  }
   const acabou = () => !vivos('planta').length || !vivos('praga').length;
 
   function foto() {
     const snap = {};
     for (const u of unidades) {
-      snap[u.uid] = { vida: u.vida, seiva: u.seiva, escudo: u.escudo, sono: u.sono, lento: u.lento, veneno: u.venenoTurnos };
+      snap[u.uid] = { vida: u.vida, seiva: u.seiva, escudo: u.escudo, sono: u.sono, lento: u.lento, status: Object.keys(u.status) };
     }
     return snap;
   }
@@ -130,7 +151,9 @@ export function simular(unidades, cfg, semente) {
   function bater(atacante, alvo, mult, efeitos) {
     if (atacante.vida <= 0) return; // morreu no meio do ataque (espinhos)
     const eficaz = !!atacante.forteContra && atacante.forteContra === (alvo.faccao || alvo.categoria);
-    let bruto = atacante.atq * mult * cfg.multDano * (100 / (100 + alvo.def));
+    const atq = atacante.atq * (1 - reducao(atacante, 'fraqueza'));
+    const def = alvo.def * (1 - reducao(alvo, 'casca'));
+    let bruto = atq * mult * cfg.multDano * (100 / (100 + def));
     if (eficaz) bruto *= 1 + atacante.vantagem;
     bruto *= 1 - cfg.variacao + rng() * 2 * cfg.variacao;
     const critico = rng() < cfg.chanceCritico;
@@ -211,15 +234,8 @@ export function simular(unidades, cfg, semente) {
           }
         }
         break;
-      case 'veneno':
-        if (alvo) {
-          bater(u, alvo, h.mult, efeitos);
-          if (alvo.vida > 0) {
-            alvo.veneno = Math.max(1, Math.round(u.atq * h.dano));
-            alvo.venenoTurnos = h.turnos;
-            efeitos.push({ alvo: alvo.uid, tipo: 'envenenou' });
-          }
-        }
+      case 'golpe':
+        if (alvo) bater(u, alvo, h.mult, efeitos);
         break;
       case 'energia':
         if (alvo) bater(u, alvo, h.mult, efeitos);
@@ -248,6 +264,7 @@ export function simular(unidades, cfg, semente) {
       default:
         if (alvo) bater(u, alvo, 1, efeitos);
     }
+    aplicarStatus(u, h, efeitos);
   }
 
   function agir(u) {
@@ -274,22 +291,34 @@ export function simular(unidades, cfg, semente) {
     });
   }
 
-  // Veneno: no fim da rodada, quem está envenenado perde vida.
-  function tickVeneno() {
+  // Fim da rodada: veneno e queimadura tiram vida, regeneração cura, e os efeitos perdem 1 rodada.
+  function tickStatus() {
     if (acabou()) return;
     const efeitos = [];
     for (const u of unidades) {
-      if (u.vida <= 0 || u.venenoTurnos <= 0) continue;
-      const dano = Math.min(u.vida, u.veneno);
-      u.vida -= dano;
-      efeitos.push({ alvo: u.uid, tipo: 'dano', valor: dano, critico: false, absorvido: 0, veneno: true, vidaDepois: u.vida, morreu: u.vida === 0 });
-      if (--u.venenoTurnos === 0) u.veneno = 0;
+      if (u.vida <= 0) continue;
+      for (const nome of ['veneno', 'queimadura']) {
+        const st = u.status[nome];
+        if (!st || u.vida <= 0) continue;
+        const dano = Math.min(u.vida, st.valor);
+        u.vida -= dano;
+        efeitos.push({ alvo: u.uid, tipo: 'dano', valor: dano, critico: false, absorvido: 0, [nome]: true, vidaDepois: u.vida, morreu: u.vida === 0 });
+      }
+      const rg = u.status.regeneracao;
+      if (rg && u.vida > 0) {
+        const valor = Math.min(rg.valor, u.vidaMax - u.vida);
+        u.vida += valor;
+        if (valor > 0) efeitos.push({ alvo: u.uid, tipo: 'cura', valor, vidaDepois: u.vida });
+      }
     }
-    if (efeitos.length) eventos.push({ tipo: 'veneno', efeitos, snap: foto() });
+    for (const u of unidades) {
+      for (const nome of Object.keys(u.status)) if (--u.status[nome].turnos <= 0) delete u.status[nome];
+    }
+    if (efeitos.length) eventos.push({ tipo: 'status', efeitos, snap: foto() });
   }
 
   function passarTurno() {
-    tickVeneno();
+    tickStatus();
     for (const u of unidades) {
       if (u.escudoTurnos > 0 && --u.escudoTurnos === 0) u.escudo = 0;
       if (u.refleteTurnos > 0 && --u.refleteTurnos === 0) u.reflete = 0;
