@@ -1,0 +1,18 @@
+{
+  "ofertasPorDia": 4,
+  "ofertas": [
+    { "id": "adubo5", "carta": "adubo", "qtd": 5, "moedas": 250 },
+    { "id": "fibra6", "carta": "fibra", "qtd": 6, "moedas": 220 },
+    { "id": "seiva1", "carta": "seiva_dourada", "qtd": 1, "moedas": 450 },
+    { "id": "seiva3", "carta": "seiva_dourada", "qtd": 3, "moedas": 1200 },
+    { "id": "petala1", "carta": "petala_rara", "qtd": 1, "moedas": 400 },
+    { "id": "petala3", "carta": "petala_rara", "qtd": 3, "moedas": 1100 },
+    { "id": "semente1", "carta": "semente_misteriosa", "qtd": 1, "moedas": 1500 },
+    { "id": "orvalho3", "orvalho": 3, "moedas": 900 }
+  ],
+  "trocas": [
+    { "id": "fibra_petala", "de": { "fibra": 6 }, "para": { "petala_rara": 1 } },
+    { "id": "adubo_seiva", "de": { "adubo": 5 }, "para": { "seiva_dourada": 1 } },
+    { "id": "petala_semente", "de": { "petala_rara": 4, "seiva_dourada": 2 }, "para": { "semente_misteriosa": 1 } }
+  ]
+}

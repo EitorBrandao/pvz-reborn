@@ -92,6 +92,11 @@ export function prepararBatalha(batalha, time, dados, colecao = {}) {
       u[atributo] = Math.round(u[atributo] * mult);
       if (atributo === 'vida') u.vidaMax = u.vida;
     }
+    // vida fixa (ex.: chefe da Invasão, que guarda a vida entre uma batalha e outra)
+    if (i.vida) {
+      u.vida = i.vida;
+      u.vidaMax = i.vidaMax || i.vida;
+    }
     marcarVantagem(u, dados);
     unidades.push(u);
   }

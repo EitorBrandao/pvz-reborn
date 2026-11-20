@@ -20,6 +20,7 @@ let pular = false;
 let loopId = null;
 let partida = 0;         // muda a cada batalha nova, pra cancelar animações antigas
 let batalhaAtual = null;
+let chefeInvasao = null; // { uid, vida } do chefe da Invasão, pra contar o dano
 
 const agora = () => performance.now();
 // Ritmo base: abaixo de 1 deixa o combate mais lento pra dar tempo de ver os ataques.
@@ -83,6 +84,8 @@ export function comecarBatalha(batalha) {
   const unidades = prepararBatalha(batalha, jogo.estado.time, dados, jogo.estado.colecao);
   const semente = (Date.now() ^ Math.floor(Math.random() * 1e9)) >>> 0;
   const resultado = simular(structuredClone(unidades), dados.config.batalha, semente);
+  const chefe = batalha.tipo === 'invasao' && unidades.find((u) => u.lado === 'praga' && u.id === batalha.idChefe);
+  chefeInvasao = chefe ? { uid: chefe.uid, vida: chefe.vida } : null;
 
   vis = {};
   for (const u of unidades) vis[u.uid] = { ...u, ox: 0, oy: 0, dx: 0, dy: 0, kx: 0, alpha: 1, brilho: 0, flash: 0 };
@@ -96,7 +99,7 @@ export function comecarBatalha(batalha) {
   if (!loopId) loopId = requestAnimationFrame(desenhar);
   som.acordar();
   som.pararMusica(false);
-  som.tocarMusica('batalha');
+  som.tocarMusica(batalha.musica || 'batalha');
 
   tocar(resultado.eventos, minhaPartida).then(() => {
     if (minhaPartida === partida) terminar(resultado, semente);
@@ -310,19 +313,28 @@ function terminar(resultado, semente) {
   const { textos } = dados;
   som.pararMusica();
   som.tocarSom(resultado.vitoria ? 'vitoria' : 'derrota');
-  const cartas = resultado.vitoria ? rolarCartas(batalhaAtual, criarRng(semente ^ 0x9e3779b9)) : [];
+  const sorteadas = resultado.vitoria ? rolarCartas(batalhaAtual, criarRng(semente ^ 0x9e3779b9)) : [];
+  let dano = 0;
+  if (chefeInvasao) {
+    const fim = resultado.eventos[resultado.eventos.length - 1].snap[chefeInvasao.uid];
+    dano = Math.max(0, chefeInvasao.vida - Math.max(0, fim ? fim.vida : 0));
+  }
   const campanha = !batalhaAtual.tipo;
   const estrelas = resultado.vitoria && campanha
     ? calcularEstrelas(resultado.plantasVivas, resultado.plantasTotal, dados.config.estrelasFase)
     : 0;
-  const { xp, moedas, orvalho, subiram, subiuJogador } = jogo.registrarBatalha(batalhaAtual, resultado.vitoria, cartas, estrelas);
+  const { xp, moedas, orvalho, subiram, subiuJogador, cartas } = jogo.registrarBatalha(batalhaAtual, resultado.vitoria, sorteadas, estrelas, { dano });
+  const invasao = batalhaAtual.tipo === 'invasao';
   atualizarBotoes();
 
   const caixa = $('resultado');
   caixa.classList.toggle('vitoria', resultado.vitoria);
-  $('resultado-titulo').textContent = sortear(resultado.vitoria ? textos.vitoria : textos.derrota);
+  $('resultado-titulo').textContent = invasao
+    ? preencher(textos.invasao.danoCausado, { dano: dano.toLocaleString('pt-BR') })
+    : sortear(resultado.vitoria ? textos.vitoria : textos.derrota);
   let texto;
-  if (batalhaAtual.tipo === 'treino') texto = textos.treinoTexto;
+  if (invasao) texto = preencher(textos.vitoriaTexto, { moedas, xp });
+  else if (batalhaAtual.tipo === 'treino') texto = textos.treinoTexto;
   else if (resultado.vitoria && !moedas && !xp) texto = textos.semPremioTexto;
   else if (resultado.vitoria) texto = preencher(textos.vitoriaTexto, { moedas, xp }) + (orvalho ? ` · +${orvalho} 💧` : '');
   else texto = preencher(textos.derrotaTexto, { xp });
@@ -363,7 +375,7 @@ function terminar(resultado, semente) {
 
   const area = $('resultado-cartas');
   area.innerHTML = '';
-  if (resultado.vitoria && !cartas.length) area.innerHTML = `<p>${textos.semCartas}</p>`;
+  if ((resultado.vitoria || invasao) && !cartas.length) area.innerHTML = `<p>${textos.semCartas}</p>`;
   cartas.forEach((id, i) => {
     const c = dados.cartas.find((x) => x.id === id);
     if (!c) return;

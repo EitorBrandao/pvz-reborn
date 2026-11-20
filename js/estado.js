@@ -4,6 +4,9 @@ import * as save from './save.js';
 import * as evo from './evolucao.js';
 import { missaoCompleta } from './missoes.js';
 import { hoje } from './atividades.js';
+import {
+  cicloAtual, situacaoInvasao, premioDoRanking, novoCicloInvasao, ofertasDoDia, paginasHerbario,
+} from './eventos.js';
 
 let dados = null;
 let config = null;
@@ -53,6 +56,9 @@ function novoEstado() {
     canteiro: Array(dados.rotina.canteiro.vasos).fill(null),
     expedicao: null,
     presenca: { dia: '', dias: 0 },
+    invasao: null,
+    feira: { dia: '', comprados: [] },
+    herbario: { pegas: [] },
   };
 }
 
@@ -253,8 +259,10 @@ export function definirVelocidade(v) {
 // Guarda o resultado da batalha. Devolve o XP dado, as moedas e o orvalho ganhos,
 // as plantas que subiram de nível e quantos níveis o jogador subiu.
 // Batalhas da campanha não têm "tipo"; as atividades têm 'torre', 'desafio' ou 'treino'.
-export function registrarBatalha(batalha, vitoria, cartas, estrelas = 0) {
+// "extra" traz dados que só algumas batalhas usam (ex.: { dano } na Invasão).
+export function registrarBatalha(batalha, vitoria, cartas, estrelas = 0, extra = {}) {
   const tipo = batalha.tipo || 'campanha';
+  if (tipo === 'invasao') return registrarInvasao(batalha, extra.dano || 0);
   const premio = vitoria && premioValido(batalha);
   const xpCheio = batalha.recompensa.xp || 0;
   const xp = vitoria ? (premio ? xpCheio : 0) : Math.round(xpCheio * config.evolucao.xpDerrota);
@@ -293,7 +301,135 @@ export function registrarBatalha(batalha, vitoria, cartas, estrelas = 0) {
   }
   const subiuJogador = darXpJogador(xp);
   salvarAgora();
-  return { xp, moedas, orvalho, subiram, subiuJogador };
+  return { xp, moedas, orvalho, subiram, subiuJogador, cartas: premio ? cartas : [] };
+}
+
+function darXpAoTime(xp) {
+  const subiram = [];
+  for (const m of estado.time) {
+    const registro = estado.colecao[m.planta];
+    if (registro && evo.darXp(registro, xp, config.evolucao) > 0) subiram.push({ id: m.planta, nivel: registro.nivel });
+  }
+  return subiram;
+}
+
+// ---------- Invasão de Chefe ----------
+// Cada ataque sempre dá prêmio: moedas pelo dano, XP e chance de cartas.
+
+function registrarInvasao(batalha, dano) {
+  const c = dados.invasao;
+  const inv = estado.invasao;
+  if (inv) inv.dano += dano;
+  const moedas = Math.round((dano / batalha.vidaUm) * c.moedasPorVidaChefe);
+  const xp = batalha.recompensa.xp;
+  const cartas = sortearCartas(batalha.cartas);
+  estado.moedas += moedas;
+  guardarCartas(cartas);
+  const subiram = darXpAoTime(xp);
+  contar('batalhar');
+  contar('atacarInvasao');
+  const subiuJogador = darXpJogador(xp);
+  salvarAgora();
+  return { xp, moedas, orvalho: 0, subiram, subiuJogador, cartas, dano };
+}
+
+// Invasão de um ciclo que já acabou e ainda tem prêmio pra pegar (ou null)
+export function invasaoPendente() {
+  const inv = estado.invasao;
+  if (!inv || inv.ciclo === cicloAtual(dados).ciclo || inv.premioPego || !inv.dano) return null;
+  const sit = situacaoInvasao(inv, dados);
+  return { ...sit, premio: premioDoRanking(sit.posicao, sit.derrotado, dados) };
+}
+
+export function resgatarInvasao() {
+  const p = invasaoPendente();
+  if (!p) return { ok: false };
+  darPremio(p.premio);
+  estado.invasao.premioPego = true;
+  contar('fimInvasao');
+  salvarAgora();
+  return { ok: true, premio: p.premio };
+}
+
+// Situação da invasão de agora (começa uma nova se precisar)
+export function invasaoAtual() {
+  if (invasaoPendente()) return null;
+  const ciclo = cicloAtual(dados).ciclo;
+  if (!estado.invasao || estado.invasao.ciclo !== ciclo) {
+    estado.invasao = novoCicloInvasao(dados, estado);
+    salvarAgora();
+  }
+  const inv = estado.invasao;
+  const dia = hoje();
+  const usados = inv.dia === dia ? inv.ataques : 0;
+  return {
+    ...situacaoInvasao(inv, dados),
+    ciclo,
+    gratis: Math.max(0, dados.invasao.ataquesGratis - usados),
+  };
+}
+
+// Gasta um ataque (grátis do dia ou pago com orvalho) antes da batalha
+export function gastarAtaqueInvasao() {
+  const sit = invasaoAtual();
+  if (!sit || sit.derrotado || sit.terminou) return { ok: false, erro: 'invasaoAcabou' };
+  const inv = estado.invasao;
+  const dia = hoje();
+  if (inv.dia !== dia) { inv.dia = dia; inv.ataques = 0; }
+  if (sit.gratis <= 0) {
+    const custo = dados.invasao.custoAtaqueExtra;
+    if (estado.orvalho < custo) return { ok: false, erro: 'semOrvalho' };
+    estado.orvalho -= custo;
+  }
+  inv.ataques += 1;
+  salvarAgora();
+  return { ok: true };
+}
+
+// ---------- Feira ----------
+
+export function feiraHoje() {
+  const dia = hoje();
+  if (estado.feira.dia !== dia) estado.feira = { dia, comprados: [] };
+  return ofertasDoDia(dados, dia).map((o) => ({ ...o, comprado: estado.feira.comprados.includes(o.id) }));
+}
+
+export function comprarOferta(id) {
+  const oferta = feiraHoje().find((o) => o.id === id);
+  if (!oferta || oferta.comprado) return { ok: false, erro: 'feiraEsgotado' };
+  if (estado.moedas < oferta.moedas) return { ok: false, erro: 'semMoedas' };
+  estado.moedas -= oferta.moedas;
+  darPremio(oferta.carta ? { cartas: { [oferta.carta]: oferta.qtd } } : { orvalho: oferta.orvalho });
+  estado.feira.comprados.push(id);
+  contar('comprarFeira');
+  salvarAgora();
+  return { ok: true, oferta };
+}
+
+export function fazerTroca(id) {
+  const troca = dados.feira.trocas.find((t) => t.id === id);
+  if (!troca || !evo.temCartas(estado.inventario, troca.de)) return { ok: false, erro: 'semMaterial' };
+  evo.gastarCartas(estado.inventario, troca.de);
+  darPremio({ cartas: troca.para });
+  contar('trocarFeira');
+  salvarAgora();
+  return { ok: true, troca };
+}
+
+// ---------- Herbário ----------
+
+export function herbario() {
+  return paginasHerbario(dados, estado);
+}
+
+export function resgatarPagina(id) {
+  const pagina = herbario().find((p) => p.id === id);
+  if (!pagina || !pagina.completa || pagina.pega) return { ok: false, erro: 'semMaterial' };
+  darPremio(pagina.premio);
+  estado.herbario.pegas.push(id);
+  contar('paginaHerbario');
+  salvarAgora();
+  return { ok: true, premio: pagina.premio };
 }
 
 // A vitória ainda dá prêmio? (andar da torre já passado, desafio já feito hoje e treino não dão)

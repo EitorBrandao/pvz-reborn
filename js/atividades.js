@@ -76,7 +76,7 @@ export function pragasConhecidas(dados, estado) {
 }
 
 // Nível das pragas pensado pro time do jogador: média das 5 plantas mais fortes
-function nivelDoJogador(estado) {
+export function nivelDoJogador(estado) {
   const niveis = Object.values(estado.colecao).map((r) => r.nivel).sort((a, b) => b - a).slice(0, 5);
   return niveis.length ? Math.round(niveis.reduce((s, n) => s + n, 0) / niveis.length) : 1;
 }

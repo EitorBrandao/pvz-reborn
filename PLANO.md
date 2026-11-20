@@ -40,7 +40,7 @@ pvz-reborn/
   service-worker.js
   css/         (estilo.css)
   js/          (main.js, estado.js, save.js, batalha.js, evolucao.js, campanha.js, arena.js, bots.js, ui/)
-  data/        (plantas.json, pragas.json, cartas.json, fases.json, bots.json, mensagens.json, missoes.json, atividades.json, rotina.json)
+  data/        (plantas.json, pragas.json, cartas.json, fases.json, bots.json, mensagens.json, missoes.json, atividades.json, rotina.json, invasao.json, feira.json, herbario.json)
   art/         (plantas/, pragas/, ui/, icones/)
   audio/
 ```
@@ -123,6 +123,13 @@ pvz-reborn/
 - **Calendário da horta:** abre ao entrar no jogo, um prêmio por dia (não precisa ser seguido); o 7º dia é o maior e depois recomeça.
 - Números em `data/rotina.json`.
 
+**Eventos e coleção:**
+
+- **Invasão de Chefe** (4º cartão em Desafios): um chefe gigante (30× a vida de um chefe normal) fica 3 dias na horta. Você e 10 vizinhos bots batem no mesmo chefe; os bots batem sozinhos com o tempo (menos de madrugada), mesmo com o jogo fechado. 3 ataques grátis por dia, extra custa 💧2. Cada ataque dá moedas pelo dano, XP e cartas; no fim, prêmio pela posição no ranking (+💧3 se o chefe caiu). Quando a Arena chegar, os bots daqui viram os bots completos. Números em `data/invasao.json`.
+- **Feira** (botão 🛒 à direita da horta): 4 ofertas por dia, cada uma comprável uma vez, só com moedas do jogo; e trocas de materiais (ex.: 6 Fibras → 1 Pétala). Números em `data/feira.json`.
+- **Herbário** (botão 📖 à direita da horta): uma página por facção (plantas) e uma por mapa (pragas). Página completa dá prêmio uma vez. Números em `data/herbario.json`.
+- Cada um tem música própria (`desafios`, `invasao`, `feira`, `herbario` no `js/som.js`).
+
 **Missões:** guiam o jogador de nível em nível (vencer fase X, evoluir uma planta, chegar ao top 20 da arena). Ficam em `data/missoes.json`.
 
 **Para depois:** guilda com bots, eventos sazonais, fusão de plantas raras.
@@ -160,7 +167,7 @@ Cada fase termina com algo jogável no celular, testado antes de seguir.
 8. **Rotina diária:** Canteiro (plantas que crescem em tempo real e são colhidas), Expedição (plantas fora do time saem em missões de 1h/4h/8h e voltam com cartas) e Calendário de presença (prêmio por dia, 7º dia maior).
    - [x] Pronto quando: ao abrir depois de algumas horas, tem coisa pra colher, expedição pra receber e prêmio do dia.
 9. **Eventos e coleção:** Invasão de Chefe (chefe gigante de vários dias com ranking de dano junto com os bots), Feira (troca de materiais e loja que muda todo dia, só com moedas do jogo) e Herbário (álbum de plantas e pragas encontradas, com prêmio por página).
-   - [ ] Pronto quando: tem um chefe de invasão rolando, a feira mudou de um dia pro outro e o herbário dá prêmio ao completar uma página.
+   - [x] Pronto quando: tem um chefe de invasão rolando, a feira mudou de um dia pro outro e o herbário dá prêmio ao completar uma página.
 
 ## Regras de trabalho
 

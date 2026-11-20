@@ -150,18 +150,21 @@
     "campanha": "Próxima fase ➡️",
     "torre": "Próximo andar ⬆️",
     "desafio": "Próxima ➡️",
-    "treino": "Próxima ➡️"
+    "treino": "Próxima ➡️",
+    "invasao": "Próxima ➡️"
   },
   "botaoSair": {
     "campanha": "Mapa",
     "torre": "Sair",
     "desafio": "Sair",
-    "treino": "Sair"
+    "treino": "Sair",
+    "invasao": "Voltar"
   },
   "rotuloAtividade": {
     "torre": "🗼 Torre das Pragas",
     "desafio": "📅 Desafio do Dia",
-    "treino": "🎯 Horta de Treino"
+    "treino": "🎯 Horta de Treino",
+    "invasao": "👹 Invasão de Chefe"
   },
   "regraTimeMax": "Regra do desafio: no máximo {max} plantas no time.",
   "regraFaccao": "Regra do desafio: só plantas {emoji} {faccao} no time.",
@@ -177,7 +180,14 @@
     "desafioBotaoFeito": "Jogar de novo",
     "treinoTitulo": "Horta de Treino",
     "treinoTexto": "Escolha pragas que você já venceu e teste seu time à vontade.",
-    "treinoBotao": "Treinar"
+    "treinoBotao": "Treinar",
+    "invasaoTitulo": "Invasão de Chefe",
+    "invasaoBotao": "Atacar",
+    "invasaoBotaoPremio": "Prêmio!",
+    "invasaoVida": "❤️ {pct}% · você é o {pos}º",
+    "invasaoAtaques": "⚔️ {n}/{max} ataques grátis hoje",
+    "invasaoDerrotado": "✅ Chefe derrotado! Novo chefe em breve.",
+    "invasaoPremio": "🎁 A invasão acabou: pegue seu prêmio!"
   },
   "mudaBloqueada": "Isso só libera num nível maior.",
   "rotina": {
@@ -215,5 +225,40 @@
     "pegou": "Prêmio do dia: {premio}",
     "previa": "Total: 🪙 {moedas} · ✨ {xp} XP",
     "forcaDica": "Nível maior: mais moedas e XP. Cada ⭐ além da 1ª: mais chance de cartas e viagem mais curta."
+  },
+  "invasao": {
+    "danoCausado": "💥 {dano} de dano!",
+    "acabaEm": "Foge em {tempo}. Todos os vizinhos batem no mesmo chefe.",
+    "atacarGratis": "⚔️ Atacar ({n}/{max} grátis)",
+    "atacarPago": "⚔️ Atacar · 💧{custo}",
+    "dica": "Cada ataque dura até 15 rodadas e dá moedas pelo dano, XP e cartas. O chefe guarda a vida entre os ataques.",
+    "ranking": "Ranking · você: {pos}º ({dano})",
+    "premiosDica": "No fim: 1º lugar ganha 💧10 e Semente Misteriosa; 2º-3º 💧6; 4º-6º 💧3. Chefe derrotado: +💧3 pra todos.",
+    "derrotadoEspera": "✅ Chefe derrotado! O próximo chega em {tempo}.",
+    "invasaoAcabou": "Essa invasão já acabou.",
+    "foiDerrotado": "O chefe foi derrotado! 🎉",
+    "fugiu": "O chefe fugiu da horta!",
+    "suaPosicao": "Você terminou em {pos}º lugar.",
+    "pegarPremio": "Pegar prêmio",
+    "pegou": "Prêmio da invasão: {premio}"
+  },
+  "feira": {
+    "ofertas": "🛒 Ofertas de hoje",
+    "ofertasDica": "Mudam todo dia. Cada uma só pode ser comprada uma vez.",
+    "trocas": "🔄 Trocas",
+    "trocasDica": "Troque materiais repetidos por outros mais raros, quantas vezes quiser.",
+    "vendido": "✅ Comprado",
+    "trocar": "Trocar",
+    "voceTem": "Você tem: {tem}",
+    "feiraEsgotado": "Já comprou essa hoje. Volte amanhã!",
+    "comprou": "Comprado!",
+    "trocou": "Troca feita!"
+  },
+  "herbario": {
+    "progresso": "Você já encontrou {vistos} de {total}. Complete uma página pra ganhar o prêmio!",
+    "pego": "✅ Prêmio pego",
+    "pegar": "Pegar",
+    "premio": "Prêmio:",
+    "pegou": "Página completa! {premio}"
   }
 }
