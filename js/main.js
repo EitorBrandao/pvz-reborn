@@ -255,7 +255,7 @@ function ligarSom() {
 }
 
 async function comecar() {
-  const [config, textos, plantas, pragas, cartas, campanha, equipamentos, missoes, faccoes, atividades, changelog, rotina, invasao, feira, herbario, ascensao, talentos] = await Promise.all([
+  const [config, textos, plantas, pragas, cartas, campanha, equipamentos, missoes, faccoes, atividades, changelog, rotina, invasao, feira, herbario, ascensao, talentos, pesadelo] = await Promise.all([
     lerJson('data/config.json'),
     lerJson('data/mensagens.json'),
     lerJson('data/plantas.json'),
@@ -273,8 +273,9 @@ async function comecar() {
     lerJson('data/herbario.json'),
     lerJson('data/ascensao.json'),
     lerJson('data/talentos.json'),
+    lerJson('data/pesadelo.json'),
   ]);
-  dados = { config, textos, plantas, pragas, cartas, campanha: prepararCampanha(campanha), equipamentos, missoes, faccoes, atividades, rotina, invasao, feira, herbario, ascensao, talentos };
+  dados = { config, textos, plantas, pragas, cartas, campanha: prepararCampanha(campanha, pesadelo), equipamentos, missoes, faccoes, atividades, rotina, invasao, feira, herbario, ascensao, talentos, pesadelo };
 
   jogo.iniciar(dados);
   save.pedirArmazenamentoPersistente();
@@ -287,7 +288,7 @@ async function comecar() {
   const mapaDaFase = (fase) => {
     if (fase && fase.tipo === 'invasao') return abrirInvasao();
     if (fase && fase.tipo) return abrirTelaAtividades();
-    return abrirTelaMapa(fase ? fase.mapaIndice : undefined);
+    return abrirTelaMapa(fase ? fase.mapaIndice : undefined, !!(fase && fase.pesadelo));
   };
   iniciarTelaMapa(dados, { voltar: irParaBase, preparar: abrirTelaTime });
   iniciarTelaAtividades(dados, { voltar: irParaBase, preparar: abrirTelaTime });

@@ -150,6 +150,8 @@
   "folegoRecarregado": "Fôlego cheio!",
   "folegoCheio": "O fôlego já está cheio.",
   "confirmarRecarga": "Recarregar o fôlego por 💧{custo} Gotas de Orvalho?",
+  "pesadeloBloqueado": "Pegue 3 estrelas em todas as fases do mapa pra abrir o Pesadelo.",
+  "pesadeloAviso": "😈 Pragas bem mais fortes, mas o prêmio é bem maior.",
   "faseBloqueada": "Vença a fase anterior primeiro.",
   "mapaBloqueado": "Derrote o chefe do {mapa} pra liberar.",
   "jogadorSubiu": "Você subiu pro nível {nivel}! Fôlego cheio e +{orvalho} 💧",

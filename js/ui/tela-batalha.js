@@ -95,6 +95,7 @@ export function comecarBatalha(batalha) {
   $('batalha-rodada').textContent = '1';
   atualizarBotoes();
   mostrarTela('tela-batalha');
+  if (batalha.pesadelo) som.tocarMusica('pesadelo');
   medir();
   if (!loopId) loopId = requestAnimationFrame(desenhar);
   som.acordar();
