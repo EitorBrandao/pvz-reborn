@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Roda o revisor antes de qualquer push que mexa na main. Se ele achar erro, o push é cancelado.
+# Ligado por: git config core.hooksPath tools/hooks (o .claude/settings.json faz isso ao abrir a sessão).
+vai_pra_main=""
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [ "$remote_ref" = "refs/heads/main" ] && [ "$local_sha" != "0000000000000000000000000000000000000000" ] && vai_pra_main="$local_sha"
+done
+[ -z "$vai_pra_main" ] && exit 0
+echo "🔎 Indo pra main: rodando o revisor..."
+git fetch -q origin main 2>/dev/null
+node "$(git rev-parse --show-toplevel)/tools/revisor/revisar.mjs" --base=origin/main --alvo="$vai_pra_main" || {
+  echo "Push pra main cancelado pelo revisor. Corrija os erros acima e tente de novo."
+  exit 1
+}

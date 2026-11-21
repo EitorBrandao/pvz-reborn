@@ -10,7 +10,7 @@ Jogo de navegador (PWA) em HTML, CSS e JavaScript puro, sem build. O plano compl
 
 ## Versão (obrigatório a cada mudança)
 
-A cada mudança que vai pra `main`, aumente a versão nos **dois** lugares, com o mesmo número:
+A cada mudança no jogo que vai pra `main` (mudança só em `tools/`, `.claude/`, `CLAUDE.md`, `PLANO.md` ou `README.md` não precisa), aumente a versão nos **dois** lugares, com o mesmo número:
 
 1. `data/config.json` → `"versaoJogo"`
 2. `service-worker.js` → `const VERSAO = 'horta-vX.Y.Z'`
@@ -28,6 +28,36 @@ Arquivo novo (js, json, imagem) também precisa entrar na lista `ARQUIVOS` do `s
 - Música: cada modo novo do jogo precisa de música própria, diferente das outras. Crie em `MUSICAS` no `js/som.js` e ligue as telas do modo em `data/config.json` → `som.musicaPorTela` (tela sem entrada toca a música da horta).
 - Arte: os desenhos ficam em `js/arte.js` (SVG), mas o jogo mostra eles pela fonte colorida `art/arte.woff2` (o modo escuro do Samsung desbota imagens, não letras). Mudou ou criou desenho? Rode `bash tools/fonte-cor/gerar.sh` pra refazer a fonte e `js/arte-fonte.js`.
 - Nomes, personagens e arte originais. Nada de Plants vs. Zombies, PopCap, EA ou Youkia.
+
+## Revisor antes da main (sempre ativo)
+
+Todo `git push` que mexe na `main` passa pelo revisor `tools/revisor/revisar.mjs` (hook `tools/hooks/pre-push`, ligado sozinho ao abrir a sessão pelo `.claude/settings.json`). Se ele achar erro, o push é cancelado: corrija e mande de novo. Nunca use `--no-verify` nem mande pra main pela API do GitHub (o hook bloqueia).
+
+Antes de subir, rode na mão (pelo subagente de testes): `node tools/revisor/revisar.mjs`. Ele confere:
+
+- **Híbridas sempre superiores**: cada híbrida tem mais 💪 poder que as duas plantas da receita (nível 1, 25 e 50); efeito igual ao de uma planta da receita (mesmo status ou mesmo tipo de habilidade) nunca mais fraco em 5★; a fusão herda o maior nível e o maior rank e nasce 5★; híbrida vai até `rankMax`, planta normal para em `rankMaxSemFusao`.
+- Versão igual nos dois lugares e maior que a da `main` quando o jogo muda; main mais nova já juntada.
+- Arquivo novo na lista `ARQUIVOS`; nada listado que não exista.
+- `js/arte.js` mudou → fonte refeita (`art/arte.woff2` e `js/arte-fonte.js`) no mesmo envio.
+- JSON válido, JS sem erro de sintaxe, sem marca de conflito, sem endereço da internet, sem nomes proibidos.
+- Todo status tem `status_<nome>` no `js/som.js`; toda tela de `musicaPorTela` aponta pra música que existe.
+- Teste no navegador em 360px: sem erro de JavaScript e sem rolagem pro lado nas telas da horta.
+
+Regra nova que dá pra conferir por código? Coloque no revisor, não só aqui.
+
+Revisão que o robô não faz (leia o próprio diff antes de subir):
+
+- Save: campo novo funciona com save antigo (`completar()`)?
+- Número ou texto novo ficou no `data/*.json`, não no código?
+- Híbrida nova ou mudada: a habilidade dela é claramente melhor que a das duas plantas da receita (não só os números)?
+
+Lições do histórico (pra não encher a main de commits de ajuste):
+
+- **Um envio = uma mudança completa.** Desenho + fonte refeita + versão + novidades no mesmo envio (ex.: a Couve Escudeira precisou de um segundo commit só pra fonte).
+- **Uma versão por envio pra main**, não por commit. Confira a versão da main antes: já houve três `v0.14.1` e duas `v0.14.15`.
+- **Nada de teste de tentativa e erro na main** (o caso do modo escuro do Samsung gerou 10 versões, v0.14.3 a v0.14.12). Experimento fica na branch da sessão; só a solução final vai pra main.
+- **Regra de jogo decidida = regra escrita no revisor** (ex.: híbrida herda maior nível e maior rank veio em dois commits separados; a fraqueza do Coco Raizão foi corrigida depois por ser menor que a da Teia).
+- Tela nova ou mudada: confira em 360px antes de subir (o detalhe da planta levou 4 commits de ajuste de espaço).
 
 ## Testes
 
