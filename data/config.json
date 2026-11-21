@@ -42,6 +42,21 @@
       "linha": 2
     }
   ],
+  "animacaoTiro": {
+    "_comentario": "Animação do tiro das plantas por partes. Peso = (tamanho / velocidade do projétil - pesoBase) / pesoFaixa, de 0 a 1. Cada par é [valor no peso 0, a mais no peso 1]. carga em ms.",
+    "pesoBase": 0.5,
+    "pesoFaixa": 2.5,
+    "cargaMinima": 160,
+    "carga": [40, 300],
+    "inclina": [0.04, 0.2],
+    "agacha": [0.25, 0.75],
+    "coice": [0.2, 0.35],
+    "estica": [0.5, 0.6],
+    "chicote": [0.05, 0.13],
+    "baforada": [4, 8],
+    "anel": [8, 12],
+    "brilho": [0.25, 0.4]
+  },
   "batalha": {
     "vagasTime": {
       "inicial": 3,

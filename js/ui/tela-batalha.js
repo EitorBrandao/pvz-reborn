@@ -5,7 +5,8 @@ import * as jogo from '../estado.js';
 import { prepararBatalha, simular, rolarCartas, criarRng } from '../batalha.js';
 import { calcularEstrelas } from '../campanha.js';
 import * as som from '../som.js';
-import { arte, desenharGlifo, glifo, artePronta, infoTiro, corHabilidade, pintarRetangulo } from '../arte.js';
+import { arte, desenharGlifo, glifo, artePronta, infoTiro, corHabilidade, pintarRetangulo, rigDe } from '../arte.js';
+import { movDe, animDoPeso } from '../animacao.js';
 
 let dados, acoes;
 let missoesAntes = new Set();
@@ -100,7 +101,12 @@ export function comecarBatalha(batalha) {
   chefeInvasao = chefe ? { uid: chefe.uid, vida: chefe.vida } : null;
 
   vis = {};
-  for (const u of unidades) vis[u.uid] = { ...u, ox: 0, oy: 0, dx: 0, dy: 0, kx: 0, alpha: 1, brilho: 0, flash: 0, estica: 0, fase: Math.random() * 6 };
+  for (const u of unidades) {
+    vis[u.uid] = { ...u, ox: 0, oy: 0, dx: 0, dy: 0, kx: 0, alpha: 1, brilho: 0, flash: 0, estica: 0, fase: Math.random() * 6 };
+    // plantas que atiram são desenhadas por partes (ver js/arte.js e js/animacao.js)
+    const rig = u.lado === 'planta' && u.alcance !== 'perto' ? rigDe(u.id) : null;
+    if (rig) Object.assign(vis[u.uid], novaAnimacao(rig, u));
+  }
 
   $('resultado').classList.add('escondido');
   $('batalha-nome').textContent = batalha.nome;
@@ -196,7 +202,14 @@ async function animarAcao(ev) {
   if (golpes.length) {
     const alvo = vis[golpes[0].alvo];
     const ang = Math.atan2(alvo.y - a.y, alvo.x - a.x);
-    if (!ev.perto) {
+    if (!ev.perto && a.rig) {
+      // a planta carrega (pega impulso) antes de atirar; o tiro sai no lugar certo do corpo
+      a.alvoAng = Math.max(-0.6, Math.min(0.6, ang));
+      a.pose = 1;
+      a.carregando = true;
+      await espera(a.anim.carga);
+      a.carregando = false;
+    } else if (!ev.perto) {
       if (!pular) som.tocarSom('tiro');
       a.estica = 1;
       a.dx = Math.cos(ang) * raio * 0.7;
@@ -229,12 +242,13 @@ async function animarAcao(ev) {
     const estilo = a.tiro || {};
     const intervalo = estilo.intervalo || 90;
     let atraso = 0;
+    let nTiro = 0;
     const chegadas = golpes.map((ef) => {
       const qtd = ev.especial ? 1 : Math.max(1, Math.min(estilo.qtd || 1, ef.valor || 1));
       const partes = dividirDano(ef.valor, qtd);
       const vidaAntes = vis[ef.alvo] ? vis[ef.alvo].vida : ef.vidaDepois;
       let feito = 0;
-      const voos = partes.map((parte, i) => lancar(a, vis[ef.alvo], a.projetil, atraso + i * intervalo, ev.especial, estilo, i > 0)
+      const voos = partes.map((parte, i) => lancar(a, vis[ef.alvo], a.projetil, atraso + i * intervalo, ev.especial, estilo, i > 0 || !!a.rig, nTiro++)
         .then(() => {
           feito += parte;
           if (i < qtd - 1) {
@@ -249,6 +263,7 @@ async function animarAcao(ev) {
       return Promise.all(voos);
     });
     await Promise.all(chegadas);
+    a.pose = 0;
   }
 
   for (const ef of ev.efeitos) {
@@ -265,14 +280,14 @@ async function animarStatus(ev) {
   await espera(350);
 }
 
-function lancar(de, para, emoji, atraso, especial = false, estilo = {}, comSom = false) {
+function lancar(de, para, emoji, atraso, especial = false, estilo = {}, comSom = false, idx = 0) {
   if (pular) return Promise.resolve();
   // projéteis seguidos saem um pouco desalinhados pra não ficarem um em cima do outro
-  const desvio = comSom ? (Math.random() - 0.5) * raio * 0.5 : 0;
+  const desvio = idx > 0 ? (Math.random() - 0.5) * raio * 0.5 : 0;
   return new Promise((resolver) => {
     projeteis.push({
       x0: de.x, y0: de.y + desvio, x1: para.x, y1: para.y + desvio * 0.4, emoji, tiro: infoTiro(emoji), especial,
-      tam: estilo.tam || 1, arco: estilo.arco ?? 1, comSom,
+      tam: estilo.tam || 1, arco: estilo.arco ?? 1, comSom, de, idx, desvio,
       t0: agora() + atraso / vel(), dur: 320 / (estilo.vel || 1) / vel(), resolver,
     });
   });
@@ -669,6 +684,15 @@ function desenharUnidade(v) {
   fundo.beginPath();
   fundo.ellipse(x, y + r * 0.75, r * 0.9, r * 0.3, 0, 0, Math.PI * 2);
   fundo.fill();
+  if (v.rig && v.calor > 0.03) {
+    const g = fundo.createRadialGradient(x, y, r * 0.2, x, y, r * 1.5);
+    g.addColorStop(0, corComAlfa(v.rastro, Math.min(0.8, v.calor * v.anim.brilho * 1.6)));
+    g.addColorStop(1, corComAlfa(v.rastro, 0));
+    fundo.fillStyle = g;
+    fundo.beginPath();
+    fundo.arc(x, y, r * 1.5, 0, Math.PI * 2);
+    fundo.fill();
+  }
   if (v.brilho > 0) {
     const g = fundo.createRadialGradient(x, y, r * 0.2, x, y, r * 1.4);
     g.addColorStop(0, 'rgba(255,240,140,.75)');
@@ -694,6 +718,9 @@ function desenharUnidade(v) {
   let giro = 0;
   if (!vivo) giro = (v.lado === 'planta' ? -1 : 1) * 0.5;
   else if (v.sono > 0) giro = Math.sin(t * 1.5 + v.fase) * 0.06;
+  if (v.rig && artePronta()) {
+    desenharPartes(v, x, base, lado, giro, resp, amassa, vivo);
+  } else {
   ctx.save();
   ctx.translate(x, base);
   ctx.rotate(giro);
@@ -715,6 +742,7 @@ function desenharUnidade(v) {
     ctx.fillText(v.emoji, 0, -r * 0.82);
   }
   ctx.restore();
+  }
 
   if (v.escudo > 0 && vivo) {
     const g = ctx.createRadialGradient(x - r * 0.4, y - r * 0.5, r * 0.1, x, y, r * 1.15);
@@ -777,6 +805,128 @@ function desenharUnidade(v) {
   ctx.restore();
 }
 
+// ---------- Plantas por partes ----------
+// Estado de animação de uma planta desenhada por partes.
+function novaAnimacao(rig, u) {
+  const info = infoTiro(u.projetil);
+  return {
+    rig, anim: animDoPeso(u.tiro, dados.config.animacaoTiro), rastro: info ? info.rastro : '#ffffff',
+    pose: 0, carregando: false, carga: 0, calor: 0, mira: 0, alvoAng: 0, giroT: 0, agacha: 0, recuo: 0, esticaT: 0,
+    tiroP: 0, tiros: [0, 0, 0], mA: 0, mAv: 0, mB: 0, mBv: 0, ms: null,
+  };
+}
+
+// cor "#rrggbb" com transparência
+function corComAlfa(hex, a) {
+  const n = parseInt(hex.slice(1), 16);
+  return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a.toFixed(3)})`;
+}
+
+// Onde nasce o tiro i: ponto de saída do desenho (boca, braço, pavio…) seguindo o corpo naquele instante.
+function pontoSaida(v, i = 0) {
+  const sd = v.rig.saida[i % v.rig.saida.length];
+  const m = v.ms && (v.ms[sd.parte] || v.ms.raiz);
+  if (!m) return { x: v.x, y: v.y };
+  const q = m.transformPoint(new DOMPoint(sd.ponto[0], sd.ponto[1]));
+  return { x: q.x, y: q.y };
+}
+
+// O tiro saiu: coice, chicote, molas, clarão e baforada no ponto de saída.
+function disparar(v, i, pt) {
+  const an = v.anim;
+  v.recuo = -raio * an.coice;
+  v.esticaT = an.estica;
+  v.giroT = an.chicote;
+  v.flash = Math.max(v.flash, 0.6);
+  v.calor *= 0.4;
+  v.tiroP = 1;
+  v.tiros[i % 3] = 1;
+  v.mAv += 0.9;
+  v.mBv += 0.6;
+  if (pular) return;
+  for (let j = 0; j < an.baforada; j++) {
+    const ang = (Math.random() - 0.5) * 1.6;
+    const forca = raio * (0.04 + Math.random() * 0.08);
+    particulas.push({ x: pt.x, y: pt.y, vx: Math.cos(ang) * forca, vy: Math.sin(ang) * forca, leve: true,
+      cor: j % 3 ? v.rastro : '#ffffff', tam: 2 + Math.random() * 2.5, vida: 0.8, forma: 'bola', ang: 0 });
+  }
+  anel(pt.x, pt.y, v.rastro, raio * 0.1, raio * an.anel / 25, 260);
+}
+
+// Atualiza molas e carga (uma vez por quadro) e desenha as peças.
+function desenharPartes(v, x, base, lado, giroBase, resp, amassa, vivo) {
+  const an = v.anim;
+  const carregando = v.carregando && vivo;
+  v.carga += ((carregando ? 1 : 0) - v.carga) * (carregando ? 0.12 : 0.3);
+  v.agacha += ((carregando ? an.agacha : 0) - v.agacha) * 0.2;
+  v.giroT += ((carregando ? an.inclina : 0) - v.giroT) * (carregando ? 0.2 : 0.18);
+  v.mira += ((v.pose ? 1 : 0) - v.mira) * (v.pose ? 0.18 : 0.1);
+  if (carregando) {
+    v.calor = Math.min(1, v.calor + 0.03);
+    // faíscas se juntando no ponto de saída
+    if (!pular && v.ms && Math.random() < 0.15 + 0.5 * an.brilho) {
+      const pt = pontoSaida(v, Math.floor(Math.random() * v.rig.saida.length));
+      const ang = Math.random() * Math.PI * 2;
+      const d = raio * (0.4 + Math.random() * 0.2);
+      particulas.push({ x: pt.x + Math.cos(ang) * d, y: pt.y + Math.sin(ang) * d, vx: -Math.cos(ang) * d * 0.06, vy: -Math.sin(ang) * d * 0.06,
+        leve: true, cor: v.rastro, tam: 1.5 + Math.random() * 1.5, vida: 0.5, forma: 'bola', ang: 0 });
+    }
+  } else v.calor *= 0.9;
+  v.mAv += -v.mA * 0.28; v.mAv *= 0.84; v.mA += v.mAv * 0.35;
+  v.mBv += -v.mB * 0.12; v.mBv *= 0.9; v.mB += v.mBv * 0.3;
+  v.recuo *= 0.82; v.esticaT *= 0.86; v.tiroP *= 0.86;
+  for (let j = 0; j < 3; j++) v.tiros[j] *= 0.84;
+
+  const t = agora() / 1000 * (v.sono > 0 ? 0.45 : 1) + v.fase;
+  const pisca = vivo && !v.pose && v.sono <= 0 && (t % 2.9) < 0.12 ? 0.12 : 1;
+  const st = { t, carga: v.carga, tiro: v.tiroP, tiros: v.tiros, mA: v.mA, mB: v.mB, pisca, mira: v.mira, alvoAng: v.alvoAng };
+  const sx = 1 - resp + amassa + v.esticaT * 0.22 + v.agacha * 0.12;
+  const sy = 1 + resp - amassa - v.esticaT * 0.12 - v.agacha * 0.16;
+  const esc = lado / 100;
+  const raiz = v.rig.fixo
+    ? new DOMMatrix().translate(x, base).rotate(giroBase * 57.3).scale(1, sy).scale(esc).translate(-50, -100)
+    : new DOMMatrix().translate(x + v.recuo, base).rotate((giroBase + v.giroT) * 57.3).scale(sx, sy).scale(esc).translate(-50, -100);
+  const chao = new DOMMatrix().translate(x, base).scale(esc).translate(-50, -100);
+
+  // matriz de cada peça (o pai antes do filho)
+  const ms = { raiz };
+  const porNome = {};
+  for (const pc of v.rig.partes) porNome[pc.nome] = pc;
+  const resolver = (nome) => {
+    if (ms[nome]) return ms[nome];
+    const pc = porNome[nome];
+    if (!pc || !pc.pai) return raiz;
+    const pai = resolver(pc.pai);
+    const fn = movDe(v.id, nome);
+    const m = fn ? fn(st) : {};
+    const [px, py] = pc.pivo;
+    ms[nome] = pai.translate(px + (m.dx || 0), py + (m.dy || 0)).rotate((m.r || 0) * 57.3).scale(m.sx ?? 1, m.sy ?? 1).translate(-px, -py);
+    pc._a = m.a ?? 1;
+    return ms[nome];
+  };
+  for (const pc of v.rig.partes) if (pc.pai) resolver(pc.nome);
+  v.ms = ms;
+
+  const alfa = ctx.globalAlpha;
+  const pintar = (pc, m) => {
+    const chave = v.pose && vivo && pc.chavePose ? pc.chavePose : pc.chave;
+    ctx.save();
+    ctx.transform(m.a, m.b, m.c, m.d, m.e, m.f);
+    ctx.globalAlpha = alfa * (pc._a ?? 1);
+    desenharGlifo(ctx, 'p', chave, 0, 0, 100);
+    if (v.flash > 0.05) {
+      // piscar branco: a mesma peça pintada de branco por cima
+      ctx.globalAlpha = alfa * (pc._a ?? 1) * Math.min(1, v.flash * 0.9);
+      ctx.filter = 'brightness(0) invert(1)';
+      desenharGlifo(ctx, 'p', chave, 0, 0, 100);
+      ctx.filter = 'none';
+    }
+    ctx.restore();
+  };
+  for (const pc of v.rig.partes) pintar(pc, pc.pai ? ms[pc.nome] : chao);
+  ctx.globalAlpha = alfa;
+}
+
 function desenharProjeteis(t) {
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
@@ -788,6 +938,12 @@ function desenharProjeteis(t) {
     if (k >= 1) { p.resolver(); return false; }
     if (!p.saiu) {
       p.saiu = true;
+      if (p.de && p.de.rig) {
+        const pt = pontoSaida(p.de, p.idx);
+        p.x0 = pt.x;
+        p.y0 = pt.y + p.desvio * 0.3;
+        disparar(p.de, p.idx, pt);
+      }
       if (p.comSom && !pular) som.tocarSom('tiro');
     }
     const altura = raio * p.arco;

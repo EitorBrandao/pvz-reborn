@@ -11,6 +11,8 @@ const lista = [
   ...ids.plantas.map((k) => ['u', k]), ...ids.pragas.map((k) => ['u', k]),
   ...ids.habilidades.map((k) => ['hab', k]), ...ids.status.map((k) => ['st', k]),
   ...ids.tiros.map((k) => ['tiro', k]), ...ids.extras.map((k) => ['extra', k]),
+  // peças das plantas animadas por partes (no fim, pra não mudar o código dos desenhos antigos)
+  ...(ids.partes || []).map((k) => ['p', k]),
 ];
 const glifos = {};
 lista.forEach(([tipo, k], i) => {

@@ -20,12 +20,25 @@ const asa = (cx, cy, rx, ry, rot) => `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" 
 const terra = () => E(50, 91, 28, 6.5, '#6b4423') + E(50, 89.5, 19, 2.6, '#8a5a33', 0);
 
 // ---------- Rostos ----------
+// Pose de tiro: com POSE = 'tiro' os rostos apertam os olhos e abrem a boca (grito do disparo).
+let POSE = '';
+const emTiro = () => POSE === 'tiro';
+function bocaGrito(x, y, w) {
+  const rx = n1(Math.max(3.2, w * 0.62)), ry = n1(Math.max(3.8, w * 0.8));
+  return E(x, n1(y + ry * 0.55), rx, ry, '#8a2a1e', 2.5)
+    + `<ellipse cx="${x}" cy="${n1(y + ry * 1.05)}" rx="${n1(rx * 0.6)}" ry="${n1(ry * 0.32)}" fill="#ff7a7a"/>`;
+}
 function olho(x, y, r = 5, dx = 1.2, dy = 0.5) {
+  if (emTiro()) return E(x, n1(y + r * 0.15), r, n1(r * 0.62), '#fff', 2.5)
+    + `<circle cx="${n1(x + r * 0.35)}" cy="${n1(y + r * 0.2)}" r="${n1(r * 0.48)}" fill="${K}"/>`
+    + L(`M${n1(x - r - 1)} ${n1(y - r * 0.55)} L${n1(x + r + 1)} ${n1(y - r * 0.2)}`, K, 3);
   return E(x, y, r, n1(r * 1.15), '#fff', 2.5)
     + `<circle cx="${n1(x + dx)}" cy="${n1(y + dy)}" r="${n1(r * 0.58)}" fill="${K}"/>`
     + `<circle cx="${n1(x + dx + r * 0.22)}" cy="${n1(y + dy - r * 0.3)}" r="${n1(r * 0.22)}" fill="#fff"/>`;
 }
 function olhoMau(x, y, r = 5, cor = '#ffd23a', dx = -1.1) {
+  if (emTiro()) return E(x, n1(y + r * 0.15), r, n1(r * 0.6), cor, 2.5)
+    + `<ellipse cx="${n1(x + r * 0.3)}" cy="${n1(y + r * 0.2)}" rx="${n1(r * 0.28)}" ry="${n1(r * 0.5)}" fill="${K}"/>`;
   return E(x, y, r, n1(r * 1.05), cor, 2.5)
     + `<ellipse cx="${n1(x + dx)}" cy="${n1(y + 0.5)}" rx="${n1(r * 0.3)}" ry="${n1(r * 0.78)}" fill="${K}"/>`
     + `<circle cx="${n1(x + dx - r * 0.25)}" cy="${n1(y - r * 0.35)}" r="${n1(r * 0.2)}" fill="#fff"/>`;
@@ -34,17 +47,19 @@ function olhoMau(x, y, r = 5, cor = '#ffd23a', dx = -1.1) {
 function olhoSono(x, y, r, pele) {
   return olho(x, y, r, 0, 1.6) + P(`M${n1(x - r - 1)} ${n1(y + 0.8)} Q${x} ${n1(y - r * 1.7)} ${n1(x + r + 1)} ${n1(y + 0.8)} Z`, pele, 2.5);
 }
-const feliz = (x, y, r) => L(`M${n1(x - r)} ${n1(y + 1)} Q${x} ${n1(y - r * 1.3)} ${n1(x + r)} ${n1(y + 1)}`, K, 2.8);
+const feliz = (x, y, r) => emTiro() ? olho(x, y, r) : L(`M${n1(x - r)} ${n1(y + 1)} Q${x} ${n1(y - r * 1.3)} ${n1(x + r)} ${n1(y + 1)}`, K, 2.8);
 const sobr = (x1, y1, x2, y2) => L(`M${x1} ${y1} L${x2} ${y2}`, K, 3.4);
-const bochecha = (x, y) => `<ellipse cx="${x}" cy="${y}" rx="3.6" ry="2.2" fill="#ff7a8a" opacity=".55"/>`;
-const leve = (x, y, w) => L(`M${n1(x - w)} ${y} Q${x} ${n1(y + w * 0.8)} ${n1(x + w)} ${y}`, K, 2.8);
-const bravo = (x, y, w) => L(`M${n1(x - w)} ${n1(y + 2)} Q${x} ${n1(y - 2.5)} ${n1(x + w)} ${n1(y + 2)}`, K, 2.8);
+const bochecha = (x, y) => emTiro() ? `<ellipse cx="${x}" cy="${y}" rx="4.6" ry="3" fill="#ff5a6a" opacity=".8"/>` : `<ellipse cx="${x}" cy="${y}" rx="3.6" ry="2.2" fill="#ff7a8a" opacity=".55"/>`;
+const leve = (x, y, w) => emTiro() ? bocaGrito(x, y, w) : L(`M${n1(x - w)} ${y} Q${x} ${n1(y + w * 0.8)} ${n1(x + w)} ${y}`, K, 2.8);
+const bravo = (x, y, w) => emTiro() ? bocaGrito(x, y, w) : L(`M${n1(x - w)} ${n1(y + 2)} Q${x} ${n1(y - 2.5)} ${n1(x + w)} ${n1(y + 2)}`, K, 2.8);
 function sorriso(x, y, w) {
+  if (emTiro()) return bocaGrito(x, y, w);
   return P(`M${n1(x - w)} ${y} Q${x} ${n1(y + w * 1.4)} ${n1(x + w)} ${y} Z`, '#8a2a1e', 2.5)
     + `<ellipse cx="${x}" cy="${n1(y + w * 0.62)}" rx="${n1(w * 0.42)}" ry="${n1(w * 0.22)}" fill="#ff7a7a"/>`;
 }
 // boca aberta com dentes em cima
 function dentes(x, y, w, h = w * 0.95) {
+  if (emTiro()) h *= 1.6;
   let s = P(`M${n1(x - w)} ${y} L${n1(x + w)} ${y} Q${n1(x + w * 0.8)} ${n1(y + h)} ${x} ${n1(y + h)} Q${n1(x - w * 0.8)} ${n1(y + h)} ${n1(x - w)} ${y} Z`, '#8a2a1e', 2.5);
   const q = 4;
   const passo = (2 * w) / q;
@@ -715,6 +730,317 @@ const EXTRAS = {
 const TINTAS = { azul: '#3a9ee6', verde: '#5cc23a', amarelo: '#ffd23a', laranja: '#ffb020', vermelho: '#e5483a', ciano: '#7fe3ff' };
 for (const [nome, cor] of Object.entries(TINTAS)) EXTRAS[`tinta_${nome}`] = () => `<rect x="0" y="0" width="100" height="100" fill="${cor}"/>`;
 
+// ---------- Plantas por partes ----------
+// Cada planta que atira é montada em peças (corpo, braços, folhas, pétalas, olhos, boca…).
+// Cada peça é um desenho 100x100 com o mesmo enquadramento do desenho inteiro, um pivô (onde gira)
+// e um pai (de quem herda o movimento). Pai null = fica parado no chão (terra, água).
+// Peças de rosto têm também a versão "pose de tiro" (olhos apertados, boca aberta).
+// O movimento de cada peça fica em js/animacao.js.
+const u100 = (miolo) => miolo;
+function rosto(fn, pose) { POSE = pose; try { return fn(); } finally { POSE = ''; } }
+const face = (nome, pai, pivo, fn) => ({ nome, pai, pivo, s: rosto(fn, ''), sPose: rosto(fn, 'tiro') });
+const pt = (nome, pai, pivo, miolo) => ({ nome, pai, pivo, s: u100(miolo) });
+const chao = () => pt('terra', null, [50, 90], terra());
+// folhas de fora da couve: a couraça cortada em 6 fatias (como gomos), cada uma vira uma folha solta
+const fatia = (ang, miolo) => {
+  const r = (g) => [50 + Math.cos(g * Math.PI / 180) * 70, 58 + Math.sin(g * Math.PI / 180) * 70].map(n1).join(' ');
+  return `<clipPath id="f"><path d="M50 58 L${r(ang - 30)} L${r(ang)} L${r(ang + 30)} Z"/></clipPath><g clip-path="url(#f)">${miolo}</g>`;
+};
+const couracas = (cor) => [0, 1, 2, 3, 4, 5].map((i) => pt(`folhaFora${i}`, 'raiz', [50, 58], fatia(-60 + i * 60, babado(50, 58, 32, 30, 11, 5, cor))));
+
+function graosMilho() {
+  let g = '';
+  for (let y = 21; y <= 82; y += 6.5) {
+    for (let x = 40; x <= 60; x += 6.6) {
+      if (y > 41 && y < 72) continue;
+      g += `<rect x="${n1(x - 2.4)}" y="${n1(y - 2.4)}" width="4.8" height="4.8" rx="2" fill="#f0a81a" opacity=".8"/>`;
+    }
+  }
+  return g;
+}
+function dentinhosJarro() {
+  let d = '';
+  for (let x = 37; x <= 58; x += 7) d += P(`M${x} 35 L${x + 3} 41 L${x + 6} 35 Z`, '#fff', 1.5);
+  return d;
+}
+function jarroRig(corpo, veia, boca, tampa, veneno = '') {
+  const partes = [
+    chao(),
+    pt('corpo', 'raiz', [50, 89], P('M31 89 Q22 62 34 42 Q37 36 35 30 L65 30 Q63 36 66 42 Q78 62 69 89 Z', corpo)
+      + tom('M60 34 Q72 54 65 88 L69 89 Q78 62 66 42 Q63 36 65 30 Z')
+      + L('M40 50 Q36 66 40 84', veia, 2.2) + L('M60 50 Q64 66 60 84', veia, 2.2) + luz(38, 60, 3, 10, 8, 0.4)),
+    pt('bolo', 'corpo', [50, 74], E(50, 74, 21, 9, corpo, 2.5) + tom('M36 74 Q50 82 64 74 Q50 79 36 74 Z', '#000', 0.15)),
+    pt('bocaJarro', 'corpo', [50, 32], E(50, 30, 19, 7, boca) + dentinhosJarro()),
+    pt('tampa', 'corpo', [34, 25], P('M33 24 Q46 2 72 12 Q62 22 33 24 Z', tampa)),
+  ];
+  if (veneno) partes.push(pt('veneno', 'corpo', [50, 36], veneno));
+  partes.push(face('olhos', 'corpo', [50, 54], () => olho(42, 56, 5) + olho(58, 56, 5) + sobr(36, 48, 46, 52) + sobr(54, 52, 64, 48)));
+  partes.push(face('boca', 'corpo', [50, 68], () => dentes(50, 68, 8)));
+  return { saida: { parte: 'bocaJarro', ponto: [52, 27] }, partes };
+}
+function cogumeloRig(chapeu, sombra, pe, olhos, boca, manchas, esporos, saida) {
+  return {
+    saida: { parte: 'boca', ponto: saida },
+    partes: [
+      chao(),
+      pt('corpo', 'raiz', [50, 89], P('M40 58 Q37 84 41 89 L59 89 Q63 84 60 58 Z', pe) + tom('M54 60 Q58 75 57 89 L59 89 Q63 84 60 58 Z', '#7a5a30', 0.25)),
+      pt('chapeu', 'corpo', [50, 62], P('M15 60 Q15 19 50 17 Q85 19 85 60 Q67 67 50 65 Q33 67 15 60 Z', chapeu) + tom('M70 25 Q85 36 85 60 Q77 63 68 64 Q76 46 70 25 Z', sombra, 0.3) + manchas),
+      pt('esporos', 'raiz', [50, 30], esporos),
+      face('olhos', 'corpo', [50, 74], olhos),
+      face('boca', 'corpo', [50, 82], boca),
+    ],
+  };
+}
+
+const RIGS = {
+  pimentao: () => ({
+    saida: { parte: 'faisca', ponto: [59, 10] },
+    partes: [
+      chao(),
+      pt('corpo', 'raiz', [50, 88], P('M30 48 C22 62 28 86 42 89 C46 90 48 87 50 87 C52 87 54 90 58 89 C72 86 78 62 70 48 C64 38 36 38 30 48 Z', '#e8392b')
+        + tom('M62 44 C72 52 74 70 66 84 C62 88 58 89 56 86 C64 74 66 58 62 44 Z', '#7a0000', 0.25) + L('M50 54 Q47 72 50 86', '#a51f17', 2) + luz(36, 58, 4, 11, 15)),
+      pt('pavio', 'corpo', [50, 43], corda('M50 42 Q48 32 55 26', '#4caf2e', 4) + L('M55 26 Q63 20 59 12', '#5d4037', 2.5)),
+      pt('faisca', 'pavio', [59, 10], estrela(59, 10, 8, 3.5, 8, '#ffd23a', 1.6, '#ff6a00') + '<circle cx="59" cy="10" r="2.4" fill="#fff"/>'),
+      pt('calice', 'corpo', [50, 45], P('M34 46 Q42 37 50 42 Q58 37 66 46 Q58 51 50 47 Q42 51 34 46 Z', '#4caf2e')),
+      face('olhos', 'corpo', [50, 60], () => olho(41, 62, 5.5, 1.5) + olho(59, 62, 5.5, 1.5) + sobr(35, 53, 46, 57) + sobr(54, 57, 65, 53)),
+      face('boca', 'corpo', [50, 73], () => dentes(50, 73, 8)),
+    ],
+  }),
+  cacto: () => ({
+    saida: { parte: 'bracoD', ponto: [77, 28] },
+    partes: [
+      chao(),
+      pt('bracoE', 'corpo', [33, 60], P('M34 66 H24 Q17 66 17 59 V46 Q17 40 23 40 Q29 40 29 46 V55 H34 Z', '#3fa34d') + vespinhos([[22, 50]])),
+      pt('bracoD', 'corpo', [66, 54], P('M66 58 H76 Q83 58 83 51 V36 Q83 30 77 30 Q71 30 71 36 V47 H66 Z', '#3fa34d') + vespinhos([[78, 40]])),
+      pt('corpo', 'raiz', [50, 90], R(32, 26, 36, 66, 18, '#47b257') + L('M41 36 V84', '#2f8a3e', 2) + L('M59 36 V84', '#2f8a3e', 2) + luz(37, 50, 3, 12, 0, 0.35) + vespinhos([[36, 42], [64, 44], [37, 76], [63, 80], [50, 86]])),
+      pt('flor', 'corpo', [50, 30], flor(50, 25, 5, '#ff6fa8')),
+      face('olhos', 'corpo', [50, 50], () => olho(43, 50, 5) + olho(57, 50, 5) + sobr(38, 42, 47, 45) + sobr(53, 45, 62, 42)),
+      face('boca', 'corpo', [50, 62], () => leve(50, 62, 5)),
+    ],
+  }),
+  milho: () => ({
+    saida: { parte: 'boca', ponto: [50, 64] },
+    partes: [
+      chao(),
+      pt('folhaTrasE', 'raiz', [50, 88], folha(50, 90, 22, 46, 10, '#5cb83a', false)),
+      pt('folhaTrasD', 'raiz', [50, 88], folha(50, 90, 78, 46, 10, '#5cb83a', false)),
+      pt('corpo', 'raiz', [50, 86], P('M35 42 Q35 16 50 12 Q65 16 65 42 L65 72 Q65 86 50 86 Q35 86 35 72 Z', '#ffd23a') + graosMilho() + luz(40, 34, 3, 9, 0, 0.5)),
+      pt('folhaE', 'raiz', [50, 90], folha(50, 92, 28, 66, 8, '#4caf2e')),
+      pt('folhaD', 'raiz', [50, 90], folha(50, 92, 72, 66, 8, '#4caf2e')),
+      face('olhos', 'corpo', [50, 51], () => olho(43, 51, 5.5) + olho(57, 51, 5.5)),
+      face('bochechas', 'corpo', [50, 61], () => bochecha(39, 61) + bochecha(61, 61)),
+      face('boca', 'corpo', [50, 61], () => sorriso(50, 61, 6)),
+    ],
+  }),
+  babosa: () => ({
+    saida: { parte: 'gota', ponto: [80, 28] },
+    partes: [
+      chao(),
+      pt('folhaE1', 'raiz', [50, 88], folha(50, 88, 16, 42, 9, '#6cbf6a')),
+      pt('folhaD1', 'raiz', [50, 88], folha(50, 88, 84, 42, 9, '#6cbf6a')),
+      pt('folhaE2', 'raiz', [50, 88], folha(50, 88, 31, 22, 9, '#7fd07c')),
+      pt('folhaD2', 'raiz', [50, 88], folha(50, 88, 69, 22, 9, '#7fd07c')),
+      pt('folhaC', 'raiz', [50, 88], folha(50, 88, 50, 12, 9, '#8fdc8a')),
+      pt('orvalho', 'raiz', [50, 45], [[30, 52], [70, 52], [40, 36], [60, 36], [50, 28], [24, 58], [76, 58]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.4" fill="#fff" opacity=".85"/>`).join('')),
+      pt('corpo', 'raiz', [50, 86], E(50, 74, 17, 14, '#9be395') + luz(44, 68, 5, 3, -20, 0.5)),
+      face('olhos', 'corpo', [50, 73], () => olho(44, 73, 4.5) + olho(56, 73, 4.5)),
+      face('bochechas', 'corpo', [50, 80], () => bochecha(39, 80) + bochecha(61, 80)),
+      face('boca', 'corpo', [50, 81], () => leve(50, 81, 4)),
+      pt('gota', 'folhaD1', [80, 30], gota(80, 30, 1.1)),
+    ],
+  }),
+  couve: () => ({
+    saida: { parte: 'folhaFora1', ponto: [83, 58] },
+    partes: [
+      chao(),
+      ...couracas('#2f8a34'),
+      pt('corpo', 'raiz', [50, 84], babado(50, 60, 25, 23, 9, 4, '#5cb83a')
+        + L('M50 37 Q46 30 40 27', 'rgba(255,255,255,.4)', 2) + L('M50 37 Q55 30 61 27', 'rgba(255,255,255,.4)', 2)
+        + L('M28 66 Q22 70 20 76', 'rgba(255,255,255,.35)', 2) + L('M72 66 Q78 70 80 76', 'rgba(255,255,255,.35)', 2) + luz(37, 48, 5, 8, -30, 0.35)),
+      face('olhos', 'corpo', [50, 57], () => olho(43, 58, 5.5) + olho(57, 58, 5.5) + sobr(37, 50, 46, 52) + sobr(54, 52, 63, 50)),
+      face('boca', 'corpo', [50, 71], () => leve(50, 71, 5)),
+    ],
+  }),
+  bambu: () => ({
+    saida: { parte: 'lanca', ponto: [74, 29] },
+    partes: [
+      chao(),
+      pt('lanca', 'raiz', [69, 64], P('M64 34 L74 29 L74 90 L64 90 Z', '#8fbf45') + R(62, 58, 14, 4, 2, '#6f9a32', 2)),
+      pt('folhaTras', 'lanca', [72, 46], folha(72, 46, 93, 33, 5, '#4caf2e')),
+      pt('corpo', 'raiz', [50, 91], P('M37 33 L63 16 L63 91 L37 91 Z', '#b9dc5a') + P('M37 33 L63 16 L60 22 L40 35 Z', '#e8f5b0', 2)
+        + tom('M55 21 L63 16 L63 91 L55 91 Z', '#3d5e10', 0.18) + R(35, 38, 30, 6, 3, '#87ab3c', 2.5) + R(35, 72, 30, 6, 3, '#87ab3c', 2.5) + luz(42, 58, 2.5, 9, 0, 0.45)),
+      pt('folhaE', 'corpo', [37, 42], folha(37, 42, 15, 32, 5, '#4caf2e')),
+      face('olhos', 'corpo', [50, 52], () => olho(44, 54, 4.8) + olho(56, 54, 4.8) + sobr(39, 47, 47, 50) + sobr(53, 50, 61, 47)),
+      face('boca', 'corpo', [50, 64], () => bravo(50, 64, 5)),
+    ],
+  }),
+  cogumelo: () => cogumeloRig('#9b5bd1', '#2a0050', '#f3e3c3',
+    () => olhoSono(45, 73, 4.3, '#f3e3c3') + olhoSono(55, 73, 4.3, '#f3e3c3'),
+    () => (POSE === 'tiro' ? E(50, 83, 3.4, 3.6, '#8a2a1e', 2) : E(50, 82, 2.6, 2.1, '#8a2a1e', 2)),
+    E(36, 36, 6, 5, '#f4e6ff', 2) + E(58, 29, 5, 4, '#f4e6ff', 2) + E(71, 46, 4, 3.5, '#f4e6ff', 2) + E(27, 51, 3.5, 3, '#f4e6ff', 2) + luz(29, 34, 6, 3, -35, 0.35),
+    [[12, 30], [88, 32], [82, 12], [18, 12]].map(([x, y]) => C(x, y, 2.6, '#c79bff', 1.5)).join(''),
+    [50, 83]),
+  trepadeira: () => ({
+    saida: { parte: 'gavinha', ponto: [88, 57] },
+    partes: [
+      chao(),
+      pt('caule', 'raiz', [50, 90], corda('M50 90 C26 82 72 70 50 58 C36 50 62 44 52 36', '#3d8b2f', 6)),
+      pt('gavinha', 'caule', [58, 64], corda('M58 64 Q66 62 71 58', '#3d8b2f', 4) + corda('M71 57 a9 9 0 1 0 18 0 a9 9 0 1 0 -18 0', '#3d8b2f', 4)),
+      pt('folhaE', 'caule', [38, 80], folha(38, 80, 20, 74, 5, '#5cb83a')),
+      pt('folhaD', 'caule', [62, 72], folha(62, 72, 78, 80, 5, '#5cb83a')),
+      pt('folhaM', 'caule', [43, 54], folha(43, 54, 26, 50, 5, '#5cb83a')),
+      pt('corpo', 'caule', [52, 42], E(50, 30, 17, 15, '#6cc24a') + folha(45, 17, 36, 5, 4, '#5cb83a') + folha(55, 17, 64, 5, 4, '#5cb83a') + luz(43, 24, 5, 3, -20, 0.45)),
+      face('olhos', 'corpo', [50, 28], () => olho(44, 29, 4.8) + olho(56, 29, 4.8) + sobr(51, 23, 60, 21)),
+      face('boca', 'corpo', [50, 36], () => sorriso(50, 36, 5)),
+    ],
+  }),
+  agave: () => ({
+    saida: { parte: 'arpao', ponto: [50, 5] },
+    partes: [
+      chao(),
+      pt('arpao', 'corpo', [50, 66], corda('M50 66 L50 20', '#8a5a2b', 3.5) + P('M50 5 L58 19 L53 17 L53 23 L47 23 L47 17 L42 19 Z', '#cfd8dc', 2.5)),
+      pt('folhasE', 'raiz', [50, 88], folha(50, 88, 10, 56, 7, '#5f9f8f') + folha(50, 88, 22, 34, 7, '#73b5a3') + `<circle cx="10" cy="56" r="2" fill="${K}"/><circle cx="22" cy="34" r="2" fill="${K}"/>`),
+      pt('folhasD', 'raiz', [50, 88], folha(50, 88, 90, 56, 7, '#5f9f8f') + folha(50, 88, 78, 34, 7, '#73b5a3') + `<circle cx="90" cy="56" r="2" fill="${K}"/><circle cx="78" cy="34" r="2" fill="${K}"/>`),
+      pt('folhaBaixaE', 'raiz', [50, 90], folha(50, 90, 8, 82, 6, '#4f8f7f')),
+      pt('folhaBaixaD', 'raiz', [50, 90], folha(50, 90, 92, 82, 6, '#4f8f7f')),
+      pt('corpo', 'raiz', [50, 86], E(50, 72, 16, 13, '#86c7b5') + luz(44, 66, 5, 3, -20, 0.45)),
+      face('olhos', 'corpo', [50, 70], () => olho(44, 71, 4.5) + olho(56, 71, 4.5) + sobr(39, 64, 47, 67) + sobr(53, 67, 61, 64)),
+      face('boca', 'corpo', [50, 80], () => bravo(50, 80, 4)),
+    ],
+  }),
+  bromelia: () => ({
+    saida: [{ parte: 'petalaE', ponto: [32, 25] }, { parte: 'petalaC', ponto: [50, 15] }, { parte: 'petalaD', ponto: [68, 25] }],
+    partes: [
+      chao(),
+      pt('folhaBaixoE', 'raiz', [50, 88], folha(50, 88, 11, 66, 8, '#3f9a4a')),
+      pt('folhaBaixoD', 'raiz', [50, 88], folha(50, 88, 89, 66, 8, '#3f9a4a')),
+      pt('folhaMeioE', 'raiz', [50, 86], folha(50, 86, 22, 46, 8, '#4caf50')),
+      pt('folhaMeioD', 'raiz', [50, 86], folha(50, 86, 78, 46, 8, '#4caf50')),
+      pt('aura', 'raiz', [50, 38], '<circle cx="50" cy="38" r="18" fill="#fff3a0" opacity=".65"/>'),
+      pt('petalaE', 'corpo', [50, 70], folha(50, 70, 31, 24, 8, '#ff4f7b')),
+      pt('petalaD', 'corpo', [50, 70], folha(50, 70, 69, 24, 8, '#ff4f7b')),
+      pt('petalaC', 'corpo', [50, 70], folha(50, 70, 50, 14, 8, '#ff6f93')),
+      pt('brilhos', 'raiz', [55, 20], estrela(30, 12, 5, 1.8, 4, '#fff8c0', 1.2) + estrela(72, 10, 4, 1.5, 4, '#fff8c0', 1.2) + estrela(84, 30, 3.5, 1.3, 4, '#fff8c0', 1.2)),
+      pt('corpo', 'raiz', [50, 86], E(50, 74, 16, 12, '#5cbf5f') + luz(44, 70, 5, 2.5, -15, 0.45)),
+      face('olhos', 'corpo', [50, 73], () => feliz(44, 73, 4) + feliz(56, 73, 4)),
+      face('bochechas', 'corpo', [50, 78], () => bochecha(39, 78) + bochecha(61, 78)),
+      face('boca', 'corpo', [50, 78], () => sorriso(50, 78, 4)),
+    ],
+  }),
+  vitoria: () => ({
+    saida: { parte: 'folhaVit', ponto: [11, 80] },
+    partes: [
+      pt('agua', null, [50, 90], E(50, 90, 45, 7, '#4aa8de')),
+      pt('ondas', null, [50, 90], L('M10 90 Q16 87 22 90', 'rgba(255,255,255,.75)', 2) + L('M78 91 Q84 88 90 91', 'rgba(255,255,255,.75)', 2)),
+      pt('folhaVit', 'raiz', [50, 82], P('M9 80 Q9 69 50 69 Q91 69 91 80 Q91 91 50 91 Q9 91 9 80 Z', '#3e9e45') + P('M14 79 Q14 73 50 73 Q86 73 86 79 Q86 86 50 86 Q14 86 14 79 Z', '#5cbf5f', 2)),
+      pt('petalaE1', 'corpo', [50, 72], folha(50, 72, 25, 56, 7, '#ffc1dd')),
+      pt('petalaD1', 'corpo', [50, 72], folha(50, 72, 75, 56, 7, '#ffc1dd')),
+      pt('petalaE2', 'corpo', [50, 70], folha(50, 70, 35, 39, 7, '#ff9ec9')),
+      pt('petalaD2', 'corpo', [50, 70], folha(50, 70, 65, 39, 7, '#ff9ec9')),
+      pt('petalaC', 'corpo', [50, 70], folha(50, 70, 50, 32, 7, '#ffb3d4')),
+      pt('corpo', 'folhaVit', [50, 72], E(50, 62, 14, 11, '#ffe082') + luz(45, 57, 4, 2, -15, 0.5)),
+      face('olhos', 'corpo', [50, 61], () => feliz(45, 61, 3.8) + feliz(55, 61, 3.8)),
+      face('bochechas', 'corpo', [50, 65], () => bochecha(40, 65) + bochecha(60, 65)),
+      face('boca', 'corpo', [50, 67], () => leve(50, 67, 3.5)),
+    ],
+  }),
+  jarro: () => jarroRig('#8bc34a', '#7b2d6a', '#4a1240', '#9c3d86'),
+  cacto_vulcao: () => ({
+    fixo: true,
+    saida: { parte: 'chama', ponto: [50, 14] },
+    partes: [
+      chao(),
+      pt('bracoE', 'corpo', [33, 64], P('M34 70 H24 Q17 70 17 63 V50 Q17 44 23 44 Q29 44 29 50 V59 H34 Z', '#4f8a3a') + vespinhos([[22, 54]])),
+      pt('bracoD', 'corpo', [67, 58], P('M66 62 H76 Q83 62 83 55 V42 Q83 36 77 36 Q71 36 71 42 V51 H66 Z', '#4f8a3a') + vespinhos([[78, 46]])),
+      pt('corpo', 'raiz', [50, 90], P('M30 90 L36 36 Q50 29 64 36 L70 90 Z', '#4f8a3a') + tom('M58 33 Q64 36 64 36 L70 90 L62 90 Z')
+        + L('M36 72 L41 78 L37 86', '#ff7a1f', 2.6) + L('M64 70 L59 78 L63 86', '#ff7a1f', 2.6) + vespinhos([[50, 88]])),
+      pt('cratera', 'corpo', [50, 35], E(50, 35, 13, 5, '#ff5a1f') + E(50, 35, 8, 2.5, '#ffd23a', 0)),
+      pt('chama', 'corpo', [50, 34], P('M43 34 Q38 20 47 11 Q47 21 52 14 Q57 23 61 16 Q62 27 57 34 Z', '#ff7a1f', 2.5) + P('M47 33 Q46 25 50 21 Q52 26 54 24 Q56 29 54 33 Z', '#ffd23a', 0)),
+      pt('brasas', 'raiz', [50, 16], C(34, 14, 3, '#ff7a1f', 2) + C(68, 9, 2.5, '#ffd23a', 2) + C(72, 22, 2, '#ff7a1f', 1.5)),
+      face('olhos', 'corpo', [50, 53], () => olho(43, 55, 5) + olho(57, 55, 5) + sobr(37, 47, 47, 51) + sobr(53, 51, 63, 47)),
+      face('boca', 'corpo', [50, 66], () => dentes(50, 66, 6)),
+    ],
+  }),
+  teia_esporenta: () => cogumeloRig('#5d6f99', '#0d1a3a', '#e8e0d0',
+    () => olho(45, 74, 4.2) + olho(55, 74, 4.2) + sobr(51, 67, 59, 65),
+    () => (POSE === 'tiro' ? bocaGrito(50, 80, 4) : L('M45 82 Q50 85 56 80', K, 2.6)),
+    ['M50 18 L16 58', 'M50 18 L33 64', 'M50 18 L50 65', 'M50 18 L67 64', 'M50 18 L84 58'].map((d) => L(d, 'rgba(255,255,255,.7)', 1.3)).join('')
+      + L('M27 44 Q38 47 50 44 Q62 47 73 44', 'rgba(255,255,255,.7)', 1.3) + L('M38 30 Q44 33 50 31 Q56 33 62 30', 'rgba(255,255,255,.7)', 1.3)
+      + L('M22 61 L20 76', 'rgba(255,255,255,.85)', 1.2) + C(20, 77, 1.8, '#bfe9ff', 1) + L('M78 61 L80 72', 'rgba(255,255,255,.85)', 1.2) + C(80, 73, 1.8, '#bfe9ff', 1),
+    [[12, 30], [88, 34], [84, 14]].map(([x, y]) => C(x, y, 2.4, '#9ccc65', 1.5)).join(''),
+    [50, 82]),
+  jarro_peconhento: () => jarroRig('#7e4bb0', '#3d1a66', '#2f5a10', '#4a2a7a',
+    E(50, 30, 14, 4, '#8dff4a', 0) + C(44, 28, 1.8, '#d4ffb0', 0) + C(55, 29, 1.3, '#d4ffb0', 0)
+    + gota(32, 40, 0.7, '#8dff4a') + gota(68, 44, 0.8, '#8dff4a') + gota(29, 52, 0.55, '#8dff4a')),
+  lirio_curativo: () => ({
+    saida: { parte: 'corpo', ponto: [50, 26] },
+    partes: [
+      chao(),
+      pt('folhaBaixoE', 'raiz', [50, 90], folha(50, 90, 16, 74, 7, '#5cbf5f')),
+      pt('folhaBaixoD', 'raiz', [50, 90], folha(50, 90, 84, 74, 7, '#5cbf5f')),
+      pt('caule', 'raiz', [50, 90], corda('M50 90 L50 66', '#3d8b2f', 3)),
+      pt('petalaE1', 'corpo', [50, 64], folha(50, 64, 20, 42, 8, '#d9f2ff')),
+      pt('petalaD1', 'corpo', [50, 64], folha(50, 64, 80, 42, 8, '#d9f2ff')),
+      pt('petalaE2', 'corpo', [50, 62], folha(50, 62, 33, 22, 8, '#ffffff')),
+      pt('petalaD2', 'corpo', [50, 62], folha(50, 62, 67, 22, 8, '#ffffff')),
+      pt('corpo', 'raiz', [50, 68], P('M50 26 Q66 46 62 58 Q58 68 50 68 Q42 68 38 58 Q34 46 50 26 Z', '#6ec6ff') + luz(44, 48, 3, 6, -20, 0.6)),
+      face('olhos', 'corpo', [50, 55], () => feliz(45, 55, 3.5) + feliz(55, 55, 3.5)),
+      face('bochechas', 'corpo', [50, 60], () => bochecha(41, 60) + bochecha(59, 60)),
+      face('boca', 'corpo', [50, 61], () => leve(50, 61, 3)),
+      pt('cruzes', 'raiz', [50, 30], cruz(18, 22, 4, '#7dff6a') + cruz(84, 18, 3.5, '#7dff6a') + cruz(88, 44, 2.6, '#7dff6a')),
+    ],
+  }),
+  couve_escudeira: () => ({
+    saida: { parte: 'coroa', ponto: [50, 4] },
+    partes: [
+      chao(),
+      pt('coroa', 'corpo', [50, 40], folha(50, 40, 28, 8, 7, '#ff4f7b') + folha(50, 40, 72, 8, 7, '#ff4f7b') + folha(50, 40, 50, 3, 7, '#ff6f93')),
+      ...couracas('#2a7a3a'),
+      pt('corpo', 'raiz', [50, 84], babado(50, 60, 25, 23, 9, 4, '#5cb83a')
+        + L('M50 37 Q46 30 40 27', 'rgba(255,255,255,.4)', 2) + L('M50 37 Q55 30 61 27', 'rgba(255,255,255,.4)', 2) + luz(37, 48, 5, 8, -30, 0.35)),
+      face('olhos', 'corpo', [49, 55], () => olho(42, 56, 5.5) + olho(56, 56, 5.5) + sobr(35, 48, 45, 51) + sobr(53, 51, 63, 48)),
+      face('boca', 'corpo', [49, 68], () => leve(49, 68, 4.5)),
+      pt('escudo', 'raiz', [72, 92], P('M60 64 L84 60 L84 75 Q84 88 72 94 Q60 88 60 75 Z', '#d4a017', 2.5) + P('M64 67 L80 64.5 L80 75 Q80 85 72 89.5 Q64 85 64 75 Z', '#ffd54f', 0) + folha(72, 86, 72, 68, 4, '#5cb83a')),
+      pt('brilhos', 'raiz', [50, 40], estrela(16, 26, 4, 1.5, 4, '#fff8c0', 1.2) + estrela(86, 30, 3.5, 1.3, 4, '#fff8c0', 1.2) + estrela(14, 60, 3, 1.1, 4, '#fff8c0', 1.2)),
+    ],
+  }),
+  bambu_pipoca: () => ({
+    saida: { parte: 'pipocaTopo', ponto: [50, 10] },
+    partes: [
+      chao(),
+      pt('folhaE', 'raiz', [50, 90], folha(50, 90, 20, 60, 7, '#4caf2e')),
+      pt('folhaD', 'raiz', [50, 90], folha(50, 90, 80, 60, 7, '#4caf2e')),
+      pt('corpo', 'raiz', [50, 91], P('M38 40 L62 40 L62 91 L38 91 Z', '#b9dc5a') + tom('M55 40 L62 40 L62 91 L55 91 Z', '#3d5e10', 0.18) + R(36, 62, 28, 6, 3, '#87ab3c', 2.5)),
+      pt('pipocaTopo', 'corpo', [50, 40], P('M39 40 Q39 14 50 10 Q61 14 61 40 Z', '#ffd23a')
+        + [[44, 20], [50, 16], [56, 20], [44, 28], [50, 25], [56, 28], [44, 35], [50, 33], [56, 35]].map(([x, y]) => `<rect x="${x - 2.2}" y="${y - 2.2}" width="4.4" height="4.4" rx="2" fill="#f0a81a" opacity=".8"/>`).join('')
+        + luz(43, 24, 2, 6, 0, 0.5)),
+      face('olhos', 'corpo', [50, 48], () => olho(44, 50, 5) + olho(56, 50, 5) + sobr(38, 43, 47, 46) + sobr(53, 46, 62, 43)),
+      face('boca', 'corpo', [50, 76], () => sorriso(50, 76, 6)),
+      pt('pipocasSoltas', 'raiz', [50, 30], C(18, 30, 5, '#fff8e1', 2) + C(23, 26, 4, '#fff8e1', 2) + C(82, 22, 5, '#fff8e1', 2) + C(86, 28, 4, '#fff8e1', 2) + C(80, 48, 4, '#fff8e1', 2) + C(19, 30, 1.8, '#ffd23a', 0) + C(83, 23, 1.8, '#ffd23a', 0)),
+    ],
+  }),
+};
+// Monta as peças uma vez: chave da peça = "<planta>.<peça>" (e "<planta>.<peça>@tiro" pra pose de tiro).
+const PECAS = {};
+const RIGS_PRONTOS = {};
+function montarRigs() {
+  if (Object.keys(RIGS_PRONTOS).length) return;
+  for (const [id, fn] of Object.entries(RIGS)) {
+    const r = fn();
+    RIGS_PRONTOS[id] = {
+      saida: [].concat(r.saida), fixo: !!r.fixo,
+      partes: r.partes.map((x) => {
+        const chave = `${id}.${x.nome}`;
+        PECAS[chave] = x.s;
+        let chavePose = null;
+        if (x.sPose && x.sPose !== x.s) { chavePose = `${chave}@tiro`; PECAS[chavePose] = x.sPose; }
+        return { nome: x.nome, pai: x.pai, pivo: x.pivo, chave, chavePose };
+      }),
+    };
+  }
+}
+export function rigDe(id) { montarRigs(); return RIGS_PRONTOS[id] || null; }
+
 // ---------- Montagem ----------
 const svg = (miolo, vb) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${vb} ${vb}" width="${vb === 100 ? 128 : 64}" height="${vb === 100 ? 128 : 64}">${miolo}</svg>`;
 const paraUrl = (s) => `data:image/svg+xml;charset=utf-8,${encodeURIComponent(s)}`;
@@ -725,6 +1051,7 @@ function fonte(tipo, chave) {
   if (tipo === 'hab') { const f = HABILIDADES[chave]; return f && svg(selo(CORES_HAB[chave], f()), 40); }
   if (tipo === 'st') { const f = STATUS[chave]; return f && svg(f(), 40); }
   if (tipo === 'extra') { const f = EXTRAS[chave]; return f && svg(f(), 100); }
+  if (tipo === 'p') { montarRigs(); const m = PECAS[chave]; return m && svg(m, 100); }
   return null;
 }
 
@@ -816,5 +1143,6 @@ export function infoTiro(emoji) {
 export const corHabilidade = (tipo) => CORES_HAB[tipo] || '#ffd23a';
 
 // Galeria e gerador da fonte: todos os ids com desenho.
-export const idsComArte = () => ({ plantas: Object.keys(PLANTAS), pragas: Object.keys(PRAGAS), tiros: Object.keys(TIROS), habilidades: Object.keys(HABILIDADES), status: Object.keys(STATUS), extras: Object.keys(EXTRAS) });
+export const idsComArte = () => { montarRigs(); return { plantas: Object.keys(PLANTAS), pragas: Object.keys(PRAGAS), tiros: Object.keys(TIROS), habilidades: Object.keys(HABILIDADES), status: Object.keys(STATUS), extras: Object.keys(EXTRAS), partes: Object.keys(PECAS) }; };
 export const urlArte = urlDe;
+

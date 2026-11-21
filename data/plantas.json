@@ -347,11 +347,10 @@
     "emoji": "🌷",
     "projetil": "🦷",
     "tiro": {
-      "qtd": 2,
-      "vel": 1.1,
-      "tam": 1.0,
-      "arco": 0.8,
-      "intervalo": 120
+      "vel": 0.65,
+      "tam": 1.35,
+      "arco": 0.9,
+      "carga": 650
     },
     "funcao": "Finalizador",
     "vida": 210,
@@ -554,11 +553,10 @@
     "emoji": "☠️",
     "projetil": "🧪",
     "tiro": {
-      "qtd": 3,
-      "vel": 1.2,
-      "tam": 0.7,
-      "arco": 1,
-      "intervalo": 80
+      "vel": 0.65,
+      "tam": 1.35,
+      "arco": 0.9,
+      "carga": 650
     },
     "funcao": "Finalizador",
     "vida": 290,
@@ -595,11 +593,10 @@
     "emoji": "💧",
     "projetil": "💧",
     "tiro": {
-      "qtd": 3,
-      "vel": 1.0,
-      "tam": 0.7,
-      "arco": 1.4,
-      "intervalo": 80
+      "vel": 0.8,
+      "tam": 1.45,
+      "arco": 1.3,
+      "carga": 480
     },
     "funcao": "Cura",
     "vida": 340,

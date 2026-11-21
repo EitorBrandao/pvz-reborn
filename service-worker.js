@@ -21,6 +21,7 @@ const ARQUIVOS = [
   'js/arena.js',
   'js/som.js',
   'js/arte.js',
+  'js/animacao.js',
   'js/arte-fonte.js',
   'art/arte.woff2',
   'js/ui/comum.js',
