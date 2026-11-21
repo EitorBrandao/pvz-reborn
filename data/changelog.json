@@ -1,5 +1,5 @@
 [
-  { "versao": "0.14.18", "itens": ["🧬 3 fusões novas: Milho + Bambu = 🏹 Bambu Pipoca (rajada de pipoca que atravessa as pragas), Mandioca + Coco = 🪓 Coco Raizão (pancadas e o último golpe deixa a praga tonta) e Melancia + Taboa = 💤 Melancia Sonolenta (rola por toda a linha da frente e faz todo mundo dormir)", "Agora toda planta tem uma fusão"] },
+  { "versao": "0.14.18", "itens": ["🧬 3 fusões novas: Milho + Bambu = 🏹 Bambu Pipoca (rajada de pipoca que atravessa as pragas), Mandioca + Coco = 🪓 Coco Raizão (pancadas e o último golpe deixa a praga tonta) e Melancia + Taboa = 💤 Melancia Sonolenta (rola por toda a linha da frente e faz todo mundo dormir)", "Agora toda planta tem uma fusão", "A híbrida também herda o maior rank das duas plantas (antes ficava com o menor)"] },
   { "versao": "0.14.17", "itens": ["🧬 Fusão: a planta híbrida nasce com o nível da planta mais alta das duas (não começa mais no nível 1)"] },
   { "versao": "0.14.16", "itens": ["✦ Ascensão não volta mais a planta pro nível 1: ela mantém o nível e só ganha o rank, o bônus de atributos e o nível máximo maior"] },
   { "versao": "0.14.15", "itens": ["🧬 Fusão nova: Couve Couraça + Bromélia Cálice = 🛡️ Couve Escudeira. O especial dá escudo pra todo o time e enche a energia do especial dos aliados"] },

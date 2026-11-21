@@ -26,10 +26,10 @@ export function situacaoFusao(receita, dados, estado) {
   return { pais, cartas, custoOk, paisOk, fundida, pronta: !fundida && paisOk && custoOk };
 }
 
-// A híbrida nasce com 5★, o maior nível entre as duas plantas e o menor rank entre elas.
+// A híbrida nasce com 5★, o maior nível e o maior rank entre as duas plantas.
 export function registroHibrida(receita, estado, dados) {
   const pais = [receita.a, receita.b].map((id) => estado.colecao[id]);
-  const rank = Math.min(...pais.map((r) => r.ascensao || 0));
+  const rank = Math.max(...pais.map((r) => r.ascensao || 0));
   const teto = nivelMaximo(dados.fusoes.estrelasMin, dados.config.evolucao, rank);
   const nivel = Math.min(teto, Math.max(...pais.map((r) => r.nivel || 1)));
   return {
