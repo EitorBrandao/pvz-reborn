@@ -424,7 +424,7 @@
     "desafiarPago": "⚔️ Desafiar · 💧{custo}",
     "desafiaveisTitulo": "🎯 Quem você pode desafiar",
     "desafiaveisVazio": "Você é o 1º do ranking! Ninguém acima de você. 👑",
-    "desafiaveisDica": "Vencer troca sua posição com a do rival. Quem estiver abaixo de você também pode te desafiar enquanto o jogo está fechado: sua defesa é o time que você deixou montado.",
+    "desafiaveisDica": "Quem tem mais pontos fica na frente. Vencer alguém mais forte rende muitos pontos; perder pra alguém mais fraco custa caro. Rivais abaixo de você também podem te desafiar com o jogo fechado: sua defesa é o time que você deixou montado.",
     "rankingTitulo": "🏆 Ranking",
     "voce": "Você",
     "subiu": "🏆 Você subiu {n} posição(ões)! Agora está em {pos}º.",
@@ -434,6 +434,9 @@
       "dano": "Dano",
       "tanque": "Tanque",
       "misto": "Equilibrado"
-    }
+    },
+    "chance": "{pct}% de ganhar",
+    "pontosResultado": "🏆 {sinal}{delta} pontos ({de} → {para})",
+    "desceu": "Você caiu {n} posição(ões). Agora está em {pos}º."
   }
 }

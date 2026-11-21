@@ -31,7 +31,7 @@ export function abrirArena() {
 const emojiPlanta = (id) => arte(dados.plantas.find((p) => p.id === id)) || '?';
 
 function linhaDesafio(d, gratis) {
-  const r = d.rival;
+  const r = { ...d.rival, pontos: d.pontos };
   const batalha = batalhaArena(r, dados);
   const { planta: nosso, praga: deles } = poderLados(batalha, jogo.estado.time, dados, jogo.estado.colecao);
   const classe = !jogo.estado.time.length || nosso >= deles ? 'mais-forte' : 'mais-fraco';
@@ -42,6 +42,7 @@ function linhaDesafio(d, gratis) {
       <b>${d.pos}º ${r.nome} <small class="nv">Nv ${r.nivel} · ${t().estilos[r.estilo]}</small></b>
       <span class="inimigos">${r.time.map((m) => emojiPlanta(m.planta)).join('')}</span>
       <small class="poder-comparar ${classe}">${num(nosso)} × ${num(deles)}</small>
+      <small class="arena-pontos">${num(r.pontos)} pts · ${preencher(t().chance, { pct: d.chance })} · <b class="ganha">+${d.ganha}</b> / <b class="perde">${d.perde}</b></small>
     </div>
     <button class="btn btn-peq ${gratis > 0 ? 'btn-laranja' : 'btn-azul'}" data-rival="${r.id}">${botao}</button>
   </div>`;
@@ -54,7 +55,7 @@ function desenhar() {
 
   const mural = info.naoVistos
     ? `<div class="arena-mural"><b>${t().muralTitulo}</b>
-        ${info.mural.slice(0, info.naoVistos).map((e) => `<p class="${e.venceu ? 'ganhou' : 'perdeu'}">${e.texto}</p>`).join('')}
+        ${info.mural.slice(0, info.naoVistos).map((e) => `<p class="${e.venceu ? 'ganhou' : 'perdeu'}">${e.texto} <b>${e.pontos > 0 ? '+' : ''}${e.pontos} pts</b></p>`).join('')}
         <button id="arena-mural-ok" class="btn btn-peq">${t().muralOk}</button></div>`
     : '';
 
@@ -68,13 +69,14 @@ function desenhar() {
     : `<p class="dica-pequena">${t().desafiaveisVazio}</p>`;
 
   const ranking = info.ranking.map((l) => (l.voce
-    ? `<li class="voce"><span class="pos">${l.pos}º</span><span>🌱 ${t().voce}</span><b></b></li>`
-    : `<li><span class="pos">${l.pos}º</span><span>${l.rival.emoji} ${l.rival.nome}</span><b>Nv ${l.rival.nivel}</b></li>`)).join('');
+    ? `<li class="voce"><span class="pos">${l.pos}º</span><span>🌱 ${t().voce}</span><b>${num(l.pontos)} pts</b></li>`
+    : `<li><span class="pos">${l.pos}º</span><span>${l.rival.emoji} ${l.rival.nome}</span><b>${num(l.pontos)} pts</b></li>`)).join('');
 
   area.innerHTML = `
     ${mural}
     <div class="arena-resumo">
       <div class="arena-posicao">🏆 ${preencher(t().posicao, { pos: info.posicao, total: info.total })}</div>
+      <div class="arena-total">${num(info.pontos)} pts</div>
       <small>${preencher(t().melhor, { melhor: info.melhor })}</small>
       <small>${info.gratis > 0
     ? preencher(t().gratis, { n: info.gratis, max: c.desafiosPorDia })

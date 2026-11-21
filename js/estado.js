@@ -332,19 +332,31 @@ function darXpAoTime(xp) {
 }
 
 // ---------- Arena ----------
-// Ranking com rivais bots. Cada dia: 5 desafios, prêmio da posição e recados de quem te desafiou.
+// Ranking por pontos (estilo Elo) contra rivais bots. Cada dia: 5 desafios, prêmio da posição
+// e recados de quem te desafiou com o jogo fechado.
 
 function arenaAtual() {
   const dia = hoje();
+  const n = dados.arena.rivais.length + 1;
   if (!estado.arena) {
-    const ordem = ar.ordemInicial(dados);
-    estado.arena = { inicio: dia, ordem, dia: '', desafios: 0, orvalhoDia: 0, premioDia: '', melhor: ordem.length, vistoEm: dia, mural: [], naoVistos: 0 };
+    estado.arena = { inicio: dia, pontos: dados.arena.pontosIniciais, ajustes: {}, dia: '', desafios: 0, orvalhoDia: 0, premioDia: '', melhor: n, vistoEm: dia, mural: [], naoVistos: 0 };
   }
   const a = estado.arena;
+  if (a.ordem) {
+    // save da versão 0.15 (ranking por posição): vira pontos perto de onde você estava
+    const eu = a.ordem.indexOf(ar.VOCE);
+    const dias = ar.diasEntre(a.inicio, dia);
+    const acima = eu > 0 ? ar.pontosBase(a.ordem[eu - 1], dias, dados) : dados.arena.pontosTopo + 100;
+    a.pontos = Math.max(dados.arena.pontosIniciais, acima - 1);
+    a.ajustes = {};
+    delete a.ordem;
+  }
+  if (!a.ajustes) a.ajustes = {};
   if (a.vistoEm !== dia) {
     // enquanto o jogo estava fechado, rivais abaixo de você podem ter te desafiado
     const r = ar.ausencia(a, estado, dados, dia);
-    a.ordem = r.ordem;
+    a.pontos = r.pontos;
+    a.ajustes = r.ajustes;
     a.mural = [...r.mural.reverse(), ...a.mural].slice(0, dados.arena.muralMax);
     a.naoVistos = (a.naoVistos || 0) + r.mural.length;
     a.vistoEm = dia;
@@ -353,21 +365,35 @@ function arenaAtual() {
   return a;
 }
 
+function rankingArena(a) {
+  return ar.ranking(a, ar.diasEntre(a.inicio, hoje()), dados);
+}
+
+const posicaoNoRanking = (rank) => rank.findIndex((x) => x.id === ar.VOCE) + 1;
+
 export function arenaInfo() {
   const a = arenaAtual();
   const c = dados.arena;
   const dias = ar.diasEntre(a.inicio, hoje());
-  const eu = a.ordem.indexOf(ar.VOCE);
-  const rivais = (id) => ar.rivalDoRanking(id, dias, dados);
-  const posicao = eu + 1;
+  const rank = rankingArena(a);
+  const posicao = posicaoNoRanking(rank);
+  // quanto cada desafio pode render ou custar
+  const comRival = (x) => ({
+    ...x,
+    rival: ar.rivalDoRanking(x.id, dias, dados),
+    ganha: ar.variacaoElo(a.pontos, x.pontos, true, c.k),
+    perde: ar.variacaoElo(a.pontos, x.pontos, false, c.k),
+    chance: Math.round(ar.chanceElo(a.pontos, x.pontos) * 100),
+  });
   salvarAgora();
   return {
+    pontos: a.pontos,
     posicao,
-    total: a.ordem.length,
+    total: rank.length,
     melhor: a.melhor,
     gratis: Math.max(0, c.desafiosPorDia - a.desafios),
-    ranking: a.ordem.map((id, i) => (id === ar.VOCE ? { voce: true, pos: i + 1 } : { pos: i + 1, rival: rivais(id) })),
-    desafiaveis: ar.desafiaveis(a.ordem, dados).map((d) => ({ pos: d.pos + 1, rival: rivais(d.id) })).reverse(),
+    ranking: rank.map((x, i) => (x.id === ar.VOCE ? { voce: true, pos: i + 1, pontos: x.pontos } : { pos: i + 1, pontos: x.pontos, rival: ar.rivalDoRanking(x.id, dias, dados) })),
+    desafiaveis: ar.desafiaveis(rank, dados).map(comRival),
     premio: { pego: a.premioDia === hoje(), premio: ar.premioDiario(posicao, dados) },
     mural: a.mural,
     naoVistos: a.naoVistos || 0,
@@ -383,9 +409,8 @@ export function limparMuralArena() {
 export function gastarDesafioArena(idRival) {
   const a = arenaAtual();
   const c = dados.arena;
-  // o ranking pode ter mudado: só vale desafiar quem está acima de você
-  const acima = ar.desafiaveis(a.ordem, dados).some((d) => d.id === idRival);
-  if (!acima) return { ok: false, erro: 'arenaSaiuDoAlcance' };
+  // o ranking pode ter mudado: só vale desafiar quem ainda está ao seu alcance
+  if (!ar.desafiaveis(rankingArena(a), dados).some((d) => d.id === idRival)) return { ok: false, erro: 'arenaSaiuDoAlcance' };
   if (a.desafios < c.desafiosPorDia) {
     a.desafios += 1;
   } else if (estado.orvalho >= c.custoDesafioExtra) {
@@ -401,7 +426,7 @@ export function gastarDesafioArena(idRival) {
 export function resgatarPremioArena() {
   const a = arenaAtual();
   if (a.premioDia === hoje()) return { ok: false };
-  const premio = ar.premioDiario(a.ordem.indexOf(ar.VOCE) + 1, dados);
+  const premio = ar.premioDiario(posicaoNoRanking(rankingArena(a)), dados);
   darPremio(premio);
   a.premioDia = hoje();
   contar('premioArena');
@@ -409,26 +434,29 @@ export function resgatarPremioArena() {
   return { ok: true, premio };
 }
 
-// Vitória troca de lugar com o rival e empurra quem estava no meio pra baixo.
+// Cada luta muda os pontos dos dois (soma zero): quem ganha leva, quem perde entrega.
 function registrarArena(batalha, vitoria) {
   const a = arenaAtual();
-  const c = dados.arena.vitoria;
-  const antes = a.ordem.indexOf(ar.VOCE);
+  const c = dados.arena;
+  const rank = rankingArena(a);
+  const antes = posicaoNoRanking(rank);
+  const dias = ar.diasEntre(a.inicio, hoje());
+  const id = batalha.rival.id;
+  const deles = ar.pontosDoRival(a, id, dias, dados);
+  const delta = ar.variacaoElo(a.pontos, deles, vitoria, c.k);
+  const pontosAntes = a.pontos;
+  a.pontos = Math.max(0, a.pontos + delta);
+  a.ajustes[id] = Math.max(-c.ajusteMax, Math.min(c.ajusteMax, (a.ajustes[id] || 0) - delta));
   let orvalho = 0;
-  if (vitoria) {
-    const pos = a.ordem.indexOf(batalha.rival.id);
-    if (pos >= 0 && pos < antes) {
-      a.ordem = ar.mover(a.ordem, ar.VOCE, pos);
-      if (pos + 1 < a.melhor) {
-        const ganho = Math.min((a.melhor - (pos + 1)) * c.orvalhoPorPosicao, c.orvalhoMaxPorDia - a.orvalhoDia);
-        orvalho = Math.max(0, ganho);
-        a.orvalhoDia += orvalho;
-        a.melhor = pos + 1;
-      }
-    }
-    contar('vencerArena');
+  const depois = posicaoNoRanking(rankingArena(a));
+  if (vitoria) contar('vencerArena');
+  if (depois < a.melhor) {
+    const v = c.vitoria;
+    orvalho = Math.max(0, Math.min((a.melhor - depois) * v.orvalhoPorPosicao, v.orvalhoMaxPorDia - a.orvalhoDia));
+    a.orvalhoDia += orvalho;
+    a.melhor = depois;
   }
-  return { subiu: antes - a.ordem.indexOf(ar.VOCE), posicao: a.ordem.indexOf(ar.VOCE) + 1, orvalho };
+  return { delta, pontos: a.pontos, pontosAntes, subiu: antes - depois, posicao: depois, orvalho };
 }
 
 // ---------- Labirinto das Raízes ----------
