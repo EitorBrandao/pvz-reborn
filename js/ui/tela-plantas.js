@@ -294,11 +294,11 @@ function desenharDetalhe() {
   if (r.estrelas >= cfg.estrelasMax) {
     if (!ca) blocoAscensao = `<p class="dica-pequena">Rank máximo!</p>`;
     else {
-      const prev = atributos(p, r, dados, { ascensao: (r.ascensao || 0) + 1, nivel: 1 });
+      const prev = atributos(p, r, dados, { ascensao: (r.ascensao || 0) + 1 });
       const pronto = podeAscender(r, cfg);
       const bonusRank = Math.round(cfg.bonusRank * 100);
       blocoAscensao = `
-        <p class="dica-pequena">${pronto ? 'Volta pro nível 1, mas ' : 'No nível máximo, '}ganha +${bonusRank}% de atributos pra sempre e +${cfg.niveisPorRank} de nível máximo.</p>
+        <p class="dica-pequena">${pronto ? 'Mantém o nível e ' : 'No nível máximo, '}ganha +${bonusRank}% de atributos pra sempre e +${cfg.niveisPorRank} de nível máximo.</p>
         <div class="estrela-info">
           ${custoTexto(ca)}
           <div class="previa-grade"><span>Nv máx</span><b>${max} → ${max + cfg.niveisPorRank}</b></div>
