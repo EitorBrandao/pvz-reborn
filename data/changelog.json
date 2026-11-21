@@ -1,4 +1,5 @@
 [
+  { "versao": "0.15.2", "itens": ["🏆 Arena com pontos: quem tem mais pontos fica na frente. Cada luta mostra quantos pontos você ganha ou perde (depende da diferença de pontos entre vocês) e a chance de vitória. Perder também tira pontos, e rivais abaixo de você podem te derrubar com o jogo fechado"] },
   { "versao": "0.15.1", "itens": ["📜 Missão nova da Dona Flora: chegar ao top 20 da Arena"] },
   { "versao": "0.15.0", "itens": ["🏆 Arena chegou! Toque em 🏆 Arena na horta: ranking com 30 rivais bots, 5 desafios por dia (extra custa 💧2), vitória troca sua posição com a do rival, prêmio diário pela posição e recados de quem te desafiou enquanto o jogo estava fechado. Os rivais ficam mais fortes com o tempo"] },
   { "versao": "0.14.22", "itens": ["🪓 Coco Raizão enfraquece mais: -30% de ataque na praga (igual à Teia Esporenta), acima dos -20% da Mandioca Machadinha"] },
