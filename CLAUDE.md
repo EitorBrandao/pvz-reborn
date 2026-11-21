@@ -29,6 +29,12 @@ Arquivo novo (js, json, imagem) também precisa entrar na lista `ARQUIVOS` do `s
 - Arte: os desenhos ficam em `js/arte.js` (SVG), mas o jogo mostra eles pela fonte colorida `art/arte.woff2` (o modo escuro do Samsung desbota imagens, não letras). Mudou ou criou desenho? Rode `bash tools/fonte-cor/gerar.sh` pra refazer a fonte e `js/arte-fonte.js`.
 - Nomes, personagens e arte originais. Nada de Plants vs. Zombies, PopCap, EA ou Youkia.
 
+## Ajustes visuais (procedimento padrão)
+
+1. Antes de mexer no jogo, faça um artefato HTML (página no claude.ai) mostrando **antes e depois** de cada alteração, animado quando for animação.
+2. Mande o link e espere o dono aprovar ou pedir ajustes (atualize o mesmo artefato).
+3. Só depois de aprovado, aplique no código, teste e publique na `main`.
+
 ## Testes
 
 - Não rode código nem testes com o modelo Opus: passe os testes pra um subagente com modelo menor (Sonnet ou Haiku, conforme a complexidade).
