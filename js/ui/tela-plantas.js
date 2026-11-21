@@ -89,7 +89,7 @@ function erro(resultado) {
 }
 
 // O que dá pra melhorar agora nessa planta, com o que o jogador tem.
-function melhorias(r) {
+function melhorias(r, p) {
   const e = jogo.estado;
   const cfg = dados.config.evolucao;
   const treinar = r.nivel < nivelMaximo(r.estrelas, cfg, r.ascensao)
@@ -104,7 +104,9 @@ function melhorias(r) {
   const algumEquip = Object.values(equip).some(Boolean);
   const ca = custoAscensao(r, dados);
   const ascender = !!ca && podeAscender(r, cfg) && e.moedas >= ca.moedas && temCartas(e.inventario, ca.cartas);
-  const talento = pontosTalento(r, dados) - pontosGastos(r) > 0;
+  // Só avisa se sobrou ponto E ainda existe talento que dá pra subir
+  const temTalentoPraSubir = classeTalento(dados, p).ramos.some((ramo) => ramo.nos.some((no) => ((r.talentos || {})[no.id] || 0) < no.max));
+  const talento = pontosTalento(r, dados) - pontosGastos(r) > 0 && temTalentoPraSubir;
   return { treinar, estrela, equip, algumEquip, ascender, talento, alguma: treinar || estrela || algumEquip || ascender || talento };
 }
 
@@ -198,7 +200,7 @@ function desenharLista() {
       const cfg = dados.config.evolucao;
       const max = nivelMaximo(r.estrelas, cfg, r.ascensao);
       const pxp = r.nivel >= max ? 1 : r.xp / xpParaProximo(r.nivel, cfg);
-      const m = melhorias(r);
+      const m = melhorias(r, p);
       const icones = [m.ascender && '✦', m.talento && '🌳', m.estrela && '⭐', m.algumEquip && '🛠️', m.treinar && '📈'].filter(Boolean).join('');
       const selos = selosPlanta(r, dados);
       botao.className = 'cartao-planta' + (m.alguma ? ' pode-evoluir' : '') + selos.classe;
@@ -235,7 +237,7 @@ function desenharDetalhe() {
   const max = nivelMaximo(r.estrelas, cfg, r.ascensao);
   const noMax = r.nivel >= max;
   const precisa = xpParaProximo(r.nivel, cfg);
-  const m = melhorias(r);
+  const m = melhorias(r, p);
 
   // Atributos (com o ganho da última evolução, se teve)
   const poderAgora = poder(stats, dados);
