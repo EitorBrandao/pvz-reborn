@@ -224,14 +224,29 @@ async function animarAcao(ev) {
     a.dx = 0;
     a.dy = 0;
   } else {
+    // Estilo do tiro (campo "tiro" da planta): quantos projéteis, velocidade, tamanho e arco.
+    // Vários projéteis dividem o mesmo dano total entre si (só no ataque básico).
+    const estilo = a.tiro || {};
+    const intervalo = estilo.intervalo || 90;
     let atraso = 0;
     const chegadas = golpes.map((ef) => {
-      const voo = lancar(a, vis[ef.alvo], a.projetil, atraso, ev.especial).then(() => {
-        mostrarEfeito(ef);
-        if (ev.especial) impacto(ev.habTipo, vis[ef.alvo]);
-      });
+      const qtd = ev.especial ? 1 : Math.max(1, Math.min(estilo.qtd || 1, ef.valor || 1));
+      const partes = dividirDano(ef.valor, qtd);
+      const vidaAntes = vis[ef.alvo] ? vis[ef.alvo].vida : ef.vidaDepois;
+      let feito = 0;
+      const voos = partes.map((parte, i) => lancar(a, vis[ef.alvo], a.projetil, atraso + i * intervalo, ev.especial, estilo, i > 0)
+        .then(() => {
+          feito += parte;
+          if (i < qtd - 1) {
+            const vida = Math.max(ef.vidaDepois, Math.round(vidaAntes - (vidaAntes - ef.vidaDepois) * feito / ef.valor));
+            mostrarGolpeParcial(ef.alvo, parte, vida);
+          } else {
+            mostrarEfeito(qtd > 1 ? { ...ef, valor: parte } : ef);
+            if (ev.especial) impacto(ev.habTipo, vis[ef.alvo]);
+          }
+        }));
       atraso += ev.habTipo === 'rajada' ? 130 : 50;
-      return voo;
+      return Promise.all(voos);
     });
     await Promise.all(chegadas);
   }
@@ -250,14 +265,36 @@ async function animarStatus(ev) {
   await espera(350);
 }
 
-function lancar(de, para, emoji, atraso, especial = false) {
+function lancar(de, para, emoji, atraso, especial = false, estilo = {}, comSom = false) {
   if (pular) return Promise.resolve();
+  // projéteis seguidos saem um pouco desalinhados pra não ficarem um em cima do outro
+  const desvio = comSom ? (Math.random() - 0.5) * raio * 0.5 : 0;
   return new Promise((resolver) => {
     projeteis.push({
-      x0: de.x, y0: de.y, x1: para.x, y1: para.y, emoji, tiro: infoTiro(emoji), especial,
-      t0: agora() + atraso / vel(), dur: 320 / vel(), resolver,
+      x0: de.x, y0: de.y + desvio, x1: para.x, y1: para.y + desvio * 0.4, emoji, tiro: infoTiro(emoji), especial,
+      tam: estilo.tam || 1, arco: estilo.arco ?? 1, comSom,
+      t0: agora() + atraso / vel(), dur: 320 / (estilo.vel || 1) / vel(), resolver,
     });
   });
+}
+
+// Divide um dano em partes inteiras que somam o total (a última leva o resto).
+function dividirDano(total, qtd) {
+  const base = Math.floor(total / qtd);
+  return Array.from({ length: qtd }, (_, i) => (i === qtd - 1 ? total - base * (qtd - 1) : base));
+}
+
+// Acerto de um projétil do meio da sequência: número pequeno, sem efeitos extras.
+function mostrarGolpeParcial(uid, valor, vida) {
+  const v = vis[uid];
+  if (!v) return;
+  if (!pular) som.tocarSom('golpe');
+  v.vida = vida;
+  v.flash = 1;
+  v.kx = (v.lado === 'planta' ? -1 : 1) * raio * 0.25;
+  flutuar(v.x + (Math.random() - 0.5) * raio * 0.6, v.y - raio, `${valor}`, '#ffe14d', 22);
+  tremor += 2;
+  estourar(v.x, v.y, 4, ['#fff', '#ffe14d']);
 }
 
 function mostrarEfeito(ef) {
@@ -746,11 +783,16 @@ function desenharProjeteis(t) {
     const k = (t - p.t0) / p.dur;
     if (k < 0) return true;
     if (k >= 1) { p.resolver(); return false; }
+    if (!p.saiu) {
+      p.saiu = true;
+      if (p.comSom && !pular) som.tocarSom('tiro');
+    }
+    const altura = raio * p.arco;
     const x = p.x0 + (p.x1 - p.x0) * k;
-    const y = p.y0 + (p.y1 - p.y0) * k - Math.sin(Math.PI * k) * raio;
+    const y = p.y0 + (p.y1 - p.y0) * k - Math.sin(Math.PI * k) * altura;
     const tiro = p.tiro;
     if (!tiro || !artePronta()) {
-      ctx.font = `${raio * 0.8}px serif`;
+      ctx.font = `${raio * 0.8 * p.tam}px serif`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillStyle = '#000';
@@ -760,13 +802,13 @@ function desenharProjeteis(t) {
     // rastro: faíscas que ficam pra trás
     if (Math.random() < 0.8) {
       particulas.push({ x, y, vx: (Math.random() - 0.5) * 0.6, vy: (Math.random() - 0.5) * 0.6, leve: true,
-        cor: tiro.rastro, tam: (p.especial ? 3 : 2) + Math.random() * 2.5, vida: 0.7, forma: 'bola', ang: 0 });
+        cor: tiro.rastro, tam: ((p.especial ? 3 : 2) + Math.random() * 2.5) * Math.sqrt(p.tam), vida: 0.7, forma: 'bola', ang: 0 });
     }
     // direção do voo (derivada da curva) ou giro
     const dx = p.x1 - p.x0;
-    const dy = p.y1 - p.y0 - Math.cos(Math.PI * k) * Math.PI * raio;
+    const dy = p.y1 - p.y0 - Math.cos(Math.PI * k) * Math.PI * altura;
     const ang = tiro.gira ? (t - p.t0) / 60 : Math.atan2(dy, dx);
-    const tam = raio * (p.especial ? 1.15 : 0.9);
+    const tam = raio * (p.especial ? 1.15 : 0.9) * p.tam;
     ctx.save();
     ctx.translate(x, y);
     ctx.rotate(ang);

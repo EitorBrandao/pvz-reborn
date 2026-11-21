@@ -5,6 +5,11 @@
     "nome": "Pimentão Pavio",
     "emoji": "🌶️",
     "projetil": "🔥",
+    "tiro": {
+      "vel": 0.6,
+      "tam": 1.6,
+      "arco": 1.6
+    },
     "funcao": "Dano em área",
     "vida": 220,
     "atq": 42,
@@ -33,6 +38,12 @@
     "nome": "Cacto Espeto",
     "emoji": "🌵",
     "projetil": "✴️",
+    "tiro": {
+      "qtd": 2,
+      "vel": 1.3,
+      "tam": 0.75,
+      "arco": 0.3
+    },
     "funcao": "Tanque",
     "vida": 420,
     "atq": 24,
@@ -56,6 +67,13 @@
     "nome": "Milho Pipoqueiro",
     "emoji": "🌽",
     "projetil": "🍿",
+    "tiro": {
+      "qtd": 3,
+      "vel": 1.2,
+      "tam": 0.7,
+      "arco": 1.2,
+      "intervalo": 80
+    },
     "funcao": "Dano rápido",
     "vida": 200,
     "atq": 30,
@@ -77,6 +95,12 @@
     "nome": "Babosa Curandeira",
     "emoji": "🪴",
     "projetil": "💧",
+    "tiro": {
+      "qtd": 2,
+      "vel": 0.9,
+      "tam": 0.8,
+      "arco": 1.4
+    },
     "funcao": "Cura",
     "vida": 260,
     "atq": 28,
@@ -107,6 +131,11 @@
     "nome": "Couve Couraça",
     "emoji": "🥬",
     "projetil": "🍃",
+    "tiro": {
+      "vel": 0.7,
+      "tam": 1.4,
+      "arco": 0.8
+    },
     "funcao": "Tanque",
     "vida": 380,
     "atq": 20,
@@ -129,6 +158,11 @@
     "nome": "Bambu Lanceiro",
     "emoji": "🎋",
     "projetil": "🥢",
+    "tiro": {
+      "vel": 1.8,
+      "tam": 1.2,
+      "arco": 0
+    },
     "funcao": "Dano perfurante",
     "vida": 230,
     "atq": 40,
@@ -157,6 +191,11 @@
     "nome": "Cogumelo Esporento",
     "emoji": "🍄",
     "projetil": "💨",
+    "tiro": {
+      "vel": 0.6,
+      "tam": 1.4,
+      "arco": 0.5
+    },
     "funcao": "Controle",
     "vida": 210,
     "atq": 30,
@@ -188,6 +227,11 @@
     "nome": "Trepadeira Laço",
     "emoji": "🌿",
     "projetil": "🌀",
+    "tiro": {
+      "vel": 0.85,
+      "tam": 1.1,
+      "arco": 0.6
+    },
     "funcao": "Controle",
     "vida": 240,
     "atq": 26,
@@ -212,6 +256,11 @@
     "nome": "Agave Arpão",
     "emoji": "🌱",
     "projetil": "🧪",
+    "tiro": {
+      "vel": 1.5,
+      "tam": 1.1,
+      "arco": 0.2
+    },
     "funcao": "Veneno",
     "vida": 230,
     "atq": 36,
@@ -242,6 +291,13 @@
     "nome": "Bromélia Cálice",
     "emoji": "🌺",
     "projetil": "✨",
+    "tiro": {
+      "qtd": 3,
+      "vel": 1.1,
+      "tam": 0.65,
+      "arco": 1.5,
+      "intervalo": 70
+    },
     "funcao": "Suporte",
     "vida": 220,
     "atq": 26,
@@ -263,6 +319,11 @@
     "nome": "Vitória-Régia",
     "emoji": "🪷",
     "projetil": "🌊",
+    "tiro": {
+      "vel": 0.6,
+      "tam": 1.6,
+      "arco": 0.3
+    },
     "funcao": "Tanque",
     "vida": 400,
     "atq": 18,
@@ -285,6 +346,13 @@
     "nome": "Jarro Devorador",
     "emoji": "🌷",
     "projetil": "🦷",
+    "tiro": {
+      "qtd": 2,
+      "vel": 1.1,
+      "tam": 1.0,
+      "arco": 0.8,
+      "intervalo": 120
+    },
     "funcao": "Finalizador",
     "vida": 210,
     "atq": 38,
@@ -408,6 +476,11 @@
     "nome": "Cacto Vulcão",
     "emoji": "🌋",
     "projetil": "🔥",
+    "tiro": {
+      "vel": 0.5,
+      "tam": 1.8,
+      "arco": 2
+    },
     "funcao": "Tanque",
     "vida": 560,
     "atq": 44,
@@ -441,6 +514,13 @@
     "nome": "Teia Esporenta",
     "emoji": "🕸️",
     "projetil": "💨",
+    "tiro": {
+      "qtd": 2,
+      "vel": 0.8,
+      "tam": 1.1,
+      "arco": 0.5,
+      "intervalo": 120
+    },
     "funcao": "Controle",
     "alvo": "rapido",
     "vida": 300,
@@ -473,6 +553,13 @@
     "nome": "Jarro Peçonhento",
     "emoji": "☠️",
     "projetil": "🧪",
+    "tiro": {
+      "qtd": 3,
+      "vel": 1.2,
+      "tam": 0.7,
+      "arco": 1,
+      "intervalo": 80
+    },
     "funcao": "Finalizador",
     "vida": 290,
     "atq": 52,
@@ -507,6 +594,13 @@
     "nome": "Lírio Curativo",
     "emoji": "💧",
     "projetil": "💧",
+    "tiro": {
+      "qtd": 3,
+      "vel": 1.0,
+      "tam": 0.7,
+      "arco": 1.4,
+      "intervalo": 80
+    },
     "funcao": "Cura",
     "vida": 340,
     "atq": 32,
@@ -538,6 +632,13 @@
     "nome": "Couve Escudeira",
     "emoji": "🛡️",
     "projetil": "🍃",
+    "tiro": {
+      "qtd": 2,
+      "vel": 0.8,
+      "tam": 1.2,
+      "arco": 0.8,
+      "intervalo": 130
+    },
     "funcao": "Tanque",
     "vida": 520,
     "atq": 34,
@@ -562,6 +663,13 @@
     "nome": "Bambu Pipoca",
     "emoji": "🏹",
     "projetil": "🍿",
+    "tiro": {
+      "qtd": 4,
+      "vel": 1.3,
+      "tam": 0.65,
+      "arco": 1.3,
+      "intervalo": 70
+    },
     "funcao": "Dano em área",
     "alvo": "fraco",
     "vida": 300,

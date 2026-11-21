@@ -18,7 +18,7 @@ export function montarUnidade(base, lado, col, linha, nivel, uid, cfg) {
   const f = 1 + cfg.crescimentoPorNivel * (nivel - 1);
   const vida = Math.round(base.vida * f);
   return {
-    uid, id: base.id, nome: base.nome, emoji: base.emoji, projetil: base.projetil,
+    uid, id: base.id, nome: base.nome, emoji: base.emoji, projetil: base.projetil, tiro: base.tiro || null,
     habilidade: base.habilidade, chefe: !!base.chefe,
     alcance: base.alcance || 'longe', alvoTipo: base.alvo || 'frente',
     faccao: base.faccao || null, categoria: base.categoria || null, forteContra: null, vantagem: 0,
