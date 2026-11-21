@@ -442,6 +442,25 @@
     },
     "xp": 300
    }
+  },
+  {
+   "id": "m24",
+   "icone": "🏆",
+   "titulo": "Campeã da Arena",
+   "fala": "Os vizinhos estão se achando na Arena. Mostra quem manda e chega no top 20!",
+   "tarefas": [
+    {
+     "tipo": "estado",
+     "chave": "subidaArena",
+     "meta": 11,
+     "texto": "Chegar ao top 20 da Arena"
+    }
+   ],
+   "premio": {
+    "moedas": 2500,
+    "orvalho": 8,
+    "xp": 300
+   }
   }
  ]
 }

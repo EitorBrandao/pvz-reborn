@@ -7,6 +7,8 @@ export function valorEstado(estado, chave) {
     case 'nivelMaxPlanta': return Math.max(0, ...Object.values(estado.colecao).map((r) => r.nivel));
     case 'plantasNaColecao': return Object.keys(estado.colecao).length;
     case 'fasesTresEstrelas': return Object.values(estado.estrelasFases).filter((n) => n >= 3).length;
+    // quantas posições você já subiu na Arena (31º = 0)
+    case 'subidaArena': return estado.arena ? estado.arena.ordem.length - estado.arena.melhor : 0;
     default: return 0;
   }
 }

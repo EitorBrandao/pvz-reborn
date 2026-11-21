@@ -172,7 +172,7 @@ export function paginasHerbario(dados, estado) {
   if (!estado.vencidas.length) vistas.clear();
   const paginas = dados.faccoes.faccoes.map((f) => {
     const itens = dados.plantas.filter((p) => p.faccao === f.id && !p.hibrida)
-      .map((p) => ({ emoji: p.emoji, nome: p.nome, visto: !!estado.colecao[p.id] }));
+      .map((p) => ({ id: p.id, emoji: p.emoji, nome: p.nome, visto: !!estado.colecao[p.id] }));
     return { id: `faccao-${f.id}`, titulo: `${f.emoji} ${h.titulos[f.id]}`, itens, premio: h.premioFaccao };
   });
   dados.campanha.mapas.forEach((m, i) => {

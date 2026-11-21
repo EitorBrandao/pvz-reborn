@@ -610,7 +610,7 @@
       "atordoa": true,
       "aplica": {
         "status": "fraqueza",
-        "valor": 0.2,
+        "valor": 0.3,
         "turnos": 2
       },
       "porEstrela": {

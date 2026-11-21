@@ -1,5 +1,8 @@
 [
+  { "versao": "0.15.1", "itens": ["📜 Missão nova da Dona Flora: chegar ao top 20 da Arena"] },
   { "versao": "0.15.0", "itens": ["🏆 Arena chegou! Toque em 🏆 Arena na horta: ranking com 30 rivais bots, 5 desafios por dia (extra custa 💧2), vitória troca sua posição com a do rival, prêmio diário pela posição e recados de quem te desafiou enquanto o jogo estava fechado. Os rivais ficam mais fortes com o tempo"] },
+  { "versao": "0.14.22", "itens": ["🪓 Coco Raizão enfraquece mais: -30% de ataque na praga (igual à Teia Esporenta), acima dos -20% da Mandioca Machadinha"] },
+  { "versao": "0.14.21", "itens": ["📖 Herbário: toque em qualquer planta pra ver vida, ataque, defesa, velocidade e habilidade dela no nível 1 (1⭐, sem rank)", "Nova página 🧬 Plantas híbridas, com todas as receitas de fusão"] },
   { "versao": "0.14.20", "itens": ["🧬 A Fusão saiu do Herbário e foi pra tela de Plantas: toque numa planta e abra a aba 🧬 Fusão. Quando dá pra fundir, aparece o aviso 🧬 na carta da planta"] },
   { "versao": "0.14.18", "itens": ["🧬 3 fusões novas: Milho + Bambu = 🏹 Bambu Pipoca (rajada de pipoca que atravessa as pragas), Mandioca + Coco = 🪓 Coco Raizão (pancadas e o último golpe deixa a praga tonta) e Melancia + Taboa = 💤 Melancia Sonolenta (rola por toda a linha da frente e faz todo mundo dormir)", "Agora toda planta tem uma fusão", "A híbrida também herda o maior rank das duas plantas (antes ficava com o menor)"] },
   { "versao": "0.14.17", "itens": ["🧬 Fusão: a planta híbrida nasce com o nível da planta mais alta das duas (não começa mais no nível 1)"] },

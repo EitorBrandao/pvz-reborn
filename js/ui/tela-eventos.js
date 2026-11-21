@@ -1,7 +1,8 @@
 // Telas da Invasão de Chefe, da Feira e do Herbário.
 
-import { arte } from '../arte.js';
-import { $, mostrarTela, avisar, preencher } from './comum.js';
+import { arte, iconeHabilidade } from '../arte.js';
+import { $, mostrarTela, avisar, preencher, textoHabilidade } from './comum.js';
+import { atributos, poder, registroNovo, habilidadeComEstrelas } from '../evolucao.js';
 import * as jogo from '../estado.js';
 import { batalhaInvasao } from '../eventos.js';
 import { hoje as hojeTexto } from '../atividades.js';
@@ -23,6 +24,7 @@ export function iniciarTelasEventos(d, { voltarDesafios, voltarBase, preparar, m
   $('invasao-voltar').addEventListener('click', voltarDesafios);
   $('feira-voltar').addEventListener('click', voltarBase);
   $('herbario-voltar').addEventListener('click', voltarBase);
+  $('herbario-info').addEventListener('click', () => $('herbario-info').classList.add('escondido'));
   $('btn-feira').addEventListener('click', abrirFeira);
   $('btn-herbario').addEventListener('click', abrirHerbario);
   setInterval(() => {
@@ -191,6 +193,34 @@ function abrirHerbario() {
   mostrarTela('tela-herbario');
 }
 
+// Status de uma planta no nível 1 (1⭐, sem rank, equipamento ou talento).
+function verPlanta(id) {
+  const p = dados.plantas.find((x) => x.id === id);
+  if (!p) return;
+  const t = dados.textos;
+  const stats = atributos(p, registroNovo(), dados);
+  const h = habilidadeComEstrelas(p.habilidade, 1);
+  const fac = dados.faccoes.faccoes.find((f) => f.id === p.faccao);
+  const rec = dados.fusoes.receitas.find((r) => r.id === id);
+  const nome = (x) => dados.plantas.find((q) => q.id === x)?.nome || x;
+  const linhas = ['vida', 'atq', 'def', 'vel'].map((a) => `<div class="linha-attr"><span>${t.atributos[a]}</span><b>${stats[a]}</b></div>`).join('');
+  $('herbario-info-conteudo').innerHTML = `
+    <div class="detalhe-topo">
+      <span class="detalhe-emoji">${arte(p)}</span>
+      <div class="detalhe-texto">
+        <h3>${p.nome}</h3>
+        <small>${p.funcao}${fac ? ` · ${fac.emoji} ${fac.nome}` : ''}</small>
+        ${rec ? `<small>${preencher(th().infoReceita, { a: nome(rec.a), b: nome(rec.b) })}</small>` : ''}
+      </div>
+    </div>
+    <p class="dica-pequena">${th().infoNivel1}</p>
+    <div class="bloco"><div class="linha-attr linha-poder"><span>${t.poder}</span><b>${poder(stats, dados)}</b></div>${linhas}</div>
+    <div class="bloco"><b>🗡️ Ataque</b><p class="dica-pequena">${preencher(t.alcance[p.alcance || 'longe'], { bonus: Math.round((dados.config.batalha.multPerto - 1) * 100) })}<br>${t.padraoAtaque[p.alvo || 'frente']}</p></div>
+    <div class="bloco"><b class="nome-hab">${iconeHabilidade(h.tipo)} ${h.nome}</b><p class="dica-pequena">${textoHabilidade(h, dados)}</p></div>
+    <p class="dica-pequena">${t.infoPlantaFechar}</p>`;
+  $('herbario-info').classList.remove('escondido');
+}
+
 // Tem página completa esperando o prêmio?
 export function herbarioTemPremio() {
   return jogo.herbario().some((p) => p.completa && !p.pega);
@@ -203,6 +233,7 @@ function desenharHerbario() {
   $('herbario-conteudo').innerHTML = `
     <p class="dica-pequena">${preencher(th().progresso, { vistos, total })}</p>
     <p class="dica-pequena">${th().fusaoMudou}</p>
+    <p class="dica-pequena">${th().toqueVer}</p>
     ${paginas.map((p) => {
     const feitos = p.itens.filter((x) => x.visto).length;
     let rodape;
@@ -212,11 +243,23 @@ function desenharHerbario() {
     return `<div class="pagina-herbario${p.completa && !p.pega ? ' pronta' : ''}">
       <div class="pagina-topo"><b>${p.titulo}</b><small>${feitos}/${p.itens.length}</small></div>
       <div class="pagina-itens">${p.itens.map((x) => `
-        <span class="item-herbario${x.visto ? '' : ' oculto'}${x.chefe ? ' chefe' : ''}" title="${x.visto ? x.nome : '???'}">
+        <span class="item-herbario${x.visto ? '' : ' oculto'}${x.chefe ? ' chefe' : ''}${x.id ? ' toque' : ''}"${x.id ? ` data-ver="${x.id}"` : ''} title="${x.visto ? x.nome : '???'}">
           <span>${arte(x)}</span><small>${x.visto ? x.nome : '???'}</small></span>`).join('')}</div>
       <div class="pagina-rodape">${rodape}</div>
     </div>`;
-  }).join('')}`;
+  }).join('')}
+    <div class="pagina-herbario">
+      <div class="pagina-topo"><b>${th().hibridasTitulo}</b></div>
+      ${dados.fusoes.receitas.map((rec) => {
+    const item = (id) => {
+      const p = dados.plantas.find((x) => x.id === id);
+      const tem = !!jogo.estado.colecao[id];
+      return `<span class="item-herbario toque${tem ? '' : ' oculto'}" data-ver="${id}" title="${p.nome}"><span>${arte(p)}</span><small>${p.nome}</small></span>`;
+    };
+    return `<div class="fusao-receita">${item(rec.a)}<b>+</b>${item(rec.b)}<b>=</b>${item(rec.id)}</div>`;
+  }).join('')}
+    </div>`;
+  $('herbario-conteudo').querySelectorAll('[data-ver]').forEach((b) => b.addEventListener('click', () => verPlanta(b.dataset.ver)));
   $('herbario-conteudo').querySelectorAll('[data-pagina]').forEach((b) => b.addEventListener('click', () => {
     const r = jogo.resgatarPagina(b.dataset.pagina);
     if (!r.ok) return;
