@@ -1,4 +1,5 @@
 [
+  { "versao": "0.14.17", "itens": ["🧬 Fusão: a planta híbrida nasce com o nível da planta mais alta das duas (não começa mais no nível 1)"] },
   { "versao": "0.14.16", "itens": ["✦ Ascensão não volta mais a planta pro nível 1: ela mantém o nível e só ganha o rank, o bônus de atributos e o nível máximo maior"] },
   { "versao": "0.14.15", "itens": ["🧬 Fusão nova: Couve Couraça + Bromélia Cálice = 🛡️ Couve Escudeira. O especial dá escudo pra todo o time e enche a energia do especial dos aliados"] },
   { "versao": "0.14.14", "itens": ["🎨 Barras de vida, XP, progresso do Labirinto e da Invasão também mantêm as cores certas no modo escuro do Samsung Internet"] },

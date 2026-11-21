@@ -1,3 +1,5 @@
+import { nivelMaximo } from './evolucao.js';
+
 // Regras da Fusão: duas plantas 5★ e ascendidas viram uma planta híbrida nova.
 // Só confere requisitos e monta o registro novo. Quem salva é o estado.js. Números em data/fusoes.json.
 
@@ -24,11 +26,14 @@ export function situacaoFusao(receita, dados, estado) {
   return { pais, cartas, custoOk, paisOk, fundida, pronta: !fundida && paisOk && custoOk };
 }
 
-// A híbrida nasce com 5★, nível 1 e o menor rank entre as duas plantas.
+// A híbrida nasce com 5★, o maior nível entre as duas plantas e o menor rank entre elas.
 export function registroHibrida(receita, estado, dados) {
-  const rank = Math.min(...[receita.a, receita.b].map((id) => estado.colecao[id].ascensao || 0));
+  const pais = [receita.a, receita.b].map((id) => estado.colecao[id]);
+  const rank = Math.min(...pais.map((r) => r.ascensao || 0));
+  const teto = nivelMaximo(dados.fusoes.estrelasMin, dados.config.evolucao, rank);
+  const nivel = Math.min(teto, Math.max(...pais.map((r) => r.nivel || 1)));
   return {
-    nivel: 1, xp: 0, estrelas: dados.fusoes.estrelasMin, ascensao: rank, fusao: 1,
+    nivel, xp: 0, estrelas: dados.fusoes.estrelasMin, ascensao: rank, fusao: 1,
     talentos: {}, copias: 0, equip: { vaso: 0, adubo: 0, regador: 0 },
   };
 }
