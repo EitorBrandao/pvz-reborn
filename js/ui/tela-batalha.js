@@ -188,7 +188,7 @@ async function animarAcao(ev) {
     estourar(a.x, a.y, 12, [corHabilidade(ev.habTipo), '#fff'], 'estrela');
     a.brilho = 1;
     tremor += 3;
-    if (!pular) som.tocarSom('especial');
+    if (!pular) som.tocarEspecial(ev.habDe);
     await espera(450);
   }
 
@@ -310,6 +310,11 @@ function mostrarEfeito(ef) {
     case 'espinhos':
       estourar(v.x, v.y, 10, ['#d7e8a8', '#4f9a3a'], 'espinho');
       flutuar(v.x, v.y - raio * 1.4, t.espinhos, '#b6ff5c', 18);
+      break;
+    case 'atordoado':
+      v.sono = 1;
+      estourar(v.x, v.y - raio * 0.6, 8, ['#ffd23a', '#fff'], 'estrela');
+      flutuar(v.x, v.y - raio * 1.4, t.atordoado, '#ffd23a', 18);
       break;
     case 'sono':
       v.sono = 1;

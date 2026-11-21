@@ -35,6 +35,21 @@
    "id": "couve_escudeira",
    "a": "couve",
    "b": "bromelia"
+  },
+  {
+   "id": "bambu_pipoca",
+   "a": "milho",
+   "b": "bambu"
+  },
+  {
+   "id": "coco_raizao",
+   "a": "mandioca",
+   "b": "coco"
+  },
+  {
+   "id": "melancia_sonolenta",
+   "a": "melancia",
+   "b": "taboa"
   }
  ]
 }

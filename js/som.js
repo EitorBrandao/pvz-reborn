@@ -85,6 +85,12 @@ const SONS = {
   escudo() { nota(500, 0.3, { tipo: 'triangle', vol: 0.15, ate: 1000 }); nota(750, 0.3, { vol: 0.08, ate: 1500 }); },
   especial() { chiado(0.35, { vol: 0.15, corte: 3000 }); nota(300, 0.35, { tipo: 'sawtooth', vol: 0.1, ate: 1200 }); },
   sono() { nota(400, 0.4, { vol: 0.12, ate: 200 }); },
+  atordoado() { [0, 0.08, 0.16].forEach((a, i) => nota(1200 - i * 150, 0.1, { tipo: 'triangle', vol: 0.1, atraso: a })); chiado(0.1, { vol: 0.3, corte: 1200 }); },
+
+  // Especial de planta com som próprio (hab_<id da planta>). As outras usam "especial".
+  hab_bambu_pipoca() { [0, 0.06, 0.11, 0.17, 0.22].forEach((a, i) => { chiado(0.05, { vol: 0.35, corte: 6000, atraso: a }); nota(900 + i * 120, 0.05, { tipo: 'square', vol: 0.05, atraso: a }); }); },
+  hab_coco_raizao() { nota(90, 0.35, { tipo: 'sawtooth', vol: 0.2, ate: 50 }); chiado(0.3, { vol: 0.4, corte: 700 }); nota(180, 0.2, { tipo: 'triangle', vol: 0.2, ate: 60, atraso: 0.15 }); },
+  hab_melancia_sonolenta() { [784, 659, 523, 392].forEach((f, i) => nota(f, 0.3, { tipo: 'triangle', vol: 0.12, atraso: i * 0.14 })); },
   lento() { nota(300, 0.35, { tipo: 'triangle', vol: 0.15, ate: 150 }); },
   espinhos() { nota(1500, 0.06, { tipo: 'square', vol: 0.05 }); nota(1700, 0.06, { tipo: 'square', vol: 0.05, atraso: 0.05 }); },
   reflexo() { nota(900, 0.1, { tipo: 'square', vol: 0.06, ate: 600 }); },
@@ -125,6 +131,11 @@ const INTERVALO = { tiro: 60, golpe: 50, critico: 80, cura: 80, escudo: 80, espi
 export function tocarStatus(nome, rodada = false) {
   const chave = `${rodada ? 'tick' : 'status'}_${nome}`;
   tocarSom(SONS[chave] ? chave : (rodada ? 'golpe' : 'status_outro'));
+}
+
+export function tocarEspecial(idPlanta) {
+  const chave = `hab_${idPlanta}`;
+  tocarSom(SONS[chave] ? chave : 'especial');
 }
 
 export function tocarSom(nome) {

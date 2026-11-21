@@ -48,7 +48,8 @@ export function textoHabilidade(hab, dados) {
   const st = a && t.status[a.status];
   const status = st ? ' ' + preencher(st.texto, { valor: Math.round(a.valor * 100), turnos: a.turnos }) : '';
   const n = hab.tipo === 'cura' ? hab.alvos : hab.tipo === 'sono' ? hab.turnos : 1;
-  const chave = hab.coluna && t.habilidades[`${hab.tipo}_coluna`] ? `${hab.tipo}_coluna` : hab.seiva && t.habilidades[`${hab.tipo}_seiva`] ? `${hab.tipo}_seiva` : n > 1 && t.habilidades[`${hab.tipo}_varios`] ? `${hab.tipo}_varios` : hab.tipo;
+  const extra = ['coluna', 'seiva', 'perfura', 'atordoa', 'area'].find((x) => hab[x] && t.habilidades[`${hab.tipo}_${x}`]);
+  const chave = extra ? `${hab.tipo}_${extra}` : n > 1 && t.habilidades[`${hab.tipo}_varios`] ? `${hab.tipo}_varios` : hab.tipo;
   return preencher(t.habilidades[chave] || '', {
     reflete: Math.round((hab.reflete || 0) * 100), turnos: hab.turnos, golpes: hab.golpes,
     reducao: Math.round((hab.reducao || 0) * 100), forca: Math.round((hab.mult || 0) * 100),

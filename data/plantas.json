@@ -554,5 +554,97 @@
         "seiva": 3
       }
     }
+  },
+  {
+    "id": "bambu_pipoca",
+    "hibrida": true,
+    "faccao": "mata",
+    "nome": "Bambu Pipoca",
+    "emoji": "🏹",
+    "projetil": "🍿",
+    "funcao": "Dano em área",
+    "alvo": "fraco",
+    "vida": 300,
+    "atq": 46,
+    "def": 20,
+    "vel": 15,
+    "habilidade": {
+      "tipo": "rajada",
+      "nome": "Chuva de Pipoca",
+      "golpes": 3,
+      "mult": 0.6,
+      "perfura": true,
+      "aplica": {
+        "status": "casca",
+        "valor": 0.2,
+        "turnos": 2
+      },
+      "porEstrela": {
+        "golpes": 0.25,
+        "mult": 0.05,
+        "aplica": {
+          "valor": 0.03
+        }
+      }
+    }
+  },
+  {
+    "id": "coco_raizao",
+    "hibrida": true,
+    "faccao": "roca",
+    "nome": "Coco Raizão",
+    "emoji": "🪓",
+    "projetil": "💥",
+    "funcao": "Corpo a corpo",
+    "alcance": "perto",
+    "alvo": "forte",
+    "vida": 420,
+    "atq": 44,
+    "def": 34,
+    "vel": 11,
+    "habilidade": {
+      "tipo": "rajada",
+      "nome": "Raizada Atordoante",
+      "golpes": 2,
+      "mult": 1.0,
+      "atordoa": true,
+      "aplica": {
+        "status": "fraqueza",
+        "valor": 0.2,
+        "turnos": 2
+      },
+      "porEstrela": {
+        "golpes": 0.25,
+        "mult": 0.05,
+        "aplica": {
+          "valor": 0.03
+        }
+      }
+    }
+  },
+  {
+    "id": "melancia_sonolenta",
+    "hibrida": true,
+    "faccao": "brejo",
+    "nome": "Melancia Sonolenta",
+    "emoji": "💤",
+    "projetil": "💥",
+    "funcao": "Controle",
+    "alcance": "perto",
+    "vida": 460,
+    "atq": 36,
+    "def": 36,
+    "vel": 9,
+    "habilidade": {
+      "tipo": "sono",
+      "nome": "Rolada de Ninar",
+      "area": true,
+      "mult": 0.8,
+      "turnos": 1,
+      "porEstrela": {
+        "mult": 0.1,
+        "turnos": 0.1
+      }
+    }
   }
 ]

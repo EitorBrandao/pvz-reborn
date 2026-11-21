@@ -49,6 +49,8 @@
     { "a": "babosa", "b": "vitoria", "emoji": "💧", "nome": "Lírio Curativo" },
     { "a": "cogumelo", "b": "trepadeira", "emoji": "🕸️", "nome": "Teia Esporenta" },
     { "a": "agave", "b": "jarro", "emoji": "☠️", "nome": "Jarro Peçonhento" },
-    { "a": "couve", "b": "bromelia", "emoji": "🛡️", "nome": "Couve Escudeira" }
+    { "a": "couve", "b": "bromelia", "emoji": "🛡️", "nome": "Couve Escudeira" },
+    { "a": "mandioca", "b": "coco", "emoji": "🪓", "nome": "Coco Raizão" },
+    { "a": "melancia", "b": "taboa", "emoji": "💤", "nome": "Melancia Sonolenta" }
   ]
 }

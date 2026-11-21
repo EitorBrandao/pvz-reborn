@@ -253,14 +253,25 @@ export function simular(unidades, cfg, semente) {
         efeitos.push({ alvo: u.uid, tipo: 'espinhos' });
         if (alvo) (h.coluna ? inimigos(u).filter((i) => i.col === alvo.col) : [alvo]).forEach((i) => bater(u, i, h.mult, efeitos));
         break;
-      case 'rajada':
+      case 'rajada': {
+        let ultimo = null;
         for (let i = 0; i < h.golpes; i++) {
           let lista = inimigos(u);
           if (u.alcance === 'perto' && lista.some((i) => i.col === 0)) lista = lista.filter((i) => i.col === 0);
           if (!lista.length) break;
-          bater(u, lista[Math.floor(rng() * lista.length)], h.mult, efeitos);
+          ultimo = lista[Math.floor(rng() * lista.length)];
+          bater(u, ultimo, h.mult, efeitos);
+          if (h.perfura) { // Bambu Pipoca: cada golpe atravessa e acerta quem está atrás
+            const atras = inimigos(u).find((x) => x.linha === ultimo.linha && x.col === 1 && x !== ultimo);
+            if (atras) bater(u, atras, h.mult, efeitos);
+          }
+        }
+        if (h.atordoa && ultimo && ultimo.vida > 0) { // Coco Raizão: o último golpe deixa tonto
+          ultimo.sono = Math.max(ultimo.sono, 1);
+          efeitos.push({ alvo: ultimo.uid, tipo: 'atordoado' });
         }
         break;
+      }
       case 'cura': {
         const feridos = aliados(u).sort((a, b) => a.vida / a.vidaMax - b.vida / b.vidaMax).slice(0, h.alvos || 1);
         const valor = Math.round(u.atq * h.mult);
@@ -290,12 +301,16 @@ export function simular(unidades, cfg, semente) {
           if (atras) bater(u, atras, h.mult, efeitos);
         }
         break;
-      case 'sono':
-        if (alvo) {
-          bater(u, alvo, h.mult, efeitos);
-          if (alvo.vida > 0) { alvo.sono = h.turnos; efeitos.push({ alvo: alvo.uid, tipo: 'sono' }); }
+      case 'sono': {
+        // Melancia Sonolenta ("area"): acerta toda a linha da frente
+        const frente = inimigos(u).filter((i) => i.col === 0);
+        const alvos = !alvo ? [] : h.area ? (frente.length ? frente : inimigos(u)) : [alvo];
+        for (const a of alvos) {
+          bater(u, a, h.mult, efeitos);
+          if (a.vida > 0) { a.sono = h.turnos; efeitos.push({ alvo: a.uid, tipo: 'sono' }); }
         }
         break;
+      }
       case 'lentidao':
         if (alvo) {
           bater(u, alvo, h.mult, efeitos);
@@ -359,6 +374,7 @@ export function simular(unidades, cfg, semente) {
       tipo: 'acao', de: u.uid, especial, perto: u.alcance === 'perto',
       nomeHab: especial ? u.habilidade.nome : null,
       habTipo: especial ? u.habilidade.tipo : null,
+      habDe: especial ? u.id : null,
       efeitos, snap: foto(),
     });
   }

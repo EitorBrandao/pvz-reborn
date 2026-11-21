@@ -360,6 +360,51 @@ const PLANTAS = {
     + P('M64 67 L80 64.5 L80 75 Q80 85 72 89.5 Q64 85 64 75 Z', '#ffd54f', 0)
     + folha(72, 86, 72, 68, 4, '#5cb83a')
     + estrela(16, 26, 4, 1.5, 4, '#fff8c0', 1.2) + estrela(86, 30, 3.5, 1.3, 4, '#fff8c0', 1.2) + estrela(14, 60, 3, 1.1, 4, '#fff8c0', 1.2),
+
+  // Bambu Pipoca: bambu com espiga de milho no topo e pipocas voando
+  bambu_pipoca: () => terra()
+    + folha(50, 90, 20, 60, 7, '#4caf2e') + folha(50, 90, 80, 60, 7, '#4caf2e')
+    + P('M38 40 L62 40 L62 91 L38 91 Z', '#b9dc5a')
+    + tom('M55 40 L62 40 L62 91 L55 91 Z', '#3d5e10', 0.18)
+    + R(36, 62, 28, 6, 3, '#87ab3c', 2.5)
+    + P('M39 40 Q39 14 50 10 Q61 14 61 40 Z', '#ffd23a')
+    + [[44, 20], [50, 16], [56, 20], [44, 28], [50, 25], [56, 28], [44, 35], [50, 33], [56, 35]].map(([x, y]) => `<rect x="${x - 2.2}" y="${y - 2.2}" width="4.4" height="4.4" rx="2" fill="#f0a81a" opacity=".8"/>`).join('')
+    + luz(43, 24, 2, 6, 0, 0.5)
+    + olho(44, 50, 5) + olho(56, 50, 5) + sobr(38, 43, 47, 46) + sobr(53, 46, 62, 43)
+    + sorriso(50, 76, 6)
+    + C(18, 30, 5, '#fff8e1', 2) + C(23, 26, 4, '#fff8e1', 2) + C(82, 22, 5, '#fff8e1', 2) + C(86, 28, 4, '#fff8e1', 2) + C(80, 48, 4, '#fff8e1', 2)
+    + C(19, 30, 1.8, '#ffd23a', 0) + C(83, 23, 1.8, '#ffd23a', 0),
+
+  // Coco Raizão: coco com raízes de mandioca nos braços e dois machadinhos
+  coco_raizao: () => terra()
+    + machado(20, 82, -24) + machado(80, 82, 24)
+    + folha(50, 34, 20, 24, 6, '#4caf50') + folha(50, 34, 36, 10, 6, '#5cb83a') + folha(50, 34, 64, 10, 6, '#5cb83a') + folha(50, 34, 80, 24, 6, '#4caf50')
+    + corda('M26 66 Q18 72 16 82', '#b5793f', 4) + corda('M74 66 Q82 72 84 82', '#b5793f', 4)
+    + C(50, 62, 28, '#7a4a22')
+    + tom('M62 37 Q79 50 77 66 Q75 83 56 89 Q73 77 71 60 Q69 46 62 37 Z')
+    + L('M27 56 Q50 62 73 56', '#b5793f', 3) + L('M30 74 Q50 80 70 74', '#b5793f', 3)
+    + luz(39, 47, 6, 3.5, -30, 0.3)
+    + olho(42, 58, 5.2) + olho(58, 58, 5.2) + sobr(35, 49, 46, 54) + sobr(54, 54, 65, 49)
+    + dentes(50, 70, 6),
+
+  // Melancia Sonolenta: melancia com cajado de taboa, gorro de dormir e zzz
+  melancia_sonolenta: () => {
+    let listras = '';
+    for (const x of [24, 38, 52, 66]) listras += `<path d="M${x} 30 Q${x - 6} 62 ${x} 94 L${x + 5} 94 Q${x - 1} 62 ${x + 5} 30 Z"/>`;
+    return terra()
+      + corda('M82 90 L82 24', '#6b8e23', 3) + R(76, 14, 12, 24, 6, '#7b4a26', 2.5)
+      + '<clipPath id="ms"><circle cx="48" cy="62" r="29"/></clipPath>'
+      + C(48, 62, 29, '#3a9a3a', 0)
+      + `<g clip-path="url(#ms)" fill="#1f6b2a">${listras}</g>`
+      + C(48, 62, 29, 'none')
+      + P('M26 44 Q34 20 56 22 Q66 24 70 40 Q48 34 26 44 Z', '#7e57c2')
+      + C(57, 18, 4.5, '#fff8e1', 2)
+      + luz(34, 50, 4, 7, 30, 0.3)
+      + olhoSono(40, 56, 5, '#3a9a3a') + olhoSono(56, 56, 5, '#3a9a3a')
+      + P('M36 68 Q48 86 60 68 Z', '#ff4d5e')
+      + P('M37.5 68.5 L58.5 68.5 L57 71.5 L39 71.5 Z', '#fff', 1.5)
+      + corda('M10 18 L20 18 L10 28 L20 28', '#b388ff', 2.5) + corda('M4 5 L11 5 L4 12 L11 12', '#b388ff', 2);
+  },
 };
 
 // ---------- Pragas ----------
