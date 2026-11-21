@@ -100,7 +100,7 @@ for (const f of [...listar('js'), ...listar('data'), ...listar('css'), 'index.ht
 // ---------- 8. Som: todo status aplicado tem som próprio ----------
 const som = ler('js/som.js');
 const statusUsados = new Set();
-const varrer = (o) => { if (o && typeof o === 'object') { if (typeof o.status === 'string') statusUsados.add(o.status); Object.values(o).forEach(varrer); } };
+const varrer = (o) => { if (o && typeof o === 'object') { if (typeof o.status === 'string' && /^[a-z_]+$/.test(o.status)) statusUsados.add(o.status); Object.values(o).forEach(varrer); } };
 Object.values(dados).forEach(varrer);
 for (const s of statusUsados) if (!new RegExp(`\\bstatus_${s}\\s*\\(`).test(som)) erro('som', `o status "${s}" não tem som próprio (status_${s}) em js/som.js`);
 
@@ -113,7 +113,8 @@ for (const [tela, mus] of Object.entries(dados.config?.som?.musicaPorTela || {})
   if (!html.includes(`id="${tela}"`)) aviso('música', `musicaPorTela cita "${tela}", mas não achei essa tela no index.html`);
 }
 const usoMusica = Object.values(dados.config?.som?.musicaPorTela || {});
-for (const m of musicas) if (m !== 'horta' && !usoMusica.includes(m) && !new RegExp(`['"]${m}['"]`).test(ler('js/main.js') + ler('js/ui/comum.js'))) aviso('música', `a música "${m}" não é usada por nenhuma tela`);
+const codigoJs = listar('js').filter((f) => f.endsWith('.js')).map(ler).join('\n') + JSON.stringify(dados);
+for (const m of musicas) if (m !== 'horta' && !usoMusica.includes(m) && !new RegExp(`['"]${m}['"]`).test(codigoJs)) aviso('música', `a música "${m}" não é usada por nenhuma tela`);
 
 // ---------- 10. Híbridas sempre melhores que as plantas normais ----------
 // Compara com as duas plantas da receita E com a melhor planta normal do jogo, em pé de igualdade
