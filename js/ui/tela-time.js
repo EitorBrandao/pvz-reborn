@@ -66,7 +66,9 @@ function rotuloFase(f) {
 
 function desenharFase() {
   const f = faseEscolhida;
-  const inimigos = f.inimigos.map((i) => arte(dados.pragas.find((p) => p.id === i.praga)) || '?').join('');
+  const inimigos = f.rival
+    ? f.rival.time.map((m) => arte(dados.plantas.find((p) => p.id === m.planta)) || '?').join('')
+    : f.inimigos.map((i) => arte(dados.pragas.find((p) => p.id === i.praga)) || '?').join('');
   const cats = [...new Set(f.inimigos.map((i) => dados.pragas.find((p) => p.id === i.praga)?.categoria))]
     .map((id) => dados.faccoes.categorias.find((c) => c.id === id)).filter(Boolean)
     .map((c) => `${c.emoji} ${c.nome}`).join(' · ');
@@ -82,10 +84,11 @@ function desenharFase() {
 // Poder do time contra o das pragas: verde se o time é mais forte, vermelho se é mais fraco.
 function textoPoder() {
   const t = dados.textos;
+  const f = faseEscolhida;
   const { planta: nosso, praga: deles } = poderLados(faseEscolhida, jogo.estado.time, dados, jogo.estado.colecao);
   if (!jogo.estado.time.length) return `<span class="poder-comparar">${preencher(t.poderVazio, { deles })}</span>`;
   const classe = nosso >= deles ? 'mais-forte' : 'mais-fraco';
-  return `<span class="poder-comparar ${classe}">${preencher(t.poderComparar, { nosso, deles })}</span>`;
+  return `<span class="poder-comparar ${classe}">${preencher(f.rival ? t.poderCompararArena : t.poderComparar, { nosso, deles })}</span>`;
 }
 
 function desenharBonus() {

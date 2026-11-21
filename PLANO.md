@@ -161,7 +161,7 @@ Cada fase termina com algo jogável no celular, testado antes de seguir.
 4. **Campanha:** mapas, fases, chefes, estrelas, fôlego, missões.
    - [ ] Pronto quando: o primeiro mapa inteiro dá pra jogar do começo ao chefe.
 5. **Arena e bots:** ranking, desafios, defesa offline, mural, recados.
-   - [ ] Pronto quando: ao abrir depois de um dia, o ranking mudou e o mural tem novidades críveis.
+   - [x] Pronto quando: ao abrir depois de um dia, o ranking mudou e o mural tem novidades críveis. (v0.15.0: ranking de 30 rivais, 5 desafios/dia, prêmio diário, recados de defesa offline; números em `data/arena.json`)
 6. **Capricho:** arte final, sons, animações, balanceamento.
    - [ ] Pronto quando: dá vontade de jogar todo dia.
 7. **Atividades rápidas:** Torre das Pragas, Desafio do Dia e Horta de Treino (tela "Desafios").

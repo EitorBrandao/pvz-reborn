@@ -13,6 +13,7 @@ import { iniciarRotina, desenharRotina, mostrarPresenca } from './ui/painel-roti
 import { iniciarTelasEventos, abrirInvasao, montarBatalhaInvasao, desenharAtalhos } from './ui/tela-eventos.js';
 import { iniciarTelaAtividades, abrirTelaAtividades } from './ui/tela-atividades.js';
 import { iniciarTelaLabirinto, abrirLabirinto } from './ui/tela-labirinto.js';
+import { iniciarTelaArena, abrirArena } from './ui/tela-arena.js';
 import { prepararCampanha, proximaFase, faseLiberada } from './campanha.js';
 import { gerarAndar, checarTime } from './atividades.js';
 import * as som from './som.js';
@@ -69,6 +70,12 @@ function pedirRecarga() {
 function lutar(fase) {
   const problema = checarTime(fase, jogo.estado.time, dados);
   if (problema) return avisar(preencher(dados.textos[problema.erro], problema));
+  if (fase.tipo === 'arena') {
+    // cada desafio gasta um dos 5 do dia (ou 💧) e só vale contra quem ainda está acima de você
+    const r = jogo.gastarDesafioArena(fase.rival.id);
+    if (!r.ok) return avisar(dados.textos[r.erro]);
+    return comecarBatalha(fase);
+  }
   if (fase.tipo === 'invasao') {
     // cada ataque usa a vida atual do chefe e gasta um ataque do dia
     const nova = montarBatalhaInvasao();
@@ -257,7 +264,7 @@ function ligarSom() {
 }
 
 async function comecar() {
-  const [config, textos, plantas, pragas, cartas, campanha, equipamentos, missoes, faccoes, atividades, changelog, rotina, invasao, feira, herbario, ascensao, talentos, pesadelo, labirinto, fusoes] = await Promise.all([
+  const [config, textos, plantas, pragas, cartas, campanha, equipamentos, missoes, faccoes, atividades, changelog, rotina, invasao, feira, herbario, ascensao, talentos, pesadelo, labirinto, fusoes, arena] = await Promise.all([
     lerJson('data/config.json'),
     lerJson('data/mensagens.json'),
     lerJson('data/plantas.json'),
@@ -278,8 +285,9 @@ async function comecar() {
     lerJson('data/pesadelo.json'),
     lerJson('data/labirinto.json'),
     lerJson('data/fusoes.json'),
+    lerJson('data/arena.json'),
   ]);
-  dados = { config, textos, plantas, pragas, cartas, campanha: prepararCampanha(campanha, pesadelo), equipamentos, missoes, faccoes, atividades, rotina, invasao, feira, herbario, ascensao, talentos, pesadelo, labirinto, fusoes };
+  dados = { config, textos, plantas, pragas, cartas, campanha: prepararCampanha(campanha, pesadelo), equipamentos, missoes, faccoes, atividades, rotina, invasao, feira, herbario, ascensao, talentos, pesadelo, labirinto, fusoes, arena };
 
   iniciarArte(dados);
   jogo.iniciar(dados);
@@ -293,6 +301,7 @@ async function comecar() {
   const mapaDaFase = (fase) => {
     if (fase && fase.tipo === 'invasao') return abrirInvasao();
     if (fase && fase.tipo === 'labirinto') return abrirLabirinto();
+    if (fase && fase.tipo === 'arena') return abrirArena();
     if (fase && fase.tipo) return abrirTelaAtividades();
     return abrirTelaMapa(fase ? fase.mapaIndice : undefined, !!(fase && fase.pesadelo));
   };
@@ -300,6 +309,7 @@ async function comecar() {
   iniciarTelaAtividades(dados, { voltar: irParaBase, preparar: abrirTelaTime });
   iniciarTelaTime(dados, { lutar, voltar: mapaDaFase });
   iniciarTelaLabirinto(dados, { lutar, voltar: abrirTelaAtividades });
+  iniciarTelaArena(dados, { voltar: irParaBase, preparar: abrirTelaTime, mudou: atualizarTela });
   iniciarTelaBatalha(dados, {
     lutar,
     sair: mapaDaFase,

@@ -1,0 +1,274 @@
+{
+  "desafiosPorDia": 5,
+  "maxRodadas": 20,
+  "custoDesafioExtra": 2,
+  "alcance": 5,
+  "nivelBase": 4,
+  "nivelTopo": 92,
+  "curva": 1.2,
+  "nivelPorDia": 0.4,
+  "diasMax": 75,
+  "vagasPorNivel": [
+    [
+      0,
+      3
+    ],
+    [
+      20,
+      4
+    ],
+    [
+      35,
+      5
+    ],
+    [
+      50,
+      6
+    ]
+  ],
+  "hibridasDesdeNivel": 55,
+  "ausenciaDiasMax": 3,
+  "ataquesPorDia": 2,
+  "muralMax": 8,
+  "vitoria": {
+    "moedasBase": 40,
+    "moedasPorNivel": 14,
+    "xpBase": 20,
+    "xpPorNivel": 6,
+    "orvalhoPorPosicao": 1,
+    "orvalhoMaxPorDia": 6
+  },
+  "cartas": [
+    {
+      "carta": "adubo",
+      "chance": 0.7
+    },
+    {
+      "carta": "fibra",
+      "chance": 0.5
+    },
+    {
+      "carta": "seiva_dourada",
+      "chance": 0.2
+    },
+    {
+      "carta": "petala_rara",
+      "chance": 0.12
+    }
+  ],
+  "premiosDiarios": [
+    {
+      "ate": 1,
+      "premio": {
+        "moedas": 3000,
+        "orvalho": 8,
+        "cartas": {
+          "semente_misteriosa": 1,
+          "petala_rara": 2
+        }
+      }
+    },
+    {
+      "ate": 3,
+      "premio": {
+        "moedas": 2000,
+        "orvalho": 5,
+        "cartas": {
+          "petala_rara": 1
+        }
+      }
+    },
+    {
+      "ate": 10,
+      "premio": {
+        "moedas": 1200,
+        "orvalho": 3,
+        "cartas": {
+          "seiva_dourada": 1
+        }
+      }
+    },
+    {
+      "ate": 20,
+      "premio": {
+        "moedas": 600,
+        "orvalho": 2,
+        "cartas": {
+          "fibra": 2
+        }
+      }
+    },
+    {
+      "ate": 99,
+      "premio": {
+        "moedas": 250,
+        "orvalho": 1,
+        "cartas": {
+          "adubo": 1
+        }
+      }
+    }
+  ],
+  "rivais": [
+    {
+      "nome": "Lavínia",
+      "emoji": "👩‍🌾",
+      "estilo": "dano"
+    },
+    {
+      "nome": "Kauã",
+      "emoji": "🧑",
+      "estilo": "dano"
+    },
+    {
+      "nome": "Seu Bento",
+      "emoji": "👴",
+      "estilo": "tanque"
+    },
+    {
+      "nome": "Dona Zefa",
+      "emoji": "👵",
+      "estilo": "misto"
+    },
+    {
+      "nome": "Tião do Sertão",
+      "emoji": "🤠",
+      "estilo": "dano"
+    },
+    {
+      "nome": "Marina",
+      "emoji": "👩‍🔬",
+      "estilo": "misto"
+    },
+    {
+      "nome": "Caio Raiz",
+      "emoji": "🧔",
+      "estilo": "tanque"
+    },
+    {
+      "nome": "Bia Brotinho",
+      "emoji": "👧",
+      "estilo": "misto"
+    },
+    {
+      "nome": "Tereza",
+      "emoji": "👩‍🦳",
+      "estilo": "tanque"
+    },
+    {
+      "nome": "Neto da Horta",
+      "emoji": "👦",
+      "estilo": "dano"
+    },
+    {
+      "nome": "Joana Orvalho",
+      "emoji": "👩",
+      "estilo": "misto"
+    },
+    {
+      "nome": "Baiano",
+      "emoji": "🧑‍🌾",
+      "estilo": "dano"
+    },
+    {
+      "nome": "Clara",
+      "emoji": "👱‍♀️",
+      "estilo": "misto"
+    },
+    {
+      "nome": "Seu Osvaldo",
+      "emoji": "👨‍🦳",
+      "estilo": "tanque"
+    },
+    {
+      "nome": "Pedrinho",
+      "emoji": "🧒",
+      "estilo": "dano"
+    },
+    {
+      "nome": "Luzia",
+      "emoji": "👩‍🦰",
+      "estilo": "misto"
+    },
+    {
+      "nome": "Fábio Estufa",
+      "emoji": "🧑‍🔧",
+      "estilo": "tanque"
+    },
+    {
+      "nome": "Nanda",
+      "emoji": "👩‍🦱",
+      "estilo": "dano"
+    },
+    {
+      "nome": "Zeca",
+      "emoji": "👨",
+      "estilo": "misto"
+    },
+    {
+      "nome": "Rosinha",
+      "emoji": "👩‍🍳",
+      "estilo": "tanque"
+    },
+    {
+      "nome": "Beto Adubão",
+      "emoji": "👨‍🌾",
+      "estilo": "dano"
+    },
+    {
+      "nome": "Duda",
+      "emoji": "🙋‍♀️",
+      "estilo": "misto"
+    },
+    {
+      "nome": "Vovô Jair",
+      "emoji": "🧓",
+      "estilo": "tanque"
+    },
+    {
+      "nome": "Ivone",
+      "emoji": "💁‍♀️",
+      "estilo": "misto"
+    },
+    {
+      "nome": "Gabriel",
+      "emoji": "🧑‍🎓",
+      "estilo": "dano"
+    },
+    {
+      "nome": "Cida",
+      "emoji": "🙆‍♀️",
+      "estilo": "tanque"
+    },
+    {
+      "nome": "Lucas Semente",
+      "emoji": "🙋‍♂️",
+      "estilo": "misto"
+    },
+    {
+      "nome": "Rodrigo",
+      "emoji": "🥷",
+      "estilo": "dano"
+    },
+    {
+      "nome": "Mariazinha",
+      "emoji": "👶",
+      "estilo": "tanque"
+    },
+    {
+      "nome": "Novato",
+      "emoji": "🐣",
+      "estilo": "misto"
+    }
+  ],
+  "recados": {
+    "venceu": [
+      "{nome} te desafiou e perdeu pra você 😅",
+      "{nome} tentou te derrubar, mas sua defesa aguentou!"
+    ],
+    "perdeu": [
+      "{nome} te ganhou e tomou sua posição 😬",
+      "{nome} passou na sua frente. Hora da revanche!"
+    ]
+  }
+}

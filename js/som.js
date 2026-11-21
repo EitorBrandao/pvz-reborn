@@ -187,6 +187,16 @@ const MUSICAS = {
         440, 0, 523, 587, 659, 0, 587, 523, 494, 0, 415, 0, 440, 0, 0, 0],
     },
   },
+  // Arena: duelo animado, com baixo marchando e melodia de fanfarra.
+  arena: {
+    passo: 0.2,
+    baixo: { notas: [165, 165, 247, 165, 196, 196, 294, 196], cada: 2, timbre: 'square', vol: 0.14 },
+    melodia: {
+      timbre: 'sawtooth', vol: 0.05,
+      notas: [659, 0, 659, 784, 988, 0, 784, 0, 880, 0, 784, 659, 740, 0, 0, 0,
+        659, 0, 784, 0, 988, 1175, 988, 0, 880, 784, 740, 0, 659, 0, 0, 0],
+    },
+  },
   // Feira: alegre e saltitante, de mercado.
   feira: {
     passo: 0.2,

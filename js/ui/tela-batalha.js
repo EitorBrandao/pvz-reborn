@@ -468,7 +468,7 @@ function terminar(resultado, semente) {
       vidas[u.id] = s ? Math.max(0, s.vida) / u.vidaMax : 0;
     }
   }
-  const { xp, moedas, orvalho, subiram, subiuJogador, cartas } = jogo.registrarBatalha(batalhaAtual, resultado.vitoria, sorteadas, estrelas, { dano, vidas });
+  const { xp, moedas, orvalho, subiram, subiuJogador, cartas, arena } = jogo.registrarBatalha(batalhaAtual, resultado.vitoria, sorteadas, estrelas, { dano, vidas });
   const invasao = batalhaAtual.tipo === 'invasao';
   atualizarBotoes();
 
@@ -505,6 +505,11 @@ function terminar(resultado, semente) {
     const vagas = jogo.vagasTime();
     if (vagas > jogo.vagasTime(jogo.estado.nivel - subiuJogador)) extras.push(preencher(textos.vagaLiberada, { vagas }));
   }
+  if (arena) {
+    const ta = textos.arena;
+    extras.push(arena.subiu > 0 ? preencher(ta.subiu, { n: arena.subiu, pos: arena.posicao }) : preencher(ta.mesmaPosicao, { pos: arena.posicao }));
+    if (arena.orvalho) extras.push(preencher(ta.orvalhoPosicao, { n: arena.orvalho }));
+  }
   for (const { missao } of jogo.missoesAtivas().filter((x) => x.completa && !missoesAntes.has(x.missao.id))) {
     extras.push(`📜 ${preencher(textos.missaoCompleta, { titulo: missao.titulo })}`);
   }
@@ -522,7 +527,7 @@ function terminar(resultado, semente) {
   $('btn-proxima').textContent = textos.botaoProxima[batalhaAtual.tipo || 'campanha'];
   $('btn-sair-batalha').textContent = textos.botaoSair[batalhaAtual.tipo || 'campanha'];
   // na torre, depois de vencer, o caminho é subir (repetir o andar não dá nada)
-  $('btn-de-novo').classList.toggle('escondido', (resultado.vitoria && batalhaAtual.tipo === 'torre') || batalhaAtual.tipo === 'labirinto');
+  $('btn-de-novo').classList.toggle('escondido', (resultado.vitoria && batalhaAtual.tipo === 'torre') || batalhaAtual.tipo === 'labirinto' || batalhaAtual.tipo === 'arena');
 
   const area = $('resultado-cartas');
   area.innerHTML = '';

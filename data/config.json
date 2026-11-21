@@ -1,5 +1,5 @@
 {
-  "versaoJogo": "0.14.20",
+  "versaoJogo": "0.15.0",
   "inicio": {
     "moedas": 500,
     "orvalho": 10,
@@ -138,6 +138,7 @@
       "tela-atividades": "desafios",
       "tela-treino": "desafios",
       "tela-invasao": "invasao",
+      "tela-arena": "arena",
       "tela-feira": "feira",
       "tela-herbario": "herbario",
       "tela-labirinto": "labirinto"

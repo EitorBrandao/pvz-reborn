@@ -57,6 +57,34 @@ function marcarVantagem(u, dados) {
   }
 }
 
+// Monta uma planta pronta pra lutar (atributos, habilidade com estrelas e talentos).
+// "lado" é 'planta' (jogador) ou 'praga' (time rival da Arena).
+function unidadeDePlanta(base, registro, m, lado, uid, dados, cfg) {
+  const u = montarUnidade(base, lado, m.col, m.linha, registro.nivel, uid, cfg);
+  u.rank = registro.ascensao || 0;
+  u.fusao = registro.fusao || 0;
+  const stats = atributos(base, registro, dados);
+  Object.assign(u, stats, {
+    vidaMax: stats.vida, estrelas: registro.estrelas,
+    habilidade: habilidadeComEstrelas(base.habilidade, registro.estrelas),
+  });
+  // Talentos: crítico, força da habilidade e seiva
+  const tal = bonusTalentos(registro, dados, base);
+  u.bonusCritico = tal.critico;
+  u.bonusCritDano = tal.critDano;
+  u.bonusSeivaTurno = tal.seivaTurno;
+  u.seiva = Math.min(100, tal.seivaInicial);
+  if (tal.potencia > 0) {
+    const h = { ...u.habilidade };
+    if (h.mult) h.mult = Math.round(h.mult * (1 + tal.potencia) * 100) / 100;
+    if (h.seiva) h.seiva = Math.round(h.seiva * (1 + tal.potencia));
+    if (h.reflete) h.reflete = Math.round(h.reflete * (1 + tal.potencia) * 100) / 100;
+    if (h.pctVida) h.pctVida = Math.round(h.pctVida * (1 + tal.potencia) * 1000) / 1000;
+    u.habilidade = h;
+  }
+  return u;
+}
+
 // Monta as unidades dos dois lados a partir do time do jogador e da batalha escolhida.
 // "colecao" traz nível, estrelas e equipamentos de cada planta.
 export function prepararBatalha(batalha, time, dados, colecao = {}) {
@@ -70,28 +98,7 @@ export function prepararBatalha(batalha, time, dados, colecao = {}) {
     if (!base) continue;
     if (lab && (lab.vidas[m.planta] ?? 1) <= 0) continue; // planta caída no labirinto
     const registro = colecao[m.planta] || registroNovo();
-    const u = montarUnidade(base, 'planta', m.col, m.linha, registro.nivel, `u${n++}`, cfg);
-    u.rank = registro.ascensao || 0;
-    u.fusao = registro.fusao || 0;
-    const stats = atributos(base, registro, dados);
-    Object.assign(u, stats, {
-      vidaMax: stats.vida, estrelas: registro.estrelas,
-      habilidade: habilidadeComEstrelas(base.habilidade, registro.estrelas),
-    });
-    // Talentos: crítico, força da habilidade e seiva
-    const tal = bonusTalentos(registro, dados, base);
-    u.bonusCritico = tal.critico;
-    u.bonusCritDano = tal.critDano;
-    u.bonusSeivaTurno = tal.seivaTurno;
-    u.seiva = Math.min(100, tal.seivaInicial);
-    if (tal.potencia > 0) {
-      const h = { ...u.habilidade };
-      if (h.mult) h.mult = Math.round(h.mult * (1 + tal.potencia) * 100) / 100;
-      if (h.seiva) h.seiva = Math.round(h.seiva * (1 + tal.potencia));
-      if (h.reflete) h.reflete = Math.round(h.reflete * (1 + tal.potencia) * 100) / 100;
-      if (h.pctVida) h.pctVida = Math.round(h.pctVida * (1 + tal.potencia) * 1000) / 1000;
-      u.habilidade = h;
-    }
+    const u = unidadeDePlanta(base, registro, m, 'planta', `u${n++}`, dados, cfg);
     if (lab) {
       // bênçãos do Labirinto
       const b = lab.mods;
@@ -136,6 +143,25 @@ export function prepararBatalha(batalha, time, dados, colecao = {}) {
     }
     marcarVantagem(u, dados);
     unidades.push(u);
+  }
+  if (batalha.rival) {
+    // Arena: o outro lado também é um time de plantas (no lado das pragas), com bônus de facção
+    const r = batalha.rival;
+    const doRival = [];
+    for (const m of r.time) {
+      const base = dados.plantas.find((p) => p.id === m.planta);
+      if (!base) continue;
+      doRival.push(unidadeDePlanta(base, r.colecao[m.planta] || registroNovo(), m, 'praga', `u${n++}`, dados, cfg));
+    }
+    if (dados.faccoes) {
+      for (const { faccao, bonus } of bonusFaccoes(r.time, dados)) {
+        for (const u of doRival.filter((x) => x.faccao === faccao.id)) {
+          u[faccao.atributo] = Math.round(u[faccao.atributo] * (1 + bonus));
+          if (faccao.atributo === 'vida') u.vidaMax = u.vida;
+        }
+      }
+    }
+    unidades.push(...doRival);
   }
   return unidades;
 }

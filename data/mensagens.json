@@ -190,7 +190,8 @@
     "desafio": "Próxima ➡️",
     "treino": "Próxima ➡️",
     "invasao": "Próxima ➡️",
-    "labirinto": "Continuar"
+    "labirinto": "Continuar",
+    "arena": "Próxima ➡️"
   },
   "botaoSair": {
     "campanha": "Mapa",
@@ -198,14 +199,16 @@
     "desafio": "Sair",
     "treino": "Sair",
     "invasao": "Voltar",
-    "labirinto": "Labirinto"
+    "labirinto": "Labirinto",
+    "arena": "Arena"
   },
   "rotuloAtividade": {
     "torre": "🗼 Torre das Pragas",
     "desafio": "📅 Desafio do Dia",
     "treino": "🎯 Horta de Treino",
     "invasao": "👹 Invasão de Chefe",
-    "labirinto": "🌳 Labirinto das Raízes"
+    "labirinto": "🌳 Labirinto das Raízes",
+    "arena": "🏆 Arena"
   },
   "regraTimeMax": "Regra do desafio: no máximo {max} plantas no time.",
   "regraFaccao": "Regra do desafio: só plantas {emoji} {faccao} no time.",
@@ -397,5 +400,36 @@
   "fusaoPais": "As duas plantas precisam ter 5⭐ e pelo menos Rank 1 de ascensão.",
   "fusaoCusto": "Faltam moedas, orvalho ou materiais pra fundir.",
   "fusaoViagem": "Uma das plantas está em expedição. Espere ela voltar.",
-  "fusaoLabirinto": "Uma das plantas está numa corrida do Labirinto. Termine a corrida primeiro."
+  "fusaoLabirinto": "Uma das plantas está numa corrida do Labirinto. Termine a corrida primeiro.",
+  "poderCompararArena": "💪 Seu time {nosso} × {deles} Rival",
+  "arenaSaiuDoAlcance": "Esse rival já não está acima de você. Escolha outro.",
+  "arenaSemDesafio": "Acabaram os desafios de hoje e você não tem 💧 pra comprar mais.",
+  "arena": {
+    "posicao": "Você está em {pos}º de {total}",
+    "melhor": "Melhor posição: {melhor}º",
+    "gratis": "⚔️ {n}/{max} desafios grátis hoje",
+    "gratisAcabou": "⚔️ Desafios grátis acabaram: cada novo custa 💧{custo}",
+    "premioTitulo": "🎁 Prêmio do dia (pela sua posição)",
+    "premioPegar": "Pegar prêmio",
+    "premioPego": "Prêmio de hoje já pego ✅ Volte amanhã",
+    "pegou": "Prêmio da Arena: {premio}",
+    "muralTitulo": "📣 Enquanto você estava fora",
+    "muralOk": "Entendi",
+    "muralVazio": "Ninguém te desafiou ainda.",
+    "desafiar": "⚔️ Desafiar",
+    "desafiarPago": "⚔️ Desafiar · 💧{custo}",
+    "desafiaveisTitulo": "🎯 Quem você pode desafiar",
+    "desafiaveisVazio": "Você é o 1º do ranking! Ninguém acima de você. 👑",
+    "desafiaveisDica": "Vencer troca sua posição com a do rival. Quem estiver abaixo de você também pode te desafiar enquanto o jogo está fechado: sua defesa é o time que você deixou montado.",
+    "rankingTitulo": "🏆 Ranking",
+    "voce": "Você",
+    "subiu": "🏆 Você subiu {n} posição(ões)! Agora está em {pos}º.",
+    "mesmaPosicao": "Sua posição continua {pos}º.",
+    "orvalhoPosicao": "+{n} 💧 por chegar mais longe no ranking!",
+    "estilos": {
+      "dano": "Dano",
+      "tanque": "Tanque",
+      "misto": "Equilibrado"
+    }
+  }
 }

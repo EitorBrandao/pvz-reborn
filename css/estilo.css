@@ -830,6 +830,18 @@ body {
 .ranking-invasao li.voce { border-color: var(--laranja); background: #fff3d6; box-shadow: 0 0 0 2px var(--laranja); }
 .ranking-invasao .pos { font-weight: 900; width: 28px; }
 
+/* ---------- Arena ---------- */
+.painel-arena { display: flex; flex-direction: column; gap: 6px; padding-bottom: 12px; }
+.painel-arena h4 { margin: 10px 0 2px; }
+.arena-resumo { background: var(--bege); color: var(--escuro); border: 3px solid var(--terra); border-radius: 14px; padding: 8px 12px; display: flex; flex-direction: column; gap: 2px; text-align: center; box-shadow: var(--sombra); }
+.arena-posicao { font-size: 1.25rem; font-weight: 900; }
+.arena-mural { background: #fff3d6; color: var(--escuro); border: 3px solid var(--laranja); border-radius: 14px; padding: 8px 12px; display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
+.arena-mural p { margin: 0; font-size: .85rem; }
+.arena-mural p.ganhou { color: #2f7d1f; }
+.arena-mural p.perdeu { color: #c0392b; }
+.arena-rival .inimigos { font-size: 1.2rem; letter-spacing: 1px; }
+.painel-arena .ranking-invasao { margin-top: 2px; }
+
 /* ---------- Herbário ---------- */
 .pagina-herbario { background: var(--bege); color: var(--escuro); border: 3px solid var(--terra); border-radius: 14px; padding: 8px 10px; margin-bottom: 10px; }
 .pagina-herbario.pronta { border-color: var(--laranja); box-shadow: 0 0 0 2px var(--laranja); }
