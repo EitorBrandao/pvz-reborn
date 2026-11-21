@@ -121,6 +121,13 @@ const SONS = {
     nota(440, 0.3, { tipo: 'triangle', vol: 0.15, ate: 880, atraso: 0.12 });
   },
 
+  // Ronda da Horta: palha da cesta mexendo e moedinhas caindo
+  ronda() {
+    chiado(0.18, { vol: 0.25, corte: 1800 }); chiado(0.14, { vol: 0.2, corte: 2400, atraso: 0.12 });
+    [784, 988, 1175, 988, 1319].forEach((f, i) => nota(f, 0.1, { tipo: 'square', vol: 0.05, atraso: 0.3 + i * 0.08 }));
+    nota(523, 0.45, { tipo: 'triangle', vol: 0.15, atraso: 0.3 });
+  },
+
   vitoria() { [523, 659, 784, 1047].forEach((f, i) => nota(f, i === 3 ? 0.6 : 0.18, { tipo: 'triangle', vol: 0.22, atraso: i * 0.13 })); },
   derrota() { [392, 330, 262, 196].forEach((f, i) => nota(f, i === 3 ? 0.7 : 0.25, { tipo: 'triangle', vol: 0.2, atraso: i * 0.2 })); },
 };

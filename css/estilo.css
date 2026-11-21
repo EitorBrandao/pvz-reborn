@@ -760,6 +760,28 @@ body {
 .vaso-expedicao { background: #d8ecfa; border-color: #2a6fa3; }
 @keyframes pronto { to { transform: translateY(-3px); } }
 
+.botao-ronda {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; max-width: 340px; margin-top: 8px; padding: 8px;
+  background: var(--laranja); color: var(--escuro);
+  border: 3px solid var(--escuro); border-radius: 14px; box-shadow: var(--sombra);
+  font: 800 1rem var(--fonte); cursor: pointer;
+}
+.botao-ronda small { font-size: .7rem; font-weight: 700; opacity: .8; }
+.botao-ronda.vazio, .botao-ronda.bloqueada { background: #e6dcc0; }
+.botao-ronda.bloqueada { opacity: .7; }
+.selo-ronda { background: var(--vermelho); color: #fff; border: 2px solid var(--escuro); border-radius: 99px; font-size: .75rem; padding: 0 7px; }
+.linha-ronda {
+  display: flex; align-items: center; gap: 8px; text-align: left;
+  padding: 6px 8px; background: #fff8e6; border: 2px solid var(--terra); border-radius: 12px;
+}
+.linha-ronda .escolha-emoji { font-size: 1.5rem; }
+.linha-ronda .escolha-preco { font-size: .85rem; }
+.chave-ronda { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: .85rem; margin: 4px 0; }
+.chave-ronda input { width: 20px; height: 20px; accent-color: var(--laranja); }
+.total-ronda { display: flex; justify-content: space-between; font-weight: 800; border-top: 2px solid var(--terra); padding-top: 6px; margin: 6px 0; }
+.botoes-ronda { display: grid; grid-template-columns: 1fr 1.4fr; gap: 8px; }
+
 .lista-escolha { display: flex; flex-direction: column; gap: 6px; margin: 8px 0; }
 .linha-escolha {
   display: flex; align-items: center; gap: 8px; text-align: left;

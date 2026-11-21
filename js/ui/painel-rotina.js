@@ -3,10 +3,11 @@
 import { arte } from '../arte.js';
 import { $, avisar, preencher } from './comum.js';
 import * as jogo from '../estado.js';
+import * as som from '../som.js';
 
 let dados;
 let aoMudar;
-let aberto = null;         // o que está aberto na janela: 'vaso', 'expedicao' ou 'presenca'
+let aberto = null;         // o que está aberto na janela: 'vaso', 'expedicao', 'presenca', 'ronda' ou 'resultado'
 let vasoAberto = 0;
 let destinoEscolhido = null;
 let escolhidas = [];
@@ -14,6 +15,7 @@ let escolhidas = [];
 export function iniciarRotina(d, mudou) {
   dados = d;
   aoMudar = mudou;
+  $('btn-ronda').addEventListener('click', abrirRonda);
   $('rotina-modal').addEventListener('click', (e) => {
     if (e.target.id === 'rotina-modal' || e.target.closest('.rotina-fechar')) fechar();
   });
@@ -89,6 +91,7 @@ export function desenharRotina() {
   b.innerHTML = `<span>${exp ? exp.destino.emoji : '🧭'}</span><small>${
     !exp ? t().expedicao : exp.pronta ? t().receber : formatar(exp.falta)}</small>`;
   if (aberto === 'expedicao' && exp) desenharExpedicao();
+  desenharBotaoRonda();
 }
 
 // ---------- Janela ----------
@@ -249,4 +252,110 @@ export function mostrarPresenca() {
     fechar();
     aoMudar();
   });
+}
+
+// ---------- Ronda da Horta ----------
+
+function desenharBotaoRonda() {
+  const b = $('btn-ronda');
+  if (!jogo.rondaLiberada()) {
+    b.className = 'botao-ronda bloqueada';
+    b.innerHTML = `🔒 🧺 ${t().ronda} <small>${preencher(t().nivelMin, { nivel: dados.rotina.ronda.nivelMin })}</small>`;
+    return;
+  }
+  const n = jogo.rondaProntos();
+  b.className = 'botao-ronda' + (n ? ' pronto' : ' vazio');
+  b.innerHTML = n ? `🧺 ${t().ronda} <span class="selo-ronda">${n}</span>` : `🧺 ${t().ronda} <small>${t().rondaNada}</small>`;
+}
+
+const emojiPlanta = (id) => arte(dados.plantas.find((p) => p.id === id));
+
+function linhaRonda(item) {
+  const tx = t();
+  let emoji;
+  let titulo;
+  let detalhe = '';
+  let valor = tx.gratis;
+  if (item.tipo === 'vaso') {
+    emoji = item.muda.emoji;
+    titulo = preencher(tx.rondaVaso, { n: item.i + 1, nome: item.muda.nome });
+    detalhe = `${tx.colhe} 🪙 ${item.muda.moedas}`;
+    if (item.replanta) {
+      titulo += ` ${preencher(tx.rondaVasoReplanta, { nome: item.replanta.nome })}`;
+      valor = `-🪙 ${item.replanta.custo}`;
+    } else {
+      const motivo = item.motivo === 'semMoedas' ? tx.rondaSemMoedas : item.motivo === 'mudaBloqueada' ? tx.rondaMudaBloqueada : tx.rondaVasoSoColhe;
+      titulo += ` (${motivo})`;
+    }
+  } else if (item.tipo === 'expedicao') {
+    emoji = item.destino.emoji;
+    titulo = item.vao.length ? preencher(tx.rondaExpedicao, { destino: item.destino.nome }) : tx.rondaExpedicaoSoReceber;
+    detalhe = [item.vao.map(emojiPlanta).join(' '), item.ficam.length ? preencher(tx.rondaFicam, { plantas: item.ficam.map(emojiPlanta).join(' ') }) : '']
+      .filter(Boolean).join(' · ');
+  } else {
+    emoji = { presenca: '📅', arena: '🏆', invasao: '👾' }[item.tipo];
+    titulo = item.tipo === 'presenca' ? preencher(tx.rondaPresenca, { n: item.dia + 1 })
+      : preencher(item.tipo === 'arena' ? tx.rondaArena : tx.rondaInvasao, { pos: item.posicao });
+    detalhe = textoPremio(item.premio);
+  }
+  return `<div class="linha-ronda"><span class="escolha-emoji">${emoji}</span>
+    <span class="escolha-info"><b>${titulo}</b>${detalhe ? `<small>${detalhe}</small>` : ''}</span>
+    <span class="escolha-preco">${valor}</span></div>`;
+}
+
+function abrirRonda() {
+  if (!jogo.rondaLiberada()) return avisar(preencher(t().rondaBloqueada, { nivel: dados.rotina.ronda.nivelMin }));
+  const replantar = jogo.estado.ronda.replantar;
+  const p = jogo.previaRonda(replantar);
+  if (p.vazio) return avisar(t().rondaVazia);
+  abrirJanela('ronda', `<h3>🧺 ${t().rondaTitulo}</h3>
+    <p class="dica-pequena">${t().rondaDica}</p>
+    <div class="lista-escolha">${p.itens.map(linhaRonda).join('')}</div>
+    <label class="chave-ronda"><input id="ronda-replantar" type="checkbox"${replantar ? ' checked' : ''}> ${t().rondaReplantar}</label>
+    <p class="total-ronda"><span>${t().rondaCusto}</span><b>${p.custo ? `🪙 ${p.custo}` : t().gratis}</b></p>
+    <div class="botoes-ronda">
+      <button class="btn rotina-fechar">${t().agoraNao}</button>
+      <button id="ronda-fazer" class="btn btn-laranja">${t().fazerRonda}</button>
+    </div>`);
+  $('ronda-replantar').addEventListener('change', (e) => {
+    jogo.definirReplantar(e.target.checked);
+    abrirRonda();
+  });
+  $('ronda-fazer').addEventListener('click', () => {
+    const r = jogo.fazerRonda(jogo.estado.ronda.replantar);
+    if (!r.ok) { avisar(t()[r.erro]); fechar(); aoMudar(); return; }
+    mostrarResumoRonda(r);
+    aoMudar();
+  });
+}
+
+function mostrarResumoRonda(r) {
+  const tx = t();
+  const partes = [`🪙 +${r.moedas}`];
+  if (r.orvalho) partes.push(`💧 +${r.orvalho}`);
+  if (r.xp) partes.push(`✨ ${r.xp} XP`);
+  const linhas = [];
+  if (r.replantados.length) {
+    linhas.push(`<div class="linha-ronda"><span class="escolha-emoji">🌱</span><span class="escolha-info"><b>${preencher(tx.rondaReplantados, { n: r.replantados.length })}</b></span><span class="escolha-preco">-🪙 ${r.custo}</span></div>`);
+  }
+  if (r.expedicao) {
+    linhas.push(`<div class="linha-ronda"><span class="escolha-emoji">${r.expedicao.destino.emoji}</span><span class="escolha-info"><b>${tx.rondaVoltouSaiu}</b><small>${r.expedicao.plantas.map(emojiPlanta).join(' ')}</small></span><span class="escolha-preco">${preencher(tx.rondaVoltaEm, { tempo: formatarDuracao(r.expedicao.falta) })}</span></div>`);
+  }
+  if (r.subiram.length) linhas.push(`<p>${preencher(tx.subiramNivel, { plantas: r.subiram.map((s) => emojiPlanta(s.id)).join('') })}</p>`);
+  abrirJanela('resultado', `<h3>${tx.rondaFeita}</h3>
+    <p class="rotina-premio">${partes.join(' · ')}</p>
+    <div id="ronda-cartas" class="cartas"></div>
+    ${linhas.join('')}
+    <button class="btn btn-laranja btn-largo rotina-fechar">${tx.oba}</button>`);
+  const area = $('ronda-cartas');
+  r.cartas.forEach((id, i) => {
+    const c = dados.cartas.find((x) => x.id === id);
+    if (!c) return;
+    const div = document.createElement('div');
+    div.className = `carta ${c.raridade}`;
+    div.style.animationDelay = `${0.2 + i * 0.12}s`;
+    div.innerHTML = `<span>${c.emoji}</span><small>${c.nome}</small>`;
+    area.appendChild(div);
+  });
+  som.tocarSom('ronda');
 }

@@ -206,5 +206,9 @@
         }
       }
     ]
+  },
+  "ronda": {
+    "nivelMin": 5,
+    "replantarPadrao": true
   }
 }

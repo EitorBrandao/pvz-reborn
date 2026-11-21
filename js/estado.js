@@ -64,6 +64,7 @@ function novoEstado() {
     herbario: { pegas: [] },
     labirinto: { melhor: 0, coringa: 0, run: null },
     arena: null,
+    ronda: { mudas: [], destino: null, plantas: [], replantar: dados.rotina.ronda.replantarPadrao },
   };
 }
 
@@ -84,6 +85,10 @@ function completar(salvo) {
     for (const no of Object.keys(r.talentos)) if (!evo.noTalento(dados, base, no)) delete r.talentos[no];
   }
   while (e.canteiro.length < dados.rotina.canteiro.vasos) e.canteiro.push(null);
+  // Ronda: saves antigos lembram a muda que está em cada vaso e a expedição que está viajando
+  if (!e.ronda) e.ronda = novoEstado().ronda;
+  e.canteiro.forEach((v, i) => { if (v && !e.ronda.mudas[i]) e.ronda.mudas[i] = v.muda; });
+  if (e.expedicao && !e.ronda.destino) { e.ronda.destino = e.expedicao.destino; e.ronda.plantas = [...e.expedicao.plantas]; }
   return e;
 }
 
@@ -828,6 +833,7 @@ export function plantarMuda(i, idMuda) {
   if (estado.moedas < muda.custo) return { ok: false, erro: 'semMoedas' };
   estado.moedas -= muda.custo;
   estado.canteiro[i] = { muda: muda.id, desde: Date.now() };
+  estado.ronda.mudas[i] = muda.id;
   contar('plantarMuda');
   salvarAgora();
   return { ok: true };
@@ -891,6 +897,8 @@ export function enviarExpedicao(idDestino, plantas) {
   if (plantas.some((id) => !estado.colecao[id] || estado.time.some((m) => m.planta === id))) return { ok: false, erro: 'expedicaoNoTime' };
   const previa = previaExpedicao(destino.id, plantas);
   estado.expedicao = { destino: destino.id, plantas: [...plantas], desde: Date.now(), duracao: previa.duracao };
+  estado.ronda.destino = destino.id;
+  estado.ronda.plantas = [...plantas];
   contar('enviarExpedicao');
   salvarAgora();
   return { ok: true };
@@ -937,6 +945,139 @@ export function resgatarPresenca() {
   contar('presenca');
   salvarAgora();
   return { ok: true, indice, premio };
+}
+
+// ---------- Ronda da Horta ----------
+// Um toque faz a parte repetida da rotina: colhe e replanta a mesma muda, recebe e reenvia
+// a expedição com as mesmas plantas e pega os prêmios parados. Nunca gasta orvalho
+// e nunca escolhe nada novo: só repete o que o jogador fez da última vez.
+
+export function rondaLiberada() {
+  return estado.nivel >= dados.rotina.ronda.nivelMin;
+}
+
+function arenaPremioPendente() {
+  return !!estado.arena && estado.arena.premioDia !== hoje();
+}
+
+// Quantas coisas a Ronda tem pra pegar agora (o selo do botão)
+export function rondaProntos() {
+  let n = 0;
+  for (let i = 0; i < estado.canteiro.length; i++) if (vasoInfo(i).pronto) n++;
+  const exp = expedicaoInfo();
+  if (exp && exp.pronta) n++;
+  if (presencaPendente() >= 0) n++;
+  if (arenaPremioPendente()) n++;
+  if (invasaoPendente()) n++;
+  return n;
+}
+
+function plantasQueVoltamAViajar(plantas) {
+  return plantas.filter((id) => estado.colecao[id] && !estado.time.some((m) => m.planta === id));
+}
+
+// O que a Ronda vai fazer e quanto custa, sem mexer em nada.
+// Replantar acontece depois de pegar tudo, na ordem dos vasos, enquanto as moedas derem.
+export function previaRonda(replantar = estado.ronda.replantar) {
+  const itens = [];
+  let moedas = estado.moedas;
+  let custo = 0;
+  const vasos = [];
+  for (let i = 0; i < estado.canteiro.length; i++) {
+    const info = vasoInfo(i);
+    if (!info.pronto) continue;
+    moedas += info.muda.moedas;
+    vasos.push({ i, muda: info.muda });
+  }
+  const exp = expedicaoInfo();
+  let expedicao = null;
+  if (exp && exp.pronta) {
+    moedas += previaExpedicao(exp.destino.id, exp.plantas).moedas;
+    const vao = plantasQueVoltamAViajar(exp.plantas);
+    const ficam = exp.plantas.filter((id) => !vao.includes(id));
+    expedicao = { tipo: 'expedicao', destino: exp.destino, vao, ficam };
+  }
+  const dia = presencaPendente();
+  if (dia >= 0) {
+    const premio = dados.rotina.presenca.premios[dia];
+    moedas += premio.moedas || 0;
+    itens.push({ tipo: 'presenca', dia, premio });
+  }
+  if (arenaPremioPendente()) {
+    const a = arenaAtual();
+    const posicao = posicaoNoRanking(rankingArena(a));
+    const premio = ar.premioDiario(posicao, dados);
+    moedas += premio.moedas || 0;
+    itens.push({ tipo: 'arena', posicao, premio });
+  }
+  const inv = invasaoPendente();
+  if (inv) {
+    moedas += inv.premio.moedas || 0;
+    itens.push({ tipo: 'invasao', posicao: inv.posicao, premio: inv.premio });
+  }
+  const linhasVasos = vasos.map(({ i, muda }) => {
+    const proxima = mudaPorId(estado.ronda.mudas[i] || muda.id);
+    let replanta = null;
+    let motivo = '';
+    if (replantar && proxima) {
+      if (estado.nivel < proxima.nivelMin) motivo = 'mudaBloqueada';
+      else if (moedas < proxima.custo) motivo = 'semMoedas';
+      else { replanta = proxima; moedas -= proxima.custo; custo += proxima.custo; }
+    }
+    return { tipo: 'vaso', i, muda, replanta, motivo };
+  });
+  const lista = [...linhasVasos, ...(expedicao ? [expedicao] : []), ...itens];
+  return { itens: lista, custo, vazio: !lista.length };
+}
+
+export function definirReplantar(sim) {
+  estado.ronda.replantar = !!sim;
+  salvarAgora();
+}
+
+export function fazerRonda(replantar = estado.ronda.replantar) {
+  if (!rondaLiberada()) return { ok: false, erro: 'rondaBloqueada' };
+  const previa = previaRonda(replantar);
+  if (previa.vazio) return { ok: false, erro: 'rondaVazia' };
+  const r = { ok: true, moedas: 0, orvalho: 0, xp: 0, cartas: [], custo: 0, replantados: [], subiram: [], expedicao: null, premios: [] };
+  const antes = { moedas: estado.moedas, orvalho: estado.orvalho, inventario: { ...estado.inventario } };
+  // 1) colher e receber tudo
+  for (const item of previa.itens) {
+    if (item.tipo === 'vaso') {
+      const c = colherVaso(item.i);
+      if (c.ok) r.cartas.push(...c.cartas);
+    } else if (item.tipo === 'expedicao') {
+      const e = receberExpedicao();
+      if (e.ok) {
+        r.cartas.push(...e.cartas);
+        r.xp += e.xp;
+        r.subiram.push(...e.subiram);
+      }
+    } else if (item.tipo === 'presenca') {
+      if (resgatarPresenca().ok) r.premios.push(item);
+    } else if (item.tipo === 'arena') {
+      if (resgatarPremioArena().ok) r.premios.push(item);
+    } else if (item.tipo === 'invasao') {
+      if (resgatarInvasao().ok) r.premios.push(item);
+    }
+  }
+  // cartas dos prêmios fixos também aparecem no resumo
+  for (const p of r.premios) for (const [carta, qtd] of Object.entries(p.premio.cartas || {})) for (let k = 0; k < qtd; k++) r.cartas.push(carta);
+  // 2) replantar e reenviar, repetindo a última escolha
+  for (const item of previa.itens) {
+    if (item.tipo === 'vaso' && item.replanta) {
+      const p = plantarMuda(item.i, item.replanta.id);
+      if (p.ok) { r.custo += item.replanta.custo; r.replantados.push(item.replanta); }
+    } else if (item.tipo === 'expedicao' && item.vao.length) {
+      const e = enviarExpedicao(item.destino.id, item.vao);
+      if (e.ok) r.expedicao = { destino: item.destino, plantas: item.vao, ficam: item.ficam, falta: expedicaoInfo().falta };
+    }
+  }
+  r.moedas = estado.moedas - antes.moedas + r.custo;
+  r.orvalho = estado.orvalho - antes.orvalho;
+  contar('ronda');
+  salvarAgora();
+  return r;
 }
 
 // ---------- Evolução ----------
