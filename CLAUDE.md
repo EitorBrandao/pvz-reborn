@@ -35,7 +35,7 @@ Todo `git push` que mexe na `main` passa pelo revisor `tools/revisor/revisar.mjs
 
 Antes de subir, rode na mão (pelo subagente de testes): `node tools/revisor/revisar.mjs`. Ele confere:
 
-- **Híbridas sempre superiores**: cada híbrida tem mais 💪 poder que as duas plantas da receita (nível 1, 25 e 50); efeito igual ao de uma planta da receita (mesmo status ou mesmo tipo de habilidade) nunca mais fraco em 5★; a fusão herda o maior nível e o maior rank e nasce 5★; híbrida vai até `rankMax`, planta normal para em `rankMaxSemFusao`.
+- **Híbridas sempre superiores**: cada híbrida tem mais 💪 poder que as duas plantas da receita (nível 1, 25 e 50) e que a planta normal mais forte da mesma classe (tanque, dano, apoio, controle); efeito igual ao de uma planta da receita (mesmo status ou mesmo tipo de habilidade) nunca mais fraco em 5★; a fusão herda o maior nível e o maior rank e nasce 5★; híbrida vai até `rankMax`, planta normal para em `rankMaxSemFusao`.
 - Versão igual nos dois lugares e maior que a da `main` quando o jogo muda; main mais nova já juntada.
 - Arquivo novo na lista `ARQUIVOS`; nada listado que não exista.
 - `js/arte.js` mudou → fonte refeita (`art/arte.woff2` e `js/arte-fonte.js`) no mesmo envio.

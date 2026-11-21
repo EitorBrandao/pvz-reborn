@@ -149,8 +149,13 @@ try {
         if (ph <= pp) erro('híbrida', `${h.nome} (💪${ph}) não é mais forte que ${p.nome} (💪${pp}) no nível ${nivel}, rank ${rank}`);
       }
     }
-    const melhorNormal = normais.reduce((m, p) => (poderDe(p, reg(1, 0)) > poderDe(m, reg(1, 0)) ? p : m), normais[0]);
-    if (poderDe(h, reg(1, 0)) <= poderDe(melhorNormal, reg(1, 0))) aviso('híbrida', `${h.nome} (💪${poderDe(h, reg(1, 0))}) não passa a planta normal mais forte, ${melhorNormal.nome} (💪${poderDe(melhorNormal, reg(1, 0))})`);
+    // Mesma classe (tanque, dano, apoio, controle): a classe muda como os pontos se distribuem, então só compara dentro dela.
+    const classe = (p) => dados.talentos?.funcoes?.[p.funcao] || 'dano';
+    const mesmaClasse = normais.filter((p) => classe(p) === classe(h));
+    for (const [nivel, rank] of [[1, 0], [50, 3]]) {
+      const melhor = mesmaClasse.reduce((m, p) => (!m || poderDe(p, reg(nivel, rank)) > poderDe(m, reg(nivel, rank)) ? p : m), null);
+      if (melhor && poderDe(h, reg(nivel, rank)) <= poderDe(melhor, reg(nivel, rank))) erro('híbrida', `${h.nome} (💪${poderDe(h, reg(nivel, rank))}) não passa a planta normal mais forte da classe ${classe(h)}, ${melhor.nome} (💪${poderDe(melhor, reg(nivel, rank))}), no nível ${nivel}, rank ${rank}`);
+    }
 
     // b) Habilidade: efeitos que a planta da receita também tem não podem ser mais fracos na híbrida (comparando em 5★)
     const hh = evo.habilidadeComEstrelas(h.habilidade, 5);
