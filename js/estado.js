@@ -847,8 +847,6 @@ export function ascender(idPlanta) {
   estado.moedas -= custo.moedas;
   evo.gastarCartas(estado.inventario, custo.cartas);
   registro.ascensao = (registro.ascensao || 0) + 1;
-  registro.nivel = 1;
-  registro.xp = 0;
   contar('ascender');
   salvarAgora();
   return { ok: true };

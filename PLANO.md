@@ -171,7 +171,7 @@ Cada fase termina com algo jogável no celular, testado antes de seguir.
 9. **Eventos e coleção:** Invasão de Chefe (chefe gigante de vários dias com ranking de dano junto com os bots), Feira (troca de materiais e loja que muda todo dia, só com moedas do jogo) e Herbário (álbum de plantas e pragas encontradas, com prêmio por página).
    - [x] Pronto quando: tem um chefe de invasão rolando, a feira mudou de um dia pro outro e o herbário dá prêmio ao completar uma página.
 
-10. **Ascensão:** planta no nível 50 e 5★ pode ascender (rank 1 a 5): volta ao nível 1, mantém estrelas e equipamento, e ganha bônus permanente de atributos (+25% por rank) e o nível máximo sobe 10 por rank. Custa Mudas Repetidas, Fibras e moedas (valores em `data/ascensao.json`). Selo do rank aparece na carta da planta.
+10. **Ascensão:** planta no nível 50 e 5★ pode ascender (rank 1 a 5): mantém o nível, as estrelas e o equipamento (desde a v0.14.16 não volta mais ao nível 1), e ganha bônus permanente de atributos (+25% por rank) e o nível máximo sobe 10 por rank. Custa Mudas Repetidas, Fibras e moedas (valores em `data/ascensao.json`). Selo do rank aparece na carta da planta.
    - [x] Pronto quando: uma planta 5★ nível 50 ascende, volta ao nível 1 e, ao treinar de novo, fica mais forte do que antes.
 11. **Árvore de talentos:** cada planta ganha 1 ponto a cada 5 níveis (e pontos extras por rank de ascensão). Três ramos: 🌱 Raiz (defesa e vida), 🔥 Tronco (ataque e velocidade), 🌸 Folha (habilidade e status). Cada planta tem nós próprios, então dois cactos podem ficar bem diferentes. Resetar custa 💧 Orvalho. Números em `data/talentos.json`.
    - [x] Pronto quando: dá pra gastar pontos numa planta, ver o efeito na batalha e resetar a árvore.

@@ -101,7 +101,7 @@
   "trocaMaterial": "🎲 Material de equipamento",
   "materialGanho": "+{qtd} {nome}",
   "ascensaoNaoPronta": "A planta precisa estar com 5 ⭐ e no nível máximo pra ascender.",
-  "ascensaoConfirma": "Ascender {nome}? Ela volta pro nível 1 (mantém estrelas e equipamentos), mas fica com +{bonus}% de atributos pra sempre e o nível máximo sobe.",
+  "ascensaoConfirma": "Ascender {nome}? Ela mantém o nível, as estrelas e os equipamentos, e fica com +{bonus}% de atributos pra sempre e o nível máximo sobe.",
   "ascensaoFeita": "{nome} ascendeu! Rank {rank}.",
   "semPontos": "Sem pontos de talento. Suba de nível ou ascenda a planta.",
   "talentoMax": "Esse talento já está no máximo.",
