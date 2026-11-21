@@ -121,6 +121,12 @@ const SONS = {
     nota(440, 0.3, { tipo: 'triangle', vol: 0.15, ate: 880, atraso: 0.12 });
   },
 
+  // Seu Tonico: assobio do fazendeiro e enxada batendo na terra
+  tonico() {
+    [988, 1319, 1175, 1568].forEach((f, i) => nota(f, 0.14, { vol: 0.1, ate: f * 1.05, atraso: i * 0.12 }));
+    [0.55, 0.75].forEach((a) => { chiado(0.08, { vol: 0.35, corte: 900, atraso: a }); nota(140, 0.1, { tipo: 'triangle', vol: 0.2, ate: 90, atraso: a }); });
+  },
+
   // Ronda da Horta: palha da cesta mexendo e moedinhas caindo
   ronda() {
     chiado(0.18, { vol: 0.25, corte: 1800 }); chiado(0.14, { vol: 0.2, corte: 2400, atraso: 0.12 });

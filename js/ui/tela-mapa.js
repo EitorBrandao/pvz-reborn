@@ -4,6 +4,7 @@ import { arte } from '../arte.js';
 import { $, mostrarTela, avisar, preencher } from './comum.js';
 import * as jogo from '../estado.js';
 import * as som from '../som.js';
+import { rolarCartas } from '../batalha.js';
 import { mapaLiberado, faseLiberada, concluida, faseAtual, pesadeloLiberado } from '../campanha.js';
 
 let dados;
@@ -160,5 +161,69 @@ function abrirPainel(fase) {
     $('fase-painel').classList.add('escondido');
     aoPreparar(fase);
   });
+  desenharTonico(fase);
   $('fase-painel').classList.remove('escondido');
+}
+
+// ---------- Seu Tonico: joga a fase várias vezes por você ----------
+
+function desenharTonico(fase) {
+  const cfg = dados.rotina.tonico;
+  const tx = dados.textos.tonico;
+  const caixa = document.createElement('div');
+  caixa.className = 'tonico';
+  if (!jogo.tonicoLiberado(fase)) {
+    caixa.classList.add('bloqueado');
+    caixa.innerHTML = `<span class="tonico-rosto">${cfg.emoji}</span><small>${preencher(tx.precisa3, { nome: cfg.nome })}</small>`;
+    $('fase-conteudo').appendChild(caixa);
+    return;
+  }
+  const fala = tx.falas[Math.floor(Math.random() * tx.falas.length)];
+  const botoes = cfg.vezes.map((v) => {
+    const p = jogo.previaTonico(fase, v);
+    const pode = p.feitas >= v;
+    return `<button class="btn tonico-vezes${pode ? '' : ' apagado'}" data-vezes="${v}">${v}×<small>⚡${fase.folego * v}</small>${
+      pode && p.encheu ? `<small class="tonico-enche">${tx.nivelEnche}</small>` : ''}</button>`;
+  }).join('');
+  caixa.innerHTML = `<div class="tonico-topo"><span class="tonico-rosto">${cfg.emoji}</span>
+      <span class="escolha-info"><b>${cfg.nome}</b><small>“${fala}”</small></span></div>
+    <div class="tonico-botoes">${botoes}</div>`;
+  $('fase-conteudo').appendChild(caixa);
+  caixa.querySelectorAll('[data-vezes]').forEach((b) => b.addEventListener('click', () => {
+    const vezes = Number(b.dataset.vezes);
+    const r = jogo.mandarTonico(fase, vezes, (f) => rolarCartas(f, Math.random));
+    if (!r.ok) return avisar(preencher(tx[r.erro], { vezes, nome: cfg.nome }));
+    mostrarResultadoTonico(fase, r);
+  }));
+}
+
+function mostrarResultadoTonico(fase, r) {
+  const cfg = dados.rotina.tonico;
+  const tx = dados.textos.tonico;
+  const partes = [`🪙 +${r.moedas}`];
+  if (r.orvalho) partes.push(`💧 +${r.orvalho}`);
+  partes.push(`✨ ${r.xp} XP`);
+  const subiram = Object.keys(r.subiram).map((id) => arte(dados.plantas.find((p) => p.id === id))).join('');
+  $('fase-conteudo').innerHTML = `
+    <button id="fase-fechar" class="fechar" aria-label="Fechar">✖</button>
+    <div class="tonico-rosto grande">${cfg.emoji}</div>
+    <h3>${preencher(tx.voltou, { nome: cfg.nome, n: r.feitas })}</h3>
+    <p class="rotina-premio">${partes.join(' · ')}</p>
+    <div id="tonico-cartas" class="cartas"></div>
+    ${subiram ? `<p>${preencher(dados.textos.rotina.subiramNivel, { plantas: subiram })}</p>` : ''}
+    ${r.subiuJogador ? `<p><b>${preencher(tx.subiuJogador, { nivel: jogo.estado.nivel })}</b></p>` : ''}
+    <button id="tonico-ok" class="btn btn-grande btn-laranja">${tx.valeu}</button>`;
+  const area = $('tonico-cartas');
+  r.cartas.forEach((id, i) => {
+    const c = dados.cartas.find((x) => x.id === id);
+    if (!c) return;
+    const div = document.createElement('div');
+    div.className = `carta ${c.raridade}`;
+    div.style.animationDelay = `${0.2 + i * 0.1}s`;
+    div.innerHTML = `<span>${c.emoji}</span><small>${c.nome}</small>`;
+    area.appendChild(div);
+  });
+  $('tonico-ok').addEventListener('click', () => abrirPainel(fase));
+  som.tocarSom('tonico');
+  if (r.subiuJogador) som.tocarSom('nivel');
 }

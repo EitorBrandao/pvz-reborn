@@ -1080,6 +1080,54 @@ export function fazerRonda(replantar = estado.ronda.replantar) {
   return r;
 }
 
+// ---------- Seu Tonico: repetir fase da campanha ----------
+// Numa fase já vencida com 3 estrelas, joga X vezes de uma vez: cada vez gasta o fôlego e
+// conta como vitória com 3 estrelas. Uma vez de cada: se o XP fizer o jogador subir de nível
+// no meio, o fôlego enche e ele continua (é mecânica, não bug).
+
+export function tonicoLiberado(fase) {
+  return (estado.estrelasFases[fase.id] || 0) >= dados.rotina.tonico.estrelasMin;
+}
+
+// Quantas das "vezes" dá pra fazer com o fôlego de agora, contando os níveis que vai subir
+export function previaTonico(fase, vezes) {
+  const c = config.jogador;
+  let f = folego().valor;
+  let nivel = estado.nivel;
+  let xp = estado.xpJogador;
+  let encheu = false;
+  for (let k = 0; k < vezes; k++) {
+    if (f < fase.folego) return { feitas: k, encheu };
+    f -= fase.folego;
+    xp += fase.recompensa.xp || 0;
+    let subiu = false;
+    while (xp >= c.xpBase + nivel * c.xpPorNivel) { xp -= c.xpBase + nivel * c.xpPorNivel; nivel += 1; subiu = true; }
+    if (subiu) { f = Math.max(f, config.folego.max); encheu = true; }
+  }
+  return { feitas: vezes, encheu, custo: fase.folego * vezes };
+}
+
+export function mandarTonico(fase, vezes, sortearCartasFase) {
+  if (!tonicoLiberado(fase)) return { ok: false, erro: 'precisa3' };
+  if (!dados.rotina.tonico.vezes.includes(vezes)) return { ok: false, erro: 'semFolego' };
+  if (previaTonico(fase, vezes).feitas < vezes) return { ok: false, erro: 'semFolego' };
+  const r = { ok: true, feitas: 0, moedas: 0, orvalho: 0, xp: 0, cartas: [], subiram: {}, subiuJogador: 0 };
+  for (let k = 0; k < vezes; k++) {
+    if (!gastarFolego(fase.folego)) break;
+    const res = registrarBatalha(fase, true, sortearCartasFase(fase), 3);
+    r.feitas += 1;
+    r.moedas += res.moedas;
+    r.orvalho += res.orvalho;
+    r.xp += res.xp;
+    r.cartas.push(...res.cartas);
+    for (const s of res.subiram) r.subiram[s.id] = s.nivel;
+    r.subiuJogador += res.subiuJogador;
+  }
+  contar('tonico', r.feitas);
+  salvarAgora();
+  return r;
+}
+
 // ---------- Evolução ----------
 // Cada função devolve { ok: true, ... } ou { ok: false, erro: 'chave do texto' }
 

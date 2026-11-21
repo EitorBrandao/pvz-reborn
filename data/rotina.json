@@ -210,5 +210,15 @@
   "ronda": {
     "nivelMin": 5,
     "replantarPadrao": true
+  },
+  "tonico": {
+    "nome": "Seu Tonico",
+    "emoji": "🧑‍🌾",
+    "vezes": [
+      3,
+      5,
+      10
+    ],
+    "estrelasMin": 3
   }
 }

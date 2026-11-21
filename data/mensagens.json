@@ -302,6 +302,16 @@
     "rondaVoltouSaiu": "Expedição voltou e saiu de novo",
     "rondaVoltaEm": "volta em {tempo}"
   },
+  "tonico": {
+    "falas": ["Essa eu já sei de cor. Deixa comigo!", "Mais uma volta nesse canteiro? É pra já!", "Pode descansar que eu cuido das pragas."],
+    "dica": "Joga essa fase {vezes} vezes por você e entrega os prêmios na hora. Usa o fôlego de todas as vezes.",
+    "nivelEnche": "⬆️ nível enche o ⚡",
+    "semFolego": "Fôlego não dá pra {vezes} vezes.",
+    "voltou": "{nome} voltou! {n} vitórias",
+    "valeu": "Valeu, Tonico!",
+    "subiuJogador": "Você subiu pro nível {nivel} e o fôlego encheu!",
+    "precisa3": "Vença com ⭐⭐⭐ pra mandar o {nome}."
+  },
   "invasao": {
     "danoCausado": "💥 {dano} de dano!",
     "acabaEm": "Foge em {tempo}. Todos os vizinhos batem no mesmo chefe.",

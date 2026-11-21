@@ -782,6 +782,20 @@ body {
 .total-ronda { display: flex; justify-content: space-between; font-weight: 800; border-top: 2px solid var(--terra); padding-top: 6px; margin: 6px 0; }
 .botoes-ronda { display: grid; grid-template-columns: 1fr 1.4fr; gap: 8px; }
 
+.tonico {
+  display: flex; flex-direction: column; gap: 6px; margin-top: 10px; padding: 8px;
+  background: #fff3d6; border: 2px solid var(--laranja); border-radius: 12px;
+}
+.tonico.bloqueado { flex-direction: row; align-items: center; background: #fff8e6; border-color: var(--terra); opacity: .75; }
+.tonico-topo { display: flex; align-items: center; gap: 8px; text-align: left; }
+.tonico-rosto { font-size: 2rem; line-height: 1; }
+.tonico-rosto.grande { font-size: 3rem; text-align: center; }
+.tonico-botoes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.tonico-vezes { display: flex; flex-direction: column; align-items: center; padding: 4px 2px; font-size: 1.05rem; }
+.tonico-vezes small { font-size: .7rem; }
+.tonico-vezes .tonico-enche { font-size: .6rem; color: #2f7d1f; }
+.tonico-vezes.apagado { opacity: .45; }
+
 .lista-escolha { display: flex; flex-direction: column; gap: 6px; margin: 8px 0; }
 .linha-escolha {
   display: flex; align-items: center; gap: 8px; text-align: left;
