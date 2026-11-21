@@ -182,7 +182,7 @@ function desenharTonico(fase) {
   const botoes = cfg.vezes.map((v) => {
     const p = jogo.previaTonico(fase, v);
     const pode = p.feitas >= v;
-    return `<button class="btn tonico-vezes${pode ? '' : ' apagado'}" data-vezes="${v}">${v}×<small>⚡${fase.folego * v}</small>${
+    return `<button class="btn tonico-vezes${pode ? ' btn-laranja' : ' apagado'}" data-vezes="${v}">${v}×<small>⚡${fase.folego * v}</small>${
       pode && p.encheu ? `<small class="tonico-enche">${tx.nivelEnche}</small>` : ''}</button>`;
   }).join('');
   caixa.innerHTML = `<div class="tonico-topo"><span class="tonico-rosto">${cfg.emoji}</span>
