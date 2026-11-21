@@ -8,7 +8,7 @@ import * as som from '../som.js';
 
 let dados;
 let aberta = null;      // id da planta aberta no detalhe
-let abaDetalhe = 'status'; // aba aberta no detalhe: status, evoluir, talentos ou equip
+let abaDetalhe = 'status'; // aba aberta no detalhe: status, evoluir, talentos, equip ou fusao
 let mudanca = null;    // { antes, depois } pra mostrar o quanto ficou mais forte
 
 const ATRIBUTOS = ['vida', 'atq', 'def', 'vel'];
@@ -107,7 +107,39 @@ function melhorias(r, p) {
   // Só avisa se sobrou ponto E ainda existe talento que dá pra subir
   const temTalentoPraSubir = classeTalento(dados, p).ramos.some((ramo) => ramo.nos.some((no) => ((r.talentos || {})[no.id] || 0) < no.max));
   const talento = pontosTalento(r, dados) - pontosGastos(r) > 0 && temTalentoPraSubir;
-  return { treinar, estrela, equip, algumEquip, ascender, talento, alguma: treinar || estrela || algumEquip || ascender || talento };
+  const fusao = fusoesDaPlanta(p.id).some((f) => f.situacao && f.situacao.pronta);
+  return { treinar, estrela, equip, algumEquip, ascender, talento, fusao, alguma: treinar || estrela || algumEquip || ascender || talento || fusao };
+}
+
+// Receitas de fusão em que a planta entra (como ingrediente ou como a híbrida).
+function fusoesDaPlanta(id) {
+  return jogo.fusoes().filter((f) => f.receita && (f.a === id || f.b === id || f.receita.id === id));
+}
+
+// Bloco de uma receita: ingredientes, o que falta, custo e botão de fundir.
+function blocoFusao(f) {
+  const th = dados.textos.herbario;
+  const s = f.situacao;
+  const receita = `
+    <div class="fusao-receita">
+      ${f.ing.map((i) => `<span class="item-herbario${i.tem ? '' : ' oculto'}" title="${i.nome}"><span>${arte(i)}</span><small>${i.nome}</small></span>`).join('<b>+</b>')}
+      <b>=</b>
+      <span class="item-herbario${s.fundida ? '' : ' oculto'}" title="${f.nome}"><span>${arte(f)}</span><small>${f.nome}</small></span>
+    </div>`;
+  if (s.fundida) return `<div class="fusao-bloco">${receita}<small class="pagina-ok">${th.fusaoFeita}</small></div>`;
+  const c = dados.fusoes;
+  const e = jogo.estado;
+  const cartaEmoji = (id) => dados.cartas.find((x) => x.id === id)?.emoji || id;
+  const pais = s.pais.map((p) => `<span class="custo-item${p.estrelasOk && p.rankOk ? '' : ' falta'}">${arte(p)} ${p.tem ? `${p.estrelasOk ? '5⭐' : 'falta ⭐'} · ${p.rankOk ? '✦' : 'falta ✦'}` : 'não tenho'}</span>`).join('');
+  const custo = [
+    `<span class="custo-item${e.moedas >= c.custo.moedas ? '' : ' falta'}">🪙${c.custo.moedas}</span>`,
+    `<span class="custo-item${e.orvalho >= c.custo.orvalho ? '' : ' falta'}">💧${c.custo.orvalho}</span>`,
+    ...s.cartas.map((x) => `<span class="custo-item${x.tem >= x.qtd ? '' : ' falta'}">${cartaEmoji(x.id)}${x.tem}/${x.qtd}</span>`),
+  ].join('');
+  return `<div class="fusao-bloco">${receita}
+    <small class="dica-pequena">${th.fusaoPais}</small><span class="custo">${pais}</span>
+    <small class="dica-pequena">${th.fusaoCusto}</small><span class="custo">${custo}</span>
+    <button class="btn btn-laranja btn-peq" data-acao="fundir" data-hibrida="${f.receita.id}" ${s.pronta ? '' : 'disabled'}>🧬 ${th.fundir}</button></div>`;
 }
 
 function poderDe(p, r, mudancaReg) {
@@ -201,7 +233,7 @@ function desenharLista() {
       const max = nivelMaximo(r.estrelas, cfg, r.ascensao);
       const pxp = r.nivel >= max ? 1 : r.xp / xpParaProximo(r.nivel, cfg);
       const m = melhorias(r, p);
-      const icones = [m.ascender && '✦', m.talento && '🌳', m.estrela && '⭐', m.algumEquip && '🛠️', m.treinar && '📈'].filter(Boolean).join('');
+      const icones = [m.fusao && '🧬', m.ascender && '✦', m.talento && '🌳', m.estrela && '⭐', m.algumEquip && '🛠️', m.treinar && '📈'].filter(Boolean).join('');
       const selos = selosPlanta(r, dados);
       botao.className = 'cartao-planta' + (m.alguma ? ' pode-evoluir' : '') + selos.classe;
       botao.innerHTML = `
@@ -360,6 +392,9 @@ function desenharDetalhe() {
     { id: 'talentos', nome: '🌳 Talentos', selo: m.talento },
     { id: 'equip', nome: '🛡️ Equip.', selo: m.algumEquip },
   ];
+  const receitas = fusoesDaPlanta(p.id);
+  if (receitas.length) abas.push({ id: 'fusao', nome: '🧬 Fusão', selo: m.fusao });
+  else if (abaDetalhe === 'fusao') abaDetalhe = 'status';
   const paineis = {
     status: `
       <div class="bloco">
@@ -375,6 +410,7 @@ function desenharDetalhe() {
       ${blocoAscensao}`,
     talentos: blocoTalentos,
     equip: `<div class="bloco">${equips}</div>`,
+    fusao: `<div class="bloco"><p class="dica-pequena">${dados.textos.herbario.fusaoTexto}</p>${receitas.map(blocoFusao).join('')}</div>`,
   };
 
   $('detalhe-conteudo').innerHTML = `
@@ -439,6 +475,21 @@ function acaoDetalhe(evento) {
       if (res.ok) som.tocarSom('estrela');
       if (res.ok) avisar(preencher(t.ascensaoFeita, { nome: p.nome, rank: r.ascensao }));
       break;
+    case 'fundir': {
+      const f = fusoesDaPlanta(aberta).find((x) => x.receita.id === botao.dataset.hibrida);
+      if (!confirm(preencher(dados.textos.herbario.fusaoConfirma, { a: f.ing[0].nome, b: f.ing[1].nome, nova: f.nome }))) return;
+      res = jogo.fundirPlanta(f.receita.id);
+      if (!res.ok) return erro(res);
+      som.tocarSom('estrela');
+      const nova = base(f.receita.id);
+      avisar(preencher(dados.textos.herbario.fusaoNova, { emoji: nova.emoji, nome: nova.nome }));
+      // a planta aberta foi consumida: abre a híbrida nova
+      aberta = nova.id;
+      abaDetalhe = 'status';
+      mudanca = null;
+      desenhar();
+      return;
+    }
     case 'equip': {
       const esp = dados.equipamentos.espacos.find((x) => x.id === botao.dataset.espaco);
       res = jogo.melhorarEquip(aberta, esp.id);

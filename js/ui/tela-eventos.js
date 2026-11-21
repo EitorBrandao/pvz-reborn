@@ -200,36 +200,9 @@ function desenharHerbario() {
   const paginas = jogo.herbario();
   const total = paginas.reduce((s, p) => s + p.itens.length, 0);
   const vistos = paginas.reduce((s, p) => s + p.itens.filter((x) => x.visto).length, 0);
-  const cartaEmoji = (id) => dados.cartas.find((c) => c.id === id)?.emoji || id;
-  const fusoes = jogo.fusoes().map((f) => {
-    const s = f.situacao;
-    const receita = `
-      <div class="fusao-receita">
-        ${f.ing.map((i) => `<span class="item-herbario${i.tem ? '' : ' oculto'}" title="${i.nome}"><span>${arte(i)}</span><small>${i.nome}</small></span>`).join('<b>+</b>')}
-        <b>=</b>
-        <span class="item-herbario${s && s.fundida ? '' : ' oculto'}" title="${f.nome}"><span>${arte(f)}</span><small>${f.nome}</small></span>
-      </div>`;
-    if (!s) return `<div class="fusao-bloco">${receita}<small class="dica-pequena">${th().fusaoEmBreve}</small></div>`;
-    if (s.fundida) return `<div class="fusao-bloco">${receita}<small class="pagina-ok">${th().fusaoFeita}</small></div>`;
-    const c = dados.fusoes;
-    const pais = s.pais.map((p) => `<span class="custo-item${p.estrelasOk && p.rankOk ? '' : ' falta'}">${arte(p)} ${p.tem ? `${p.estrelasOk ? '5⭐' : 'falta ⭐'} · ${p.rankOk ? '✦' : 'falta ✦'}` : 'não tenho'}</span>`).join('');
-    const custo = [
-      `<span class="custo-item${jogo.estado.moedas >= c.custo.moedas ? '' : ' falta'}">🪙${c.custo.moedas}</span>`,
-      `<span class="custo-item${jogo.estado.orvalho >= c.custo.orvalho ? '' : ' falta'}">💧${c.custo.orvalho}</span>`,
-      ...s.cartas.map((x) => `<span class="custo-item${x.tem >= x.qtd ? '' : ' falta'}">${cartaEmoji(x.id)}${x.tem}/${x.qtd}</span>`),
-    ].join('');
-    return `<div class="fusao-bloco">${receita}
-      <small class="dica-pequena">${th().fusaoPais}</small><span class="custo">${pais}</span>
-      <small class="dica-pequena">${th().fusaoCusto}</small><span class="custo">${custo}</span>
-      <button class="btn btn-laranja btn-peq" data-fundir="${f.receita.id}" ${s.pronta ? '' : 'disabled'}>🧬 ${th().fundir}</button></div>`;
-  }).join('');
   $('herbario-conteudo').innerHTML = `
     <p class="dica-pequena">${preencher(th().progresso, { vistos, total })}</p>
-    <div class="pagina-herbario">
-      <div class="pagina-topo"><b>${th().fusaoTitulo}</b></div>
-      <p class="dica-pequena">${th().fusaoTexto}</p>
-      ${fusoes}
-    </div>
+    <p class="dica-pequena">${th().fusaoMudou}</p>
     ${paginas.map((p) => {
     const feitos = p.itens.filter((x) => x.visto).length;
     let rodape;
@@ -244,17 +217,6 @@ function desenharHerbario() {
       <div class="pagina-rodape">${rodape}</div>
     </div>`;
   }).join('')}`;
-  $('herbario-conteudo').querySelectorAll('[data-fundir]').forEach((b) => b.addEventListener('click', () => {
-    const rec = jogo.fusoes().find((x) => x.receita && x.receita.id === b.dataset.fundir);
-    if (!confirm(preencher(th().fusaoConfirma, { a: rec.ing[0].nome, b: rec.ing[1].nome, nova: rec.nome }))) return;
-    const r = jogo.fundirPlanta(b.dataset.fundir);
-    if (!r.ok) return avisar(dados.textos[r.erro] || dados.textos.semMaterial);
-    som.tocarSom('estrela');
-    const p = dados.plantas.find((x) => x.id === b.dataset.fundir);
-    avisar(preencher(th().fusaoNova, { emoji: p.emoji, nome: p.nome }));
-    aoMudar();
-    desenharHerbario();
-  }));
   $('herbario-conteudo').querySelectorAll('[data-pagina]').forEach((b) => b.addEventListener('click', () => {
     const r = jogo.resgatarPagina(b.dataset.pagina);
     if (!r.ok) return;
