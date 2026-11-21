@@ -544,7 +544,10 @@ function terminar(resultado, semente) {
   }
   if (arena) {
     const ta = textos.arena;
-    extras.push(arena.subiu > 0 ? preencher(ta.subiu, { n: arena.subiu, pos: arena.posicao }) : preencher(ta.mesmaPosicao, { pos: arena.posicao }));
+    extras.push(preencher(ta.pontosResultado, { sinal: arena.delta > 0 ? '+' : '', delta: arena.delta, de: arena.pontosAntes, para: arena.pontos }));
+    extras.push(arena.subiu > 0 ? preencher(ta.subiu, { n: arena.subiu, pos: arena.posicao })
+      : arena.subiu < 0 ? preencher(ta.desceu, { n: -arena.subiu, pos: arena.posicao })
+        : preencher(ta.mesmaPosicao, { pos: arena.posicao }));
     if (arena.orvalho) extras.push(preencher(ta.orvalhoPosicao, { n: arena.orvalho }));
   }
   for (const { missao } of jogo.missoesAtivas().filter((x) => x.completa && !missoesAntes.has(x.missao.id))) {

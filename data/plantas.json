@@ -684,14 +684,14 @@
       "perfura": true,
       "aplica": {
         "status": "casca",
-        "valor": 0.2,
+        "valor": 0.3,
         "turnos": 2
       },
       "porEstrela": {
-        "golpes": 0.25,
+        "golpes": 0.5,
         "mult": 0.05,
         "aplica": {
-          "valor": 0.03
+          "valor": 0.04
         }
       }
     }
@@ -722,7 +722,7 @@
         "turnos": 2
       },
       "porEstrela": {
-        "golpes": 0.25,
+        "golpes": 0.5,
         "mult": 0.05,
         "aplica": {
           "valor": 0.03
@@ -751,7 +751,7 @@
       "turnos": 1,
       "porEstrela": {
         "mult": 0.1,
-        "turnos": 0.1
+        "turnos": 0.25
       }
     }
   }

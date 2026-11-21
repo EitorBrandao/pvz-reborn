@@ -2,7 +2,6 @@
   "desafiosPorDia": 5,
   "maxRodadas": 20,
   "custoDesafioExtra": 2,
-  "alcance": 5,
   "nivelBase": 4,
   "nivelTopo": 92,
   "curva": 1.2,
@@ -270,5 +269,14 @@
       "{nome} te ganhou e tomou sua posição 😬",
       "{nome} passou na sua frente. Hora da revanche!"
     ]
-  }
+  },
+  "pontosIniciais": 700,
+  "pontosBase": 800,
+  "pontosTopo": 2300,
+  "pontosPorDia": 3,
+  "k": 40,
+  "pesoDefesa": 0.5,
+  "ajusteMax": 300,
+  "alcanceAcima": 5,
+  "alcanceAbaixo": 3
 }

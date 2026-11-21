@@ -17,8 +17,39 @@ export function diasEntre(de, ate) {
   return n(ate) - n(de);
 }
 
-export function ordemInicial(dados) {
-  return [...dados.arena.rivais.map((_, i) => i), VOCE];
+// ---------- Pontos (estilo Elo) ----------
+// Quem tem mais pontos fica na frente. Ganhar de alguém mais forte rende muito; ganhar de
+// alguém mais fraco rende pouco. Perder pra alguém mais fraco custa caro.
+
+// Pontos de cada rival no dia "dias": começam por força (o 1º do ranking é o mais forte) e crescem com o tempo.
+export function pontosBase(i, dias, dados) {
+  const c = dados.arena;
+  const n = c.rivais.length;
+  const fator = Math.pow((n - 1 - i) / (n - 1), c.curva);
+  return Math.round(c.pontosBase + (c.pontosTopo - c.pontosBase) * fator + c.pontosPorDia * Math.min(dias, c.diasMax));
+}
+
+export function pontosDoRival(arena, i, dias, dados) {
+  return Math.max(0, pontosBase(i, dias, dados) + ((arena.ajustes || {})[i] || 0));
+}
+
+// Chance de vitória pela diferença de pontos (0 a 1)
+export function chanceElo(meus, deles) {
+  return 1 / (1 + Math.pow(10, (deles - meus) / 400));
+}
+
+// Pontos que "meus" ganha (positivo) ou perde (negativo) contra "deles"
+export function variacaoElo(meus, deles, venceu, k) {
+  const v = Math.round(k * ((venceu ? 1 : 0) - chanceElo(meus, deles)));
+  return venceu ? Math.max(1, v) : Math.min(-1, v);
+}
+
+// Ranking completo, do mais pontuado pro menos: [{ id, pontos }] (id === VOCE é você)
+export function ranking(arena, dias, dados) {
+  const lista = dados.arena.rivais.map((_, id) => ({ id, pontos: pontosDoRival(arena, id, dias, dados) }));
+  lista.push({ id: VOCE, pontos: arena.pontos });
+  // empate: você fica atrás do rival
+  return lista.sort((x, y) => y.pontos - x.pontos || (x.id === VOCE ? 1 : y.id === VOCE ? -1 : x.id - y.id));
 }
 
 // Nível das plantas do rival: o 1º do ranking inicial é o mais forte; todos crescem com os dias.
@@ -101,52 +132,50 @@ export function batalhaArena(rival, dados) {
   };
 }
 
-// Põe "quem" na posição "pos" e empurra todo mundo que estava no meio uma casa pra baixo.
-export function mover(ordem, quem, pos) {
-  const nova = ordem.filter((x) => x !== quem);
-  nova.splice(pos, 0, quem);
-  return nova;
-}
-
 export function premioDiario(posicao, dados) {
   const faixa = dados.arena.premiosDiarios.find((f) => posicao <= f.ate);
   return structuredClone(faixa.premio);
 }
 
-// Rivais que você pode desafiar: os que estão até "alcance" posições acima de você
-export function desafiaveis(ordem, dados) {
-  const eu = ordem.indexOf(VOCE);
-  const lista = [];
-  for (let pos = Math.max(0, eu - dados.arena.alcance); pos < eu; pos++) lista.push({ pos, id: ordem[pos] });
-  return lista;
+// Rivais que você pode desafiar: até "alcanceAcima" posições acima e "alcanceAbaixo" abaixo de você
+export function desafiaveis(rank, dados) {
+  const eu = rank.findIndex((x) => x.id === VOCE);
+  const c = dados.arena;
+  return rank.slice(Math.max(0, eu - c.alcanceAcima), eu + 1 + c.alcanceAbaixo)
+    .filter((x) => x.id !== VOCE).map((x) => ({ ...x, pos: rank.indexOf(x) + 1 }));
 }
 
 // Enquanto o jogo estava fechado: rivais abaixo de você tentam te passar.
-// Devolve a nova ordem e os recados do mural (a defesa é o time que você deixou montado).
+// Devolve os pontos e ajustes novos e os recados do mural (a defesa é o time que você deixou montado).
 export function ausencia(arena, estado, dados, hojeTexto) {
   const c = dados.arena;
   const dias = Math.min(c.ausenciaDiasMax, Math.max(0, diasEntre(arena.vistoEm, hojeTexto)));
-  let ordem = [...arena.ordem];
+  const novo = { pontos: arena.pontos, ajustes: { ...(arena.ajustes || {}) } };
   const mural = [];
-  if (!estado.time.length) return { ordem, mural };
+  if (!estado.time.length) return { ...novo, mural };
+  const dd = diasEntre(arena.inicio, hojeTexto);
   for (let d = 1; d <= dias; d++) {
-    const diaTexto = hojeTexto;
-    const rng = criarRng(numeroDoTexto(`ausencia-${arena.vistoEm}-${d}-${ordem.indexOf(VOCE)}`));
+    const rng = criarRng(numeroDoTexto(`ausencia-${arena.vistoEm}-${d}-${novo.pontos}`));
     const ataques = 1 + Math.floor(rng() * c.ataquesPorDia);
     for (let a = 0; a < ataques; a++) {
-      const eu = ordem.indexOf(VOCE);
-      const abaixo = ordem.slice(eu + 1, eu + 1 + c.alcance);
+      const rank = ranking(novo, dd, dados);
+      const eu = rank.findIndex((x) => x.id === VOCE);
+      const abaixo = rank.slice(eu + 1, eu + 1 + c.alcanceAbaixo);
       if (!abaixo.length) break;
       const atacante = abaixo[Math.floor(rng() * abaixo.length)];
-      const dd = diasEntre(arena.inicio, hojeTexto);
-      const rival = rivalDoRanking(atacante, dd, dados);
-      const unidades = prepararBatalha({ ...batalhaArena(rival, dados) }, estado.time, dados, estado.colecao);
+      const rival = rivalDoRanking(atacante.id, dd, dados);
+      const unidades = prepararBatalha(batalhaArena(rival, dados), estado.time, dados, estado.colecao);
       const r = simular(structuredClone(unidades), { ...dados.config.batalha, maxRodadas: c.maxRodadas }, numeroDoTexto(`defesa-${arena.vistoEm}-${d}-${a}`));
       const venceu = r.vitoria; // sua defesa venceu
-      const frases = dados.arena.recados[venceu ? 'venceu' : 'perdeu'];
-      if (!venceu) ordem = mover(ordem, atacante, eu);
-      mural.push({ dia: diaTexto, rival: atacante, venceu, texto: frases[Math.floor(rng() * frases.length)].replace('{nome}', c.rivais[atacante].nome) });
+      // quem ataca arrisca como no desafio normal; a defesa ganha ou perde com peso menor
+      const doAtacante = variacaoElo(atacante.pontos, novo.pontos, !venceu, c.k);
+      const seu = Math.round(-doAtacante * c.pesoDefesa);
+      novo.pontos = Math.max(0, novo.pontos + seu);
+      novo.ajustes[atacante.id] = Math.max(-c.ajusteMax, Math.min(c.ajusteMax, (novo.ajustes[atacante.id] || 0) + doAtacante));
+      const frases = c.recados[venceu ? 'venceu' : 'perdeu'];
+      const texto = frases[Math.floor(rng() * frases.length)].replace('{nome}', c.rivais[atacante.id].nome);
+      mural.push({ dia: hojeTexto, rival: atacante.id, venceu, pontos: seu, texto });
     }
   }
-  return { ordem, mural };
+  return { ...novo, mural };
 }
