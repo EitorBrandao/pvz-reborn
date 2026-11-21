@@ -30,6 +30,11 @@
    "id": "lirio_curativo",
    "a": "babosa",
    "b": "vitoria"
+  },
+  {
+   "id": "couve_escudeira",
+   "a": "couve",
+   "b": "bromelia"
   }
  ]
 }

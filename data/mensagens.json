@@ -119,6 +119,7 @@
     "cura": "Cura o aliado mais ferido ({forca}% do ataque).",
     "cura_varios": "Cura os {alvos} aliados mais feridos ({forca}% do ataque).",
     "escudo": "Dá um escudo de {forca}% do ataque pra todo o time por {turnos} rodadas.",
+    "escudo_seiva": "Dá um escudo de {forca}% do ataque pra todo o time por {turnos} rodadas e enche {seiva} de energia do especial dos aliados.",
     "perfurar": "Atravessa e acerta também quem está atrás ({forca}% do ataque).",
     "sono": "Ataca e faz o alvo dormir 1 rodada.",
     "sono_varios": "Ataca e faz o alvo dormir {turnos} rodadas.",

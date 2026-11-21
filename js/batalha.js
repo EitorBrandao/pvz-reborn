@@ -276,6 +276,10 @@ export function simular(unidades, cfg, semente) {
           a.escudo = Math.max(a.escudo, valor);
           a.escudoTurnos = h.turnos;
           efeitos.push({ alvo: a.uid, tipo: 'escudo', valor: a.escudo });
+          if (h.seiva && a !== u) { // Couve Escudeira: escudo + energia pros aliados
+            a.seiva = Math.min(100, a.seiva + h.seiva);
+            efeitos.push({ alvo: a.uid, tipo: 'seiva', valor: h.seiva });
+          }
         }
         break;
       }

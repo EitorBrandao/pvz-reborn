@@ -530,5 +530,29 @@
         }
       }
     }
+  },
+  {
+    "id": "couve_escudeira",
+    "hibrida": true,
+    "faccao": "roca",
+    "nome": "Couve Escudeira",
+    "emoji": "🛡️",
+    "projetil": "🍃",
+    "funcao": "Tanque",
+    "vida": 520,
+    "atq": 34,
+    "def": 48,
+    "vel": 12,
+    "habilidade": {
+      "tipo": "escudo",
+      "nome": "Muralha de Néctar",
+      "mult": 1.8,
+      "turnos": 2,
+      "seiva": 20,
+      "porEstrela": {
+        "mult": 0.15,
+        "seiva": 3
+      }
+    }
   }
 ]
