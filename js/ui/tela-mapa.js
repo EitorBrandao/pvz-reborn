@@ -1,7 +1,7 @@
 // Mapa da campanha: abas dos mapas, caminho de fases e painel da fase escolhida.
 
 import { arte } from '../arte.js';
-import { $, mostrarTela, avisar, preencher } from './comum.js';
+import { $, mostrarCartasAgrupadas, mostrarTela, avisar, preencher } from './comum.js';
 import * as jogo from '../estado.js';
 import * as som from '../som.js';
 import { rolarCartas } from '../batalha.js';
@@ -213,16 +213,7 @@ function mostrarResultadoTonico(fase, r) {
     ${subiram ? `<p>${preencher(dados.textos.rotina.subiramNivel, { plantas: subiram })}</p>` : ''}
     ${r.subiuJogador ? `<p><b>${preencher(tx.subiuJogador, { nivel: jogo.estado.nivel })}</b></p>` : ''}
     <button id="tonico-ok" class="btn btn-grande btn-laranja">${tx.valeu}</button>`;
-  const area = $('tonico-cartas');
-  r.cartas.forEach((id, i) => {
-    const c = dados.cartas.find((x) => x.id === id);
-    if (!c) return;
-    const div = document.createElement('div');
-    div.className = `carta ${c.raridade}`;
-    div.style.animationDelay = `${0.2 + i * 0.1}s`;
-    div.innerHTML = `<span>${c.emoji}</span><small>${c.nome}</small>`;
-    area.appendChild(div);
-  });
+  mostrarCartasAgrupadas($('tonico-cartas'), r.cartas, dados);
   $('tonico-ok').addEventListener('click', () => abrirPainel(fase));
   som.tocarSom('tonico');
   if (r.subiuJogador) som.tocarSom('nivel');

@@ -1,7 +1,7 @@
 // Rotina diária na tela da horta: Canteiro (3 vasos), Expedição e Calendário de presença.
 
 import { arte } from '../arte.js';
-import { $, avisar, preencher } from './comum.js';
+import { $, mostrarCartasAgrupadas, avisar, preencher } from './comum.js';
 import * as jogo from '../estado.js';
 import * as som from '../som.js';
 
@@ -347,15 +347,6 @@ function mostrarResumoRonda(r) {
     <div id="ronda-cartas" class="cartas"></div>
     ${linhas.join('')}
     <button class="btn btn-laranja btn-largo rotina-fechar">${tx.oba}</button>`);
-  const area = $('ronda-cartas');
-  r.cartas.forEach((id, i) => {
-    const c = dados.cartas.find((x) => x.id === id);
-    if (!c) return;
-    const div = document.createElement('div');
-    div.className = `carta ${c.raridade}`;
-    div.style.animationDelay = `${0.2 + i * 0.12}s`;
-    div.innerHTML = `<span>${c.emoji}</span><small>${c.nome}</small>`;
-    area.appendChild(div);
-  });
+  mostrarCartasAgrupadas($('ronda-cartas'), r.cartas, dados);
   som.tocarSom('ronda');
 }

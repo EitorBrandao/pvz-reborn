@@ -327,6 +327,10 @@ body {
 .carta span { font-size: 1.8rem; }
 .carta small { font-size: .65rem; font-weight: 700; }
 .carta.rara { border-color: var(--azul); }
+.carta-grupo { width: 64px; padding: 6px 2px; }
+.carta-grupo span { font-size: 1.5rem; }
+.carta-grupo small { font-size: .6rem; text-align: center; line-height: 1.1; }
+.carta-qtd { font-size: .9rem; color: #8a3b00; }
 .carta.epica { border-color: #a24be0; background: #f6ebff; }
 
 @keyframes entrar { from { transform: scale(.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }

@@ -26,6 +26,23 @@ export function preencher(texto, valores) {
   return texto.replace(/\{(\w+)\}/g, (_, chave) => (chave in valores ? valores[chave] : `{${chave}}`));
 }
 
+// Cartas ganhas, agrupadas: cada carta aparece uma vez, com a quantidade embaixo (×3).
+// Usado nos resumos que juntam muitas vitórias (Seu Tonico, Ronda), pra janela não precisar rolar.
+export function mostrarCartasAgrupadas(area, ids, dados) {
+  const qtd = new Map();
+  for (const id of ids) qtd.set(id, (qtd.get(id) || 0) + 1);
+  area.innerHTML = '';
+  [...qtd].forEach(([id, n], i) => {
+    const c = dados.cartas.find((x) => x.id === id);
+    if (!c) return;
+    const div = document.createElement('div');
+    div.className = `carta carta-grupo ${c.raridade}`;
+    div.style.animationDelay = `${0.2 + i * 0.15}s`;
+    div.innerHTML = `<span>${c.emoji}</span><small>${c.nome}</small><b class="carta-qtd">×${n}</b>`;
+    area.appendChild(div);
+  });
+}
+
 // Selos de evolução da planta (Ascensão e, no futuro, Fusão), usados em todo cartão de planta.
 // Pra ligar a Fusão: guardar o nível no registro (registro.fusao) e criar "fusao" em data/ascensao.json.
 export function selosPlanta(registro, dados) {
