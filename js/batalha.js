@@ -313,9 +313,17 @@ export function simular(unidades, cfg, semente) {
           a.escudo = Math.max(a.escudo, valor);
           a.escudoTurnos = h.turnos;
           efeitos.push({ alvo: a.uid, tipo: 'escudo', valor: a.escudo });
-          if (h.seiva && a !== u) { // Couve Escudeira: escudo + energia pros aliados
-            a.seiva = Math.min(100, a.seiva + h.seiva);
-            efeitos.push({ alvo: a.uid, tipo: 'seiva', valor: h.seiva });
+        }
+        if (h.seiva) { // Couve Escudeira: reparte um pote de seiva, enchendo primeiro os mais vazios
+          let pote = Math.round(h.seiva * (h.pote || 1));
+          const fila = aliados(u).filter((a) => a !== u).sort((a, b) => a.seiva - b.seiva);
+          for (const a of [...fila, u]) {
+            const dado = Math.min(pote, 100 - a.seiva);
+            if (dado <= 0) continue;
+            a.seiva += dado;
+            pote -= dado;
+            efeitos.push({ alvo: a.uid, tipo: 'seiva', valor: dado });
+            if (pote <= 0) break;
           }
         }
         break;

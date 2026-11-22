@@ -647,6 +647,7 @@
       "mult": 1.8,
       "turnos": 2,
       "seiva": 20,
+      "pote": 3,
       "porEstrela": {
         "mult": 0.15,
         "seiva": 3
