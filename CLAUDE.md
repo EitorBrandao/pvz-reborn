@@ -76,3 +76,10 @@ Lições do histórico (pra não encher a main de commits de ajuste):
 - O dono do jogo não é programador: explique em português simples, diga o que ele deve ver na tela e onde clicar.
 - Seja conciso e pergunte quando algo não estiver claro.
 - Ao terminar uma fase, marque o "Pronto quando" no `PLANO.md`.
+
+## Memória entre sessões (STATE.md)
+
+- Mantenha um `STATE.md` na raiz com no máximo 40 linhas por tarefa: o que já foi aprovado, o que falta e as decisões tomadas. Atualize a cada marco.
+- Quando um marco for aprovado ou o contexto passar de 200 mil tokens, avise o dono que é hora de trocar de chat e entregue o resumo pronto pra colar na nova sessão.
+- Toda análise de imagem roda num subagente, que devolve só texto.
+- Nada de fork pra continuar. Sessão nova começa do zero, lendo o `STATE.md`.
