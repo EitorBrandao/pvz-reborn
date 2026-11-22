@@ -70,7 +70,7 @@ export function textoHabilidade(hab, dados) {
   return preencher(t.habilidades[chave] || '', {
     reflete: Math.round((hab.reflete || 0) * 100), turnos: hab.turnos, golpes: hab.golpes,
     reducao: Math.round((hab.reducao || 0) * 100), forca: Math.round((hab.mult || 0) * 100),
-    alvos: hab.alvos || 1, seiva: hab.seiva,
+    alvos: hab.alvos || 1, seiva: Math.round((hab.seiva || 0) * (hab.pote || 1)),
     pctVida: Math.round((hab.pctVida || 0) * 100), limite: Math.round((hab.limite || 0) * 100),
     bonus: Math.round((hab.mult || 0) * (hab.bonus || 0) * 100),
   }) + status;
