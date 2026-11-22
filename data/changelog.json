@@ -1,4 +1,5 @@
 [
+  { "versao": "0.15.11", "itens": ["🌳 Classes híbridas: as plantas híbridas agora têm classe própria (Tanque Dano, Tanque Apoio, Tanque Controle, Dano Apoio, Controle Agressivo e Controle Suporte). Na aba Talentos você escolhe qual das duas árvores seguir; pra trocar, resete antes"] },
   { "versao": "0.15.10", "itens": ["⚔️ Batalhas mais duras: a defesa agora conta em relação ao ataque de quem bate, então pragas fortes machucam de verdade e cura e escudo fazem diferença", "🐛 Pragas acima do nível 40 (Pesadelo, Torre, Desafio, Invasão) ficam mais fortes aos poucos", "👑 Chefe da Invasão bate mais forte", "🌳 Labirinto: menos empate por tempo"] },
   { "versao": "0.15.9", "itens": ["🌿 Talentos de energia reajustados: com a Raiz toda no máximo, quem é de Controle solta a habilidade a cada 3 ações (2 ataques e a habilidade) e as outras classes a cada 4 ações"] },
   { "versao": "0.15.8", "itens": ["🛡️ Couve Escudeira: a Muralha de Néctar agora reparte um pote de energia do especial, enchendo primeiro quem está mais vazio. Nada se perde: a sobra fica com ela"] },
