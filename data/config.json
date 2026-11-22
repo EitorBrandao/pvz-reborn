@@ -1,5 +1,5 @@
 {
-  "versaoJogo": "0.15.12",
+  "versaoJogo": "0.16.0",
   "inicio": {
     "moedas": 500,
     "orvalho": 10,
@@ -158,7 +158,8 @@
       "tela-arena": "arena",
       "tela-feira": "feira",
       "tela-herbario": "herbario",
-      "tela-labirinto": "labirinto"
+      "tela-labirinto": "labirinto",
+      "tela-viveiro": "viveiro"
     }
   },
   "poder": {

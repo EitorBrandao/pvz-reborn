@@ -14,6 +14,7 @@ import { iniciarTelasEventos, abrirInvasao, montarBatalhaInvasao, desenharAtalho
 import { iniciarTelaAtividades, abrirTelaAtividades } from './ui/tela-atividades.js';
 import { iniciarTelaLabirinto, abrirLabirinto } from './ui/tela-labirinto.js';
 import { iniciarTelaArena, abrirArena } from './ui/tela-arena.js';
+import { iniciarTelaViveiro, desenharBotaoViveiro } from './ui/tela-viveiro.js';
 import { prepararCampanha, proximaFase, faseLiberada } from './campanha.js';
 import { gerarAndar, checarTime } from './atividades.js';
 import * as som from './som.js';
@@ -36,6 +37,7 @@ function atualizarTela() {
   desenharMissoes();
   desenharRotina();
   desenharAtalhos();
+  desenharBotaoViveiro();
   const broto = jogo.estagioBroto();
   $('broto-emoji').textContent = broto.emoji;
   $('broto-barra').style.width = `${broto.progresso * 100}%`;
@@ -59,7 +61,7 @@ function formatarTempo(ms) {
 
 function pedirRecarga() {
   const { textos, config } = dados;
-  if (jogo.folego().valor >= config.folego.max) return avisar(textos.folegoCheio);
+  if (jogo.folego().valor >= jogo.folegoMax()) return avisar(textos.folegoCheio);
   if (!confirm(preencher(textos.confirmarRecarga, { custo: config.folego.recargaOrvalho }))) return;
   const res = jogo.recarregarFolego();
   avisar(res.ok ? textos.folegoRecarregado : textos[res.erro]);
@@ -264,7 +266,7 @@ function ligarSom() {
 }
 
 async function comecar() {
-  const [config, textos, plantas, pragas, cartas, campanha, equipamentos, missoes, faccoes, atividades, changelog, rotina, invasao, feira, herbario, ascensao, talentos, pesadelo, labirinto, fusoes, arena] = await Promise.all([
+  const [config, textos, plantas, pragas, cartas, campanha, equipamentos, missoes, faccoes, atividades, changelog, rotina, invasao, feira, herbario, ascensao, talentos, pesadelo, labirinto, fusoes, arena, viveiro] = await Promise.all([
     lerJson('data/config.json'),
     lerJson('data/mensagens.json'),
     lerJson('data/plantas.json'),
@@ -286,8 +288,9 @@ async function comecar() {
     lerJson('data/labirinto.json'),
     lerJson('data/fusoes.json'),
     lerJson('data/arena.json'),
+    lerJson('data/viveiro.json'),
   ]);
-  dados = { config, textos, plantas, pragas, cartas, campanha: prepararCampanha(campanha, pesadelo), equipamentos, missoes, faccoes, atividades, rotina, invasao, feira, herbario, ascensao, talentos, pesadelo, labirinto, fusoes, arena };
+  dados = { config, textos, plantas, pragas, cartas, campanha: prepararCampanha(campanha, pesadelo), equipamentos, missoes, faccoes, atividades, rotina, invasao, feira, herbario, ascensao, talentos, pesadelo, labirinto, fusoes, arena, viveiro };
 
   iniciarArte(dados);
   jogo.iniciar(dados);
@@ -324,6 +327,7 @@ async function comecar() {
   iniciarTelaPlantas(dados, irParaBase);
   iniciarMissoes(dados, atualizarTela);
   iniciarRotina(dados, atualizarTela);
+  iniciarTelaViveiro(dados, { voltar: irParaBase });
   iniciarTelasEventos(dados, { voltarDesafios: abrirTelaAtividades, voltarBase: irParaBase, preparar: abrirTelaTime, mudou: atualizarTela });
   setInterval(atualizarFolego, 1000);
   prepararInstalacao();

@@ -134,6 +134,12 @@ const SONS = {
     nota(523, 0.45, { tipo: 'triangle', vol: 0.15, atraso: 0.3 });
   },
 
+  // Pesquisa do Viveiro pronta: sininho de folhas e acorde subindo
+  pesquisa() {
+    [523, 659, 784, 1047, 1319].forEach((f, i) => nota(f, 0.2, { tipo: 'sine', vol: 0.12, atraso: i * 0.09 }));
+    chiado(0.12, { vol: 0.12, corte: 3000, atraso: 0.45 });
+  },
+
   vitoria() { [523, 659, 784, 1047].forEach((f, i) => nota(f, i === 3 ? 0.6 : 0.18, { tipo: 'triangle', vol: 0.22, atraso: i * 0.13 })); },
   derrota() { [392, 330, 262, 196].forEach((f, i) => nota(f, i === 3 ? 0.7 : 0.25, { tipo: 'triangle', vol: 0.2, atraso: i * 0.2 })); },
 };
@@ -228,6 +234,16 @@ const MUSICAS = {
       timbre: 'sine', vol: 0.11,
       notas: [0, 587, 0, 0, 523, 0, 659, 0, 0, 494, 0, 0, 440, 0, 0, 0,
         0, 587, 0, 0, 659, 0, 784, 0, 0, 698, 0, 659, 587, 0, 0, 0],
+    },
+  },
+  // Viveiro de Pesquisa: calma e paciente, de quem espera a semente crescer.
+  viveiro: {
+    passo: 0.5,
+    baixo: { notas: [147, 123, 131, 110], cada: 8, timbre: 'sine', vol: 0.24 },
+    melodia: {
+      timbre: 'triangle', vol: 0.09,
+      notas: [587, 0, 0, 0, 740, 0, 659, 0, 587, 0, 0, 0, 494, 0, 0, 0,
+        659, 0, 0, 0, 784, 0, 740, 0, 659, 0, 587, 0, 0, 0, 0, 0],
     },
   },
   // Pesadelo: grave, lenta e sombria, em tom menor.

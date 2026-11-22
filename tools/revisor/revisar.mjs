@@ -200,6 +200,22 @@ try {
   erro('híbrida', `não consegui testar as regras das híbridas: ${e.message}`);
 }
 
+// ---------- 10b. Viveiro de Pesquisa: só capacidade e conforto, nunca dano ou vida ----------
+{
+  const nos = dados.viveiro?.nos || [];
+  const ids = new Set(nos.map((n) => n.id));
+  const permitidos = new Set(['vasoExtra', 'moedasVasoPct', 'vagaExpedicao', 'rondaVaria', 'folegoMax', 'tonicoVezes', 'filaPesquisa']);
+  if (ids.size !== nos.length) erro('viveiro', 'tem nó com id repetido em data/viveiro.json');
+  for (const n of nos) {
+    if (!permitidos.has(n.efeito?.tipo)) erro('viveiro', `o nó "${n.id}" tem efeito "${n.efeito?.tipo}", que não é de capacidade/conforto (nada de dano ou vida no Viveiro)`);
+    for (const r of n.requer || []) if (!ids.has(r)) erro('viveiro', `o nó "${n.id}" precisa de "${r}", que não existe`);
+    if (!(n.minutos >= 240 && n.minutos <= 4320)) erro('viveiro', `o nó "${n.id}" dura ${n.minutos} min; tem que ficar entre 4 horas e 3 dias`);
+    for (const c of Object.keys(n.materiais || {})) if (!(dados.cartas || []).some((x) => x.id === c)) erro('viveiro', `o nó "${n.id}" cobra "${c}", que não é uma carta do jogo`);
+  }
+  const ramos = new Set((dados.viveiro?.ramos || []).map((r) => r.id));
+  for (const n of nos) if (!ramos.has(n.ramo)) erro('viveiro', `o nó "${n.id}" está no ramo "${n.ramo}", que não existe`);
+}
+
 // ---------- 11. Novidades e plano ----------
 const novidades = dados.changelog || [];
 if (versaoCfg && !novidades.some((n) => n.versao === versaoCfg)) aviso('novidades', `data/changelog.json não tem a versão ${versaoCfg}: o jogador não vai ver o que mudou`);

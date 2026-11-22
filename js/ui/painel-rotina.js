@@ -4,6 +4,7 @@ import { arte } from '../arte.js';
 import { $, mostrarCartasAgrupadas, avisar, preencher, curto } from './comum.js';
 import * as jogo from '../estado.js';
 import * as som from '../som.js';
+import { desenharBotaoViveiro } from './tela-viveiro.js';
 
 let dados;
 let aoMudar;
@@ -60,8 +61,11 @@ function textoPremio(p) {
 
 export function desenharRotina() {
   const area = $('rotina');
-  if (!area.childElementCount) {
-    for (let i = 0; i < dados.rotina.canteiro.vasos; i++) {
+  const nVasos = jogo.vasos();
+  if (area.childElementCount !== nVasos + 1) {
+    area.replaceChildren();
+    area.style.gridTemplateColumns = `repeat(${nVasos + 1}, 1fr)`;
+    for (let i = 0; i < nVasos; i++) {
       const b = document.createElement('button');
       b.className = 'vaso';
       b.addEventListener('click', () => tocarVaso(i));
@@ -74,7 +78,7 @@ export function desenharRotina() {
   }
   const botoes = area.children;
   const estagios = dados.rotina.canteiro.estagios;
-  for (let i = 0; i < dados.rotina.canteiro.vasos; i++) {
+  for (let i = 0; i < nVasos; i++) {
     const info = jogo.vasoInfo(i);
     let emoji = '🟫';
     let texto = t().plantar;
@@ -86,12 +90,13 @@ export function desenharRotina() {
     botoes[i].innerHTML = `<span>${emoji}</span><small>${texto}</small>`;
   }
   const exp = jogo.expedicaoInfo();
-  const b = botoes[dados.rotina.canteiro.vasos];
+  const b = botoes[nVasos];
   b.className = 'vaso vaso-expedicao' + (exp && exp.pronta ? ' pronto' : '');
   b.innerHTML = `<span>${exp ? exp.destino.emoji : '🧭'}</span><small>${
     !exp ? t().expedicao : exp.pronta ? t().receber : formatar(exp.falta)}</small>`;
   if (aberto === 'expedicao' && exp) desenharExpedicao();
   desenharBotaoRonda();
+  desenharBotaoViveiro();
 }
 
 // ---------- Janela ----------
@@ -126,7 +131,7 @@ function tocarVaso(i) {
     return `<button class="linha-escolha${bloqueada ? ' bloqueada' : ''}" data-muda="${m.id}">
       <span class="escolha-emoji">${bloqueada ? '🔒' : m.emoji}</span>
       <span class="escolha-info"><b>${m.nome} · ⏱️ ${tempo}</b>
-        <small>${bloqueada ? preencher(t().nivelMin, { nivel: m.nivelMin }) : `${t().colhe} 🪙 ${curto(m.moedas)} ${cartas}`}</small></span>
+        <small>${bloqueada ? preencher(t().nivelMin, { nivel: m.nivelMin }) : `${t().colhe} 🪙 ${curto(jogo.moedasDaMuda(m))} ${cartas}`}</small></span>
       <span class="escolha-preco">🪙 ${m.custo}</span>
     </button>`;
   }).join('');
@@ -181,7 +186,7 @@ function desenharExpedicao() {
       <p class="dica-pequena">${t().viajandoDica}</p>`;
     return;
   }
-  const max = dados.rotina.expedicao.maxPlantas;
+  const max = jogo.maxPlantasExpedicao();
   // Com plantas escolhidas, cada destino mostra o prêmio e o tempo de verdade
   const destinos = dados.rotina.expedicao.destinos.map((d) => {
     const cartas = d.cartas.map((c) => dados.cartas.find((x) => x.id === c.carta)?.emoji).join('');
@@ -279,7 +284,7 @@ function linhaRonda(item) {
   if (item.tipo === 'vaso') {
     emoji = item.muda.emoji;
     titulo = preencher(tx.rondaVaso, { n: item.i + 1, nome: item.muda.nome });
-    detalhe = `${tx.colhe} 🪙 ${curto(item.muda.moedas)}`;
+    detalhe = `${tx.colhe} 🪙 ${curto(jogo.moedasDaMuda(item.muda))}`;
     if (item.replanta) {
       titulo += ` ${preencher(tx.rondaVasoReplanta, { nome: item.replanta.nome })}`;
       valor = `-🪙 ${item.replanta.custo}`;
@@ -288,10 +293,13 @@ function linhaRonda(item) {
       titulo += ` (${motivo})`;
     }
   } else if (item.tipo === 'expedicao') {
-    emoji = item.destino.emoji;
-    titulo = item.vao.length ? preencher(tx.rondaExpedicao, { destino: item.destino.nome }) : tx.rondaExpedicaoSoReceber;
+    emoji = item.proximo.emoji;
+    titulo = item.vao.length ? preencher(tx.rondaExpedicao, { destino: item.proximo.nome }) : tx.rondaExpedicaoSoReceber;
     detalhe = [item.vao.map(emojiPlanta).join(' '), item.ficam.length ? preencher(tx.rondaFicam, { plantas: item.ficam.map(emojiPlanta).join(' ') }) : '']
       .filter(Boolean).join(' · ');
+  } else if (item.tipo === 'pesquisa') {
+    emoji = '🌳';
+    titulo = preencher(tx.rondaPesquisas, { nomes: item.ids.map((id) => dados.viveiro.nos.find((n) => n.id === id)?.nome).join(', ') });
   } else {
     emoji = { presenca: '📅', arena: '🏆', invasao: '👾' }[item.tipo];
     titulo = item.tipo === 'presenca' ? preencher(tx.rondaPresenca, { n: item.dia + 1 })
@@ -312,6 +320,7 @@ function abrirRonda() {
     <p class="dica-pequena">${t().rondaDica}</p>
     <div class="lista-escolha">${p.itens.map(linhaRonda).join('')}</div>
     <label class="chave-ronda"><input id="ronda-replantar" type="checkbox"${replantar ? ' checked' : ''}> ${t().rondaReplantar}</label>
+    ${jogo.efeitoViveiro('rondaVaria') ? `<label class="chave-ronda"><input id="ronda-variar" type="checkbox"${jogo.estado.ronda.variar ? ' checked' : ''}> ${t().rondaVaria}</label>` : ''}
     <p class="total-ronda"><span>${t().rondaCusto}</span><b>${p.custo ? `🪙 ${p.custo}` : t().gratis}</b></p>
     <div class="botoes-ronda">
       <button class="btn rotina-fechar">${t().agoraNao}</button>
@@ -319,6 +328,10 @@ function abrirRonda() {
     </div>`);
   $('ronda-replantar').addEventListener('change', (e) => {
     jogo.definirReplantar(e.target.checked);
+    abrirRonda();
+  });
+  $('ronda-variar')?.addEventListener('change', (e) => {
+    jogo.definirVariar(e.target.checked);
     abrirRonda();
   });
   $('ronda-fazer').addEventListener('click', () => {
@@ -341,6 +354,7 @@ function mostrarResumoRonda(r) {
   if (r.expedicao) {
     linhas.push(`<div class="linha-ronda"><span class="escolha-emoji">${r.expedicao.destino.emoji}</span><span class="escolha-info"><b>${tx.rondaVoltouSaiu}</b><small>${r.expedicao.plantas.map(emojiPlanta).join(' ')}</small></span><span class="escolha-preco">${preencher(tx.rondaVoltaEm, { tempo: formatarDuracao(r.expedicao.falta) })}</span></div>`);
   }
+  if (r.pesquisas.length) linhas.push(`<p>${preencher(tx.rondaPesquisas, { nomes: r.pesquisas.map((id) => dados.viveiro.nos.find((n) => n.id === id)?.nome).join(', ') })}</p>`);
   if (r.subiram.length) linhas.push(`<p>${preencher(tx.subiramNivel, { plantas: r.subiram.map((s) => emojiPlanta(s.id)).join('') })}</p>`);
   abrirJanela('resultado', `<h3>${tx.rondaFeita}</h3>
     <p class="rotina-premio">${partes.join(' · ')}</p>
@@ -348,5 +362,5 @@ function mostrarResumoRonda(r) {
     ${linhas.join('')}
     <button class="btn btn-laranja btn-largo rotina-fechar">${tx.oba}</button>`);
   mostrarCartasAgrupadas($('ronda-cartas'), r.cartas, dados);
-  som.tocarSom('ronda');
+  som.tocarSom(r.pesquisas.length ? 'pesquisa' : 'ronda');
 }

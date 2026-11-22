@@ -1,0 +1,19 @@
+{
+  "nivelMin": 10,
+  "ramos": [
+    { "id": "horta", "nome": "Horta", "emoji": "🌱" },
+    { "id": "expedicao", "nome": "Expedição", "emoji": "🧭" },
+    { "id": "campanha", "nome": "Campanha", "emoji": "⚡" },
+    { "id": "geral", "nome": "Geral", "emoji": "🌳" }
+  ],
+  "nos": [
+    { "id": "vaso4", "ramo": "horta", "nome": "4º vaso", "texto": "Mais um vaso no Canteiro.", "minutos": 240, "moedas": 300, "materiais": {}, "requer": [], "efeito": { "tipo": "vasoExtra", "valor": 1 } },
+    { "id": "colheita", "ramo": "horta", "nome": "Colheita dupla de moedas", "texto": "Os vasos rendem o dobro de moedas.", "minutos": 720, "moedas": 600, "materiais": { "fibra": 8 }, "requer": ["vaso4"], "efeito": { "tipo": "moedasVasoPct", "valor": 100 } },
+    { "id": "vaga4", "ramo": "expedicao", "nome": "4ª vaga", "texto": "Uma planta a mais por expedição.", "minutos": 480, "moedas": 900, "materiais": { "petala_rara": 5 }, "requer": [], "efeito": { "tipo": "vagaExpedicao", "valor": 1 } },
+    { "id": "rondaVaria", "ramo": "expedicao", "nome": "Ronda que varia o destino", "texto": "A Ronda pode mandar a expedição pro destino seguinte, em vez de repetir o mesmo.", "minutos": 1440, "moedas": 1500, "materiais": { "petala_rara": 10 }, "requer": ["vaga4"], "efeito": { "tipo": "rondaVaria", "valor": 1 } },
+    { "id": "folego1", "ramo": "campanha", "nome": "Mais fôlego I", "texto": "Fôlego máximo +10.", "minutos": 360, "moedas": 500, "materiais": { "fibra": 10 }, "requer": [], "efeito": { "tipo": "folegoMax", "valor": 10 } },
+    { "id": "folego2", "ramo": "campanha", "nome": "Mais fôlego II", "texto": "Fôlego máximo +10.", "minutos": 1440, "moedas": 1500, "materiais": { "semente_labirinto": 3 }, "requer": ["folego1"], "efeito": { "tipo": "folegoMax", "valor": 10 } },
+    { "id": "tonico20", "ramo": "campanha", "nome": "Seu Tonico joga 20 vezes", "texto": "Seu Tonico ganha o botão de 20 vezes.", "minutos": 2880, "moedas": 2500, "materiais": { "semente_labirinto": 5 }, "requer": ["folego1"], "efeito": { "tipo": "tonicoVezes", "valor": 20 } },
+    { "id": "fila2", "ramo": "geral", "nome": "Fila de 2 pesquisas", "texto": "Deixa uma segunda pesquisa na fila, pronta pra começar sozinha.", "minutos": 4320, "moedas": 4000, "materiais": { "semente_labirinto": 10 }, "requer": [], "efeito": { "tipo": "filaPesquisa", "valor": 1 } }
+  ]
+}

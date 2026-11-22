@@ -179,7 +179,8 @@ function desenharTonico(fase) {
     return;
   }
   const fala = tx.falas[Math.floor(Math.random() * tx.falas.length)];
-  const botoes = cfg.vezes.map((v) => {
+  const vezesTonico = jogo.tonicoVezes();
+  const botoes = vezesTonico.map((v) => {
     const p = jogo.previaTonico(fase, v);
     const pode = p.feitas >= v;
     return `<button class="btn tonico-vezes${pode ? ' btn-laranja' : ' apagado'}" data-vezes="${v}">${v}×<small>⚡${fase.folego * v}</small>${
@@ -189,6 +190,7 @@ function desenharTonico(fase) {
       <span class="escolha-info"><b>${cfg.nome}</b><small>“${fala}”</small></span></div>
     <div class="tonico-botoes">${botoes}</div>`;
   $('fase-conteudo').appendChild(caixa);
+  caixa.querySelector('.tonico-botoes').style.gridTemplateColumns = `repeat(${Math.min(4, vezesTonico.length)}, 1fr)`;
   caixa.querySelectorAll('[data-vezes]').forEach((b) => b.addEventListener('click', () => {
     const vezes = Number(b.dataset.vezes);
     const r = jogo.mandarTonico(fase, vezes, (f) => rolarCartas(f, Math.random));

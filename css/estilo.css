@@ -826,6 +826,20 @@ body {
 .rotina-plantas { font-size: 2rem; text-align: center; margin: 6px 0; }
 .selo-viagem { color: #2a6fa3; font-weight: 700; }
 
+.viveiro-resumo { display: flex; flex-direction: column; gap: 2px; background: rgba(0, 0, 0, .25); border-radius: 12px; padding: 8px 10px; margin: 8px 0; }
+.viveiro-resumo small { opacity: .85; }
+.ramo-viveiro { margin: 12px 0 6px; }
+.no-viveiro { display: flex; flex-direction: column; gap: 4px; min-width: 0; padding: 8px 10px; margin-bottom: 6px; background: #fff8e6; color: var(--escuro); border: 2px solid var(--terra); border-radius: 12px; }
+.no-viveiro-topo { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.no-viveiro-topo b { min-width: 0; overflow-wrap: anywhere; }
+.no-viveiro-topo span { font-size: .75rem; white-space: nowrap; }
+.no-viveiro small { font-size: .75rem; }
+.no-viveiro.pronto { border-color: #3d9a22; background: #d9f5c8; }
+.no-viveiro.rodando { border-color: var(--laranja); box-shadow: 0 0 0 2px var(--laranja); }
+.no-viveiro.trava { opacity: .6; }
+.viveiro-custo { font-weight: 800; }
+.falta-material { color: #b3261e; }
+.viveiro-pesquisar { align-self: flex-start; padding: 6px 14px; }
 .grade-presenca { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 8px 0 12px; }
 .dia-presenca {
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;

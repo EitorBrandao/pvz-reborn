@@ -64,7 +64,8 @@ function novoEstado() {
     herbario: { pegas: [] },
     labirinto: { melhor: 0, coringa: 0, run: null },
     arena: null,
-    ronda: { mudas: [], destino: null, plantas: [], replantar: dados.rotina.ronda.replantarPadrao },
+    ronda: { mudas: [], destino: null, plantas: [], replantar: dados.rotina.ronda.replantarPadrao, variar: false },
+    viveiro: { prontos: [], atual: null, fila: [], avisos: [] },
   };
 }
 
@@ -84,7 +85,8 @@ function completar(salvo) {
     if (!base) continue;
     for (const no of Object.keys(r.talentos)) if (!evo.noTalento(dados, base, no, r)) delete r.talentos[no];
   }
-  while (e.canteiro.length < dados.rotina.canteiro.vasos) e.canteiro.push(null);
+  e.viveiro = limparViveiro(e.viveiro);
+  while (e.canteiro.length < dados.rotina.canteiro.vasos + efeitoDe(e.viveiro.prontos, 'vasoExtra')) e.canteiro.push(null);
   // Ronda: saves antigos lembram a muda que está em cada vaso e a expedição que está viajando
   if (!e.ronda) e.ronda = novoEstado().ronda;
   e.canteiro.forEach((v, i) => { if (v && !e.ronda.mudas[i]) e.ronda.mudas[i] = v.muda; });
@@ -143,15 +145,128 @@ function darXpJogador(xp) {
     subiu += 1;
     info = xpJogadorInfo();
   }
-  if (subiu) estado.folego = { valor: Math.max(estado.folego.valor, config.folego.max), desde: Date.now() };
+  if (subiu) estado.folego = { valor: Math.max(estado.folego.valor, folegoMax()), desde: Date.now() };
   return subiu;
+}
+
+// ---------- Viveiro de Pesquisa ----------
+// Árvore de melhorias de capacidade e conforto. Só uma pesquisa roda por vez (e a fila, se
+// pesquisada). Tudo conta pelo relógio, inclusive com o jogo fechado. Todo limite que as pesquisas
+// mexem (vasos, vagas da expedição, fôlego, vezes do Tonico) vem das funções daqui.
+
+const nosViveiro = () => dados.viveiro.nos;
+const noPorId = (id) => nosViveiro().find((n) => n.id === id);
+
+function efeitoDe(prontos, tipo) {
+  return prontos.reduce((soma, id) => {
+    const ef = noPorId(id)?.efeito;
+    return ef && ef.tipo === tipo ? soma + ef.valor : soma;
+  }, 0);
+}
+
+// Deixa o viveiro do save em ordem: ids que não existem mais saem, sem mexer no resto do jogo
+function limparViveiro(v) {
+  const ok = (id) => typeof id === 'string' && !!noPorId(id);
+  const bruto = v && typeof v === 'object' ? v : {};
+  const lista = (l) => (Array.isArray(l) ? l.filter(ok) : []);
+  const prontos = [...new Set(lista(bruto.prontos))];
+  const atual = bruto.atual && ok(bruto.atual.id) && Number.isFinite(bruto.atual.desde) && !prontos.includes(bruto.atual.id)
+    ? { id: bruto.atual.id, desde: bruto.atual.desde } : null;
+  const fila = atual ? lista(bruto.fila).filter((id) => !prontos.includes(id) && id !== atual.id) : [];
+  return { prontos, atual, fila, avisos: lista(bruto.avisos) };
+}
+
+// Conclui o que já passou do tempo (mesmo com o jogo fechado) e começa a próxima da fila
+export function viveiroAtualizar() {
+  const v = estado.viveiro;
+  let mudou = false;
+  while (v.atual) {
+    const no = noPorId(v.atual.id);
+    const fim = v.atual.desde + no.minutos * 60000;
+    if (Date.now() < fim) break;
+    v.prontos.push(no.id);
+    v.avisos.push(no.id);
+    const proximo = v.fila.shift();
+    v.atual = proximo ? { id: proximo, desde: fim } : null;
+    mudou = true;
+  }
+  if (mudou) {
+    while (estado.canteiro.length < vasos()) estado.canteiro.push(null);
+    salvarAgora();
+  }
+}
+
+export function efeitoViveiro(tipo) {
+  viveiroAtualizar();
+  return efeitoDe(estado.viveiro.prontos, tipo);
+}
+
+export const vasos = () => dados.rotina.canteiro.vasos + efeitoViveiro('vasoExtra');
+export const maxPlantasExpedicao = () => dados.rotina.expedicao.maxPlantas + efeitoViveiro('vagaExpedicao');
+export const folegoMax = () => config.folego.max + efeitoViveiro('folegoMax');
+export const tonicoVezes = () => [...dados.rotina.tonico.vezes, ...nosViveiro().filter((n) => n.efeito.tipo === 'tonicoVezes' && estado.viveiro.prontos.includes(n.id)).map((n) => n.efeito.valor)].sort((a, b) => a - b);
+export const moedasDaMuda = (muda) => Math.round(muda.moedas * (1 + efeitoViveiro('moedasVasoPct') / 100));
+
+export function viveiroLiberado() {
+  return estado.nivel >= dados.viveiro.nivelMin;
+}
+
+// Situação de cada nó: pronto, rodando, fila, livre (dá pra começar) ou trava (falta pré-requisito)
+export function viveiroInfo() {
+  viveiroAtualizar();
+  const v = estado.viveiro;
+  const agendados = [...(v.atual ? [v.atual.id] : []), ...v.fila];
+  const nos = nosViveiro().map((no) => {
+    let situacao;
+    if (v.prontos.includes(no.id)) situacao = 'pronto';
+    else if (v.atual && v.atual.id === no.id) situacao = 'rodando';
+    else if (v.fila.includes(no.id)) situacao = 'fila';
+    else if (no.requer.every((r) => v.prontos.includes(r) || agendados.includes(r))) situacao = 'livre';
+    else situacao = 'trava';
+    return { no, situacao, faltaRequer: no.requer.filter((r) => !v.prontos.includes(r) && !agendados.includes(r)).map((r) => noPorId(r)) };
+  });
+  let atual = null;
+  if (v.atual) {
+    const total = noPorId(v.atual.id).minutos * 60000;
+    const passou = Date.now() - v.atual.desde;
+    atual = { no: noPorId(v.atual.id), falta: Math.max(0, total - passou), progresso: Math.min(1, passou / total) };
+  }
+  return { nos, atual, fila: v.fila.map(noPorId), vagasFila: efeitoViveiro('filaPesquisa'), avisos: v.avisos.length, prontos: v.prontos.length, total: nosViveiro().length };
+}
+
+export function iniciarPesquisa(id) {
+  if (!viveiroLiberado()) return { ok: false, erro: 'viveiroBloqueado' };
+  const info = viveiroInfo();
+  const item = info.nos.find((n) => n.no.id === id);
+  if (!item || item.situacao === 'pronto' || item.situacao === 'rodando' || item.situacao === 'fila') return { ok: false, erro: 'pesquisaJaFeita' };
+  if (item.situacao === 'trava') return { ok: false, erro: 'pesquisaTrava' };
+  const v = estado.viveiro;
+  if (v.atual && v.fila.length >= info.vagasFila) return { ok: false, erro: 'viveiroOcupado' };
+  const no = item.no;
+  if (estado.moedas < no.moedas) return { ok: false, erro: 'semMoedas' };
+  for (const [carta, qtd] of Object.entries(no.materiais)) if ((estado.inventario[carta] || 0) < qtd) return { ok: false, erro: 'semMaterial' };
+  estado.moedas -= no.moedas;
+  for (const [carta, qtd] of Object.entries(no.materiais)) estado.inventario[carta] -= qtd;
+  const enfileirada = !!v.atual;
+  if (enfileirada) v.fila.push(no.id);
+  else v.atual = { id: no.id, desde: Date.now() };
+  contar('iniciarPesquisa');
+  salvarAgora();
+  return { ok: true, enfileirada };
+}
+
+// Abrir a tela do Viveiro conta como ver os avisos de pesquisa pronta
+export function viveiroVisto() {
+  if (!estado.viveiro.avisos.length) return;
+  estado.viveiro.avisos = [];
+  salvarAgora();
 }
 
 // ---------- Fôlego ----------
 // Recupera 1 ponto a cada X minutos, inclusive com o jogo fechado (usa o relógio).
 
 export function folego() {
-  const c = config.folego;
+  const c = { ...config.folego, max: folegoMax() };
   const f = estado.folego;
   const passo = c.minutosPorPonto * 60000;
   const agora = Date.now();
@@ -179,10 +294,10 @@ export function gastarFolego(qtd) {
 
 export function recarregarFolego() {
   const custo = config.folego.recargaOrvalho;
-  if (folego().valor >= config.folego.max) return { ok: false, erro: 'folegoCheio' };
+  if (folego().valor >= folegoMax()) return { ok: false, erro: 'folegoCheio' };
   if (estado.orvalho < custo) return { ok: false, erro: 'semOrvalho' };
   estado.orvalho -= custo;
-  estado.folego = { valor: config.folego.max, desde: Date.now() };
+  estado.folego = { valor: folegoMax(), desde: Date.now() };
   salvarAgora();
   return { ok: true };
 }
@@ -843,12 +958,13 @@ export function colherVaso(i) {
   const info = vasoInfo(i);
   if (!info.pronto) return { ok: false, erro: 'naoPronto' };
   const cartas = sortearCartas(info.muda.cartas);
-  estado.moedas += info.muda.moedas;
+  const moedasVaso = moedasDaMuda(info.muda);
+  estado.moedas += moedasVaso;
   guardarCartas(cartas);
   estado.canteiro[i] = null;
   contar('colherCanteiro');
   salvarAgora();
-  return { ok: true, moedas: info.muda.moedas, cartas, muda: info.muda };
+  return { ok: true, moedas: moedasVaso, cartas, muda: info.muda };
 }
 
 const destinoPorId = (id) => dados.rotina.expedicao.destinos.find((d) => d.id === id);
@@ -893,7 +1009,7 @@ export function enviarExpedicao(idDestino, plantas) {
   const destino = destinoPorId(idDestino);
   if (!destino || estado.expedicao) return { ok: false, erro: 'semMaterial' };
   if (!plantas.length) return { ok: false, erro: 'expedicaoVazia' };
-  if (plantas.length > dados.rotina.expedicao.maxPlantas) return { ok: false, erro: 'semMaterial' };
+  if (plantas.length > maxPlantasExpedicao()) return { ok: false, erro: 'semMaterial' };
   if (plantas.some((id) => !estado.colecao[id] || estado.time.some((m) => m.planta === id))) return { ok: false, erro: 'expedicaoNoTime' };
   const previa = previaExpedicao(destino.id, plantas);
   estado.expedicao = { destino: destino.id, plantas: [...plantas], desde: Date.now(), duracao: previa.duracao };
@@ -967,6 +1083,8 @@ export function rondaProntos() {
   const exp = expedicaoInfo();
   if (exp && exp.pronta) n++;
   if (presencaPendente() >= 0) n++;
+  viveiroAtualizar();
+  if (estado.viveiro.avisos.length) n++;
   if (arenaPremioPendente()) n++;
   if (invasaoPendente()) n++;
   return n;
@@ -986,7 +1104,7 @@ export function previaRonda(replantar = estado.ronda.replantar) {
   for (let i = 0; i < estado.canteiro.length; i++) {
     const info = vasoInfo(i);
     if (!info.pronto) continue;
-    moedas += info.muda.moedas;
+    moedas += moedasDaMuda(info.muda);
     vasos.push({ i, muda: info.muda });
   }
   const exp = expedicaoInfo();
@@ -995,8 +1113,10 @@ export function previaRonda(replantar = estado.ronda.replantar) {
     moedas += previaExpedicao(exp.destino.id, exp.plantas).moedas;
     const vao = plantasQueVoltamAViajar(exp.plantas);
     const ficam = exp.plantas.filter((id) => !vao.includes(id));
-    expedicao = { tipo: 'expedicao', destino: exp.destino, vao, ficam };
+    expedicao = { tipo: 'expedicao', destino: exp.destino, proximo: destinoDaRonda(exp.destino), vao, ficam };
   }
+  viveiroAtualizar();
+  if (estado.viveiro.avisos.length) itens.push({ tipo: 'pesquisa', ids: [...estado.viveiro.avisos] });
   const dia = presencaPendente();
   if (dia >= 0) {
     const premio = dados.rotina.presenca.premios[dia];
@@ -1030,6 +1150,18 @@ export function previaRonda(replantar = estado.ronda.replantar) {
   return { itens: lista, custo, vazio: !lista.length };
 }
 
+// Com a pesquisa "Ronda que varia o destino", a expedição reenviada vai pro destino seguinte da lista
+function destinoDaRonda(atual) {
+  if (!estado.ronda.variar || !efeitoViveiro('rondaVaria')) return atual;
+  const lista = dados.rotina.expedicao.destinos;
+  return lista[(lista.findIndex((d) => d.id === atual.id) + 1) % lista.length];
+}
+
+export function definirVariar(sim) {
+  estado.ronda.variar = !!sim;
+  salvarAgora();
+}
+
 export function definirReplantar(sim) {
   estado.ronda.replantar = !!sim;
   salvarAgora();
@@ -1039,7 +1171,7 @@ export function fazerRonda(replantar = estado.ronda.replantar) {
   if (!rondaLiberada()) return { ok: false, erro: 'rondaBloqueada' };
   const previa = previaRonda(replantar);
   if (previa.vazio) return { ok: false, erro: 'rondaVazia' };
-  const r = { ok: true, moedas: 0, orvalho: 0, xp: 0, cartas: [], custo: 0, replantados: [], subiram: [], expedicao: null, premios: [] };
+  const r = { ok: true, moedas: 0, orvalho: 0, xp: 0, cartas: [], custo: 0, replantados: [], subiram: [], expedicao: null, premios: [], pesquisas: [] };
   const antes = { moedas: estado.moedas, orvalho: estado.orvalho, inventario: { ...estado.inventario } };
   // 1) colher e receber tudo
   for (const item of previa.itens) {
@@ -1053,6 +1185,9 @@ export function fazerRonda(replantar = estado.ronda.replantar) {
         r.xp += e.xp;
         r.subiram.push(...e.subiram);
       }
+    } else if (item.tipo === 'pesquisa') {
+      r.pesquisas.push(...item.ids);
+      estado.viveiro.avisos = estado.viveiro.avisos.filter((id) => !item.ids.includes(id));
     } else if (item.tipo === 'presenca') {
       if (resgatarPresenca().ok) r.premios.push(item);
     } else if (item.tipo === 'arena') {
@@ -1069,8 +1204,8 @@ export function fazerRonda(replantar = estado.ronda.replantar) {
       const p = plantarMuda(item.i, item.replanta.id);
       if (p.ok) { r.custo += item.replanta.custo; r.replantados.push(item.replanta); }
     } else if (item.tipo === 'expedicao' && item.vao.length) {
-      const e = enviarExpedicao(item.destino.id, item.vao);
-      if (e.ok) r.expedicao = { destino: item.destino, plantas: item.vao, ficam: item.ficam, falta: expedicaoInfo().falta };
+      const e = enviarExpedicao(item.proximo.id, item.vao);
+      if (e.ok) r.expedicao = { destino: item.proximo, plantas: item.vao, ficam: item.ficam, falta: expedicaoInfo().falta };
     }
   }
   r.moedas = estado.moedas - antes.moedas + r.custo;
@@ -1102,14 +1237,14 @@ export function previaTonico(fase, vezes) {
     xp += fase.recompensa.xp || 0;
     let subiu = false;
     while (xp >= c.xpBase + nivel * c.xpPorNivel) { xp -= c.xpBase + nivel * c.xpPorNivel; nivel += 1; subiu = true; }
-    if (subiu) { f = Math.max(f, config.folego.max); encheu = true; }
+    if (subiu) { f = Math.max(f, folegoMax()); encheu = true; }
   }
   return { feitas: vezes, encheu, custo: fase.folego * vezes };
 }
 
 export function mandarTonico(fase, vezes, sortearCartasFase) {
   if (!tonicoLiberado(fase)) return { ok: false, erro: 'precisa3' };
-  if (!dados.rotina.tonico.vezes.includes(vezes)) return { ok: false, erro: 'semFolego' };
+  if (!tonicoVezes().includes(vezes)) return { ok: false, erro: 'semFolego' };
   if (previaTonico(fase, vezes).feitas < vezes) return { ok: false, erro: 'semFolego' };
   const r = { ok: true, feitas: 0, moedas: 0, orvalho: 0, xp: 0, cartas: [], subiram: {}, subiuJogador: 0 };
   for (let k = 0; k < vezes; k++) {
