@@ -204,7 +204,7 @@ export function efeitoViveiro(tipo) {
 export const vasos = () => dados.rotina.canteiro.vasos + efeitoViveiro('vasoExtra');
 export const maxPlantasExpedicao = () => dados.rotina.expedicao.maxPlantas + efeitoViveiro('vagaExpedicao');
 export const folegoMax = () => config.folego.max + efeitoViveiro('folegoMax');
-export const tonicoVezes = () => [...dados.rotina.tonico.vezes, ...nosViveiro().filter((n) => n.efeito.tipo === 'tonicoVezes' && estado.viveiro.prontos.includes(n.id)).map((n) => n.efeito.valor)].sort((a, b) => a - b);
+export const tonicoVezes = () => (viveiroAtualizar(), [...dados.rotina.tonico.vezes, ...nosViveiro().filter((n) => n.efeito.tipo === 'tonicoVezes' && estado.viveiro.prontos.includes(n.id)).map((n) => n.efeito.valor)].sort((a, b) => a - b));
 export const moedasDaMuda = (muda) => Math.round(muda.moedas * (1 + efeitoViveiro('moedasVasoPct') / 100));
 
 export function viveiroLiberado() {

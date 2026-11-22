@@ -758,6 +758,7 @@ body {
   font-family: inherit; cursor: pointer;
 }
 .vaso span { font-size: 1.7rem; line-height: 1.1; }
+.rotina .vaso small { font-size: .65rem; }
 .vaso small { font-size: .7rem; font-weight: 700; white-space: nowrap; }
 .vaso.vazio span { opacity: .6; }
 .vaso.pronto { border-color: var(--laranja); background: #fff3d6; animation: pronto 1s ease-in-out infinite alternate; }

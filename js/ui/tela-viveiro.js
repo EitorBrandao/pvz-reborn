@@ -68,7 +68,7 @@ function linhaNo({ no, situacao, faltaRequer }, info) {
   } else if (situacao === 'fila') rodape = `<small>${tx.naFila}</small>`;
   else if (situacao === 'trava') rodape = `<small>${preencher(tx.precisa, { nome: faltaRequer.map((n) => n.nome).join(', ') })}</small>`;
   else {
-    const vaiFila = !!info.atual;
+    const vaiFila = !!info.atual && info.vagasFila > info.fila.length;
     rodape = `<small>${no.texto}</small><small class="viveiro-custo">${custo(no)}</small>`;
     acao = `<button class="btn btn-laranja viveiro-pesquisar" data-no="${no.id}">${vaiFila ? tx.enfileirar : tx.pesquisar}</button>`;
   }
