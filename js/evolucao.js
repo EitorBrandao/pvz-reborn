@@ -24,13 +24,29 @@ export function pontosGastos(registro) {
 }
 
 // Classe de talentos da planta (pela função dela: Tanque, Dano, Apoio, Controle)
-export function classeTalento(dados, base) {
+// Função híbrida (ex.: Tanque Controle): a planta segue a árvore escolhida (registro.arvore) entre as duas.
+export function hibridaTalento(dados, base) {
   const t = dados.talentos;
+  return (t.hibridas && t.hibridas[t.funcoes[base.funcao]]) || null;
+}
+
+export function arvoreEscolhida(dados, base, registro) {
+  const h = hibridaTalento(dados, base);
+  if (!h) return null;
+  const quer = registro && registro.arvore;
+  if (h.classes.includes(quer)) return quer;
+  return h.classes.includes(base.arvorePadrao) ? base.arvorePadrao : h.classes[0];
+}
+
+export function classeTalento(dados, base, registro) {
+  const t = dados.talentos;
+  const arvore = arvoreEscolhida(dados, base, registro);
+  if (arvore) return t.classes[arvore];
   return t.classes[t.funcoes[base.funcao]] || t.classes.dano;
 }
 
-export function noTalento(dados, base, idNo) {
-  for (const ramo of classeTalento(dados, base).ramos) {
+export function noTalento(dados, base, idNo, registro) {
+  for (const ramo of classeTalento(dados, base, registro).ramos) {
     const no = ramo.nos.find((n) => n.id === idNo);
     if (no) return no;
   }
@@ -42,7 +58,7 @@ export function bonusTalentos(registro, dados, base) {
   const b = { vida: 0, atq: 0, def: 0, vel: 0, critico: 0, critDano: 0, potencia: 0, seivaInicial: 0, seivaTurno: 0 };
   if (!dados.talentos) return b;
   for (const [id, n] of Object.entries(registro.talentos || {})) {
-    const no = noTalento(dados, base, id);
+    const no = noTalento(dados, base, id, registro);
     if (no) b[no.efeito] += no.porPonto * n;
   }
   return b;

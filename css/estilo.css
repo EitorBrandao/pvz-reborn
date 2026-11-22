@@ -904,6 +904,7 @@ body {
 .talento-ramo { margin: 4px 0; }
 .talento-no { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 2px 0; font-size: 13px; }
 .talento-no small { display: block; opacity: .8; }
+.arvore-opcoes { display: flex; gap: 8px; margin: 4px 0; }
 
 /* ---------- Selos de Ascensão / Fusão ---------- */
 .cartao-planta, .espaco { position: relative; }

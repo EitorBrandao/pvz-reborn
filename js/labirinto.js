@@ -16,7 +16,7 @@ function embaralhar(lista) {
 // Tanques ficam na frente, o resto atrás.
 export function posicionarTime(ids, dados) {
   const funcao = (id) => dados.plantas.find((p) => p.id === id)?.funcao;
-  const ordem = [...ids].sort((a, b) => Number(funcao(b) === 'Tanque') - Number(funcao(a) === 'Tanque'));
+  const ordem = [...ids].sort((a, b) => Number(/^Tanque/.test(funcao(b))) - Number(/^Tanque/.test(funcao(a))));
   return ordem.map((planta, i) => ({ planta, col: ESPACOS[i][0], linha: ESPACOS[i][1] }));
 }
 

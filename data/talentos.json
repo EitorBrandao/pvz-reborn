@@ -13,7 +13,69 @@
   "Finalizador": "dano",
   "Cura": "apoio",
   "Suporte": "apoio",
-  "Controle": "controle"
+  "Controle": "controle",
+  "Tanque Dano": "tanque-dano",
+  "Tanque Apoio": "tanque-apoio",
+  "Tanque Controle": "tanque-controle",
+  "Dano Apoio": "dano-apoio",
+  "Controle Agressivo": "controle-agressivo",
+  "Controle Suporte": "controle-suporte"
+ },
+ "hibridas": {
+  "tanque-dano": {
+   "nome": "Tanque Dano",
+   "emoji": "🛡️⚔️",
+   "desc": "Aguenta e bate de volta: escolha a árvore de Tanque ou de Dano.",
+   "classes": [
+    "tanque",
+    "dano"
+   ]
+  },
+  "tanque-apoio": {
+   "nome": "Tanque Apoio",
+   "emoji": "🛡️💚",
+   "desc": "Protege o time: escolha a árvore de Tanque ou de Apoio.",
+   "classes": [
+    "tanque",
+    "apoio"
+   ]
+  },
+  "tanque-controle": {
+   "nome": "Tanque Controle",
+   "emoji": "🛡️🌀",
+   "desc": "Segura a linha e atrapalha as pragas: escolha a árvore de Tanque ou de Controle.",
+   "classes": [
+    "tanque",
+    "controle"
+   ]
+  },
+  "dano-apoio": {
+   "nome": "Dano Apoio",
+   "emoji": "⚔️💚",
+   "desc": "Bate e ajuda o time: escolha a árvore de Dano ou de Apoio.",
+   "classes": [
+    "dano",
+    "apoio"
+   ]
+  },
+  "controle-agressivo": {
+   "nome": "Controle Agressivo",
+   "emoji": "🌀⚔️",
+   "desc": "Atrapalha batendo forte: escolha a árvore de Controle ou de Dano.",
+   "classes": [
+    "controle",
+    "dano"
+   ]
+  },
+  "controle-suporte": {
+   "nome": "Controle Suporte",
+   "emoji": "🌀💚",
+   "desc": "Atrapalha e ajuda o time: escolha a árvore de Controle ou de Apoio.",
+   "classes": [
+    "controle",
+    "apoio"
+   ]
+  }
  },
  "classes": {
   "tanque": {

@@ -150,11 +150,16 @@ try {
       }
     }
     // Mesma classe (tanque, dano, apoio, controle): a classe muda como os pontos se distribuem, então só compara dentro dela.
-    const classe = (p) => dados.talentos?.funcoes?.[p.funcao] || 'dano';
-    const mesmaClasse = normais.filter((p) => classe(p) === classe(h));
-    for (const [nivel, rank] of [[1, 0], [50, 3]]) {
-      const melhor = mesmaClasse.reduce((m, p) => (!m || poderDe(p, reg(nivel, rank)) > poderDe(m, reg(nivel, rank)) ? p : m), null);
-      if (melhor && poderDe(h, reg(nivel, rank)) <= poderDe(melhor, reg(nivel, rank))) erro('híbrida', `${h.nome} (💪${poderDe(h, reg(nivel, rank))}) não passa a planta normal mais forte da classe ${classe(h)}, ${melhor.nome} (💪${poderDe(melhor, reg(nivel, rank))}), no nível ${nivel}, rank ${rank}`);
+    // Híbrida (ex.: Tanque Controle) compara com as normais das duas classes do par.
+    const idClasse = (p) => dados.talentos?.funcoes?.[p.funcao] || 'dano';
+    const classesDe = (p) => dados.talentos?.hibridas?.[idClasse(p)]?.classes || [idClasse(p)];
+    if (!dados.talentos?.funcoes?.[h.funcao]) erro('híbrida', `${h.nome} tem função "${h.funcao}" que não existe em talentos.json`);
+    for (const cl of classesDe(h)) {
+      const mesmaClasse = normais.filter((p) => idClasse(p) === cl);
+      for (const [nivel, rank] of [[1, 0], [50, 3]]) {
+        const melhor = mesmaClasse.reduce((m, p) => (!m || poderDe(p, reg(nivel, rank)) > poderDe(m, reg(nivel, rank)) ? p : m), null);
+        if (melhor && poderDe(h, reg(nivel, rank)) <= poderDe(melhor, reg(nivel, rank))) erro('híbrida', `${h.nome} (💪${poderDe(h, reg(nivel, rank))}) não passa a planta normal mais forte da classe ${cl}, ${melhor.nome} (💪${poderDe(melhor, reg(nivel, rank))}), no nível ${nivel}, rank ${rank}`);
+      }
     }
 
     // b) Habilidade: efeitos que a planta da receita também tem não podem ser mais fracos na híbrida (comparando em 5★)

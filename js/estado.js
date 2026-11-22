@@ -82,7 +82,7 @@ function completar(salvo) {
   for (const [id, r] of Object.entries(e.colecao)) {
     const base = dados.plantas.find((x) => x.id === id);
     if (!base) continue;
-    for (const no of Object.keys(r.talentos)) if (!evo.noTalento(dados, base, no)) delete r.talentos[no];
+    for (const no of Object.keys(r.talentos)) if (!evo.noTalento(dados, base, no, r)) delete r.talentos[no];
   }
   while (e.canteiro.length < dados.rotina.canteiro.vasos) e.canteiro.push(null);
   // Ronda: saves antigos lembram a muda que está em cada vaso e a expedição que está viajando
@@ -1176,11 +1176,23 @@ export function ascender(idPlanta) {
 export function gastarTalento(idPlanta, idNo) {
   const registro = estado.colecao[idPlanta];
   const base = dados.plantas.find((x) => x.id === idPlanta);
-  const no = base && evo.noTalento(dados, base, idNo);
+  const no = base && evo.noTalento(dados, base, idNo, registro);
   if (!registro || !no) return { ok: false, erro: 'semMaterial' };
   if ((registro.talentos[idNo] || 0) >= no.max) return { ok: false, erro: 'talentoMax' };
   if (evo.pontosGastos(registro) >= evo.pontosTalento(registro, dados)) return { ok: false, erro: 'semPontos' };
   registro.talentos[idNo] = (registro.talentos[idNo] || 0) + 1;
+  salvarAgora();
+  return { ok: true };
+}
+
+// Planta híbrida: escolhe qual das duas árvores seguir (só com todos os pontos livres; pra trocar, reseta antes).
+export function escolherArvore(idPlanta, classe) {
+  const registro = estado.colecao[idPlanta];
+  const base = dados.plantas.find((x) => x.id === idPlanta);
+  const h = base && evo.hibridaTalento(dados, base);
+  if (!registro || !h || !h.classes.includes(classe)) return { ok: false, erro: 'semMaterial' };
+  if (evo.pontosGastos(registro)) return { ok: false, erro: 'semPontosGastos' };
+  registro.arvore = classe;
   salvarAgora();
   return { ok: true };
 }

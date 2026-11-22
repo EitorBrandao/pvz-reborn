@@ -3,7 +3,7 @@
 import { arte, iconeHabilidade } from '../arte.js';
 import { $, mostrarTela, avisar, preencher, selosPlanta, textoHabilidade } from './comum.js';
 import * as jogo from '../estado.js';
-import { atributos, poder, xpParaProximo, nivelMaximo, classeTalento, pontosTalento, pontosGastos, custoAscensao, podeAscender, custoEstrela, custoEquip, temCartas, habilidadeComEstrelas } from '../evolucao.js';
+import { atributos, poder, xpParaProximo, nivelMaximo, classeTalento, hibridaTalento, arvoreEscolhida, pontosTalento, pontosGastos, custoAscensao, podeAscender, custoEstrela, custoEquip, temCartas, habilidadeComEstrelas } from '../evolucao.js';
 import * as som from '../som.js';
 
 let dados;
@@ -105,7 +105,7 @@ function melhorias(r, p) {
   const ca = custoAscensao(r, dados);
   const ascender = !!ca && podeAscender(r, cfg) && e.moedas >= ca.moedas && temCartas(e.inventario, ca.cartas);
   // Só avisa se sobrou ponto E ainda existe talento que dá pra subir
-  const temTalentoPraSubir = classeTalento(dados, p).ramos.some((ramo) => ramo.nos.some((no) => ((r.talentos || {})[no.id] || 0) < no.max));
+  const temTalentoPraSubir = classeTalento(dados, p, r).ramos.some((ramo) => ramo.nos.some((no) => ((r.talentos || {})[no.id] || 0) < no.max));
   const talento = pontosTalento(r, dados) - pontosGastos(r) > 0 && temTalentoPraSubir;
   const fusao = fusoesDaPlanta(p.id).some((f) => f.situacao && f.situacao.pronta);
   return { treinar, estrela, equip, algumEquip, ascender, talento, fusao, alguma: treinar || estrela || algumEquip || ascender || talento || fusao };
@@ -345,7 +345,13 @@ function desenharDetalhe() {
   // Talentos
   const tl = dados.talentos;
   const livres = pontosTalento(r, dados) - pontosGastos(r);
-  const classe = classeTalento(dados, p);
+  const classe = classeTalento(dados, p, r);
+  const hib = hibridaTalento(dados, p);
+  const arvore = arvoreEscolhida(dados, p, r);
+  const gastou = pontosGastos(r) > 0;
+  const escolhaHtml = hib ? `<div class="bloco-arvore"><p class="dica-pequena"><b>${hib.emoji} ${hib.nome}</b>: ${hib.desc}</p>
+    <div class="arvore-opcoes">${hib.classes.map((c) => `<button class="btn ${c === arvore ? 'btn-verde' : 'btn-azul'} btn-peq" data-acao="arvore" data-classe="${c}" ${c === arvore || gastou ? 'disabled' : ''}>${tl.classes[c].emoji} ${tl.classes[c].nome}</button>`).join('')}</div>
+    ${gastou ? `<p class="dica-pequena">Pra trocar de árvore, resete os talentos antes.</p>` : ''}</div>` : '';
   const ramosHtml = classe.ramos.map((ramo) => `
     <div class="talento-ramo"><b>${ramo.emoji} ${ramo.nome}</b> <small>${ramo.desc}</small>
     ${ramo.nos.map((no) => {
@@ -355,6 +361,7 @@ function desenharDetalhe() {
         <button class="btn btn-verde btn-peq" data-acao="talento" data-no="${no.id}" ${livres > 0 && n < no.max ? '' : 'disabled'}>+</button></div>`;
     }).join('')}</div>`).join('');
   const blocoTalentos = `<div class="bloco">
+    ${escolhaHtml}
     <p class="dica-pequena"><b>${classe.emoji} ${classe.nome}</b>: ${classe.desc}</p>
     <p class="dica-pequena">Pontos livres: <b>${livres}</b> (1 a cada ${tl.niveisPorPonto} níveis, +${tl.pontosPorRank} por rank de ascensão)</p>
     ${ramosHtml}
@@ -458,6 +465,10 @@ function acaoDetalhe(evento) {
       break;
     case 'talento':
       res = jogo.gastarTalento(aberta, botao.dataset.no);
+      if (res.ok) som.tocarSom('treino');
+      break;
+    case 'arvore':
+      res = jogo.escolherArvore(aberta, botao.dataset.classe);
       if (res.ok) som.tocarSom('treino');
       break;
     case 'ponto-labirinto':

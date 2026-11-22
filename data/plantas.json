@@ -480,7 +480,7 @@
       "tam": 1.8,
       "arco": 2
     },
-    "funcao": "Tanque",
+    "funcao": "Tanque Dano",
     "vida": 560,
     "atq": 44,
     "def": 50,
@@ -504,7 +504,8 @@
           "valor": 0.03
         }
       }
-    }
+    },
+    "arvorePadrao": "tanque"
   },
   {
     "id": "teia_esporenta",
@@ -520,7 +521,7 @@
       "arco": 0.5,
       "intervalo": 120
     },
-    "funcao": "Controle",
+    "funcao": "Controle Suporte",
     "alvo": "rapido",
     "vida": 300,
     "atq": 36,
@@ -543,7 +544,8 @@
           "valor": 0.03
         }
       }
-    }
+    },
+    "arvorePadrao": "controle"
   },
   {
     "id": "jarro_peconhento",
@@ -558,7 +560,7 @@
       "arco": 0.9,
       "carga": 650
     },
-    "funcao": "Finalizador",
+    "funcao": "Controle Agressivo",
     "vida": 290,
     "atq": 52,
     "def": 18,
@@ -583,7 +585,8 @@
         }
       }
     },
-    "alvo": "fraco"
+    "alvo": "fraco",
+    "arvorePadrao": "dano"
   },
   {
     "id": "lirio_curativo",
@@ -598,7 +601,7 @@
       "arco": 1.3,
       "carga": 480
     },
-    "funcao": "Cura",
+    "funcao": "Controle Suporte",
     "vida": 340,
     "atq": 32,
     "def": 28,
@@ -620,7 +623,8 @@
           "valor": 0.03
         }
       }
-    }
+    },
+    "arvorePadrao": "apoio"
   },
   {
     "id": "couve_escudeira",
@@ -636,7 +640,7 @@
       "arco": 0.8,
       "intervalo": 130
     },
-    "funcao": "Tanque",
+    "funcao": "Tanque Controle",
     "vida": 520,
     "atq": 34,
     "def": 48,
@@ -652,7 +656,8 @@
         "mult": 0.15,
         "seiva": 3
       }
-    }
+    },
+    "arvorePadrao": "tanque"
   },
   {
     "id": "bambu_pipoca",
@@ -668,7 +673,7 @@
       "arco": 1.3,
       "intervalo": 70
     },
-    "funcao": "Dano em área",
+    "funcao": "Dano Apoio",
     "alvo": "fraco",
     "vida": 300,
     "atq": 46,
@@ -692,7 +697,8 @@
           "valor": 0.04
         }
       }
-    }
+    },
+    "arvorePadrao": "dano"
   },
   {
     "id": "coco_raizao",
@@ -701,7 +707,7 @@
     "nome": "Coco Raizão",
     "emoji": "🪓",
     "projetil": "💥",
-    "funcao": "Corpo a corpo",
+    "funcao": "Tanque Dano",
     "alcance": "perto",
     "alvo": "forte",
     "vida": 420,
@@ -726,7 +732,8 @@
           "valor": 0.03
         }
       }
-    }
+    },
+    "arvorePadrao": "dano"
   },
   {
     "id": "melancia_sonolenta",
@@ -735,7 +742,7 @@
     "nome": "Melancia Sonolenta",
     "emoji": "💤",
     "projetil": "💥",
-    "funcao": "Controle",
+    "funcao": "Controle Suporte",
     "alcance": "perto",
     "vida": 460,
     "atq": 36,
@@ -751,6 +758,7 @@
         "mult": 0.1,
         "turnos": 0.25
       }
-    }
+    },
+    "arvorePadrao": "controle"
   }
 ]
