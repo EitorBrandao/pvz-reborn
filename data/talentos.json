@@ -97,7 +97,7 @@
        "id": "seivaTurno",
        "nome": "Raiz Veloz",
        "efeito": "seivaTurno",
-       "porPonto": 1,
+       "porPonto": 2,
        "max": 5,
        "texto": "+{valor} de seiva por rodada",
        "absoluto": true
@@ -365,7 +365,7 @@
        "id": "seivaTurno",
        "nome": "Raiz Veloz",
        "efeito": "seivaTurno",
-       "porPonto": 2,
+       "porPonto": 5,
        "max": 5,
        "texto": "+{valor} de seiva por rodada",
        "absoluto": true
