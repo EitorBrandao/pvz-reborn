@@ -1,5 +1,5 @@
 {
-  "versaoJogo": "0.15.9",
+  "versaoJogo": "0.15.10",
   "inicio": {
     "moedas": 500,
     "orvalho": 10,
@@ -63,7 +63,9 @@
       "liberaNoNivel": [20, 30, 40]
     },
     "maxRodadas": 15,
-    "multDano": 1.7,
+    "multDano": 1.0,
+    "kDef": 0.25,
+    "pragaForte": { "de": 40, "ate": 70, "vida": 4, "atq": 7 },
     "multPerto": 1.25,
     "seivaPorTurno": 25,
     "seivaAoApanhar": 10,
