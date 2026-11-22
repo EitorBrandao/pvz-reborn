@@ -1,7 +1,7 @@
 // Tela da Arena: ranking, desafios do dia, prêmio diário e recados dos rivais.
 
 import { arte } from '../arte.js';
-import { $, mostrarTela, avisar, preencher } from './comum.js';
+import { $, mostrarTela, avisar, preencher, curto } from './comum.js';
 import * as jogo from '../estado.js';
 import { batalhaArena } from '../arena.js';
 import { poderLados } from '../batalha.js';
@@ -13,7 +13,7 @@ let aoPreparar;
 let aoMudar;
 
 const t = () => dados.textos.arena;
-const num = (n) => Math.round(n).toLocaleString('pt-BR');
+const num = curto;
 
 export function iniciarTelaArena(d, { voltar, preparar, mudou }) {
   dados = d;
@@ -42,7 +42,7 @@ function linhaDesafio(d, gratis) {
       <b>${d.pos}º ${r.nome} <small class="nv">Nv ${r.nivel} · ${t().estilos[r.estilo]}</small></b>
       <span class="inimigos">${r.time.map((m) => emojiPlanta(m.planta)).join('')}</span>
       <small class="poder-comparar ${classe}">${num(nosso)} × ${num(deles)}</small>
-      <small class="arena-pontos">${num(r.pontos)} pts · ${preencher(t().chance, { pct: d.chance })} · <b class="ganha">+${d.ganha}</b> / <b class="perde">${d.perde}</b></small>
+      <small class="arena-pontos">${num(r.pontos)} pts · ${preencher(t().chance, { pct: d.chance })} · <b class="ganha">+${curto(d.ganha)}</b> / <b class="perde">${curto(d.perde)}</b></small>
     </div>
     <button class="btn btn-peq ${gratis > 0 ? 'btn-laranja' : 'btn-azul'}" data-rival="${r.id}">${botao}</button>
   </div>`;

@@ -1,6 +1,6 @@
 // Desenha e anima a batalha no Canvas, tocando os eventos calculados em batalha.js.
 
-import { $, mostrarTela, avisar, sortear, preencher } from './comum.js';
+import { $, mostrarTela, avisar, sortear, preencher, curto } from './comum.js';
 import * as jogo from '../estado.js';
 import { prepararBatalha, simular, rolarCartas, criarRng } from '../batalha.js';
 import { calcularEstrelas } from '../campanha.js';
@@ -485,14 +485,14 @@ function mostrarDano(soma, aba) {
     const nome = document.createElement('span');
     nome.innerHTML = l.nome;
     const num = document.createElement('span');
-    num.textContent = l.v.toLocaleString('pt-BR');
+    num.textContent = curto(l.v);
     li.append(barra, nome, num);
     lista.appendChild(li);
   }
   if (linhas.length > 1) {
     const li = document.createElement('li');
     li.className = 'total';
-    li.innerHTML = `<span>${t.total}: ${total.toLocaleString('pt-BR')}</span>`;
+    li.innerHTML = `<span>${t.total}: ${curto(total)}</span>`;
     lista.appendChild(li);
   }
 }
@@ -527,7 +527,7 @@ function terminar(resultado, semente) {
   const caixa = $('resultado');
   caixa.classList.toggle('vitoria', resultado.vitoria);
   $('resultado-titulo').textContent = invasao
-    ? preencher(textos.invasao.danoCausado, { dano: dano.toLocaleString('pt-BR') })
+    ? preencher(textos.invasao.danoCausado, { dano: curto(dano) })
     : sortear(resultado.vitoria ? textos.vitoria : textos.derrota);
   let texto;
   if (invasao) texto = preencher(textos.vitoriaTexto, { moedas, xp });

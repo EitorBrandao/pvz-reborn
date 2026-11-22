@@ -1,7 +1,7 @@
 // Tela de preparar batalha: ver a fase escolhida e montar o time.
 
 import { arte, iconeHabilidade } from '../arte.js';
-import { $, mostrarTela, avisar, preencher, selosPlanta, textoHabilidade } from './comum.js';
+import { $, mostrarTela, avisar, preencher, selosPlanta, textoHabilidade, curto } from './comum.js';
 import * as jogo from '../estado.js';
 import { atributos, poder, habilidadeComEstrelas } from '../evolucao.js';
 import { bonusFaccoes, poderLados } from '../batalha.js';
@@ -86,9 +86,9 @@ function textoPoder() {
   const t = dados.textos;
   const f = faseEscolhida;
   const { planta: nosso, praga: deles } = poderLados(faseEscolhida, jogo.estado.time, dados, jogo.estado.colecao);
-  if (!jogo.estado.time.length) return `<span class="poder-comparar">${preencher(t.poderVazio, { deles })}</span>`;
+  if (!jogo.estado.time.length) return `<span class="poder-comparar">${preencher(t.poderVazio, { deles: curto(deles) })}</span>`;
   const classe = nosso >= deles ? 'mais-forte' : 'mais-fraco';
-  return `<span class="poder-comparar ${classe}">${preencher(f.rival ? t.poderCompararArena : t.poderComparar, { nosso, deles })}</span>`;
+  return `<span class="poder-comparar ${classe}">${preencher(f.rival ? t.poderCompararArena : t.poderComparar, { nosso: curto(nosso), deles: curto(deles) })}</span>`;
 }
 
 function desenharBonus() {
@@ -180,7 +180,7 @@ function plantasOrdenadas() {
 // Número mostrado no cartão: o atributo da ordem escolhida, ou o Poder.
 const ICONE_ATRIBUTO = { vida: '❤️', atq: '⚔️', def: '🛡️', vel: '💨' };
 function numeroCartao(s) {
-  return ICONE_ATRIBUTO[ordem] ? `${ICONE_ATRIBUTO[ordem]} ${s[ordem]}` : `💪 ${s.poder}`;
+  return ICONE_ATRIBUTO[ordem] ? `${ICONE_ATRIBUTO[ordem]} ${curto(s[ordem])}` : `💪 ${curto(s.poder)}`;
 }
 
 function tituloGrupo(texto) {
@@ -277,7 +277,7 @@ function mostrarInfo(p, registro, stats) {
       <small>${p.funcao}${fac ? ` · ${fac.emoji} ${fac.nome}` : ''}</small>
       <div class="estrelas">${'⭐'.repeat(registro.estrelas)}</div>
     </div>
-    <div class="bloco"><span class="atributos">💪 ${stats.poder} · ❤️${stats.vida} ⚔️${stats.atq} 🛡️${stats.def} 💨${stats.vel}</span></div>
+    <div class="bloco"><span class="atributos">💪 ${curto(stats.poder)} · ❤️${curto(stats.vida)} ⚔️${curto(stats.atq)} 🛡️${curto(stats.def)} 💨${curto(stats.vel)}</span></div>
     <div class="bloco"><b class="nome-hab">${iconeHabilidade(h.tipo)} ${h.nome}</b><p class="dica-pequena">${textoHabilidade(h, dados)}</p></div>
     <p class="dica-pequena">${t.infoPlantaFechar}</p>`;
   ignorarToqueAte = Date.now() + 700;

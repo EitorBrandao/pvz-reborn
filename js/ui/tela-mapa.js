@@ -1,7 +1,7 @@
 // Mapa da campanha: abas dos mapas, caminho de fases e painel da fase escolhida.
 
 import { arte } from '../arte.js';
-import { $, mostrarCartasAgrupadas, mostrarTela, avisar, preencher } from './comum.js';
+import { $, mostrarCartasAgrupadas, mostrarTela, avisar, preencher, curto } from './comum.js';
 import * as jogo from '../estado.js';
 import * as som from '../som.js';
 import { rolarCartas } from '../batalha.js';
@@ -152,7 +152,7 @@ function abrirPainel(fase) {
     <div class="fase-estrelas">${estrelas(melhor)}</div>
     <div class="bloco"><b>Inimigos</b> <small>(Nv ${fase.nivel})</small><div class="fase-inimigos">${inimigos}</div></div>
     <div class="bloco"><b>Prêmios</b>
-      <p>🪙 ${r.moedas} · ✨ ${r.xp} XP${r.orvalho ? ` · 💧 ${r.orvalho}` : ''}</p>
+      <p>🪙 ${curto(r.moedas)} · ✨ ${curto(r.xp)} XP${r.orvalho ? ` · 💧 ${curto(r.orvalho)}` : ''}</p>
       <div class="fase-cartas">${cartas}</div>
     </div>
     <p class="dica-pequena">3 estrelas: vencer sem perder nenhuma planta.</p>
@@ -200,9 +200,9 @@ function desenharTonico(fase) {
 function mostrarResultadoTonico(fase, r) {
   const cfg = dados.rotina.tonico;
   const tx = dados.textos.tonico;
-  const partes = [`🪙 +${r.moedas}`];
-  if (r.orvalho) partes.push(`💧 +${r.orvalho}`);
-  partes.push(`✨ ${r.xp} XP`);
+  const partes = [`🪙 +${curto(r.moedas)}`];
+  if (r.orvalho) partes.push(`💧 +${curto(r.orvalho)}`);
+  partes.push(`✨ ${curto(r.xp)} XP`);
   const subiram = Object.keys(r.subiram).map((id) => arte(dados.plantas.find((p) => p.id === id))).join('');
   $('fase-conteudo').innerHTML = `
     <button id="fase-fechar" class="fechar" aria-label="Fechar">✖</button>

@@ -1,7 +1,7 @@
 // Telas da Invasão de Chefe, da Feira e do Herbário.
 
 import { arte, iconeHabilidade } from '../arte.js';
-import { $, mostrarTela, avisar, preencher, textoHabilidade } from './comum.js';
+import { $, mostrarTela, avisar, preencher, textoHabilidade, curto } from './comum.js';
 import { atributos, poder, registroNovo, habilidadeComEstrelas } from '../evolucao.js';
 import * as jogo from '../estado.js';
 import { batalhaInvasao } from '../eventos.js';
@@ -15,7 +15,7 @@ let aoMudar;
 const t = () => dados.textos.invasao;
 const tf = () => dados.textos.feira;
 const th = () => dados.textos.herbario;
-const num = (n) => Math.round(n).toLocaleString('pt-BR');
+const num = curto;
 
 export function iniciarTelasEventos(d, { voltarDesafios, voltarBase, preparar, mudou }) {
   dados = d;
@@ -42,8 +42,8 @@ function formatarFalta(ms) {
 
 export function textoPremio(p) {
   const partes = [];
-  if (p.moedas) partes.push(`🪙 ${p.moedas}`);
-  if (p.orvalho) partes.push(`💧 ${p.orvalho}`);
+  if (p.moedas) partes.push(`🪙 ${curto(p.moedas)}`);
+  if (p.orvalho) partes.push(`💧 ${curto(p.orvalho)}`);
   for (const [id, qtd] of Object.entries(p.cartas || {})) {
     const c = dados.cartas.find((x) => x.id === id);
     if (c) partes.push(`${c.emoji}${qtd > 1 ? `×${qtd}` : ''}`);
@@ -143,11 +143,11 @@ function desenharFeira() {
   const ofertas = jogo.feiraHoje().map((o) => {
     const c = o.carta && nomeCarta(o.carta);
     const emoji = c ? c.emoji : '💧';
-    const nome = c ? `${c.nome} ×${o.qtd}` : `${o.orvalho} Gotas de Orvalho`;
+    const nome = c ? `${c.nome} ×${o.qtd}` : `${curto(o.orvalho)} Gotas de Orvalho`;
     return `<button class="linha-escolha${o.comprado ? ' bloqueada' : ''}" data-oferta="${o.id}">
       <span class="escolha-emoji">${emoji}</span>
       <span class="escolha-info"><b>${nome}</b>${c ? `<small>${c.descricao}</small>` : ''}</span>
-      <span class="escolha-preco">${o.comprado ? tf().vendido : `🪙 ${o.moedas}`}</span>
+      <span class="escolha-preco">${o.comprado ? tf().vendido : `🪙 ${curto(o.moedas)}`}</span>
     </button>`;
   }).join('');
   const inv = jogo.estado.inventario;
@@ -214,7 +214,7 @@ function verPlanta(id) {
       </div>
     </div>
     <p class="dica-pequena">${th().infoNivel1}</p>
-    <div class="bloco"><div class="linha-attr linha-poder"><span>${t.poder}</span><b>${poder(stats, dados)}</b></div>${linhas}</div>
+    <div class="bloco"><div class="linha-attr linha-poder"><span>${t.poder}</span><b>${curto(poder(stats, dados))}</b></div>${linhas}</div>
     <div class="bloco"><b>🗡️ Ataque</b><p class="dica-pequena">${preencher(t.alcance[p.alcance || 'longe'], { bonus: Math.round((dados.config.batalha.multPerto - 1) * 100) })}<br>${t.padraoAtaque[p.alvo || 'frente']}</p></div>
     <div class="bloco"><b class="nome-hab">${iconeHabilidade(h.tipo)} ${h.nome}</b><p class="dica-pequena">${textoHabilidade(h, dados)}</p></div>
     <p class="dica-pequena">${t.infoPlantaFechar}</p>`;

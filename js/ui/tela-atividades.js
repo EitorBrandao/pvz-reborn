@@ -1,7 +1,7 @@
 // Tela "Desafios": Torre das Pragas, Desafio do Dia e Horta de Treino.
 
 import { arte } from '../arte.js';
-import { $, mostrarTela, avisar, preencher } from './comum.js';
+import { $, mostrarTela, avisar, preencher, curto } from './comum.js';
 import * as jogo from '../estado.js';
 import { gerarAndar, desafioDoDia, batalhaTreino, pragasConhecidas } from '../atividades.js';
 import { resumoInvasao, abrirInvasao } from './tela-eventos.js';
@@ -35,8 +35,8 @@ const emojiPraga = (id) => arte(dados.pragas.find((p) => p.id === id)) || '?';
 const emojis = (batalha) => batalha.inimigos.map((i) => emojiPraga(i.praga)).join('');
 
 function textoPremio(r) {
-  const partes = [`🪙 ${r.moedas}`, `✨ ${r.xp} XP`];
-  if (r.orvalho) partes.push(`💧 ${r.orvalho}`);
+  const partes = [`🪙 ${curto(r.moedas)}`, `✨ ${curto(r.xp)} XP`];
+  if (r.orvalho) partes.push(`💧 ${curto(r.orvalho)}`);
   return partes.join(' · ');
 }
 

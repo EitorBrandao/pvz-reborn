@@ -1,7 +1,7 @@
 // Tela de plantas: coleção, cartas, pacote de sementes e evolução de cada planta.
 
 import { arte, iconeHabilidade } from '../arte.js';
-import { $, mostrarTela, avisar, preencher, selosPlanta, textoHabilidade } from './comum.js';
+import { $, mostrarTela, avisar, preencher, selosPlanta, textoHabilidade, curto } from './comum.js';
 import * as jogo from '../estado.js';
 import { atributos, poder, xpParaProximo, nivelMaximo, classeTalento, hibridaTalento, arvoreEscolhida, pontosTalento, pontosGastos, custoAscensao, podeAscender, custoEstrela, custoEquip, temCartas, habilidadeComEstrelas } from '../evolucao.js';
 import * as som from '../som.js';
@@ -48,10 +48,10 @@ export function iniciarTelaPlantas(d, voltar) {
   $('troca-material').addEventListener('click', () => { fecharTroca(); usarComLote(carta(dados.config.troca.carta), true); });
 
   const { pacote } = dados.config;
-  $('btn-pacote-moedas').textContent = `🌱 Pacote 🪙${pacote.moedas}`;
-  $('btn-pacote-orvalho').textContent = `🌱 Pacote 💧${pacote.orvalho}`;
-  $('btn-pacote-moedas-lote').textContent = `🌱×${lote} 🪙${pacote.moedas * lote}`;
-  $('btn-pacote-orvalho-lote').textContent = `🌱×${lote} 💧${pacote.orvalho * lote}`;
+  $('btn-pacote-moedas').textContent = `🌱 Pacote 🪙${curto(pacote.moedas)}`;
+  $('btn-pacote-orvalho').textContent = `🌱 Pacote 💧${curto(pacote.orvalho)}`;
+  $('btn-pacote-moedas-lote').textContent = `🌱×${lote} 🪙${curto(pacote.moedas * lote)}`;
+  $('btn-pacote-orvalho-lote').textContent = `🌱×${lote} 💧${curto(pacote.orvalho * lote)}`;
 }
 
 export function abrirTelaPlantas() {
@@ -76,7 +76,7 @@ function estrelasTexto(n) {
 function custoTexto(custo) {
   // Cada item vira uma "pílula" que nunca quebra no meio; vermelha se falta.
   const partes = [];
-  if (custo.moedas) partes.push(`<span class="custo-item${jogo.estado.moedas < custo.moedas ? ' falta' : ''}">🪙${custo.moedas}</span>`);
+  if (custo.moedas) partes.push(`<span class="custo-item${jogo.estado.moedas < custo.moedas ? ' falta' : ''}">🪙${curto(custo.moedas)}</span>`);
   for (const [id, qtd] of Object.entries(custo.cartas || {})) {
     const tem = jogo.estado.inventario[id] || 0;
     partes.push(`<span class="custo-item${tem < qtd ? ' falta' : ''}">${carta(id).emoji}${tem}/${qtd}</span>`);
@@ -132,8 +132,8 @@ function blocoFusao(f) {
   const cartaEmoji = (id) => dados.cartas.find((x) => x.id === id)?.emoji || id;
   const pais = s.pais.map((p) => `<span class="custo-item${p.estrelasOk && p.rankOk ? '' : ' falta'}">${arte(p)} ${p.tem ? `${p.estrelasOk ? '5⭐' : 'falta ⭐'} · ${p.rankOk ? '✦' : 'falta ✦'}` : 'não tenho'}</span>`).join('');
   const custo = [
-    `<span class="custo-item${e.moedas >= c.custo.moedas ? '' : ' falta'}">🪙${c.custo.moedas}</span>`,
-    `<span class="custo-item${e.orvalho >= c.custo.orvalho ? '' : ' falta'}">💧${c.custo.orvalho}</span>`,
+    `<span class="custo-item${e.moedas >= c.custo.moedas ? '' : ' falta'}">🪙${curto(c.custo.moedas)}</span>`,
+    `<span class="custo-item${e.orvalho >= c.custo.orvalho ? '' : ' falta'}">💧${curto(c.custo.orvalho)}</span>`,
     ...s.cartas.map((x) => `<span class="custo-item${x.tem >= x.qtd ? '' : ' falta'}">${cartaEmoji(x.id)}${x.tem}/${x.qtd}</span>`),
   ].join('');
   return `<div class="fusao-bloco">${receita}
@@ -274,7 +274,7 @@ function desenharDetalhe() {
   // Atributos (com o ganho da última evolução, se teve)
   const poderAgora = poder(stats, dados);
   const ganhoPoder = mudanca ? poderAgora - poder(mudanca.antes, dados) : 0;
-  const linhaPoder = `<div class="linha-attr linha-poder"><span>${t.poder}</span><b>${poderAgora}${ganhoPoder > 0 ? ` <em class="ganho">+${ganhoPoder}</em>` : ''}</b></div>`;
+  const linhaPoder = `<div class="linha-attr linha-poder"><span>${t.poder}</span><b>${curto(poderAgora)}${ganhoPoder > 0 ? ` <em class="ganho">+${curto(ganhoPoder)}</em>` : ''}</b></div>`;
   const linhas = linhaPoder + ATRIBUTOS.map((a) => {
     const ganho = mudanca ? mudanca.depois[a] - mudanca.antes[a] : 0;
     return `<div class="linha-attr"><span>${t.atributos[a]}</span><b>${stats[a]}${ganho > 0 ? ` <em class="ganho">+${ganho}</em>` : ''}</b></div>`;
@@ -311,10 +311,10 @@ function desenharDetalhe() {
     const prev = atributos(p, r, dados, { estrelas: r.estrelas + 1 });
     blocoEstrela = `
       <div class="estrela-info">
-        <span class="custo"><span class="custo-item${r.copias < custo.copias ? ' falta' : ''}">🃏 Cópias ${r.copias}/${custo.copias}</span><span class="custo-item${jogo.estado.moedas < custo.moedas ? ' falta' : ''}">🪙${custo.moedas}</span></span>
+        <span class="custo"><span class="custo-item${r.copias < custo.copias ? ' falta' : ''}">🃏 Cópias ${r.copias}/${custo.copias}</span><span class="custo-item${jogo.estado.moedas < custo.moedas ? ' falta' : ''}">🪙${curto(custo.moedas)}</span></span>
         <div class="previa-grade">
           <span>Nv máx</span><b>${max} → ${max + cfg.niveisPorEstrela}</b>
-          <span>💪</span><b>${poderAgora} → ${poder(prev, dados)}</b>
+          <span>💪</span><b>${curto(poderAgora)} → ${poder(prev, dados)}</b>
           <span>⚔️</span><b>${stats.atq} → ${prev.atq}</b>
           <span>❤️</span><b>${stats.vida} → ${prev.vida}</b>
         </div>
@@ -366,7 +366,7 @@ function desenharDetalhe() {
     <p class="dica-pequena">Pontos livres: <b>${livres}</b> (1 a cada ${tl.niveisPorPonto} níveis, +${tl.pontosPorRank} por rank de ascensão)</p>
     ${ramosHtml}
     ${jogo.labirinto().coringa > 0 ? `<button class="btn btn-laranja btn-peq" data-acao="ponto-labirinto">🌳 ${dados.textos.labirinto.usarPonto} (${jogo.labirinto().coringa})</button>` : ''}
-    <button class="btn btn-azul btn-peq" data-acao="resetar-talentos" ${pontosGastos(r) ? '' : 'disabled'}>Resetar 💧${tl.custoReset.orvalho}</button></div>`;
+    <button class="btn btn-azul btn-peq" data-acao="resetar-talentos" ${pontosGastos(r) ? '' : 'disabled'}>Resetar 💧${curto(tl.custoReset.orvalho)}</button></div>`;
 
   // Equipamentos
   const equips = dados.equipamentos.espacos.map((esp) => {

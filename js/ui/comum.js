@@ -3,6 +3,15 @@ import * as som from '../som.js';
 
 export const $ = (id) => document.getElementById(id);
 
+// Número curto: até 9.999 normal; 10.0k a 999.9k; 1.0M pra cima.
+export function curto(n) {
+  n = Math.round(Number(n) || 0);
+  const a = Math.abs(n);
+  if (a < 10000) return n.toLocaleString('pt-BR');
+  if (a < 999950) return `${(n / 1000).toFixed(1)}k`;
+  return `${(n / 1000000).toFixed(1)}M`;
+}
+
 export function mostrarTela(id) {
   document.querySelectorAll('.tela').forEach((t) => t.classList.toggle('ativa', t.id === id));
   som.musicaDaTela(id);

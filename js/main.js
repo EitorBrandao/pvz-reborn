@@ -3,7 +3,7 @@
 import { iniciarArte } from './arte.js';
 import * as jogo from './estado.js';
 import * as save from './save.js';
-import { $, mostrarTela, avisar, sortear, preencher } from './ui/comum.js';
+import { $, mostrarTela, avisar, sortear, preencher, curto } from './ui/comum.js';
 import { iniciarTelaTime, abrirTelaTime } from './ui/tela-time.js';
 import { iniciarTelaBatalha, comecarBatalha } from './ui/tela-batalha.js';
 import { iniciarTelaPlantas, abrirTelaPlantas } from './ui/tela-plantas.js';
@@ -27,8 +27,8 @@ async function lerJson(caminho) {
 
 function atualizarTela() {
   const e = jogo.estado;
-  $('hud-moedas').textContent = e.moedas;
-  $('hud-orvalho').textContent = e.orvalho;
+  $('hud-moedas').textContent = curto(e.moedas);
+  $('hud-orvalho').textContent = curto(e.orvalho);
   $('hud-nivel').textContent = e.nivel;
   const xp = jogo.xpJogadorInfo();
   $('hud-xp').style.width = `${(xp.xp / xp.precisa) * 100}%`;

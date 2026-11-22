@@ -1,6 +1,6 @@
 // Ícones de missão na lateral da tela da horta e a ficha da missão.
 
-import { $, avisar, preencher } from './comum.js';
+import { $, avisar, preencher, curto } from './comum.js';
 import * as jogo from '../estado.js';
 import { progressoTarefa, resumoProgresso } from '../missoes.js';
 
@@ -31,8 +31,8 @@ export function desenharMissoes() {
 
 function premioTexto(p) {
   const partes = [];
-  if (p.moedas) partes.push(`🪙 ${p.moedas}`);
-  if (p.orvalho) partes.push(`💧 ${p.orvalho}`);
+  if (p.moedas) partes.push(`🪙 ${curto(p.moedas)}`);
+  if (p.orvalho) partes.push(`💧 ${curto(p.orvalho)}`);
   if (p.xp) partes.push(`✨ ${p.xp} XP`);
   for (const [id, qtd] of Object.entries(p.cartas || {})) {
     const c = dados.cartas.find((x) => x.id === id);

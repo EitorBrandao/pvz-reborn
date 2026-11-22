@@ -1,7 +1,7 @@
 // Rotina diária na tela da horta: Canteiro (3 vasos), Expedição e Calendário de presença.
 
 import { arte } from '../arte.js';
-import { $, mostrarCartasAgrupadas, avisar, preencher } from './comum.js';
+import { $, mostrarCartasAgrupadas, avisar, preencher, curto } from './comum.js';
 import * as jogo from '../estado.js';
 import * as som from '../som.js';
 
@@ -47,8 +47,8 @@ function nomesCartas(cartas) {
 
 function textoPremio(p) {
   const partes = [];
-  if (p.moedas) partes.push(`🪙 ${p.moedas}`);
-  if (p.orvalho) partes.push(`💧 ${p.orvalho}`);
+  if (p.moedas) partes.push(`🪙 ${curto(p.moedas)}`);
+  if (p.orvalho) partes.push(`💧 ${curto(p.orvalho)}`);
   for (const [id, qtd] of Object.entries(p.cartas || {})) {
     const c = dados.cartas.find((x) => x.id === id);
     if (c) partes.push(`${c.emoji}${qtd > 1 ? `×${qtd}` : ''}`);
@@ -126,7 +126,7 @@ function tocarVaso(i) {
     return `<button class="linha-escolha${bloqueada ? ' bloqueada' : ''}" data-muda="${m.id}">
       <span class="escolha-emoji">${bloqueada ? '🔒' : m.emoji}</span>
       <span class="escolha-info"><b>${m.nome} · ⏱️ ${tempo}</b>
-        <small>${bloqueada ? preencher(t().nivelMin, { nivel: m.nivelMin }) : `${t().colhe} 🪙 ${m.moedas} ${cartas}`}</small></span>
+        <small>${bloqueada ? preencher(t().nivelMin, { nivel: m.nivelMin }) : `${t().colhe} 🪙 ${curto(m.moedas)} ${cartas}`}</small></span>
       <span class="escolha-preco">🪙 ${m.custo}</span>
     </button>`;
   }).join('');
@@ -148,7 +148,7 @@ function abrirExpedicao() {
     if (r.ok) {
       const subiram = r.subiram.map((s) => arte(dados.plantas.find((p) => p.id === s.id))).join('');
       abrirJanela('resultado', `<h3>${t().voltaram}</h3>
-        <p class="rotina-premio">🪙 ${r.moedas} · ✨ ${r.xp} XP ${nomesCartas(r.cartas)}</p>
+        <p class="rotina-premio">🪙 ${curto(r.moedas)} · ✨ ${curto(r.xp)} XP ${nomesCartas(r.cartas)}</p>
         ${subiram ? `<p>${preencher(t().subiramNivel, { plantas: subiram })}</p>` : ''}
         <button class="btn btn-laranja rotina-fechar">${t().oba}</button>`);
     }
@@ -279,7 +279,7 @@ function linhaRonda(item) {
   if (item.tipo === 'vaso') {
     emoji = item.muda.emoji;
     titulo = preencher(tx.rondaVaso, { n: item.i + 1, nome: item.muda.nome });
-    detalhe = `${tx.colhe} 🪙 ${item.muda.moedas}`;
+    detalhe = `${tx.colhe} 🪙 ${curto(item.muda.moedas)}`;
     if (item.replanta) {
       titulo += ` ${preencher(tx.rondaVasoReplanta, { nome: item.replanta.nome })}`;
       valor = `-🪙 ${item.replanta.custo}`;
@@ -331,8 +331,8 @@ function abrirRonda() {
 
 function mostrarResumoRonda(r) {
   const tx = t();
-  const partes = [`🪙 +${r.moedas}`];
-  if (r.orvalho) partes.push(`💧 +${r.orvalho}`);
+  const partes = [`🪙 +${curto(r.moedas)}`];
+  if (r.orvalho) partes.push(`💧 +${curto(r.orvalho)}`);
   if (r.xp) partes.push(`✨ ${r.xp} XP`);
   const linhas = [];
   if (r.replantados.length) {
