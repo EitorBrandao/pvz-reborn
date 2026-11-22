@@ -134,7 +134,16 @@ export function prepararBatalha(batalha, time, dados, colecao = {}) {
       u[atributo] = Math.round(u[atributo] * mult);
       if (atributo === 'vida') u.vidaMax = u.vida;
     }
-    // ajuste só desse inimigo (ex.: chefe da Invasão bate mais fraco)
+    // pragas de nível alto ficam mais fortes aos poucos (não vale no Labirinto, que já se ajusta ao time)
+    const pf = cfg.pragaForte;
+    if (pf && !lab) {
+      const rampa = Math.min(1, Math.max(0, (u.nivel - pf.de) / (pf.ate - pf.de)));
+      for (const atributo of ['vida', 'atq', 'def']) {
+        if (pf[atributo]) u[atributo] = Math.round(u[atributo] * (1 + (pf[atributo] - 1) * rampa));
+      }
+      u.vidaMax = u.vida;
+    }
+    // ajuste só desse inimigo (ex.: chefe da Invasão)
     for (const [atributo, mult] of Object.entries(i.mult || {})) u[atributo] = Math.round(u[atributo] * mult);
     // vida fixa (ex.: chefe da Invasão, que guarda a vida entre uma batalha e outra)
     if (i.vida) {
@@ -245,7 +254,8 @@ export function simular(unidades, cfg, semente) {
     const eficaz = !!atacante.forteContra && atacante.forteContra === (alvo.faccao || alvo.categoria);
     const atq = atacante.atq * (1 - reducao(atacante, 'fraqueza'));
     const def = alvo.def * (1 - reducao(alvo, 'casca'));
-    let bruto = atq * mult * cfg.multDano * (100 / (100 + def));
+    // defesa relativa: quanto maior a defesa perto do ataque de quem bate, menos dano passa
+    let bruto = atq * mult * cfg.multDano * (atq / (atq + cfg.kDef * def || 1));
     if (eficaz) bruto *= 1 + atacante.vantagem;
     if (atacante.alcance === 'perto') bruto *= cfg.multPerto || 1;
     bruto *= 1 - cfg.variacao + rng() * 2 * cfg.variacao;
